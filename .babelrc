@@ -1,0 +1,15 @@
+{
+  "comments": false,
+  "presets": [
+    ["env", {
+      "loose": true,
+      "targets": {
+        "node": 4
+      },
+      "exclude": [
+        "transform-regenerator"
+      ]
+    }],
+    "stage-0"
+  ]
+}

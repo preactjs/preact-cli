@@ -1,0 +1,18 @@
+html, body {
+	font: 14px/1.21 'Helvetica Neue', arial, sans-serif;
+	font-weight: 400;
+	color: #444;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+h1 {
+	text-align: center;
+}
+
+.result {
+	padding: 10px;
+	margin: 10px;
+	background: white;
+	box-shadow: 0 1px 5px rgba(0,0,0,0.5);
+}
