@@ -22,4 +22,5 @@ yargs
 	.help()
 	.alias('h', 'help')
 	.demandCommand()
+	.strict()
 	.argv;
