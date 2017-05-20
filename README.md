@@ -45,6 +45,45 @@ npm start
 npm run build
 ```
 
+### CLI Options
+
+```sh
+$ preact create
+
+  --name      directory and package name for the new app
+  --dest      Directory to create the app within                  [default: <name>]
+  --type      A project template to start from
+              [Options: "default", "full", "simple", "empty"]     [default: "default"]
+  --less      Pre-install LESS support                 [boolean]  [default: false]
+  --sass      Pre-install SASS/SCSS support            [boolean]  [default: false]
+
+$ preact build
+
+  --src             Entry file (index.js)                         [default: "src"]
+  --dest            Directory root for output                     [default: "build"]
+  --production, -p  Create a minified production build.           [default: true]
+  --less, -l        Build and compile LESS files                  [default: false]
+  --sass, -s        Build and compile SASS files                  [default: false]
+  --prerender       Pre-render static app content.                [default: true]
+
+$ preact watch
+
+  --src        Entry file (index.js)                              [default: "src"]
+  --port, -p   Port to start a server on                          [default: "8080"]
+  --host, -h                                          [boolean]   [default: "0.0.0.0"]
+  --prerender  Pre-render static app content on initial build     [default: false]
+
+$ preact serve
+
+  --dir       Directory root to serve static files from.          [default: "build"]
+  --cwd       The working directory in which to spawn a server.   [default: .]
+  --server    Which server to run, or "config" to produce a firebase config.    [options: "simplehttp2server", "superstatic", "config"] [default:"simplehttp2server"]
+  --dest      Directory or filename where firebase.json should be written
+              (used for --server config)                          [default: -]
+  --port, -p  Port to start a server on                           [default: "8080"]
+  -h, --help  Exibe ajuda  
+
+```
 
 ### Deploying
 
