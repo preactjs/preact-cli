@@ -373,7 +373,7 @@ const development = config => {
 	]);
 };
 
-const production = () => addPlugins([
+const production = config => addPlugins([
 	new webpack.LoaderOptionsPlugin({
 		minimize: true
 	}),
@@ -428,6 +428,7 @@ const production = () => addPlugins([
 		filename: 'sw.js',
 		navigateFallback: 'index.html',
 		minify: true,
+		stripPrefix: config.cwd,
 		staticFileGlobsIgnorePatterns: [
 			/\.map$/,
 			/push-manifest\.json$/
