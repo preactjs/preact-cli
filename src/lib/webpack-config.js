@@ -260,6 +260,11 @@ export default env => {
 			}
 		}),
 
+		// dev-only plugins
+		!env.production && addPlugins([
+			new webpack.NamedModulesPlugin()
+		]),
+
 		// copy any static files
 		addPlugins([
 			new CopyWebpackPlugin([
