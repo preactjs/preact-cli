@@ -70,18 +70,18 @@ $ preact watch
 
   --src        Entry file (index.js)                              [default: "src"]
   --port, -p   Port to start a server on                          [default: "8080"]
-  --host, -h                                          [boolean]   [default: "0.0.0.0"]
+  --host                                              [boolean]   [default: "0.0.0.0"]
   --prerender  Pre-render static app content on initial build     [default: false]
 
 $ preact serve
 
   --dir       Directory root to serve static files from.          [default: "build"]
   --cwd       The working directory in which to spawn a server.   [default: .]
-  --server    Which server to run, or "config" to produce a firebase config.    [options: "simplehttp2server", "superstatic", "config"] [default:"simplehttp2server"]
+  --server    Which server to run, or "config" to produce a firebase config.      	
+  	      [options: "simplehttp2server", "superstatic", "config"] [default:"simplehttp2server"]
   --dest      Directory or filename where firebase.json should be written
               (used for --server config)                          [default: -]
   --port, -p  Port to start a server on                           [default: "8080"]
-  -h, --help  Exibe ajuda  
 
 ```
 
