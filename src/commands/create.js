@@ -92,7 +92,7 @@ export default asyncCommand({
 			build: 'preact build',
 			serve: 'preact build && preact serve',
 			dev: 'preact watch',
-			test: 'eslint src && echo "Error: no test specified" && exit 1'
+			test: 'eslint src && preact test'
 		};
 
 		pkg.eslintConfig = {
