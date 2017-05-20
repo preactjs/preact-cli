@@ -38,6 +38,7 @@ function readJson(file) {
 readJson.cache = {};
 
 export default env => {
+	let isProd = env && env.production;
 	let cwd = env.cwd = resolve(env.cwd || process.cwd());
 	let src = dir => resolve(env.cwd, env.src || 'src', dir);
 
@@ -178,7 +179,7 @@ export default env => {
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
 							use: [
-								`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${env.production}`,
+								`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${isProd}`,
 								`postcss-loader`
 							]
 						})
@@ -192,7 +193,7 @@ export default env => {
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
 							use: [
-								`css-loader?sourceMap=${env.production}`,
+								`css-loader?sourceMap=${isProd}`,
 								`postcss-loader`
 							]
 						})
@@ -215,7 +216,7 @@ export default env => {
 					},
 					{
 						test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif)(\?.*)?$/i,
-						loader: env.production ? 'file-loader' : 'url-loader'
+						loader: isProd ? 'file-loader' : 'url-loader'
 					}
 				]
 			}
@@ -235,18 +236,18 @@ export default env => {
 		]),
 
 		defineConstants({
-			'process.env.NODE_ENV': env.production ? 'production' : 'development'
+			'process.env.NODE_ENV': isProd ? 'production' : 'development'
 		}),
 
 		// monitor output size and warn if it exceeds 200kb:
-		env.production && performance(Object.assign({
+		isProd && performance(Object.assign({
 			maxAssetSize: 200 * 1000,
 			maxEntrypointSize: 200 * 1000,
 			hints: 'warning'
 		}, env.pkg.performance || {})),
 
 		// Source maps for dev/prod:
-		setDevTool(env.production ? 'source-map' : 'cheap-module-eval-source-map'),
+		setDevTool(isProd ? 'source-map' : 'cheap-module-eval-source-map'),
 
 		// remove unnecessary shims:
 		customConfig({
@@ -261,7 +262,7 @@ export default env => {
 		}),
 
 		// dev-only plugins
-		!env.production && addPlugins([
+		!isProd && addPlugins([
 			new webpack.NamedModulesPlugin()
 		]),
 
@@ -277,7 +278,7 @@ export default env => {
 		addPlugins([
 			new ExtractTextPlugin({
 				filename: 'style.css',
-				disable: !env.production,
+				disable: !isProd,
 				allChunks: true
 			})
 		]),
@@ -292,7 +293,7 @@ export default env => {
 
 		htmlPlugin(env),
 
-		env.production ? production(env) : development(env),
+		isProd ? production(env) : development(env),
 
 		addPlugins([
 			new webpack.NoEmitOnErrorsPlugin(),
