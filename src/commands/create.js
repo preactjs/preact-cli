@@ -103,17 +103,15 @@ export default asyncCommand({
 
 		spinner.text = 'Installing dev dependencies';
 
-		await npm(target, [
-			'install', '--save-dev',
+		await install(target, [
 			'preact-cli',
 			'if-env',
 			'eslint'
-		]);
+		], 'dev');
 
 		spinner.text = 'Installing dependencies';
 
-		await npm(target, [
-			'install', '--save',
+		await install(target, [
 			'preact',
 			'preact-compat',
 			'preact-router'
@@ -139,3 +137,26 @@ export default asyncCommand({
 
 
 const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
+
+const install = (cwd, packages, env) => {
+	const isWin = process.platform === 'win32'
+	const isDev = env === 'dev' ? true : false
+
+	return checkIfYarnExists(isWin ? 'where' : 'which')
+		.then(yarn => {
+			if(yarn) {
+				const args = ['add']
+				if(isDev) {
+					args.push('-D')
+				}
+				return { cmd: 'yarn', args }
+			}
+
+			return { cmd: 'npm', args: ['install', isDev ? '--save-dev' : '--save'] }
+		})
+		.then(({ cmd, args }) => spawn(cmd, [...args, ...packages], { cwd, stdio: 'ignore' }))
+}
+
+const checkIfYarnExists = (cmd) => spawn(cmd, ['yarn'])
+	.then(() => true)
+	.catch(() => false)
