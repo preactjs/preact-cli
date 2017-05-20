@@ -1,7 +1,6 @@
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
-import rimraf from 'rimraf';
 
 export default (watch=false, config, onprogress) => new Promise( (resolve, reject) => {
 	let compiler = webpack(config);
@@ -32,9 +31,7 @@ export default (watch=false, config, onprogress) => new Promise( (resolve, rejec
 		server.listen(config.devServer.port);
 	}
 	else {
-		cleanOutputDir(config)
-			.catch(reject)
-			.then(() => compiler.run(done));
+		compiler.run(done);
 	}
 });
 
@@ -54,14 +51,4 @@ export function showStats(stats) {
 	}
 
 	return stats;
-}
-
-const cleanOutputDir = config => {
-	let output = config.output.path
-	return new Promise((resolve, reject) => {
-		rimraf(output, err => {
-			if (err) reject(err)
-			resolve()
-		})
-	})
 }
