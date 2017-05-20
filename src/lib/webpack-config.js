@@ -441,8 +441,11 @@ const htmlPlugin = config => addPlugins([
 	new HtmlWebpackPlugin({
 		filename: 'index.html',
 		template: `!!ejs-loader!${config.template || resolve(__dirname, '../resources/template.html')}`,
-		minify: {
+		minify: config.production && {
 			collapseWhitespace: true,
+			removeScriptTypeAttributes: true,
+			removeRedundantAttributes: true,
+			removeStyleLinkTypeAttributes: true,
 			removeComments: true
 		},
 		favicon: exists(resolve(config.cwd, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../resources/favicon.ico'),
