@@ -107,7 +107,8 @@ export default asyncCommand({
 			'install', '--save-dev',
 			'preact-cli',
 			'if-env',
-			'eslint'
+			'eslint',
+			'eslint-config-synacor'
 		]);
 
 		spinner.text = 'Installing dependencies';
