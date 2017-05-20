@@ -117,8 +117,20 @@ export default asyncCommand({
 			'install', '--save',
 			'preact',
 			'preact-compat',
-			'preact-router'
-		]);
+			'preact-router',
+
+			// install sass setup if --sass
+			...(argv.sass ? [
+				'node-sass',
+				'sass-loader'
+			] : []),
+
+			// install less setup if --less
+			...(argv.less ? [
+				'less',
+				'less-loader'
+			] : [])
+		].filter(Boolean));
 
 		spinner.succeed('Done!\n');
 
