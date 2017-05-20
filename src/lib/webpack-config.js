@@ -261,11 +261,6 @@ export default env => {
 			}
 		}),
 
-		// dev-only plugins
-		!isProd && addPlugins([
-			new webpack.NamedModulesPlugin()
-		]),
-
 		// copy any static files
 		addPlugins([
 			new CopyWebpackPlugin([
@@ -323,6 +318,10 @@ const development = config => {
 		origin = `${config.https===true?'https':'http'}://${host}:${port}/`;
 
 	return group([
+		addPlugins([
+			new webpack.NamedModulesPlugin()
+		]),
+
 		devServer({
 			port,
 			host,
