@@ -89,6 +89,7 @@ export default asyncCommand({
 
 		pkg.scripts = {
 			start: 'if-env NODE_ENV=production && npm run -s serve || npm run -s dev',
+			prebuild: 'rimraf build',
 			build: 'preact build',
 			serve: 'preact build && preact serve',
 			dev: 'preact watch',
@@ -107,7 +108,8 @@ export default asyncCommand({
 			'install', '--save-dev',
 			'preact-cli',
 			'if-env',
-			'eslint'
+			'eslint',
+			'rimraf'
 		]);
 
 		spinner.text = 'Installing dependencies';
