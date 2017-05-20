@@ -28,6 +28,13 @@ import createBabelConfig from './babel-config';
 import prerender from './prerender';
 import PushManifestPlugin from './push-manifest';
 
+function exists(file) {
+	try {
+		if (statSync(file)) return true;
+	} catch (e) {}
+	return false;
+}
+
 function readJson(file) {
 	if (file in readJson.cache) return readJson.cache[file];
 	let ret;
@@ -43,10 +50,9 @@ export default env => {
 	let src = dir => resolve(env.cwd, env.src || 'src', dir);
 
 	// only use src/ if it exists:
-	let hasSrc = false;
-	try { hasSrc = statSync(src('.')).isDirectory(); }
-	catch (e) { }
-	if (!hasSrc) env.src = '.';
+	if (!exists(src('.'))) {
+		env.src = '.';
+	}
 
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 	env.manifest = readJson(src('manifest.json')) || {};
@@ -264,9 +270,23 @@ export default env => {
 		// copy any static files
 		addPlugins([
 			new CopyWebpackPlugin([
-				{ from: 'manifest.json' },
-				{ from: 'assets', to: 'assets' }
-			])
+				...(exists(src('manifest.json')) ? [
+					{ from: 'manifest.json' }
+				] : [
+					{
+						from: resolve(__dirname, '../resources/manifest.json'),
+						to: 'manifest.json'
+					},
+					{
+						from: resolve(__dirname, '../resources/icon.png'),
+						to: 'assets/icon.png'
+					}
+				]),
+				exists(src('assets')) && {
+					from: 'assets',
+					to: 'assets'
+				}
+			].filter(Boolean))
 		]),
 
 		// produce HTML & CSS:
@@ -424,7 +444,7 @@ const htmlPlugin = config => addPlugins([
 			collapseWhitespace: true,
 			removeComments: true
 		},
-		favicon: 'assets/favicon.ico',
+		favicon: exists(resolve(config.cwd, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../resources/favicon.ico'),
 		manifest: config.manifest,
 		inject: true,
 		compile: true,
