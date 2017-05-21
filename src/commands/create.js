@@ -139,10 +139,9 @@ export default asyncCommand({
 const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
 
 const install = (cwd, packages, env) => {
-	const isWin = process.platform === 'win32'
 	const isDev = env === 'dev' ? true : false
 
-	return checkIfYarnExists(isWin ? 'where' : 'which')
+	return isCommandAvailable('yarn')
 		.then(yarn => {
 			if(yarn) {
 				const args = ['add']
@@ -157,6 +156,10 @@ const install = (cwd, packages, env) => {
 		.then(({ cmd, args }) => spawn(cmd, [...args, ...packages], { cwd, stdio: 'ignore' }))
 }
 
-const checkIfYarnExists = (cmd) => spawn(cmd, ['yarn'])
-	.then(() => true)
-	.catch(() => false)
+const isCommandAvailable = cmd => {
+	const isWin = process.platform === 'win32'
+
+	return spawn(isWin ? 'where' : 'which', [cmd])
+		.then(() => true)
+		.catch(() => false)
+}
