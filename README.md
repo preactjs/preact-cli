@@ -6,10 +6,10 @@
 
 - **100/100 Lighthouse score**, right out of the box ([proof])
 - Fully **automatic code splitting** for routes
-- Transparently code-split any component with an `async!` prefix
-- Auto-generated ServiceWorker for offline caching powered by [sw-precache]
-- [PRPL](https://developers.google.com/web/fundamentals/performance/prpl-pattern/) pattern support for efficient loading. 
-- Zero-configuration pre-rendering / SSR hydration
+- Transparently code-split any component with an [`async!`] prefix
+- Auto-generated [Service Workers] for offline caching powered by [sw-precache]
+- [PRPL](https://developers.google.com/web/fundamentals/performance/prpl-pattern/) pattern support for efficient loading
+- Zero-configuration pre-rendering / server-side rendering hydration
 - Support for CSS Modules, LESS & autoprefixer
 - Monitor your bundle/chunk sizes with built-in tracking
 - Automatic app mounting, debug helpers & Hot Module Replacement
@@ -102,3 +102,5 @@ npm run serve -- --server config
 [preact-router]: https://github.com/developit/preact-router
 [sw-precache]: https://github.com/GoogleChrome/sw-precache
 [proof]: https://googlechrome.github.io/lighthouse/viewer/?gist=142af6838482417af741d966e7804346
+[Service Workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
+[`async!`]: https://github.com/developit/preact-cli/blob/222e7018dd360e40f7db622191aeca62d6ef0c9a/examples/full/src/components/app.js#L7
