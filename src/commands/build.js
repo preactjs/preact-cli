@@ -1,6 +1,6 @@
 import asyncCommand from '../lib/async-command';
 import webpackConfig from '../lib/webpack-config';
-import runWebpack, { showStats } from '../lib/run-webpack';
+import runWebpack, { showStats, writeJsonStats } from '../lib/run-webpack';
 
 export default asyncCommand({
 	command: 'build [src] [dest]',
@@ -34,6 +34,10 @@ export default asyncCommand({
 		prerender: {
 			description: 'Pre-render static app content.',
 			default: true
+		},
+		json: {
+			description: 'Generate build statistics for analysis.',
+			default: false
 		}
 	},
 
@@ -42,5 +46,10 @@ export default asyncCommand({
 
 		let stats = await runWebpack(false, config);
 		showStats(stats);
+
+		if (argv.json) {
+			await writeJsonStats(stats)
+		}
 	}
 })
+
