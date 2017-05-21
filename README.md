@@ -65,6 +65,7 @@ $ preact build
   --less, -l        Build and compile LESS files                  [default: false]
   --sass, -s        Build and compile SASS files                  [default: false]
   --prerender       Pre-render static app content.                [default: true]
+  --clean           Clear output directory before building.       [default: true]
   --json            Generate build statistics for analysis.       [default: false]
 
 $ preact watch
