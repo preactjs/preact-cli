@@ -28,6 +28,13 @@ import createBabelConfig from './babel-config';
 import prerender from './prerender';
 import PushManifestPlugin from './push-manifest';
 
+function exists(file) {
+	try {
+		if (statSync(file)) return true;
+	} catch (e) {}
+	return false;
+}
+
 function readJson(file) {
 	if (file in readJson.cache) return readJson.cache[file];
 	let ret;
@@ -38,14 +45,14 @@ function readJson(file) {
 readJson.cache = {};
 
 export default env => {
+	let isProd = env && env.production;
 	let cwd = env.cwd = resolve(env.cwd || process.cwd());
 	let src = dir => resolve(env.cwd, env.src || 'src', dir);
 
 	// only use src/ if it exists:
-	let hasSrc = false;
-	try { hasSrc = statSync(src('.')).isDirectory(); }
-	catch (e) { }
-	if (!hasSrc) env.src = '.';
+	if (!exists(src('.'))) {
+		env.src = '.';
+	}
 
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 	env.manifest = readJson(src('manifest.json')) || {};
@@ -178,7 +185,7 @@ export default env => {
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
 							use: [
-								`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${env.production}`,
+								`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${isProd}`,
 								`postcss-loader`
 							]
 						})
@@ -192,7 +199,7 @@ export default env => {
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
 							use: [
-								`css-loader?sourceMap=${env.production}`,
+								`css-loader?sourceMap=${isProd}`,
 								`postcss-loader`
 							]
 						})
@@ -215,7 +222,7 @@ export default env => {
 					},
 					{
 						test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif)(\?.*)?$/i,
-						loader: env.production ? 'file-loader' : 'url-loader'
+						loader: isProd ? 'file-loader' : 'url-loader'
 					}
 				]
 			}
@@ -235,18 +242,18 @@ export default env => {
 		]),
 
 		defineConstants({
-			'process.env.NODE_ENV': env.production ? 'production' : 'development'
+			'process.env.NODE_ENV': isProd ? 'production' : 'development'
 		}),
 
 		// monitor output size and warn if it exceeds 200kb:
-		env.production && performance(Object.assign({
+		isProd && performance(Object.assign({
 			maxAssetSize: 200 * 1000,
 			maxEntrypointSize: 200 * 1000,
 			hints: 'warning'
 		}, env.pkg.performance || {})),
 
 		// Source maps for dev/prod:
-		setDevTool(env.production ? 'source-map' : 'cheap-module-eval-source-map'),
+		setDevTool(isProd ? 'source-map' : 'cheap-module-eval-source-map'),
 
 		// remove unnecessary shims:
 		customConfig({
@@ -263,16 +270,30 @@ export default env => {
 		// copy any static files
 		addPlugins([
 			new CopyWebpackPlugin([
-				{ from: 'manifest.json' },
-				{ from: 'assets', to: 'assets' }
-			])
+				...(exists(src('manifest.json')) ? [
+					{ from: 'manifest.json' }
+				] : [
+					{
+						from: resolve(__dirname, '../resources/manifest.json'),
+						to: 'manifest.json'
+					},
+					{
+						from: resolve(__dirname, '../resources/icon.png'),
+						to: 'assets/icon.png'
+					}
+				]),
+				exists(src('assets')) && {
+					from: 'assets',
+					to: 'assets'
+				}
+			].filter(Boolean))
 		]),
 
 		// produce HTML & CSS:
 		addPlugins([
 			new ExtractTextPlugin({
 				filename: 'style.css',
-				disable: !env.production,
+				disable: !isProd,
 				allChunks: true
 			})
 		]),
@@ -287,7 +308,7 @@ export default env => {
 
 		htmlPlugin(env),
 
-		env.production ? production(env) : development(env),
+		isProd ? production(env) : development(env),
 
 		addPlugins([
 			new webpack.NoEmitOnErrorsPlugin(),
@@ -317,6 +338,10 @@ const development = config => {
 		origin = `${config.https===true?'https':'http'}://${host}:${port}/`;
 
 	return group([
+		addPlugins([
+			new webpack.NamedModulesPlugin()
+		]),
+
 		devServer({
 			port,
 			host,
@@ -348,7 +373,7 @@ const development = config => {
 	]);
 };
 
-const production = () => addPlugins([
+const production = config => addPlugins([
 	new webpack.LoaderOptionsPlugin({
 		minimize: true
 	}),
@@ -403,6 +428,7 @@ const production = () => addPlugins([
 		filename: 'sw.js',
 		navigateFallback: 'index.html',
 		minify: true,
+		stripPrefix: config.cwd,
 		staticFileGlobsIgnorePatterns: [
 			/\.map$/,
 			/push-manifest\.json$/
@@ -415,11 +441,14 @@ const htmlPlugin = config => addPlugins([
 	new HtmlWebpackPlugin({
 		filename: 'index.html',
 		template: `!!ejs-loader!${config.template || resolve(__dirname, '../resources/template.html')}`,
-		minify: {
+		minify: config.production && {
 			collapseWhitespace: true,
+			removeScriptTypeAttributes: true,
+			removeRedundantAttributes: true,
+			removeStyleLinkTypeAttributes: true,
 			removeComments: true
 		},
-		favicon: 'assets/favicon.ico',
+		favicon: exists(resolve(config.cwd, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../resources/favicon.ico'),
 		manifest: config.manifest,
 		inject: true,
 		compile: true,
