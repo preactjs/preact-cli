@@ -374,6 +374,7 @@ const development = config => {
 };
 
 const production = config => addPlugins([
+	new webpack.HashedModuleIdsPlugin(),
 	new webpack.LoaderOptionsPlugin({
 		minimize: true
 	}),
