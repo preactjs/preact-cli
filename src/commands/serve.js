@@ -34,8 +34,8 @@ export default asyncCommand({
 			defaultDescription: '-'
 		},
 		port: {
-			description: 'Port to start a server on',
-			default: '8080',
+			description: 'Port to start a server on.',
+			defaultDescription: 'PORT || 8080',
 			alias: 'p'
 		}
 	},
@@ -81,7 +81,7 @@ async function serve(options) {
 		config: configFile,
 		configObj: config,
 		server: options.server,
-		port: options.port,
+		port: options.port || process.env.PORT || 8080,
 		dir,
 		cwd: path.resolve(__dirname, '../resources')
 	});
