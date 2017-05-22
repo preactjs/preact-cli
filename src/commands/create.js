@@ -6,6 +6,7 @@ import ora from 'ora';
 import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
+import which from 'which';
 
 const TEMPLATES = {
 	default: 'examples/root',
@@ -83,7 +84,7 @@ export default asyncCommand({
 
 		spinner.text = 'Initializing project';
 
-		await npm(target, ['init', '-y']);
+		await spawn('npm', ['init', '-y'], { cwd: target, stdio: 'ignore' })
 
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
@@ -148,31 +149,27 @@ export default asyncCommand({
 	}
 })
 
-
-const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
-
-const install = (cwd, packages, env) => {
+const install = async (cwd, packages, env) => {
 	const isDev = env === 'dev' ? true : false
+	const isYarnAvailable = await isCommandAvailable('yarn')
 
-	return isCommandAvailable('yarn')
-		.then(yarn => {
-			if(yarn) {
-				const args = ['add']
-				if(isDev) {
-					args.push('-D')
-				}
-				return { cmd: 'yarn', args }
-			}
+	if(isYarnAvailable) {
+		const args = ['add']
+		if(isDev) {
+			args.push('-D')
+		}
 
-			return { cmd: 'npm', args: ['install', isDev ? '--save-dev' : '--save'] }
-		})
-		.then(({ cmd, args }) => spawn(cmd, [...args, ...packages], { cwd, stdio: 'ignore' }))
+		return await spawn('yarn', [...args, ...packages], { cwd, stdio: 'ignore' })
+	}
+
+	await spawn('npm', ['install', isDev ? '--save-dev' : '--save', ...packages], { cwd, stdio: 'ignore' })
 }
 
-const isCommandAvailable = cmd => {
-	const isWin = process.platform === 'win32'
-
-	return spawn(isWin ? 'where' : 'which', [cmd])
-		.then(() => true)
-		.catch(() => false)
+const isCommandAvailable = async cmd => {
+	try {
+		await promisify(which)(cmd)
+		return true;
+	} catch(e){
+		return false
+	}
 }
