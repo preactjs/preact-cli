@@ -16,10 +16,6 @@ export default asyncCommand({
 			description: 'Directory root to serve static files from.',
 			default: 'build'
 		},
-		cwd: {
-			description: 'The working directory in which to spawn a server.',
-			defaultDescription: '.'
-		},
 		server: {
 			description: 'Which server to run, or "config" to produce a firebase config.',
 			choices: [
