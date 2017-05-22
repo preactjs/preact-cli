@@ -108,8 +108,20 @@ export default asyncCommand({
 			'preact-cli',
 			'if-env',
 			'eslint',
-			'eslint-config-synacor'
-		]);
+			'eslint-config-synacor',
+
+			// install sass setup if --sass
+			...(argv.sass ? [
+				'node-sass',
+				'sass-loader'
+			] : []),
+
+			// install less setup if --less
+			...(argv.less ? [
+				'less',
+				'less-loader'
+			] : [])
+		].filter(Boolean));
 
 		spinner.text = 'Installing dependencies';
 
