@@ -94,7 +94,7 @@
     "babel-register": "^6.24.1",
     "copy-webpack-plugin": "^4.0.1",
     "cross-spawn-promise": "^0.10.1",
-    "css-modules-require-hook": "^4.1.0-beta",
+    "css-modules-require-hook": "^4.0.6",
     "ejs-loader": "^0.3.0",
     "es6-promisify": "^5.0.0",
     "eslint": "^3.19.0",
