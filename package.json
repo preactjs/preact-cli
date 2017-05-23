@@ -10,6 +10,7 @@
     "build": "babel src -d lib -D",
     "prepublish": "npm run -s build",
     "dev": "babel-node src",
+    "lint": "eslint 'src/**/*.js'",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
     "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
@@ -51,6 +52,8 @@
     "rules": {
       "no-console": 1,
       "no-empty": 0,
+      "semi": 2,
+      "keyword-spacing": 2,
       "react/no-string-refs": 2,
       "react/no-find-dom-node": 2,
       "react/no-is-mounted": 2,

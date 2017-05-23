@@ -36,4 +36,4 @@ module.exports = class PushManifestPlugin {
 			callback();
 		});
 	}
-}
+};

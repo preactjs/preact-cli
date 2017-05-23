@@ -6,13 +6,13 @@ module.exports.pitch = function(remainingRequest) {
 	this.cacheable && this.cacheable();
 	var query = loaderUtils.getOptions(this) || {};
 	var routeName = typeof query.name === 'function' ? query.name(this.resourcePath) : null;
-	var name
-	if(routeName !== null) {
-		name = routeName
+	var name;
+	if (routeName !== null) {
+		name = routeName;
 	} else if ('name' in query) {
-		name = query.name
+		name = query.name;
 	} else if ('formatName' in query) {
-		name = query.formatName(this.resourcePath)
+		name = query.formatName(this.resourcePath);
 	}
 
 	return `

@@ -28,4 +28,4 @@ export default (env, options={}) => ({
 			import: 'h'
 		}]
 	]
-})
+});

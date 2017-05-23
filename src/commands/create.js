@@ -148,7 +148,7 @@ export default asyncCommand({
 			  \u001b[32mnpm run serve\u001b[39m
 		`.trim().replace(/^\t+/gm, '') + '\n';
 	}
-})
+});
 
 
 const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
