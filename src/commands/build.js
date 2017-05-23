@@ -3,7 +3,7 @@ import promisify from 'es6-promisify';
 import rimraf from 'rimraf';
 import asyncCommand from '../lib/async-command';
 import webpackConfig from '../lib/webpack-config';
-import runWebpack, { showStats } from '../lib/run-webpack';
+import runWebpack, { showStats, writeJsonStats } from '../lib/run-webpack';
 
 export default asyncCommand({
 	command: 'build [src] [dest]',
@@ -24,16 +24,6 @@ export default asyncCommand({
 			alias: 'p',
 			default: true
 		},
-		less: {
-			description: 'Build and compile LESS files',
-			alias: 'l',
-			default: false
-		},
-		sass: {
-			description: 'Build and compile SASS files',
-			alias: 's',
-			default: false
-		},
 		prerender: {
 			description: 'Pre-render static app content.',
 			default: true
@@ -41,6 +31,10 @@ export default asyncCommand({
 		clean: {
 			description: 'Clear output directory before building.',
 			default: true
+		},
+		json: {
+			description: 'Generate build statistics for analysis.',
+			default: false
 		}
 	},
 
@@ -54,5 +48,9 @@ export default asyncCommand({
 
 		let stats = await runWebpack(false, config);
 		showStats(stats);
+
+		if (argv.json) {
+			await writeJsonStats(stats)
+		}
 	}
 });
