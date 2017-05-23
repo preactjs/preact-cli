@@ -12,7 +12,7 @@ module.exports.pitch = function(remainingRequest) {
 	} else if ('name' in query) {
 		name = query.name
 	} else if ('formatName' in query) {
-		name = this.resourcePath
+		name = query.formatName(this.resourcePath)
 	}
 
 	return `
