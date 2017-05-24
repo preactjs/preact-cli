@@ -440,7 +440,7 @@ const production = config => addPlugins([
 const htmlPlugin = config => addPlugins([
 	new HtmlWebpackPlugin({
 		filename: 'index.html',
-		template: `!!ejs-loader!${config.template || resolve(__dirname, '../resources/template.html')}`,
+		template: `!!ejs-loader!${config.template || exists(resolve(config.cwd, 'template.html')) ? resolve(config.cwd, 'template.html') : resolve(__dirname, '../resources/template.html')}`,
 		minify: config.production && {
 			collapseWhitespace: true,
 			removeScriptTypeAttributes: true,
