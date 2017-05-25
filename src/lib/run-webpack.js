@@ -13,7 +13,7 @@ export default (watch=false, config, onprogress) => new Promise( (resolve, rejec
 			// Timeout for plugins that work on `after-emit` event of webpack
 			setTimeout(()=>{
 				resolve(stats);
-			},20)
+			},20);
 		}
 	};
 
