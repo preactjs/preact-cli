@@ -16,5 +16,5 @@ export default function asyncCommand(options) {
 			let r = options.handler(argv, done);
 			if (r && r.then) r.then(result => done(null, result), done);
 		}
-	}
+	};
 }

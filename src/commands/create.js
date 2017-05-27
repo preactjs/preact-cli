@@ -6,7 +6,7 @@ import ora from 'ora';
 import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
-import install from '../lib/install-dependencies'
+import install from '../lib/install-dependencies';
 
 const TEMPLATES = {
 	default: 'examples/root',
@@ -84,7 +84,7 @@ export default asyncCommand({
 
 		spinner.text = 'Initializing project';
 
-		await spawn('npm', ['init', '-y'], { cwd: target, stdio: 'ignore' })
+		await spawn('npm', ['init', '-y'], { cwd: target, stdio: 'ignore' });
 
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
@@ -147,4 +147,4 @@ export default asyncCommand({
 			  \u001b[32mnpm run serve\u001b[39m
 		`.trim().replace(/^\t+/gm, '') + '\n';
 	}
-})
+});
