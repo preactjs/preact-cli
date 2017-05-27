@@ -64,7 +64,7 @@ export default env => {
 			path: resolve(cwd, env.dest || 'build'),
 			publicPath: '/',
 			filename: 'bundle.js',
-			chunkFilename: '[name].chunk.[chunkhash].js'
+			chunkFilename: '[name].chunk.[chunkhash:5].js'
 		}),
 
 		customConfig({
