@@ -6,7 +6,7 @@ import ora from 'ora';
 import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
-import which from 'which';
+import install from '../lib/install-dependencies'
 
 const TEMPLATES = {
 	default: 'examples/root',
@@ -121,7 +121,7 @@ export default asyncCommand({
 				'less',
 				'less-loader'
 			] : [])
-		].filter(Boolean), 'dev');
+		], 'dev');
 
 		spinner.text = 'Installing dependencies';
 
@@ -148,28 +148,3 @@ export default asyncCommand({
 		`.trim().replace(/^\t+/gm, '') + '\n';
 	}
 })
-
-const install = async (cwd, packages, env) => {
-	const isDev = env === 'dev' ? true : false
-	const isYarnAvailable = await isCommandAvailable('yarn')
-
-	if(isYarnAvailable) {
-		const args = ['add']
-		if(isDev) {
-			args.push('-D')
-		}
-
-		return await spawn('yarn', [...args, ...packages], { cwd, stdio: 'ignore' })
-	}
-
-	await spawn('npm', ['install', isDev ? '--save-dev' : '--save', ...packages], { cwd, stdio: 'ignore' })
-}
-
-const isCommandAvailable = async cmd => {
-	try {
-		await promisify(which)(cmd)
-		return true;
-	} catch(e){
-		return false
-	}
-}

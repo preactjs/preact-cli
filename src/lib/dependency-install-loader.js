@@ -1,6 +1,7 @@
 import loaderUtils from 'loader-utils';
 import fs from 'fs';
-import spawn from 'cross-spawn-promise';
+import path from 'path';
+import install from './install-dependencies';
 
 /**
  * This is a pass-through loader that runs `npm install --save` for the specified dependencies when invoked.
@@ -30,7 +31,7 @@ const CACHE = {};
 
 function isInstalled(dep) {
 	return CACHE[dep] || (CACHE[dep] = new Promise( resolve => {
-		fs.stat(resolve('node_modules', dep), err => {
+		fs.stat(path.resolve('node_modules', dep), err => {
 			resolve(!err);
 		});
 	}));
@@ -38,11 +39,7 @@ function isInstalled(dep) {
 
 function installDeps(deps, save) {
 	process.stdout.write(`\nInstalling ${deps.join(' ')}..`);
-	return spawn('npm', [
-		'install', save && (save==='dev' ? '--save-dev' : '--save'),
-		'--prefix', process.cwd(),
-		...deps
-	].filter(Boolean)).then( () => {
+	return install(process.cwd(), deps, save).then(() => {
 		process.stdout.write(` ..${deps.length} installed.\n`);
 	});
 }
