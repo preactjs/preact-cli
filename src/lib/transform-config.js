@@ -45,10 +45,14 @@ const helpers = cwd => ({
 })
 
 export default async function (env, config) {
-	const transformerPath = path.resolve(env.cwd, env.config);
+	let transformerPath = path.resolve(env.cwd, env.config || './preact.config.js');
+
 	try {
 		await fs.stat(transformerPath);
 	} catch (e) {
+		if(env.config) {
+			throw new Error(`preact-cli config could not be loaded!\nFile ${env.config} not found.`);
+		}
 		return;
 	}
 

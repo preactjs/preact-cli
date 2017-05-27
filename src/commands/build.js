@@ -38,8 +38,8 @@ export default asyncCommand({
 			default: false
 		},
 		config: {
-			description: 'Path to custom preact.config.js',
-			default: './preact.config.js'
+			description: 'Path to custom CLI config.',
+			alias: 'c'
 		}
 	},
 
