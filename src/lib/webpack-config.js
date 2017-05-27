@@ -105,8 +105,8 @@ export default env => {
 					pkg = readJson(manifest) || {};
 				return !!(pkg.module || pkg['jsnext:main']);
 			},
-			babelrc: false,
-			...createBabelConfig(env)
+			babelrc: true,
+			presets: [resolve(__dirname, './babel-config')],
 		}),
 
 		// automatic async components :)

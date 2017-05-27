@@ -4,7 +4,7 @@ export default (env, options={}) => ({
 			loose: true,
 			modules: options.modules || false,
 			uglify: true,
-			browsers: env.browsers ? env.browsers.split() : [
+			browsers: [
 				'> 1%',
 				'Last 2 versions',
 				'IE >= 9'
