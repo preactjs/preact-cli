@@ -1,5 +1,5 @@
-import path from 'path'
-import fs from 'fs.promised'
+import path from 'path';
+import fs from 'fs.promised';
 import {
 	webpack,
 } from '@webpack-blocks/webpack2';
@@ -10,7 +10,7 @@ export default async function (env, config) {
 	try {
 		await fs.stat(transformerPath);
 	} catch (e) {
-		if(env.config) {
+		if (env.config) {
 			throw new Error(`preact-cli config could not be loaded!\nFile ${env.config} not found.`);
 		}
 		return;
@@ -19,7 +19,7 @@ export default async function (env, config) {
 	require('babel-register')();
 	const m = require(transformerPath);
 	const transformer = m && m.default || m;
-	await transformer(config, Object.assign({}, env), new WebpackConfigHelpers(env.cwd))
+	await transformer(config, Object.assign({}, env), new WebpackConfigHelpers(env.cwd));
 }
 
 /**
@@ -29,7 +29,7 @@ export default async function (env, config) {
  */
 class WebpackConfigHelpers {
 	constructor(cwd) {
-		this._cwd = cwd
+		this._cwd = cwd;
 	}
 
   /**
@@ -40,7 +40,7 @@ class WebpackConfigHelpers {
    * @memberof WebpackConfigHelpers
    */
 	get webpack() {
-		return webpack
+		return webpack;
 	}
 
   /**
@@ -56,7 +56,7 @@ class WebpackConfigHelpers {
 			rule: rule,
 			ruleIndex: index,
 			loaders: (rule.loaders || rule.use || rule.loader)
-		}))
+		}));
 	}
 
   /**
@@ -69,7 +69,7 @@ class WebpackConfigHelpers {
    */
 	getRules(config) {
 		return [...(config.module.loaders || []), ...(config.module.rules || [])]
-			.map((rule, index) => ({ index, rule }))
+			.map((rule, index) => ({ index, rule }));
 	}
 
   /**
@@ -81,7 +81,7 @@ class WebpackConfigHelpers {
    * @memberof WebpackConfigHelpers
    */
 	getPlugins(config) {
-		return (config.plugins || []).map((plugin, index) => ({ index, plugin }))
+		return (config.plugins || []).map((plugin, index) => ({ index, plugin }));
 	}
 
   /**
@@ -94,9 +94,9 @@ class WebpackConfigHelpers {
    * @memberof WebpackConfigHelpers
    */
 	getRulesByMatchingFile(config, file) {
-		let filePath = path.resolve(this._cwd, file)
+		let filePath = path.resolve(this._cwd, file);
 		return this.getRules(config)
-			.filter(w => w.rule.test && w.rule.test.exec(filePath))
+			.filter(w => w.rule.test && w.rule.test.exec(filePath));
 	}
 
   /**
@@ -117,7 +117,7 @@ class WebpackConfigHelpers {
 				: [{ rule, ruleIndex, loader: loaders, loaderIndex: -1 }]
 			)
 			.reduce((arr, loaders) => arr.concat(loaders), [])
-			.filter(({ loader }) => loader === name || (loader && loader.loader === name))
+			.filter(({ loader }) => loader === name || (loader && loader.loader === name));
 	}
 
   /**
@@ -133,7 +133,7 @@ class WebpackConfigHelpers {
    */
 	getPluginsByName(config, name) {
 		return this.getPlugins(config)
-			.filter(w => w.plugin && w.plugin.constructor && w.plugin.constructor.name === name)
+			.filter(w => w.plugin && w.plugin.constructor && w.plugin.constructor.name === name);
 	}
 
   /**
@@ -149,7 +149,7 @@ class WebpackConfigHelpers {
    */
 	getPluginsByType(config, type) {
 		return this.getPlugins(config)
-			.filter(w => w.plugin instanceof type)
+			.filter(w => w.plugin instanceof type);
 	}
 
   /**
@@ -161,15 +161,15 @@ class WebpackConfigHelpers {
    * @memberof WebpackConfigHelpers
    */
 	setHtmlTemplate(config, template) {
-		let isPath
+		let isPath;
 		try {
-			fs.statSync(template)
-			isPath = true
+			fs.statSync(template);
+			isPath = true;
 		} catch (e) {}
 
-		let templatePath = isPath ? `!!ejs-loader!${path.resolve(this._cwd, template)}` : template
-		let htmlWebpackPlugin = this.getPluginsByName(config, 'HtmlWebpackPlugin')[0]
-		htmlWebpackPlugin.options.template = templatePath
+		let templatePath = isPath ? `!!ejs-loader!${path.resolve(this._cwd, template)}` : template;
+		let htmlWebpackPlugin = this.getPluginsByName(config, 'HtmlWebpackPlugin')[0];
+		htmlWebpackPlugin.options.template = templatePath;
 	}
 }
 

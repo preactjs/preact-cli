@@ -121,7 +121,7 @@ function createHeadersFromPushManifest(pushManifest) {
 						`<${url}>; rel=preload; as=${type}`
 					).join(', ')
 				}]
-			})
+			});
 		}
 	}
 

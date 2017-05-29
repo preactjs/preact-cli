@@ -41,4 +41,4 @@ export default asyncCommand({
 		let stats = await runWebpack(true, config, showStats);
 		showStats(stats);
 	}
-})
+});

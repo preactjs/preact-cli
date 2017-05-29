@@ -10,13 +10,14 @@
     "build": "babel src -d lib -D",
     "prepublish": "npm run -s build",
     "dev": "babel-node src",
+    "lint": "eslint 'src/**/*.js'",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
     "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
     "test:simple": "babel-node src build --cwd examples/simple && babel-node src serve --port 3000 --cwd examples/simple",
     "test:empty": "babel-node src build --cwd examples/empty && babel-node src serve --port 3000 --cwd examples/empty",
     "test:watch": "babel-node src watch --cwd examples/root --port 3000",
-    "test:deploy": "npm run test:build && surge -d cli-demo.preactjs.com examples/root/build"
+    "test:deploy": "npm run test:build && cp examples/root/build/index.html examples/root/build/200.html && surge -d cli-demo.preactjs.com examples/root/build"
   },
   "repository": "developit/preact-cli",
   "files": [
@@ -51,6 +52,8 @@
     "rules": {
       "no-console": 1,
       "no-empty": 0,
+      "semi": 2,
+      "keyword-spacing": 2,
       "react/no-string-refs": 2,
       "react/no-find-dom-node": 2,
       "react/no-is-mounted": 2,
@@ -94,7 +97,7 @@
     "babel-register": "^6.24.1",
     "copy-webpack-plugin": "^4.0.1",
     "cross-spawn-promise": "^0.10.1",
-    "css-modules-require-hook": "^4.1.0-beta",
+    "css-modules-require-hook": "^4.0.6",
     "ejs-loader": "^0.3.0",
     "es6-promisify": "^5.0.0",
     "eslint": "^3.19.0",

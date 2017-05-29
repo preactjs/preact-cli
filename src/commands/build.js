@@ -56,7 +56,7 @@ export default asyncCommand({
 		showStats(stats);
 
 		if (argv.json) {
-			await writeJsonStats(stats)
+			await writeJsonStats(stats);
 		}
 	}
 });
