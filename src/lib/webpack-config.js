@@ -24,7 +24,6 @@ import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ReplacePlugin from 'replace-bundle-webpack-plugin';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
-import createBabelConfig from './babel-config';
 import prerender from './prerender';
 import PushManifestPlugin from './push-manifest';
 
