@@ -10,6 +10,7 @@ export default function(load) {
 		if (r && r.then) r.then(done);
 	}
 	Async.prototype = new Component;
+	Async.prototype.constructor = Async;
 	Async.prototype.render = (props, state) => h(state.child, props);
 	return Async;
 }
