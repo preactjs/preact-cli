@@ -98,14 +98,12 @@ export default env => {
 
 		// ES2015
 		babel({
-			exclude: [],
 			include(filepath) {
 				if (filepath.indexOf(src('.'))===0 || filepath.indexOf(resolve(__dirname, '../..'))===0 || filepath.split(/[/\\]/).indexOf('node_modules')===-1) return true;
 				let manifest = resolve(filepath.replace(/(.*([\/\\]node_modules|\.\.)[\/\\](@[^\/\\]+[\/\\])?[^\/\\]+)([\/\\].*)?$/g, '$1'), 'package.json'),
 					pkg = readJson(manifest) || {};
 				return !!(pkg.module || pkg['jsnext:main']);
 			},
-			babelrc: false,
 			...createBabelConfig(env)
 		}),
 
