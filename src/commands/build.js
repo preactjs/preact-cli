@@ -46,11 +46,11 @@ export default asyncCommand({
 			await promisify(rimraf)(dest);
 		}
 
-		let stats = await runWebpack(false, config);
+		let stats = await runWebpack(false, argv, config);
 		showStats(stats);
 
 		if (argv.json) {
-			await writeJsonStats(stats)
+			await writeJsonStats(stats);
 		}
 	}
 });

@@ -56,6 +56,7 @@ export default env => {
 
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 	env.manifest = readJson(src('manifest.json')) || {};
+	env.outputFilename = 'bundle.js';
 
 	return createConfig.vanilla([
 		setContext(src('.')),
@@ -63,7 +64,7 @@ export default env => {
 		setOutput({
 			path: resolve(cwd, env.dest || 'build'),
 			publicPath: '/',
-			filename: 'bundle.js',
+			filename: env.outputFilename,
 			chunkFilename: '[name].chunk.[chunkhash].js'
 		}),
 
@@ -454,7 +455,7 @@ const htmlPlugin = config => addPlugins([
 		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
 		config,
 		ssr(params) {
-			return config.prerender ? prerender(config, params) : '';
+			return config.prerender ? prerender(config.outputFilename, params) : '';
 		}
 	}),
 
