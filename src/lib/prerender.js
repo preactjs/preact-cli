@@ -37,6 +37,7 @@ export default function prerender(config, params) {
 		app = m && m.default || m;
 
 	if (typeof app!=='function') {
+		// eslint-disable-next-line no-console
 		console.warn('Entry does not export a Component function/class, aborting prerendering.');
 		return '';
 	}
