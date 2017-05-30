@@ -4,31 +4,20 @@ import { filter } from 'minimatch';
 import {
 	webpack,
 	group,
-	createConfig,
 	customConfig,
 	setContext,
-	entryPoint,
-	setOutput,
 	defineConstants,
-	performance,
 	addPlugins,
 	setDevTool
 } from '@webpack-blocks/webpack2';
 import babel from '@webpack-blocks/babel6';
-import devServer from '@webpack-blocks/dev-server2';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ReplacePlugin from 'replace-bundle-webpack-plugin';
-import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
-import createBabelConfig from './babel-config';
-import prerender from './prerender';
-import PushManifestPlugin from './push-manifest';
+import createBabelConfig from '../babel-config';
 
-function exists(file) {
+export function exists(file) {
 	try {
 		if (statSync(file)) return true;
 	} catch (e) {}
@@ -44,11 +33,8 @@ function readJson(file) {
 }
 readJson.cache = {};
 
-export default env => {
-	let isProd = env && env.production;
-	let cwd = env.cwd = resolve(env.cwd || process.cwd());
-	let src = dir => resolve(env.cwd, env.src || 'src', dir);
-
+export default (env) => {
+	let { isProd, cwd, src } = helpers(env);
 	// only use src/ if it exists:
 	if (!exists(src('.'))) {
 		env.src = '.';
@@ -56,28 +42,20 @@ export default env => {
 
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 	env.manifest = readJson(src('manifest.json')) || {};
-	env.outputFilename = 'bundle.js';
 
-	return createConfig.vanilla([
+	return group([
 		setContext(src('.')),
-		entryPoint(resolve(__dirname, './entry')),
-		setOutput({
-			path: resolve(cwd, env.dest || 'build'),
-			publicPath: '/',
-			filename: env.outputFilename,
-			chunkFilename: '[name].chunk.[chunkhash:5].js'
-		}),
 
 		customConfig({
 			resolve: {
 				modules: [
 					'node_modules',
-					resolve(__dirname, '../../node_modules')
+					resolve(__dirname, '../../../node_modules')
 				],
 				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.css'],
 				alias: {
 					'preact-cli-entrypoint': src('index.js'),
-					'preact-cli-polyfills': resolve(__dirname, 'polyfills.js'),
+					'preact-cli-polyfills': resolve(__dirname, './polyfills.js'),
 					style: src('style'),
 					preact$: 'preact/dist/preact.min.js',
 					// preact-compat aliases for supporting React dependencies:
@@ -91,7 +69,7 @@ export default env => {
 					'async': resolve(__dirname, './async-component-loader')
 				},
 				modules: [
-					resolve(__dirname, '../../node_modules'),
+					resolve(__dirname, '../../../node_modules'),
 					resolve(cwd, 'node_modules')
 				]
 			}
@@ -100,7 +78,7 @@ export default env => {
 		// ES2015
 		babel({
 			include(filepath) {
-				if (filepath.indexOf(src('.'))===0 || filepath.indexOf(resolve(__dirname, '../..'))===0 || filepath.split(/[/\\]/).indexOf('node_modules')===-1) return true;
+				if (filepath.indexOf(src('.'))===0 || filepath.indexOf(resolve(__dirname, '../../../'))===0 || filepath.split(/[/\\]/).indexOf('node_modules')===-1) return true;
 				let manifest = resolve(filepath.replace(/(.*([\/\\]node_modules|\.\.)[\/\\](@[^\/\\]+[\/\\])?[^\/\\]+)([\/\\].*)?$/g, '$1'), 'package.json'),
 					pkg = readJson(manifest) || {};
 				return !!(pkg.module || pkg['jsnext:main']);
@@ -244,13 +222,6 @@ export default env => {
 			'process.env.NODE_ENV': isProd ? 'production' : 'development'
 		}),
 
-		// monitor output size and warn if it exceeds 200kb:
-		isProd && performance(Object.assign({
-			maxAssetSize: 200 * 1000,
-			maxEntrypointSize: 200 * 1000,
-			hints: 'warning'
-		}, env.pkg.performance || {})),
-
 		// Source maps for dev/prod:
 		setDevTool(isProd ? 'source-map' : 'cheap-module-eval-source-map'),
 
@@ -265,28 +236,6 @@ export default env => {
 				setImmediate: false
 			}
 		}),
-
-		// copy any static files
-		addPlugins([
-			new CopyWebpackPlugin([
-				...(exists(src('manifest.json')) ? [
-					{ from: 'manifest.json' }
-				] : [
-					{
-						from: resolve(__dirname, '../resources/manifest.json'),
-						to: 'manifest.json'
-					},
-					{
-						from: resolve(__dirname, '../resources/icon.png'),
-						to: 'assets/icon.png'
-					}
-				]),
-				exists(src('assets')) && {
-					from: 'assets',
-					to: 'assets'
-				}
-			].filter(Boolean))
-		]),
 
 		// produce HTML & CSS:
 		addPlugins([
@@ -305,9 +254,7 @@ export default env => {
 		// 	})
 		// ]),
 
-		htmlPlugin(env),
-
-		isProd ? production(env) : development(env),
+		isProd ? production() : development(),
 
 		addPlugins([
 			new webpack.NoEmitOnErrorsPlugin(),
@@ -323,56 +270,14 @@ export default env => {
 				async: false,
 				children: true,
 				minChunks: 3
-			}),
-
-			new PushManifestPlugin()
+			})
 		])
 	].filter(Boolean));
 };
 
+const development = () =>  group([]);
 
-const development = config => {
-	let port = process.env.PORT || config.port || 8080,
-		host = process.env.HOST || config.host || '0.0.0.0',
-		origin = `${config.https===true?'https':'http'}://${host}:${port}/`;
-
-	return group([
-		addPlugins([
-			new webpack.NamedModulesPlugin()
-		]),
-
-		devServer({
-			port,
-			host,
-			inline: true,
-			hot: true,
-			https: config.https===true,
-			compress: true,
-			publicPath: '/',
-			contentBase: resolve(config.cwd, config.src || './src'),
-			// setup(app) {
-			// 	app.use(middleware);
-			// },
-			disableHostCheck: true,
-			historyApiFallback: true,
-			quiet: true,
-			clientLogLevel: 'none',
-			overlay: false,
-			stats: 'minimal',
-			watchOptions: {
-				ignored: [
-					resolve(config.cwd, 'build'),
-					resolve(config.cwd, 'node_modules')
-				]
-			}
-		}, [
-			`webpack-dev-server/client?${origin}`,
-			`webpack/hot/dev-server?${origin}`
-		])
-	]);
-};
-
-const production = config => addPlugins([
+const production = () => addPlugins([
 	new webpack.HashedModuleIdsPlugin(),
 	new webpack.LoaderOptionsPlugin({
 		minimize: true
@@ -423,45 +328,12 @@ const production = config => addPlugins([
 			]
 		}
 	}),
-
-	new SWPrecacheWebpackPlugin({
-		filename: 'sw.js',
-		navigateFallback: 'index.html',
-		minify: true,
-		stripPrefix: config.cwd,
-		staticFileGlobsIgnorePatterns: [
-			/\.map$/,
-			/push-manifest\.json$/
-		]
-	})
 ]);
 
-
-const htmlPlugin = config => addPlugins([
-	new HtmlWebpackPlugin({
-		filename: 'index.html',
-		template: `!!ejs-loader!${config.template || resolve(__dirname, '../resources/template.html')}`,
-		minify: config.production && {
-			collapseWhitespace: true,
-			removeScriptTypeAttributes: true,
-			removeRedundantAttributes: true,
-			removeStyleLinkTypeAttributes: true,
-			removeComments: true
-		},
-		favicon: exists(resolve(config.cwd, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../resources/favicon.ico'),
-		manifest: config.manifest,
-		inject: true,
-		compile: true,
-		preload: config.preload===true,
-		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
-		config,
-		ssr(params) {
-			return config.prerender ? prerender(config.outputFilename, params) : '';
-		}
-	}),
-
-	new ScriptExtHtmlWebpackPlugin({
-		// inline: 'bundle.js',
-		defaultAttribute: 'async'
-	})
-]);
+export function helpers(env) {
+	return {
+		isProd:  env && env.production,
+		cwd: env.cwd = resolve(env.cwd || process.cwd()),
+		src: dir => resolve(env.cwd, env.src || 'src', dir)
+	};
+}

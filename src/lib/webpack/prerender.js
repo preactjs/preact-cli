@@ -1,9 +1,9 @@
 import { resolve } from 'path';
 
-export default function prerender(outputFilename, params) {
+export default function prerender(params) {
 	params = params || {};
 
-	let entry = resolve(__dirname, './ssr-build', outputFilename),
+	let entry = resolve(__dirname, './ssr-build/ssr-bundle.js'),
 		url = params.url || '/';
 
 	global.location = { href:url, pathname:url };

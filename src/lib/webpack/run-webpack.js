@@ -4,17 +4,20 @@ import fs from 'fs.promised';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
+import clientConfig from './webpack-client-config';
+import serverConfig from './webpack-server-config';
 
-export default (watch=false, env, config, onprogress) => {
+export default (watch=false, env, onprogress) => {
 	if (watch) {
-		return devBuild(config, onprogress);
+		return devBuild(env, onprogress);
 	}
 	else {
-		return prodBuild(env, config);
+		return prodBuild(env);
 	}
 };
 
-const devBuild = (config, onprogress) => {
+const devBuild = (env, onprogress) => {
+	let config = clientConfig(env);
 	let compiler = webpack(config);
 	return new Promise((resolve, reject) => {
 		let first = true;
@@ -34,32 +37,11 @@ const devBuild = (config, onprogress) => {
 	});
 };
 
-const prodBuild = (env, config) => {
-	let ssrOutputPath = path.resolve(__dirname, 'ssr-build/');
-	let pluginNameFilter = (plugin, name) => plugin.constructor && plugin.constructor.name === name;
-	let ssrConfig = (config) => {
-		let newConfig = Object.assign({}, config, {
-			target: 'node',
-			entry: path.resolve(env.cwd, env.src || 'src', 'index.js'),
-			plugins: config.plugins.filter(p => !pluginNameFilter(p, 'HtmlWebpackPlugin'))
-				.filter(p => !pluginNameFilter(p, 'SWPrecacheWebpackPlugin')),
-		});
-
-		newConfig.output.path = ssrOutputPath;
-		newConfig.output.libraryTarget = 'commonjs2';
-
-		let asyncLoaderIndex = newConfig.module.loaders
-			.findIndex(l => l.loader === path.resolve(__dirname, 'async-component-loader'));
-
-		// Remove async loader in prerender because all chunks are available.
-		if (asyncLoaderIndex > -1) {
-			newConfig.module.loaders.splice(asyncLoaderIndex, 1);
-		}
-
-		return newConfig;
-	};
-
-	let compiler = env.prerender ? webpack([config, ssrConfig(config)]) : webpack(config);
+const prodBuild = (env) => {
+	rimraf.sync('./ssr-build');
+	let compiler = env.prerender
+		? webpack([clientConfig(env), serverConfig(env)])
+		: webpack([clientConfig(env)]);
 
 	return new Promise((resolve, reject) => {
 		compiler.run((err, stats) => {
