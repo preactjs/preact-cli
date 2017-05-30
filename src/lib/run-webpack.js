@@ -36,11 +36,13 @@ const devBuild = (config, onprogress) => {
 
 const prodBuild = (env, config) => {
 	let ssrOutputPath = path.resolve(__dirname, 'ssr-build/');
+	let pluginNameFilter = (plugin, name) => plugin.constructor && plugin.constructor.name === name;
 	let ssrConfig = (config) => {
 		let newConfig = Object.assign({}, config, {
 			target: 'node',
 			entry: path.resolve(env.cwd, env.src || 'src', 'index.js'),
-			plugins: config.plugins.filter(c => !(c.constructor && c.constructor.name === 'HtmlWebpackPlugin')),
+			plugins: config.plugins.filter(p => !pluginNameFilter(p, 'HtmlWebpackPlugin'))
+				.filter(p => !pluginNameFilter(p, 'SWPrecacheWebpackPlugin')),
 		});
 
 		newConfig.output.path = ssrOutputPath;
@@ -56,9 +58,10 @@ const prodBuild = (env, config) => {
 
 		return newConfig;
 	};
-	let compiler = webpack(config);
-	let runCompiler = () => new Promise((resolve, reject) => {
-		console.log('Running production build...');
+
+	let compiler = env.prerender ? webpack([config, ssrConfig(config)]) : webpack(config);
+
+	return new Promise((resolve, reject) => {
 		compiler.run((err, stats) => {
 			if (err) reject(err);
 			else {
@@ -67,19 +70,6 @@ const prodBuild = (env, config) => {
 			}
 		});
 	});
-
-	let ssrCompiler = webpack(ssrConfig(config));
-	let runSsrCompiler = () => new Promise((resolve, reject) => {
-		console.log('Running SSR build...');
-		rimraf.sync(ssrOutputPath);
-		ssrCompiler.run((err) => {
-			if (err) return reject(err);
-			// Timeout for plugins that work on `after-emit` event of webpack
-			setTimeout(()=>	resolve(), 20);
-		});
-	});
-
-	return env.prerender ? runSsrCompiler().then(runCompiler) : runCompiler();
 };
 
 export function showStats(stats) {
