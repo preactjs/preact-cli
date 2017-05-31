@@ -1,5 +1,4 @@
 import path from 'path';
-import rimraf from 'rimraf';
 import fs from 'fs.promised';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
@@ -11,9 +10,8 @@ export default (watch=false, env, onprogress) => {
 	if (watch) {
 		return devBuild(env, onprogress);
 	}
-	else {
-		return prodBuild(env);
-	}
+
+	return prodBuild(env);
 };
 
 const devBuild = (env, onprogress) => {
@@ -38,7 +36,6 @@ const devBuild = (env, onprogress) => {
 };
 
 const prodBuild = (env) => {
-	rimraf.sync('./ssr-build');
 	let compiler = env.prerender
 		? webpack([clientConfig(env), serverConfig(env)])
 		: webpack([clientConfig(env)]);

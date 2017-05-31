@@ -1,7 +1,9 @@
 import { resolve } from 'path';
+import { filter } from 'minimatch';
 import {
 	webpack,
 	createConfig,
+	customConfig,
 	entryPoint,
 	setOutput,
 	addPlugins,
@@ -19,15 +21,46 @@ import prerender from './prerender';
 
 export default env => {
 	let { isProd, cwd, src } = helpers(env);
+	let outputDir = resolve(cwd, env.dest || 'build');
 	return createConfig.vanilla([
 		baseConfig(env),
 		entryPoint(resolve(__dirname, '../entry')),
 		setOutput({
-			path: resolve(cwd, env.dest || 'build'),
+			path: outputDir,
 			publicPath: '/',
 			filename: 'bundle.js',
 			chunkFilename: '[name].chunk.[chunkhash:5].js'
 		}),
+
+		// automatic async components :)
+		customConfig({
+			module: {
+				loaders: [
+					{
+						test: /\.jsx?$/,
+						include: [
+							filter(src('routes')+'/{*.js,*/index.js}'),
+							filter(src('components')+'/{routes,async}/{*.js,*/index.js}')
+						],
+						loader: resolve(__dirname, './async-component-loader'),
+						options: {
+							name(filename) {
+								let relative = filename.replace(src('.'), '');
+								let isRoute = filename.indexOf('/routes/') >= 0;
+
+								return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
+							},
+							formatName(filename) {
+								let relative = filename.replace(src('.'), '');
+								// strip out context dir & any file/ext suffix
+								return relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
+							}
+						}
+					}
+				]
+			}
+		}),
+
 		// monitor output size and warn if it exceeds 200kb:
 		isProd && performance(Object.assign({
 			maxAssetSize: 200 * 1000,
@@ -57,11 +90,20 @@ export default env => {
 			new PushManifestPlugin()
 		]),
 
-		htmlPlugin(env),
+		htmlPlugin(env, outputDir),
 
-		isProd ? production(env) : development(env)
+		isProd ? production(env) : development(env),
+
+		customConfig({
+			resolveLoader: {
+				alias: {
+					'async': resolve(__dirname, './async-component-loader')
+				},
+			}
+		})
 	].filter(Boolean));
 };
+
 const development = config => {
 	let port = process.env.PORT || config.port || 8080,
 		host = process.env.HOST || config.host || '0.0.0.0',
@@ -103,7 +145,6 @@ const development = config => {
 	]);
 };
 
-
 const production = config => addPlugins([
 	new SWPrecacheWebpackPlugin({
 		filename: 'sw.js',
@@ -117,8 +158,7 @@ const production = config => addPlugins([
 	})
 ]);
 
-
-const htmlPlugin = config => addPlugins([
+const htmlPlugin = (config, outputDir) => addPlugins([
 	new HtmlWebpackPlugin({
 		filename: 'index.html',
 		template: `!!ejs-loader!${config.template || resolve(__dirname, '../../resources/template.html')}`,
@@ -137,7 +177,7 @@ const htmlPlugin = config => addPlugins([
 		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
 		config,
 		ssr(params) {
-			return config.prerender ? prerender(params) : '';
+			return config.prerender ? prerender(outputDir, params) : '';
 		}
 	}),
 
@@ -146,4 +186,3 @@ const htmlPlugin = config => addPlugins([
 		defaultAttribute: 'async'
 	})
 ]);
-

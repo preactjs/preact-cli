@@ -1,6 +1,5 @@
 import { resolve } from 'path';
 import { readFileSync, statSync } from 'fs';
-import { filter } from 'minimatch';
 import {
 	webpack,
 	group,
@@ -65,9 +64,6 @@ export default (env) => {
 				}
 			},
 			resolveLoader: {
-				alias: {
-					'async': resolve(__dirname, './async-component-loader')
-				},
 				modules: [
 					resolve(__dirname, '../../../node_modules'),
 					resolve(cwd, 'node_modules')
@@ -84,35 +80,6 @@ export default (env) => {
 				return !!(pkg.module || pkg['jsnext:main']);
 			},
 			...createBabelConfig(env)
-		}),
-
-		// automatic async components :)
-		customConfig({
-			module: {
-				loaders: [
-					{
-						test: /\.jsx?$/,
-						include: [
-							filter(src('routes')+'/{*.js,*/index.js}'),
-							filter(src('components')+'/{routes,async}/{*.js,*/index.js}')
-						],
-						loader: resolve(__dirname, './async-component-loader'),
-						options: {
-							name(filename) {
-								let relative = filename.replace(src('.'), '');
-								let isRoute = filename.indexOf('/routes/') >= 0;
-
-								return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
-							},
-							formatName(filename) {
-								let relative = filename.replace(src('.'), '');
-								// strip out context dir & any file/ext suffix
-								return relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
-							}
-						}
-					}
-				]
-			}
 		}),
 
 		// LESS, SASS & CSS
