@@ -88,6 +88,7 @@ export default asyncCommand({
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
 		pkg.scripts = {
+			...(pkg.scripts || {}),
 			start: 'if-env NODE_ENV=production && npm run -s serve || npm run -s dev',
 			build: 'preact build',
 			serve: 'preact build && preact serve',
