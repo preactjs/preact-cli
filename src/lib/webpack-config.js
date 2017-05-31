@@ -78,6 +78,7 @@ export default env => {
 					'preact-cli-entrypoint': src('index.js'),
 					'preact-cli-polyfills': resolve(__dirname, 'polyfills.js'),
 					style: src('style'),
+          components: src('components'),
 					preact$: 'preact/dist/preact.min.js',
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
