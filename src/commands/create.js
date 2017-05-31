@@ -8,9 +8,10 @@ import spawn from 'cross-spawn-promise';
 import path from 'path';
 
 const TEMPLATES = {
-	default: 'examples/root',
-	empty: 'examples/empty',
+	default: 'examples/full',
 	full: 'examples/full',
+	empty: 'examples/empty',
+	root: 'examples/root',
 	simple: 'examples/simple'
 };
 
@@ -31,7 +32,7 @@ export default asyncCommand({
 			description: 'A project template to start from',
 			choices: [
 				'default',
-				'full',
+				'root',
 				'simple',
 				'empty'
 			],
