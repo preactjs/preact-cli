@@ -70,12 +70,14 @@ export function showStats(stats) {
 }
 
 export function writeJsonStats(stats) {
-	const outputPath = path.resolve(process.cwd(), 'stats.json');
-	const jsonStats = stats.toJson({
+	let outputPath = path.resolve(process.cwd(), 'stats.json');
+	let jsonStats = stats.toJson({
 		json: true,
 		chunkModules: true,
 		source: false,
 	});
+
+	jsonStats = (jsonStats.children && jsonStats.children[0]) || jsonStats;
 
 	jsonStats.modules.forEach(normalizeModule);
 	jsonStats.chunks.forEach(c => c.modules.forEach(normalizeModule));
