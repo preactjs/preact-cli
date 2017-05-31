@@ -96,6 +96,13 @@ export default asyncCommand({
 			test: 'eslint src && preact test'
 		};
 
+		try {
+			await fs.stat(path.resolve(target, 'src'));
+		}
+		catch (err) {
+			pkg.scripts.test = pkg.scripts.test.replace('src', '.');
+		}
+
 		pkg.eslintConfig = {
 			extends: 'eslint-config-synacor'
 		};
