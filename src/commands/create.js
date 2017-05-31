@@ -149,7 +149,7 @@ export default asyncCommand({
 			To start a development live-reload server:
 			  \u001b[32mnpm start\u001b[39m
 
-			To create a production build in build/:
+			To create a production build (in ./build):
 			  \u001b[32mnpm run build\u001b[39m
 
 			To start a production HTTP/2 server:
