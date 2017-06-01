@@ -22,6 +22,11 @@ export default asyncCommand({
 			default: '0.0.0.0',
 			alias: 'h'
 		},
+		https: {
+			description: 'Use HTTPS?',
+			type: 'boolean',
+			default: false
+		},
 		prerender: {
 			description: 'Pre-render static app content on initial build',
 			default: false

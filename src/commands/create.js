@@ -8,9 +8,10 @@ import spawn from 'cross-spawn-promise';
 import path from 'path';
 
 const TEMPLATES = {
-	default: 'examples/root',
-	empty: 'examples/empty',
+	default: 'examples/full',
 	full: 'examples/full',
+	empty: 'examples/empty',
+	root: 'examples/root',
 	simple: 'examples/simple'
 };
 
@@ -31,7 +32,7 @@ export default asyncCommand({
 			description: 'A project template to start from',
 			choices: [
 				'default',
-				'full',
+				'root',
 				'simple',
 				'empty'
 			],
@@ -88,12 +89,20 @@ export default asyncCommand({
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
 		pkg.scripts = {
+			...(pkg.scripts || {}),
 			start: 'if-env NODE_ENV=production && npm run -s serve || npm run -s dev',
 			build: 'preact build',
 			serve: 'preact build && preact serve',
 			dev: 'preact watch',
 			test: 'eslint src && preact test'
 		};
+
+		try {
+			await fs.stat(path.resolve(target, 'src'));
+		}
+		catch (err) {
+			pkg.scripts.test = pkg.scripts.test.replace('src', '.');
+		}
 
 		pkg.eslintConfig = {
 			extends: 'eslint-config-synacor'
@@ -141,7 +150,7 @@ export default asyncCommand({
 			To start a development live-reload server:
 			  \u001b[32mnpm start\u001b[39m
 
-			To create a production build in build/:
+			To create a production build (in ./build):
 			  \u001b[32mnpm run build\u001b[39m
 
 			To start a production HTTP/2 server:
