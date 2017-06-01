@@ -23,10 +23,11 @@ import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ReplacePlugin from 'replace-bundle-webpack-plugin';
-import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
+import WorkboxWebpackPlugin from 'workbox-webpack-plugin';
 import createBabelConfig from './babel-config';
 import prerender from './prerender';
 import PushManifestPlugin from './push-manifest';
+import path from 'path';
 
 function exists(file) {
 	try {
@@ -423,15 +424,11 @@ const production = config => addPlugins([
 		}
 	}),
 
-	new SWPrecacheWebpackPlugin({
-		filename: 'sw.js',
+	new WorkboxWebpackPlugin({
 		navigateFallback: 'index.html',
-		minify: true,
-		stripPrefix: config.cwd,
-		staticFileGlobsIgnorePatterns: [
-			/\.map$/,
-			/push-manifest\.json$/
-		]
+		skipWaiting: true,
+		clientsClaim: true,
+		globPatterns: ['**\/*.{js,css}'],
 	})
 ]);
 

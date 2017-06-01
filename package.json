@@ -115,6 +115,7 @@
     "ora": "^1.2.0",
     "postcss-less": "^0.16.1",
     "preact-render-to-string": "^3.6.0",
+    "preact-router": "^2.5.2",
     "progress-bar-webpack-plugin": "^1.9.3",
     "promise-polyfill": "^6.0.2",
     "raw-loader": "^0.5.1",
@@ -129,6 +130,7 @@
     "url-loader": "^0.5.8",
     "webpack": "^2.3.3",
     "webpack-dev-server": "^2.4.5",
+    "workbox-webpack-plugin": "^1.0.1",
     "yargs": "^8.0.1"
   }
 }
