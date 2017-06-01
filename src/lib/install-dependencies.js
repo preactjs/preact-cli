@@ -4,11 +4,11 @@ import { commandExists } from './shell';
 const install = async (cwd, packages, env) => {
 	let isDev = env === 'dev' ? true : false;
 	let isYarnAvailable = await commandExists('yarn');
-	let toInstall = packages.filter(Boolean)
+	let toInstall = packages.filter(Boolean);
 
-	if(isYarnAvailable) {
+	if (isYarnAvailable) {
 		let args = ['add'];
-		if(isDev) {
+		if (isDev) {
 			args.push('-D');
 		}
 
@@ -16,6 +16,6 @@ const install = async (cwd, packages, env) => {
 	}
 
 	await spawn('npm', ['install', isDev ? '--save-dev' : '--save', ...toInstall], { cwd, stdio: 'ignore' });
-}
+};
 
 export default install;

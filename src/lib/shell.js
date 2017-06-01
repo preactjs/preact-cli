@@ -5,7 +5,7 @@ const commandExists = async cmd => {
 	try {
 		await promisify(which)(cmd);
 		return true;
-	} catch(e){
+	} catch (e){
 		return false;
 	}
 };
