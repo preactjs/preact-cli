@@ -1,7 +1,7 @@
 {
   "name": "preact-cli",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.1.0",
+  "description": "Start building a Preact Progressive Web App in seconds.",
   "main": "lib/index.js",
   "bin": {
     "preact": "./lib/index.js"
@@ -10,7 +10,8 @@
     "build": "babel src -d lib -D",
     "prepublish": "npm run -s build",
     "dev": "babel-node src",
-    "lint": "eslint 'src/**/*.js'",
+    "lint": "eslint src",
+    "test": "npm run -s lint",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
     "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
@@ -72,10 +73,7 @@
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
     "eslint": "^3.19.0",
-    "eslint-plugin-react": "^7.0.1",
-    "preact": "^8.1.0",
-    "preact-compat": "^3.14.3",
-    "preact-router": "^2.5.2"
+    "eslint-plugin-react": "^7.0.1"
   },
   "dependencies": {
     "@webpack-blocks/babel6": "^0.4.1",
@@ -114,7 +112,10 @@
     "offline-plugin": "^4.6.2",
     "ora": "^1.2.0",
     "postcss-less": "^0.16.1",
+    "preact": "^8.1.0",
+    "preact-compat": "^3.14.3",
     "preact-render-to-string": "^3.6.0",
+    "preact-router": "^2.5.2",
     "progress-bar-webpack-plugin": "^1.9.3",
     "promise-polyfill": "^6.0.2",
     "raw-loader": "^0.5.1",
