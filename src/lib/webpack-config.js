@@ -22,7 +22,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import ReplacePlugin from 'replace-bundle-webpack-plugin';
+import ReplacePlugin from 'webpack-plugin-replace';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
 import createBabelConfig from './babel-config';
 import prerender from './prerender';
@@ -378,11 +378,13 @@ const production = config => addPlugins([
 	}),
 
 	// strip out babel-helper invariant checks
-	new ReplacePlugin([{
-		// this is actually the property name https://github.com/kimhou/replace-bundle-webpack-plugin/issues/1
-		partten: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-		replacement: () => 'return;('
-	}]),
+	new ReplacePlugin({
+		include: /babel-helper$/,
+		patterns: [{
+			regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
+			value: 'return;('
+		}]
+	}),
 
 	new webpack.optimize.UglifyJsPlugin({
 		output: {
