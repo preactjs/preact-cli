@@ -428,7 +428,7 @@ const production = config => addPlugins([
 		navigateFallback: 'index.html',
 		skipWaiting: true,
 		clientsClaim: true,
-		globPatterns: ['**\/*.{js,css}'],
+		globPatterns: ['**\/*.{html,js,css}'],
 	})
 ]);
 
