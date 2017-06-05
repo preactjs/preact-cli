@@ -382,7 +382,7 @@ const production = config => addPlugins([
 		include: /babel-helper$/,
 		patterns: [{
 			regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-			value: 'return;('
+			value: s => `return;${ Array(s.length-7).join(' ') }(`
 		}]
 	}),
 
