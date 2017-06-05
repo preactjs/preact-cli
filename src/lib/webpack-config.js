@@ -428,7 +428,10 @@ const production = config => addPlugins([
 		navigateFallback: 'index.html',
 		skipWaiting: true,
 		clientsClaim: true,
-		globPatterns: ['**\/*.{html,js,css}'],
+		globIgnores: [
+			'**\/.map',
+			'**\/push-manifest.json'
+		],
 	})
 ]);
 
