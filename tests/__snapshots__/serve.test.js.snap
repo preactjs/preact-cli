@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`preact serve should create server hosting the app. 1`] = `"<body><div id=\\"app\\"><header class=\\"header__3fP58\\"><h1>Preact App</h1><nav><a href=\\"/\\" class=\\"active__2aRKV\\">Home</a><a href=\\"/profile\\" class=\\"\\">Me</a><a href=\\"/profile/john\\" class=\\"\\">John</a></nav></header><div class=\\"home__MVGbg\\"><h1>Home</h1><p>This is the Home component.</p></div></div><script src=\\"/bundle.js\\" async=\\"\\"></script></body>"`;
