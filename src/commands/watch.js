@@ -30,6 +30,9 @@ export default asyncCommand({
 		prerender: {
 			description: 'Pre-render static app content on initial build',
 			default: false
+		},
+		template: {
+			description: 'HTML template used by webpack'
 		}
 	},
 
