@@ -34,7 +34,7 @@ export default asyncCommand({
 		},
 		config: {
 			description: 'Path to custom preact.config.js',
-			default: './preact.config.js'
+			alias: 'c'
 		}
 	},
 

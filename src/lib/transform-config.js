@@ -16,7 +16,9 @@ export default async function (env, config) {
 		return;
 	}
 
-	require('babel-register')();
+	require('babel-register')({
+		presets: ['env']
+	});
 	const m = require(transformerPath);
 	const transformer = m && m.default || m;
 	await transformer(config, Object.assign({}, env), new WebpackConfigHelpers(env.cwd));
