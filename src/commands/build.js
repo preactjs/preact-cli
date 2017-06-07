@@ -24,16 +24,6 @@ export default asyncCommand({
 			alias: 'p',
 			default: true
 		},
-		less: {
-			description: 'Build and compile LESS files',
-			alias: 'l',
-			default: false
-		},
-		sass: {
-			description: 'Build and compile SASS files',
-			alias: 's',
-			default: false
-		},
 		prerender: {
 			description: 'Pre-render static app content.',
 			default: true
@@ -60,7 +50,7 @@ export default asyncCommand({
 		showStats(stats);
 
 		if (argv.json) {
-			await writeJsonStats(stats)
+			await writeJsonStats(stats);
 		}
 	}
 });

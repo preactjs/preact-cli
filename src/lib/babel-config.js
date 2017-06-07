@@ -1,4 +1,5 @@
 export default (env, options={}) => ({
+	babelrc: false,
 	presets: [
 		[require.resolve('babel-preset-env'), {
 			loose: true,
@@ -28,4 +29,4 @@ export default (env, options={}) => ({
 			import: 'h'
 		}]
 	]
-})
+});

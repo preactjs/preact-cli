@@ -6,7 +6,14 @@ module.exports.pitch = function(remainingRequest) {
 	this.cacheable && this.cacheable();
 	var query = loaderUtils.getOptions(this) || {};
 	var routeName = typeof query.name === 'function' ? query.name(this.resourcePath) : null;
-	var name = routeName !== null ? routeName : ('name' in query ? query.name : (query.formatName || String)(this.resourcePath));
+	var name;
+	if (routeName !== null) {
+		name = routeName;
+	} else if ('name' in query) {
+		name = query.name;
+	} else if ('formatName' in query) {
+		name = query.formatName(this.resourcePath);
+	}
 
 	return `
 		import async from ${JSON.stringify(path.resolve(__dirname, '../components/async'))};
