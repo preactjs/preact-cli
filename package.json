@@ -122,7 +122,7 @@
     "recursive-copy": "^2.0.6",
     "rimraf": "^2.6.1",
     "script-ext-html-webpack-plugin": "^1.8.0",
-    "simplehttp2server": "^1.0.0",
+    "simplehttp2server": "^2.0.0",
     "sw-precache-webpack-plugin": "^0.11.0",
     "tmp": "0.0.31",
     "unfetch": "^2.1.2",
