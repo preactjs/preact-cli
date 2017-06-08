@@ -4,6 +4,7 @@ import rimraf from 'rimraf';
 import promisify from 'es6-promisify';
 import uuid from 'uuid/v4';
 import run from './run';
+import lsr from './lsr';
 
 const rm = promisify(rimraf);
 
@@ -23,6 +24,9 @@ describe('preact build', () => {
 		it(`should build generated projects without errors. Veryfing ${template}`, async () => {
 			await run(['create', template, '--no-install', `--type=${template}`], workDir);
 			await run(['build'], resolve(workDir, template));
+
+			let output = await lsr(resolve(workDir, template, 'build'));
+			expect(output).toMatchSnapshot();
 		})
 	);
 });
