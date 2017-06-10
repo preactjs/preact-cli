@@ -42,7 +42,9 @@ const prodBuild = (env) => {
 
 	return new Promise((resolve, reject) => {
 		compiler.run((err, stats) => {
-			if (err) reject(err);
+			if (err || stats.hasErrors()) {
+				reject(err || stats.toJson().errors.join('\n'));
+			}
 			else {
 				// Timeout for plugins that work on `after-emit` event of webpack
 				setTimeout(()=>	resolve(stats), 20);
