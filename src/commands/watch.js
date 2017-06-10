@@ -32,6 +32,9 @@ export default asyncCommand({
 			description: 'Pre-render static app content on initial build',
 			default: false
 		},
+		template: {
+			description: 'HTML template used by webpack'
+		},
 		config: {
 			description: 'Path to custom preact.config.js',
 			alias: 'c'

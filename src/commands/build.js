@@ -37,6 +37,9 @@ export default asyncCommand({
 			description: 'Generate build statistics for analysis.',
 			default: false
 		},
+		template: {
+			description: 'HTML template used by webpack'
+		},
 		config: {
 			description: 'Path to custom CLI config.',
 			alias: 'c'
