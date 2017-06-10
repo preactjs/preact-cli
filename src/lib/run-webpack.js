@@ -8,7 +8,9 @@ export default (watch=false, config, onprogress) => new Promise( (resolve, rejec
 	let compiler = webpack(config);
 
 	let done = (err, stats) => {
-		if (err) reject(err);
+		if (err || stats.hasErrors()) {
+			reject(err || stats.toJson().errors.join('\n'));
+		}
 		else {
 			// Timeout for plugins that work on `after-emit` event of webpack
 			setTimeout(()=>{

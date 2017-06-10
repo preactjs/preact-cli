@@ -53,7 +53,7 @@ $ preact create
   --name      directory and package name for the new app
   --dest      Directory to create the app within                  [default: <name>]
   --type      A project template to start from
-              [Options: "default", "full", "simple", "empty"]     [default: "default"]
+              [Options: "default", "root", "simple", "empty"]     [default: "default"]
   --less      Pre-install LESS support                 [boolean]  [default: false]
   --sass      Pre-install SASS/SCSS support            [boolean]  [default: false]
 
