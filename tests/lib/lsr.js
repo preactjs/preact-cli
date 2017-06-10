@@ -12,12 +12,10 @@ const lsr = async (path, excludes = []) => {
 
 		if (contentStats.isDirectory()) {
 			stats[content] = {
-				isDirectory: true,
 				...(await lsr(contentPath, excludes))
 			};
 		} else {
 			stats[content] = {
-				isFile: true,
 				size: contentStats.size
 			};
 		}

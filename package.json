@@ -10,8 +10,9 @@
     "build": "babel src -d lib -D",
     "prepublish": "npm run -s build",
     "dev": "babel-node src",
-    "lint": "eslint src",
-    "test": "npm run -s build && jest",
+    "lint": "eslint src tests",
+    "pretest": "npm run -s build",
+    "test": "tape -r babel-register tests/*.test.js",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
     "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
@@ -48,8 +49,7 @@
     },
     "env": {
       "node": true,
-      "browser": true,
-      "jest": true
+      "browser": true
     },
     "rules": {
       "no-console": 1,
@@ -66,9 +66,6 @@
       "react/jsx-uses-vars": 2
     }
   },
-  "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/tests/setup.js"
-  },
   "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
   "license": "MIT",
   "bugs": "https://github.com/developit/preact-cli/issues",
@@ -76,12 +73,13 @@
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
-    "casperjs": "^1.1.4",
+    "chrome-remote-interface": "^0.23.2",
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^7.0.1",
-    "jest": "^20.0.4",
+    "html-looks-like": "^1.0.2",
+    "lighthouse": "^2.1.0",
     "lodash": "^4.17.4",
-    "selenium-webdriver": "^3.4.0",
+    "tape": "^4.6.3",
     "uuid": "^3.0.1"
   },
   "dependencies": {

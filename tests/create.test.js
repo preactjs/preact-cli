@@ -1,44 +1,34 @@
+import test from './async-test';
 import { resolve } from 'path';
-import mkdirp from 'mkdirp';
-import rimraf from 'rimraf';
-import promisify from 'es6-promisify';
-import uuid from 'uuid/v4';
-import run from './run';
-import lsr from './lsr';
+import { create } from './lib/cli';
+import lsr from './lib/lsr';
+import { setup, clean } from './lib/output';
 
-const rm = promisify(rimraf);
-const listTemplate = async name => await lsr(resolve(__dirname, '../examples', name), ['.gitkeep', 'package.json']);
-const listOutput = async (dir, name) => await lsr(resolve(dir, name), ['.gitkeep', 'package.json']);
+const listTemplate = async dir => await lsr(resolve(__dirname, '../examples', dir), ['.gitkeep', 'package.json']);
+const listOutput = async dir => await lsr(dir, ['.gitkeep', 'package.json']);
 
-describe('preact create', () => {
-	let workDir = '';
+test('preact create - before', async () => {
+	await setup();
+});
 
-	beforeEach(async () => {
-		workDir = resolve(__dirname, 'output', uuid());
-		await mkdirp(workDir);
-	});
+test('preact create - should create project using full template by default.', async t => {
+	let fullExample = await listTemplate('full');
+	let app = await create('app');
+	let generated = await listOutput(app);
 
-	afterEach(async () => {
-		await rm(workDir);
-	});
+	t.isEquivalent(generated, fullExample);
+});
 
-	it('should create project using full template by default.', async () => {
-		let fullExample = await listTemplate('full');
+['root', 'simple', 'empty'].forEach(template =>
+	test(`preact create - should create project using provided template. Verifying ${template}`, async t => {
+		let example = await listTemplate(template);
+		let app = await create('app', template);
+		let generated = await listOutput(app);
 
-		await run(['create', 'my-app', '--no-install'], workDir);
-		let generated = await listOutput(workDir, 'my-app');
+		t.isEquivalent(generated, example);
+	})
+);
 
-		expect(generated).toEqual(fullExample);
-	});
-
-	['root', 'simple', 'empty'].forEach(template =>
-		it(`should create project using provided template. Verifying ${template}`, async () => {
-			let example = await listTemplate(template);
-
-			await run(['create', template, '--no-install', `--type=${template}`], workDir);
-			let generated = await listOutput(workDir, template);
-
-			expect(generated).toEqual(example);
-		})
-	);
+test('preact build - after', async () => {
+	await clean();
 });
