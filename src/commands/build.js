@@ -35,6 +35,9 @@ export default asyncCommand({
 		json: {
 			description: 'Generate build statistics for analysis.',
 			default: false
+		},
+		template: {
+			description: 'HTML template used by webpack'
 		}
 	},
 
