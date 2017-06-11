@@ -1,0 +1,15 @@
+dist: trusty
+addons:
+  chrome: stable
+
+language: node_js
+node_js:
+  - "6"
+  - "7"
+  - "8"
+cache:
+  npm: true
+
+script:
+- npm run lint
+- npm run test
