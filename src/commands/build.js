@@ -35,6 +35,9 @@ export default asyncCommand({
 		json: {
 			description: 'Generate build statistics for analysis.',
 			default: false
+		},
+		template: {
+			description: 'HTML template used by webpack'
 		}
 	},
 
@@ -50,7 +53,7 @@ export default asyncCommand({
 		showStats(stats);
 
 		if (argv.json) {
-			await writeJsonStats(stats)
+			await writeJsonStats(stats);
 		}
 	}
 });

@@ -22,7 +22,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import ReplacePlugin from 'replace-bundle-webpack-plugin';
+import ReplacePlugin from 'webpack-plugin-replace';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
 import createBabelConfig from './babel-config';
 import prerender from './prerender';
@@ -64,7 +64,7 @@ export default env => {
 			path: resolve(cwd, env.dest || 'build'),
 			publicPath: '/',
 			filename: 'bundle.js',
-			chunkFilename: '[name].chunk.[chunkhash].js'
+			chunkFilename: '[name].chunk.[chunkhash:5].js'
 		}),
 
 		customConfig({
@@ -78,7 +78,7 @@ export default env => {
 					'preact-cli-entrypoint': src('index.js'),
 					'preact-cli-polyfills': resolve(__dirname, 'polyfills.js'),
 					style: src('style'),
-					preact$: 'preact/dist/preact.min.js',
+					preact$: isProd ? 'preact/dist/preact.min.js' : 'preact',
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
@@ -98,14 +98,12 @@ export default env => {
 
 		// ES2015
 		babel({
-			exclude: [],
 			include(filepath) {
 				if (filepath.indexOf(src('.'))===0 || filepath.indexOf(resolve(__dirname, '../..'))===0 || filepath.split(/[/\\]/).indexOf('node_modules')===-1) return true;
 				let manifest = resolve(filepath.replace(/(.*([\/\\]node_modules|\.\.)[\/\\](@[^\/\\]+[\/\\])?[^\/\\]+)([\/\\].*)?$/g, '$1'), 'package.json'),
 					pkg = readJson(manifest) || {};
 				return !!(pkg.module || pkg['jsnext:main']);
 			},
-			babelrc: false,
 			...createBabelConfig(env)
 		}),
 
@@ -374,16 +372,19 @@ const development = config => {
 };
 
 const production = config => addPlugins([
+	new webpack.HashedModuleIdsPlugin(),
 	new webpack.LoaderOptionsPlugin({
 		minimize: true
 	}),
 
 	// strip out babel-helper invariant checks
-	new ReplacePlugin([{
-		// this is actually the property name https://github.com/kimhou/replace-bundle-webpack-plugin/issues/1
-		partten: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-		replacement: () => 'return;('
-	}]),
+	new ReplacePlugin({
+		include: /babel-helper$/,
+		patterns: [{
+			regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
+			value: s => `return;${ Array(s.length-7).join(' ') }(`
+		}]
+	}),
 
 	new webpack.optimize.UglifyJsPlugin({
 		output: {
