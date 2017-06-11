@@ -1,6 +1,5 @@
 import { Launcher } from 'lighthouse/chrome-launcher';
 import chrome from 'chrome-remote-interface';
-import fs from 'fs.promised';
 
 export default async () => {
 	let launcher = new Launcher({
@@ -13,18 +12,7 @@ export default async () => {
 		]
 	});
 	await launcher.launch();
-	// Wait for chrome to launch
-	await delay(1000);
-
-	let protocol;
-	try {
-		protocol = await setup();
-	} catch (err) {
-		console.log('chrome errors');
-		let chromeErrors = fs.readFile(launcher.errFile, 'utf-8');
-		console.error(chromeErrors);
-		throw err;
-	}
+	let protocol = await setup();
 	return { launcher, protocol };
 };
 
