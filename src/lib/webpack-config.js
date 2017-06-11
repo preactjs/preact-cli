@@ -223,7 +223,7 @@ export default env => {
 						loader: isProd ? 'file-loader' : 'url-loader'
 					},
 					{
-						test: /\.(mp4|webm)$/i,
+						test: /\.(mp4|webm|ogv)$/i,
 						loader: isProd ? 'file-loader' : 'url-loader'
 					}
 				]
