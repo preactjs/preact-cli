@@ -10,6 +10,12 @@ node_js:
 cache:
   npm: true
 
+before_script:
+  - echo "which google-chrome"
+  - echo `which google-chrome`
+  - echo "which google-chrome-stable"
+  - echo `which google-chrome-stable`
+  - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
 script:
 - npm run lint
 - npm run test
