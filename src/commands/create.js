@@ -137,10 +137,9 @@ export default asyncCommand({
 					'less-loader'
 				] : [])
 			].filter(Boolean));
-		}
-		spinner.text = 'Installing dependencies';
 
-		if (argv.install) {
+			spinner.text = 'Installing dependencies';
+
 			await npm(target, [
 				'install', '--save',
 				'preact',

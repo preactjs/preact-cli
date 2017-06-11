@@ -4,6 +4,7 @@ import { create, build, serve } from './lib/cli';
 import startChrome, { loadPage, waitUntil } from './lib/chrome';
 import { setup, clean } from './lib/output';
 
+const options = { timeout: 20 * 1000 };
 let chrome, launcher;
 
 test('preact serve - before', async () => {
@@ -13,7 +14,7 @@ test('preact serve - before', async () => {
 	launcher = result.launcher;
 });
 
-test(`preact serve - should spawn server hosting the app.`, async t => {
+test(`preact serve - should spawn server hosting the app.`, options, async t => {
 	let { Runtime } = chrome;
 	let app = await create('app');
 	await build(app);
@@ -27,7 +28,7 @@ test(`preact serve - should spawn server hosting the app.`, async t => {
 	t.pass();
 });
 
-test(`preact serve - should serve interactive page.`, async t => {
+test(`preact serve - should serve interactive page.`, options, async t => {
 	let { Runtime } = chrome;
 	let app = await create('app');
 	await build(app);
@@ -45,7 +46,7 @@ test(`preact serve - should serve interactive page.`, async t => {
 	t.pass();
 });
 
-test(`preact serve - should register service worker on first visit.`, async t => {
+test(`preact serve - should register service worker on first visit.`, options, async t => {
 	let { Runtime } = chrome;
 
 	await loadPage(chrome, 'https://localhost:8081/');

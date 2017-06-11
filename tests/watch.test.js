@@ -5,6 +5,7 @@ import { create, build, watch } from './lib/cli';
 import startChrome, { loadPage, waitUntil } from './lib/chrome';
 import { setup, clean } from './lib/output';
 
+const options = { timeout: 30 * 1000 };
 let chrome, launcher;
 
 test('preact watch - before', async () => {
@@ -14,7 +15,7 @@ test('preact watch - before', async () => {
 	launcher = result.launcher;
 });
 
-test(`preact watch - should create development server with hot reloading.`, async t => {
+test(`preact watch - should create development server with hot reloading.`, options, async t => {
 	let { Runtime } = chrome;
 	let app = await create('app');
 	await build(app);
