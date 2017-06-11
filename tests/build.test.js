@@ -5,7 +5,7 @@ import lsr from './lib/lsr';
 import { setup, clean } from './lib/output';
 import { normalize, expectedOutputs } from './build.snapshot';
 
-const options = { timeout: 15 * 1000 };
+const options = { timeout: 30 * 1000 };
 
 test('preact build - before', async () => {
 	await setup();
