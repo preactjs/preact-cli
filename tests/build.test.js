@@ -5,12 +5,14 @@ import lsr from './lib/lsr';
 import { setup, clean } from './lib/output';
 import { normalize, expectedOutputs } from './build.snapshot';
 
+const options = { timeout: 15 * 1000 };
+
 test('preact build - before', async () => {
 	await setup();
 });
 
 ['empty', 'simple', 'root', 'default'].forEach(template =>
-	test(`preact build - should produce output. Veryfing ${template}`, async t => {
+	test(`preact build - should produce output. Veryfing ${template}`, options, async t => {
 		let app = await create('app', template);
 		await build(app);
 

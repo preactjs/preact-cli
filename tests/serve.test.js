@@ -4,7 +4,7 @@ import { create, build, serve } from './lib/cli';
 import startChrome, { loadPage, waitUntil } from './lib/chrome';
 import { setup, clean } from './lib/output';
 
-const options = { timeout: 20 * 1000 };
+const options = { timeout: 30 * 1000 };
 let chrome, launcher;
 
 test('preact serve - before', async () => {
