@@ -221,6 +221,10 @@ export default env => {
 					{
 						test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif)(\?.*)?$/i,
 						loader: isProd ? 'file-loader' : 'url-loader'
+					},
+					{
+						test: /\.(mp4|webm)$/i,
+						loader: isProd ? 'file-loader' : 'url-loader'
 					}
 				]
 			}
