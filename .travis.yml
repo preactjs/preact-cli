@@ -12,7 +12,7 @@ cache:
 
 before_script:
   - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 script:
 - npm run lint
 - npm run test
