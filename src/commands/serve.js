@@ -3,6 +3,8 @@ import path from 'path';
 import fs from 'fs.promised';
 import tmp from 'tmp';
 import { execFile } from 'child_process';
+import getSslCert from '../lib/ssl-cert';
+import persistencePath from 'persist-path';
 // import spawn from 'cross-spawn-promise';
 import simplehttp2server from 'simplehttp2server';
 
@@ -168,7 +170,31 @@ const serveHttp2 = options => Promise.resolve(options)
 
 
 const SERVERS = {
-	simplehttp2server(options) {
+	async simplehttp2server(options) {
+		let ssl = await getSslCert();
+		if (ssl) {
+			console.info(`Copying key from ${ssl.keyPath} to ${path.resolve(options.cwd, 'key.pem')}`);
+			console.info(`Copying key from ${ssl.certPath} to ${path.resolve(options.cwd, 'cert.pem')}`);
+			await fs.writeFile(path.resolve(options.cwd, 'key.pem'), ssl.key);
+			await fs.writeFile(path.resolve(options.cwd, 'cert.pem'), ssl.cert);
+		}
+		else {
+			options.cwd = persistencePath('preact-cli');
+			process.stderr.write(`Falling back to shared directory + simplehttp2server.\n(dir: ${options.cwd})\n`);
+			// console.log('Attempting to spawn simplehttp2server to generate cert.');
+			// await new Promise( resolve => {
+			// 	let child = execFile(simplehttp2server, ['-listen', ':40210'], {
+			// 		cwd: options.cwd,
+			// 		encoding: 'utf8'
+			// 	}, (err, stdout, stderr) => {
+			// 		setTimeout( () => {
+			// 			child.kill();
+			// 			resolve();
+			// 		}, 1000);
+			// 	});
+			// });
+			// throw Error(`Unable to initialize SSL certificate: ${err}`);
+		}
 		return [
 			simplehttp2server,
 			'-cors', '*',
