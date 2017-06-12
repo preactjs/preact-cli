@@ -1,6 +1,5 @@
 import asyncCommand from '../lib/async-command';
-import webpackConfig from '../lib/webpack-config';
-import runWebpack, { showStats } from '../lib/run-webpack';
+import createCompiler from '../compile';
 
 export default asyncCommand({
 	command: 'watch [src]',
@@ -38,9 +37,7 @@ export default asyncCommand({
 
 	async handler(argv) {
 		argv.production = false;
-		let config = webpackConfig(argv);
 
-		let stats = await runWebpack(true, config, showStats);
-		showStats(stats);
+		await createCompiler(argv).compile(true);
 	}
 });

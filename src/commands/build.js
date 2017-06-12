@@ -1,9 +1,5 @@
-import { resolve } from 'path';
-import promisify from 'es6-promisify';
-import rimraf from 'rimraf';
 import asyncCommand from '../lib/async-command';
-import webpackConfig from '../lib/webpack-config';
-import runWebpack, { showStats, writeJsonStats } from '../lib/run-webpack';
+import createCompiler from '../compiler';
 
 export default asyncCommand({
 	command: 'build [src] [dest]',
@@ -42,18 +38,16 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
-		let config = webpackConfig(argv);
+		let compiler = createCompiler(argv);
 
 		if (argv.clean) {
-			let dest = resolve(argv.cwd || process.cwd(), argv.dest || 'build');
-			await promisify(rimraf)(dest);
+			await compiler.clean();
 		}
 
-		let stats = await runWebpack(false, config);
-		showStats(stats);
+		let stats = await compiler.compile();
 
 		if (argv.json) {
-			await writeJsonStats(stats);
+			await compiler.writeJsonStats(stats);
 		}
 	}
 });
