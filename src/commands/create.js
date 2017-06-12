@@ -115,9 +115,9 @@ export default asyncCommand({
 
 		await fs.writeFile(path.resolve(target, 'package.json'), JSON.stringify(pkg, null, 2));
 
-		spinner.text = 'Installing dev dependencies';
-
 		if (argv.install) {
+			spinner.text = 'Installing dev dependencies';
+
 			await npm(target, [
 				'install', '--save-dev',
 				'preact-cli',
@@ -146,9 +146,9 @@ export default asyncCommand({
 				'preact-compat',
 				'preact-router'
 			]);
-		}
 
-		spinner.succeed('Done!\n');
+			spinner.succeed('Done!\n');
+		}
 
 		return `
 			To get started, cd into the new directory:
