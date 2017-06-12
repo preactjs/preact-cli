@@ -41,10 +41,10 @@ export default asyncCommand({
 			await compiler.clean();
 		}
 
-		await compiler.compile();
+		let stats = await compiler.compile();
 
 		if (argv.json) {
-			await compiler.stats();
+			await compiler.writeJsonStats(stats);
 		}
 	}
 });
