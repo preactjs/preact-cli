@@ -3,6 +3,7 @@ import htmlLooksLike from 'html-looks-like';
 import { create, build, serve } from './lib/cli';
 import startChrome, { loadPage, waitUntil } from './lib/chrome';
 import { setup, clean } from './lib/output';
+import { homePageHTML, profilePageHtml } from './serve.snapshot';
 
 const options = { timeout: 60 * 1000 };
 let chrome, launcher;
@@ -21,6 +22,7 @@ test(`preact serve - should spawn server hosting the app.`, options, async t => 
 	let server = await serve(app, 8081);
 
 	await loadPage(chrome, 'https://localhost:8081/');
+	await pageIsInteractive(chrome);
 	let { result } = await Runtime.evaluate({ expression: 'document.querySelector("body").outerHTML' });
 	await server.kill();
 
@@ -36,6 +38,7 @@ test(`preact serve - should serve interactive page.`, options, async t => {
 	let url = 'https://localhost:8081/';
 
 	await loadPage(chrome, url);
+	await pageIsInteractive(chrome);
 	await Runtime.evaluate({ expression: `document.querySelector('a[href="/profile"]').click()` });
 	await waitUntil(Runtime, `document.querySelector('div > h1').innerText === 'Profile: me'`);
 
@@ -50,6 +53,7 @@ test(`preact serve - should register service worker on first visit.`, options, a
 	let { Runtime } = chrome;
 
 	await loadPage(chrome, 'https://localhost:8081/');
+	await pageIsInteractive(chrome);
 	let { result } = await Runtime.evaluate({ expression: 'document.querySelector("body").outerHTML' });
 
 	htmlLooksLike(result.value, homePageHTML);
@@ -58,63 +62,28 @@ test(`preact serve - should register service worker on first visit.`, options, a
 
 test(`preact serve - after`, options, async () => {
 	await clean();
-	await unregisterSW();
+	await unregisterSW('https://localhost:8081/');
 	await chrome.close();
 	await launcher.kill();
 });
 
-const unregisterSW = async () => {
-	let { Runtime } = chrome;
-	await Runtime.evaluate({
-		expression: `
-			Promise.resolve(navigator.serviceWorker)
-					.then(sw => sw && sw.getRegistration())
-					.then(r => r && r.unregister())
-					.catch(() => false)
-					.then(() => window._sw_unregistered_ = true);
-		`
-	});
-	await waitUntil(Runtime, `window._sw_unregistered_ === true`);
+const unregisterSW = async url => {
+	let { ServiceWorker } = chrome;
+	await ServiceWorker.unregister({ scopeURL: url });
 };
 
-const homePageHTML = `
-<body>
-	<div id="app">
-		<header class="header__3fP58">
-			<h1>Preact App</h1>
-			<nav>
-				<a href="/" class="active__2aRKV">Home</a>
-				<a href="/profile" class="">Me</a>
-				<a href="/profile/john" class="">John</a>
-			</nav>
-		</header>
-		<div class="home__MVGbg">
-			<h1>Home</h1>
-			<p>This is the Home component.</p>
-		</div>
-	</div>
-	<script src="/bundle.js" async=""></script>
-</body>
-`;
+export const pageIsInteractive = async (chrome, retryCount = 10, retryInterval = 500) => {
+	if (retryCount < 0) {
+		throw new Error('Waiting for page interactivity timeout out.');
+	}
 
-const profilePageHtml = `
-<body>
-	<div id="app">
-		<header class="header__3fP58">
-			<h1>Preact App</h1>
-			<nav>
-				<a href="/" class="">Home</a>
-				<a href="/profile" class="active__2aRKV">Me</a>
-				<a href="/profile/john" class="">John</a>
-			</nav>
-		</header>
-		<div class="profile__1fPRW">
-			<h1>Profile: me</h1>
-			<p>This is the user profile for a user named me.</p>
-			<div>{{ ... }}</div>
-			<p><button>Click Me</button> Clicked 10 times.</p>
-		</div>
-	</div>
-	<script src="/bundle.js" async=""></script>
-</body>
-`;
+	let { DOM, DOMDebugger } = chrome;
+	let { root: document} = await DOM.getDocument();
+	let a = await DOM.querySelector({ selector: 'a', nodeId: document.nodeId });
+	let { object } = await DOM.resolveNode({ nodeId: a.nodeId });
+	let { listeners } = await DOMDebugger.getEventListeners({ objectId: object.objectId });
+
+	if (!listeners.some(l => l.type === 'click')) {
+		await pageIsInteractive(chrome, retryCount - 1, retryInterval);
+	}
+};
