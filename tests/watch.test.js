@@ -8,7 +8,7 @@ import { setup, clean } from './lib/output';
 const options = { timeout: 120 * 1000 };
 let chrome, launcher;
 
-test('preact watch - before', async () => {
+test('preact watch - before', options, async () => {
 	await setup();
 	let result = await startChrome();
 	chrome = result.protocol;
@@ -19,10 +19,10 @@ test(`preact watch - should create development server with hot reloading.`, opti
 	let { Runtime } = chrome;
 	let app = await create('app');
 	await build(app);
-	let server = await watch(app, 8082);
+	let server = await watch(app, 8083);
 	let headerComponentSourceFile = resolve(app, './src/components/header/index.js');
 
-	await loadPage(chrome, 'http://localhost:8082/');
+	await loadPage(chrome, 'http://localhost:8083/');
 	let headerComponentSourceCode = await fs.readFile(headerComponentSourceFile, 'utf8');
 	let newSourceCode = headerComponentSourceCode.replace('<h1>Preact App</h1>', '<h1>Test App</h1>');
 	await fs.writeFile(headerComponentSourceFile, newSourceCode);
@@ -31,11 +31,12 @@ test(`preact watch - should create development server with hot reloading.`, opti
 		Runtime,
 		`document.querySelector('header > h1').innerText === 'Test App'`,
 	);
+
 	await server.kill();
 	t.pass();
 });
 
-test(`preact watch - after`, async () => {
+test(`preact watch - after`, options, async () => {
 	await clean();
 	await chrome.close();
 	await launcher.kill();

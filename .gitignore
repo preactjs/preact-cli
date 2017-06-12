@@ -4,3 +4,5 @@
 /tests/output
 .DS_Store
 npm-debug.log
+/lighthouse.*
+tmp-*.json

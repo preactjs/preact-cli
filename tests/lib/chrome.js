@@ -11,6 +11,7 @@ export default async () => {
 			'--headless'
 		]
 	});
+	launcher.pollInterval = 1000;
 	await launcher.launch();
 	let protocol = await setup();
 	return { launcher, protocol };
@@ -29,7 +30,7 @@ export const waitUntil = async (Runtime, expression, retryCount = 10, retryInter
 	}
 };
 
-export const loadPage = async (chrome, url, retryCount = 10, retryInterval = 500) => {
+export const loadPage = async (chrome, url, retryCount = 40, retryInterval = 500) => {
 	let result = await openPage(chrome, url, retryCount, retryInterval);
 	await chrome.Page.loadEventFired();
 	return result;

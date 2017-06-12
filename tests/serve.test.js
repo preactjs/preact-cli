@@ -7,7 +7,7 @@ import { setup, clean } from './lib/output';
 const options = { timeout: 60 * 1000 };
 let chrome, launcher;
 
-test('preact serve - before', async () => {
+test('preact serve - before', options, async () => {
 	await setup();
 	let result = await startChrome();
 	chrome = result.protocol;
@@ -56,7 +56,7 @@ test(`preact serve - should register service worker on first visit.`, options, a
 	t.pass();
 });
 
-test(`preact serve - after`, async () => {
+test(`preact serve - after`, options, async () => {
 	await clean();
 	await unregisterSW();
 	await chrome.close();

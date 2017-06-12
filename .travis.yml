@@ -1,4 +1,5 @@
 dist: trusty
+sudo: true
 addons:
   chrome: stable
 
@@ -11,8 +12,11 @@ cache:
   npm: true
 
 before_script:
-  - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+- apt-get install -y libnss3-tools
+- certutil -d sql:$HOME/.pki/nssdb -A -t "P,," -n ./lib/resources/cert.pem -i ./lib/resources/cert.pem
+- export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
+- google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+
 script:
 - npm run lint
 - npm run test
