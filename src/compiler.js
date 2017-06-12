@@ -25,8 +25,8 @@ export default env => {
 			return prerender(env, params);
 		}
 
-		async writeJsonStats(stats) {
-			await writeJsonStats(stats);
+		writeJsonStats(stats) {
+			return writeJsonStats(stats);
 		}
 	}
 }
