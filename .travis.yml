@@ -13,7 +13,8 @@ cache:
 
 before_script:
 - sudo apt-get install -y libnss3-tools
-- sudo certutil -d sql:$HOME/.pki/nssdb -A -t "P,," -n ./lib/resources/cert.pem -i ./lib/resources/cert.pem
+- mkdir -p $HOME/.pki/nssdb
+- certutil -d sql:$HOME/.pki/nssdb -A -t "P,," -n ./lib/resources/cert.pem -i ./lib/resources/cert.pem
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
 - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 
