@@ -38,9 +38,7 @@ export const loadPage = async (chrome, url, retryCount = 10, retryInterval = 500
 
 const openPage = async (chrome, url, retryCount, retryInterval) => {
 	if (retryCount < 0) {
-		//eslint-disable-next-line no-console
-		console.error('Page could not be loaded - timeout reached. Continuing without throwing error...');
-		return;
+		throw new Error('Page could not be loaded!');
 	}
 
 	let result;
@@ -89,6 +87,6 @@ const navigateToPage = (chrome, url, timeout) => new Promise(async (resolve, rej
 		reject();
 	}, timeout);
 
-	chrome.on('Network.responseReceived', listener);
 	await chrome.Page.navigate({ url });
+	chrome.on('Network.responseReceived', listener);
 });
