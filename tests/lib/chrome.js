@@ -17,12 +17,24 @@ export default async () => {
 	return { launcher, protocol };
 };
 
+export const getElementHtml = async (Runtime, selector) => {
+	let { result } = await Runtime.evaluate({ expression: `document.querySelector("${selector}").outerHTML` });
+	return result.value;
+};
+
 export const waitUntil = async (Runtime, expression, retryCount = 10, retryInterval = 500) => {
 	if (retryCount < 0) {
 		throw new Error(`Wait until: '${expression}' timed out.`);
 	}
 
 	let { result } = await Runtime.evaluate({ expression });
+	if (result && result.subtype === 'promise') {
+		let message = await Runtime.awaitPromise({
+			promiseObjectId: result.objectId,
+			returnByValue: true
+		});
+		result = message.result;
+	}
 
 	if (!result || !result.value) {
 		await delay(retryInterval);
@@ -87,6 +99,6 @@ const navigateToPage = (chrome, url, timeout) => new Promise(async (resolve, rej
 		reject();
 	}, timeout);
 
-	await chrome.Page.navigate({ url });
 	chrome.on('Network.responseReceived', listener);
+	await chrome.Page.navigate({ url });
 });

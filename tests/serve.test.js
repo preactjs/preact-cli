@@ -1,7 +1,7 @@
 import test from './async-test';
 import htmlLooksLike from 'html-looks-like';
 import { create, build, serve } from './lib/cli';
-import startChrome, { loadPage, waitUntil } from './lib/chrome';
+import startChrome, { loadPage, waitUntil, getElementHtml } from './lib/chrome';
 import { setup, clean } from './lib/output';
 import { homePageHTML, profilePageHtml } from './serve.snapshot';
 
@@ -23,10 +23,10 @@ test(`preact serve - should spawn server hosting the app.`, options, async t => 
 
 	await loadPage(chrome, 'https://localhost:8081/');
 	await pageIsInteractive(chrome);
-	let { result } = await Runtime.evaluate({ expression: 'document.querySelector("body").outerHTML' });
+	let html = await getElementHtml(Runtime, 'body');
 	await server.kill();
 
-	htmlLooksLike(result.value, homePageHTML);
+	htmlLooksLike(html, homePageHTML);
 	t.pass();
 });
 
@@ -42,21 +42,36 @@ test(`preact serve - should serve interactive page.`, options, async t => {
 	await Runtime.evaluate({ expression: `document.querySelector('a[href="/profile"]').click()` });
 	await waitUntil(Runtime, `document.querySelector('div > h1').innerText === 'Profile: me'`);
 
-	let { result } = await Runtime.evaluate({ expression: `document.querySelector('body').outerHTML` });
-
+	let html = await getElementHtml(Runtime, 'body');
 	await server.kill();
-	htmlLooksLike(result.value, profilePageHtml);
+
+	htmlLooksLike(html, profilePageHtml);
 	t.pass();
 });
 
 test(`preact serve - should register service worker on first visit.`, options, async t => {
 	let { Runtime } = chrome;
+	let app = await create('app');
+	await build(app);
+	let server = await serve(app, 8081);
+	let url = 'https://localhost:8081/';
 
-	await loadPage(chrome, 'https://localhost:8081/');
+	await loadPage(chrome, url);
 	await pageIsInteractive(chrome);
-	let { result } = await Runtime.evaluate({ expression: 'document.querySelector("body").outerHTML' });
 
-	htmlLooksLike(result.value, homePageHTML);
+	await waitUntil(Runtime, `
+		navigator.serviceWorker
+			.getRegistration()
+			.then(r => !!r && !!r.active && r.active.state === 'activated')
+	`);
+
+	await server.kill();
+
+	await loadPage(chrome, url);
+	await pageIsInteractive(chrome);
+	let html = await getElementHtml(Runtime, 'body');
+
+	htmlLooksLike(html, homePageHTML);
 	t.pass();
 });
 
