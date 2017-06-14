@@ -79,7 +79,7 @@ export default env => {
 					'preact-cli-entrypoint': src('index.js'),
 					'preact-cli-polyfills': resolve(__dirname, 'polyfills.js'),
 					style: src('style'),
-					preact$: 'preact/dist/preact.min.js',
+					preact$: isProd ? 'preact/dist/preact.min.js' : 'preact',
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
@@ -379,11 +379,13 @@ const production = config => addPlugins([
 	}),
 
 	// strip out babel-helper invariant checks
-	new ReplacePlugin([{
-		// this is actually the property name https://github.com/kimhou/replace-bundle-webpack-plugin/issues/1
-		partten: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-		replacement: () => 'return;('
-	}]),
+	new ReplacePlugin({
+		include: /babel-helper$/,
+		patterns: [{
+			regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
+			value: s => `return;${ Array(s.length-7).join(' ') }(`
+		}]
+	}),
 
 	new webpack.optimize.UglifyJsPlugin({
 		output: {
