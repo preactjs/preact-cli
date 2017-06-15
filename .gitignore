@@ -3,3 +3,5 @@
 /examples/*/build
 .DS_Store
 npm-debug.log
+key.pem
+cert.pem
