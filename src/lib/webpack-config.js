@@ -345,7 +345,7 @@ const development = config => {
 			host,
 			inline: true,
 			hot: true,
-			https: config.https===true,
+			https: config.https,
 			compress: true,
 			publicPath: '/',
 			contentBase: resolve(config.cwd, config.src || './src'),
