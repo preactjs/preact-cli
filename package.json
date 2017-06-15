@@ -96,7 +96,7 @@
     "copy-webpack-plugin": "^4.0.1",
     "cross-spawn-promise": "^0.10.1",
     "css-modules-require-hook": "^4.0.6",
-    "devcert": "^0.3.2",
+    "devcert-san": "^0.3.3",
     "ejs-loader": "^0.3.0",
     "es6-promisify": "^5.0.0",
     "eslint": "^3.19.0",

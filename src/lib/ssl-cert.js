@@ -1,4 +1,4 @@
-import getDevelopmentCertificate from 'devcert';
+import getDevelopmentCertificate from 'devcert-san';
 import persistencePath from 'persist-path';
 import simplehttp2server from 'simplehttp2server';
 import fs from 'fs.promised';
@@ -6,6 +6,7 @@ import path from 'path';
 import { execFile } from 'child_process';
 
 export default async function getSslCert() {
+	process.stdout.write('Setting up SSL certificate (may require sudo)...\n');
 	try {
 		return await getDevelopmentCertificate('preact-cli', {
 			installCertutil: true
@@ -28,6 +29,7 @@ const spawnServerForCert = () => new Promise( (resolve, reject) => {
 		cwd,
 		encoding: 'utf8'
 	}, (err, stdout, stderr) => {
+		if (err) return reject(err);
 		let timer = setTimeout( () => {
 			reject('Error: certificate generation timed out.');
 		}, 5000);
