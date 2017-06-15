@@ -73,11 +73,11 @@
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
+    "chrome-launcher": "^0.1.1",
     "chrome-remote-interface": "^0.23.2",
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^7.0.1",
     "html-looks-like": "^1.0.2",
-    "lighthouse": "^2.1.0",
     "lodash": "^4.17.4",
     "tape": "^4.6.3",
     "uuid": "^3.0.1"

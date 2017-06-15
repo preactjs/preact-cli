@@ -1,4 +1,4 @@
-import { Launcher } from 'lighthouse/chrome-launcher';
+import { Launcher } from 'chrome-launcher';
 import chrome from 'chrome-remote-interface';
 
 export default async () => {
