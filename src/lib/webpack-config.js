@@ -14,7 +14,6 @@ import {
 	addPlugins,
 	setDevTool
 } from '@webpack-blocks/webpack2';
-import babel from '@webpack-blocks/babel6';
 import devServer from '@webpack-blocks/dev-server2';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
@@ -104,15 +103,7 @@ export default env => {
 						enforce: 'pre',
 						test: /\.(js|jsx)?$/,
 						loader: 'babel-loader',
-						options: {
-							presets: [
-								['es2015', {"modules": false}],
-								'stage-0'
-							],
-							plugins:[
-								["transform-react-jsx", { "pragma": "h" }],
-							],
-						}
+						options: createBabelConfig(env)
 					}
 				]
 			}
