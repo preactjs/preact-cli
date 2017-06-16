@@ -97,14 +97,25 @@ export default env => {
 		}),
 
 		// ES2015
-		babel({
-			include(filepath) {
-				if (filepath.indexOf(src('.'))===0 || filepath.indexOf(resolve(__dirname, '../..'))===0 || filepath.split(/[/\\]/).indexOf('node_modules')===-1) return true;
-				let manifest = resolve(filepath.replace(/(.*([\/\\]node_modules|\.\.)[\/\\](@[^\/\\]+[\/\\])?[^\/\\]+)([\/\\].*)?$/g, '$1'), 'package.json'),
-					pkg = readJson(manifest) || {};
-				return !!(pkg.module || pkg['jsnext:main']);
-			},
-			...createBabelConfig(env)
+		customConfig({
+			module: {
+				loaders: [
+					{
+						enforce: 'pre',
+						test: /\.(js|jsx)?$/,
+						loader: 'babel-loader',
+						options: {
+							presets: [
+								['es2015', {"modules": false}],
+								'stage-0'
+							],
+							plugins:[
+								["transform-react-jsx", { "pragma": "h" }],
+							],
+						}
+					}
+				]
+			}
 		}),
 
 		// automatic async components :)
