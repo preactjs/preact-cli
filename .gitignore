@@ -6,3 +6,5 @@
 npm-debug.log
 key.pem
 cert.pem
+lighthouse.*/
+tmp-*.json
