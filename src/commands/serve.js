@@ -179,11 +179,12 @@ const SERVERS = {
 			options.cwd = persistencePath('preact-cli');
 			process.stderr.write(`Falling back to shared directory + simplehttp2server.\n(dir: ${options.cwd})\n`);
 		}
+		let port = options.port || 8080;
 		return [
 			simplehttp2server,
-			'-cors', '*',
+			'-cors', `https://localhost:${port}`,
 			'-config', options.config,
-			'-listen', `:${options.port || 8080}`
+			'-listen', `:${port}`
 		];
 	},
 	superstatic(options) {
