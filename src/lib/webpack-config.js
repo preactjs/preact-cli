@@ -101,7 +101,7 @@ export default env => {
 				loaders: [
 					{
 						enforce: 'pre',
-						test: /\.(js|jsx)?$/,
+						test: /\.jsx?$/,
 						loader: 'babel-loader',
 						options: createBabelConfig(env)
 					}
