@@ -103,7 +103,7 @@ npm run serve -- --server config
 
 > **TL;DR** Currently in progress. See [#56](https://github.com/developit/preact-cli/pull/56)
 
-#### Browserlist
+#### Browserslist
 
 You may customize your list of supported browser versions by declaring a [`"broswerslist"`](https://github.com/ai/browserslist) key within your `package.json`. Changing these values will modify your JavaScript (via [`babel-preset-env`](https://github.com/babel/babel-preset-env#targetsbrowsers)) and your CSS (via [`autoprefixer`]()) output.
 
