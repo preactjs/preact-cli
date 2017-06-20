@@ -3,9 +3,11 @@ export default (env, options={}) => ({
 	presets: [
 		[require.resolve('babel-preset-env'), {
 			loose: true,
-			modules: options.modules || false,
-			browsers: options.browsers,
 			uglify: true,
+			modules: options.modules || false,
+			targets: {
+				browsers: options.browsers
+			},
 			exclude: [
 				'transform-regenerator',
 				'transform-es2015-typeof-symbol'
