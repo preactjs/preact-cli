@@ -105,7 +105,7 @@ npm run serve -- --server config
 
 #### Browserslist
 
-You may customize your list of supported browser versions by declaring a [`"broswerslist"`](https://github.com/ai/browserslist) key within your `package.json`. Changing these values will modify your JavaScript (via [`babel-preset-env`](https://github.com/babel/babel-preset-env#targetsbrowsers)) and your CSS (via [`autoprefixer`]()) output.
+You may customize your list of supported browser versions by declaring a [`"browserslist"`](https://github.com/ai/browserslist) key within your `package.json`. Changing these values will modify your JavaScript (via [`babel-preset-env`](https://github.com/babel/babel-preset-env#targetsbrowsers)) and your CSS (via [`autoprefixer`]()) output.
 
 By default, `preact-cli` emulates the following config:
 
