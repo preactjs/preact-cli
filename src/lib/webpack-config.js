@@ -53,8 +53,10 @@ export default env => {
 		env.src = '.';
 	}
 
-	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 	env.manifest = readJson(src('manifest.json')) || {};
+	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
+
+	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
 	return createConfig.vanilla([
 		setContext(src('.')),
@@ -103,7 +105,7 @@ export default env => {
 						enforce: 'pre',
 						test: /\.jsx?$/,
 						loader: 'babel-loader',
-						options: createBabelConfig(env)
+						options: createBabelConfig(env, { browsers })
 					}
 				]
 			}
@@ -232,9 +234,7 @@ export default env => {
 			new webpack.LoaderOptionsPlugin({
 				options: {
 					postcss: () => [
-						autoprefixer({
-							browsers: ['last 2 versions']
-						})
+						autoprefixer({ browsers })
 					],
 					context: resolve(cwd, env.src || 'src')
 				}

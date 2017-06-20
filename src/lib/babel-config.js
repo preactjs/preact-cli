@@ -4,12 +4,8 @@ export default (env, options={}) => ({
 		[require.resolve('babel-preset-env'), {
 			loose: true,
 			modules: options.modules || false,
+			browsers: options.browsers,
 			uglify: true,
-			browsers: env.browsers ? env.browsers.split() : [
-				'> 1%',
-				'Last 2 versions',
-				'IE >= 9'
-			],
 			exclude: [
 				'transform-regenerator',
 				'transform-es2015-typeof-symbol'
