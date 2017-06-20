@@ -12,7 +12,7 @@
 		<% } %>
 		<% for (var chunk of webpack.chunks) { %>
 			<% for (var file of chunk.files) { %>
-				<% if (htmlWebpackPlugin.options.preload && file.match(/\.(js|css)$/)) { %>
+				<% if (htmlWebpackPlugin.options.preload && file.match(/\.(js|css)$/) && file !== 'polyfills.js') { %>
 					<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>">
 				<% } else if (file.match(/manifest\.json$/)) { %>
 					<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
@@ -24,5 +24,6 @@
 		<%= htmlWebpackPlugin.options.ssr({
 			url: '/'
 		}) %>
+		<script>"undefined"==typeof fetch&&document.write('<script src="<%= htmlWebpackPlugin.files.publicPath + "polyfills.js" %>"><\/script>')</script>
 	</body>
 </html>

@@ -58,11 +58,14 @@ export default env => {
 
 	return createConfig.vanilla([
 		setContext(src('.')),
-		entryPoint(resolve(__dirname, './entry')),
+		entryPoint({
+			'bundle': resolve(__dirname, './entry'),
+			'polyfills': resolve(__dirname, './polyfills'),
+		}),
 		setOutput({
 			path: resolve(cwd, env.dest || 'build'),
 			publicPath: '/',
-			filename: 'bundle.js',
+			filename: '[name].js',
 			chunkFilename: '[name].chunk.[chunkhash:5].js'
 		}),
 
@@ -75,7 +78,6 @@ export default env => {
 				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.css'],
 				alias: {
 					'preact-cli-entrypoint': src('index.js'),
-					'preact-cli-polyfills': resolve(__dirname, 'polyfills.js'),
 					style: src('style'),
 					preact$: isProd ? 'preact/dist/preact.min.js' : 'preact',
 					// preact-compat aliases for supporting React dependencies:
@@ -433,6 +435,7 @@ const production = config => addPlugins([
 		minify: true,
 		stripPrefix: config.cwd,
 		staticFileGlobsIgnorePatterns: [
+			/polyfills\.js$/,
 			/\.map$/,
 			/push-manifest\.json$/
 		]
@@ -457,6 +460,7 @@ const htmlPlugin = config => addPlugins([
 		compile: true,
 		preload: config.preload===true,
 		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
+		excludeChunks: ['polyfills'],
 		config,
 		ssr(params) {
 			return config.prerender ? prerender(config, params) : '';
