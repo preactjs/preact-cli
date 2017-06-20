@@ -9,6 +9,7 @@ export default function prerender(config, params) {
 
 	require('babel-register')({
 		babelrc: false,
+		ignore: false,
 		...createBabelConfig(config, { modules: 'commonjs' })
 	});
 
