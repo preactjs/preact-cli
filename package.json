@@ -79,6 +79,9 @@
     "eslint-plugin-react": "^7.0.1",
     "html-looks-like": "^1.0.2",
     "lodash": "^4.17.4",
+    "ncp": "^2.0.0",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
     "tape": "^4.6.3",
     "uuid": "^3.0.1"
   },

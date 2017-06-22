@@ -98,3 +98,13 @@ export const expectedOutputs = normalize({
 		}
 	}
 });
+
+export const sassPrerendered = `
+<body>
+	<div class="background__21gOq">
+		<h1>Header on background</h1>
+		<p>Paragraph on background</p>
+	</div>
+	<script src="/bundle.js" async=""></script>
+</body>
+`;
