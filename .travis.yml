@@ -1,3 +1,22 @@
+dist: trusty
+sudo: required
+addons:
+  chrome: stable
+  apt:
+    packages: libnss3-tools
+
 language: node_js
 node_js:
-- "7.0"
+  - "6"
+  - "7"
+  - "8"
+cache:
+  npm: true
+
+before_script:
+- export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
+- google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+
+script:
+- npm run lint
+- npm run test
