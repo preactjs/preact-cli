@@ -73,7 +73,8 @@
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
     "eslint": "^3.19.0",
-    "eslint-plugin-react": "^7.0.1"
+    "eslint-plugin-react": "^7.0.1",
+    "html-webpack-exclude-assets-plugin": "0.0.5"
   },
   "dependencies": {
     "@webpack-blocks/css-modules": "^0.4.0",

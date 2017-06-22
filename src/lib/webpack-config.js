@@ -19,6 +19,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
+import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
@@ -460,15 +461,15 @@ const htmlPlugin = config => addPlugins([
 		compile: true,
 		preload: config.preload===true,
 		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
-		excludeChunks: ['polyfills'],
+		excludeAssets: [/[polyfills|bundle]\.*\.js$/],
 		config,
 		ssr(params) {
 			return config.prerender ? prerender(config, params) : '';
 		}
 	}),
-
+	new HtmlWebpackExcludeAssetsPlugin(),
 	new ScriptExtHtmlWebpackPlugin({
 		// inline: 'bundle.js',
-		defaultAttribute: 'async'
+		defaultAttribute: 'defer'
 	})
 ]);
