@@ -1,7 +1,7 @@
 export const normalize = obj => {
 	let keys = Object.keys(obj);
 
-	if (keys.length === 1 && keys[0] === 'size' && typeof keys[0] === 'number') {
+	if (keys.length === 1 && keys[0] === 'size' && typeof obj.size === 'number') {
 		return { size: Math.round(obj.size / 10) * 10 };
 	}
 
@@ -46,34 +46,55 @@ const fullBuildCommons = {
 export const expectedOutputs = normalize({
 	empty: {
 		...smallBuildCommons,
-		'bundle.js': { size: 10694 },
+		'bundle.js': { size: 10760 },
 		'index.html': { size: 534 },
-		'style.css': { size: 131 },
-		'style.css.map': { size: 359 },
+		'style.css': { size: 130 },
+		'style.css.map': { size: 360 },
+		'ssr-build': {
+			'ssr-bundle.js': { size: 9450 },
+			'style.css': { size: 130 },
+			'style.css.map': { size: 360 },
+		}
 	},
 	simple: {
 		...smallBuildCommons,
-		'bundle.js': { size: 11336 },
+		'bundle.js': { size: 11410 },
 		'index.html': { size: 548 },
 		'style.css': { size: 296},
 		'style.css.map': { size: 621 },
+		'manifest.json': { size: 290 },
+		'ssr-build': {
+			'ssr-bundle.js': { size: 10100 },
+			'style.css': { size: 296 },
+			'style.css.map': { size: 621 },
+		}
 	},
 	root: {
 		...fullBuildCommons,
-		'bundle.js': { size: 18739 },
-		'route-home.chunk.*.js': { size: 959 },
-		'route-profile.chunk.*.js': { size: 1595 },
+		'bundle.js': { size: 18540 },
+		'route-home.chunk.*.js': { size: 970 },
+		'route-profile.chunk.*.js': { size: 1600 },
 		'index.html': { size: 775 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2246 },
+		'ssr-build': {
+			'ssr-bundle.js': { size: 18960 },
+			'style.css': { size: 1065 },
+			'style.css.map': { size: 2250 },
+		}
 	},
 	'default': {
 		...fullBuildCommons,
-		'bundle.js': { size: 19661 },
-		'route-home.chunk.*.js': { size: 961 },
-		'route-profile.chunk.*.js': { size: 1597 },
+		'bundle.js': { size: 19390 },
+		'route-home.chunk.*.js': { size: 970 },
+		'route-profile.chunk.*.js': { size: 1610 },
 		'index.html': { size: 775 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2345 },
+		'ssr-build': {
+			'ssr-bundle.js': { size: 19820 },
+			'style.css': { size: 1065 },
+			'style.css.map': { size: 2345 },
+		}
 	}
 });

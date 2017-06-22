@@ -1,6 +1,6 @@
 import asyncCommand from '../lib/async-command';
 import getSslCert from '../lib/ssl-cert';
-import runWebpack, { showStats } from '../lib/run-webpack';
+import runWebpack, { showStats } from '../lib/webpack/run-webpack';
 
 export default asyncCommand({
 	command: 'watch [src]',
@@ -48,7 +48,7 @@ export default asyncCommand({
 			argv.https = ssl;
 		}
 
-		let stats = await runWebpack(true, showStats);
+		let stats = await runWebpack(true, argv, showStats);
 		showStats(stats);
 	}
 });
