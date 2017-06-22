@@ -9,7 +9,6 @@ import {
 	addPlugins,
 	setDevTool
 } from '@webpack-blocks/webpack2';
-import babel from '@webpack-blocks/babel6';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
@@ -72,14 +71,17 @@ export default (env) => {
 		}),
 
 		// ES2015
-		babel({
-			include(filepath) {
-				if (filepath.indexOf(src('.'))===0 || filepath.indexOf(resolve(__dirname, '../../../'))===0 || filepath.split(/[/\\]/).indexOf('node_modules')===-1) return true;
-				let manifest = resolve(filepath.replace(/(.*([\/\\]node_modules|\.\.)[\/\\](@[^\/\\]+[\/\\])?[^\/\\]+)([\/\\].*)?$/g, '$1'), 'package.json'),
-					pkg = readJson(manifest) || {};
-				return !!(pkg.module || pkg['jsnext:main']);
-			},
-			...createBabelConfig(env)
+		customConfig({
+			module: {
+				loaders: [
+					{
+						enforce: 'pre',
+						test: /\.jsx?$/,
+						loader: 'babel-loader',
+						options: createBabelConfig(env)
+					}
+				]
+			}
 		}),
 
 		// LESS, SASS & CSS
