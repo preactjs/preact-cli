@@ -116,10 +116,43 @@ export default asyncCommand({
 
 		await fs.writeFile(path.resolve(target, 'package.json'), JSON.stringify(pkg, null, 2));
 
+<<<<<<< HEAD
+		spinner.text = 'Installing dev dependencies';
+
+		await install(target, [
+			'preact-cli',
+			'if-env',
+			'eslint',
+			'eslint-config-synacor',
+
+			// install sass setup if --sass
+			...(argv.sass ? [
+				'node-sass',
+				'sass-loader'
+			] : []),
+
+			// install less setup if --less
+			...(argv.less ? [
+				'less',
+				'less-loader'
+			] : [])
+		], 'dev');
+
+		spinner.text = 'Installing dependencies';
+
+		await install(target, [
+			'preact',
+			'preact-compat',
+			'preact-router'
+		]);
+
+		spinner.succeed('Done!\n');
+=======
 		if (argv.install) {
 			spinner.text = 'Installing dev dependencies';
 
-		await install(target, [
+			await npm(target, [
+				'install', '--save-dev',
 				'preact-cli',
 				'if-env',
 				'eslint',
@@ -136,11 +169,12 @@ export default asyncCommand({
 					'less',
 					'less-loader'
 				] : [])
-		], 'dev');
+			].filter(Boolean));
 
 			spinner.text = 'Installing dependencies';
 
-		await install(target, [
+			await npm(target, [
+				'install', '--save',
 				'preact',
 				'preact-compat',
 				'preact-router'
@@ -148,6 +182,7 @@ export default asyncCommand({
 
 			spinner.succeed('Done!\n');
 		}
+>>>>>>> developit/master
 
 		return `
 			To get started, cd into the new directory:

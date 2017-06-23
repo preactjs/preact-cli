@@ -14,7 +14,6 @@ import {
 	addPlugins,
 	setDevTool
 } from '@webpack-blocks/webpack2';
-import babel from '@webpack-blocks/babel6';
 import devServer from '@webpack-blocks/dev-server2';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
@@ -97,14 +96,17 @@ export default env => {
 		}),
 
 		// ES2015
-		babel({
-			include(filepath) {
-				if (filepath.indexOf(src('.'))===0 || filepath.indexOf(resolve(__dirname, '../..'))===0 || filepath.split(/[/\\]/).indexOf('node_modules')===-1) return true;
-				let manifest = resolve(filepath.replace(/(.*([\/\\]node_modules|\.\.)[\/\\](@[^\/\\]+[\/\\])?[^\/\\]+)([\/\\].*)?$/g, '$1'), 'package.json'),
-					pkg = readJson(manifest) || {};
-				return !!(pkg.module || pkg['jsnext:main']);
-			},
-			...createBabelConfig(env)
+		customConfig({
+			module: {
+				loaders: [
+					{
+						enforce: 'pre',
+						test: /\.jsx?$/,
+						loader: 'babel-loader',
+						options: createBabelConfig(env)
+					}
+				]
+			}
 		}),
 
 		// automatic async components :)
@@ -345,7 +347,7 @@ const development = config => {
 			host,
 			inline: true,
 			hot: true,
-			https: config.https===true,
+			https: config.https,
 			compress: true,
 			publicPath: '/',
 			contentBase: resolve(config.cwd, config.src || './src'),

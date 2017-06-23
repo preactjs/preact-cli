@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "main": "lib/index.js",
   "bin": {
@@ -10,8 +10,9 @@
     "build": "babel src -d lib -D",
     "prepublish": "npm run -s build",
     "dev": "babel-node src",
-    "lint": "eslint src",
-    "test": "npm run -s lint",
+    "lint": "eslint src tests",
+    "pretest": "npm run -s build",
+    "test": "tape -r babel-register tests/*.test.js",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
     "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
@@ -72,11 +73,16 @@
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
+    "chrome-launcher": "^0.1.1",
+    "chrome-remote-interface": "^0.23.2",
     "eslint": "^3.19.0",
-    "eslint-plugin-react": "^7.0.1"
+    "eslint-plugin-react": "^7.0.1",
+    "html-looks-like": "^1.0.2",
+    "lodash": "^4.17.4",
+    "tape": "^4.6.3",
+    "uuid": "^3.0.1"
   },
   "dependencies": {
-    "@webpack-blocks/babel6": "^0.4.1",
     "@webpack-blocks/css-modules": "^0.4.0",
     "@webpack-blocks/dev-server2": "^0.4.0",
     "@webpack-blocks/extract-text2": "^0.4.0",
@@ -96,9 +102,9 @@
     "copy-webpack-plugin": "^4.0.1",
     "cross-spawn-promise": "^0.10.1",
     "css-modules-require-hook": "^4.0.6",
+    "devcert-san": "^0.3.3",
     "ejs-loader": "^0.3.0",
     "es6-promisify": "^5.0.0",
-    "eslint": "^3.19.0",
     "file-loader": "^0.11.1",
     "fs.promised": "^3.0.0",
     "html-webpack-plugin": "^2.28.0",
@@ -111,6 +117,7 @@
     "mkdirp": "^0.5.1",
     "offline-plugin": "^4.6.2",
     "ora": "^1.2.0",
+    "persist-path": "^1.0.1",
     "postcss-less": "^0.16.1",
     "preact": "^8.1.0",
     "preact-compat": "^3.14.3",
