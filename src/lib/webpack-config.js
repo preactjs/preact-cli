@@ -47,6 +47,13 @@ export default env => {
 	let isProd = env && env.production;
 	let cwd = env.cwd = resolve(env.cwd || process.cwd());
 	let src = dir => resolve(env.cwd, env.src || 'src', dir);
+	let preact, type = isProd ? 'preact/dist/preact.min' : 'preact';
+
+	try {
+		preact = require.resolve(type);
+	} catch (err) {
+		throw err;
+	}
 
 	// only use src/ if it exists:
 	if (!exists(src('.'))) {
@@ -77,7 +84,7 @@ export default env => {
 					'preact-cli-entrypoint': src('index.js'),
 					'preact-cli-polyfills': resolve(__dirname, 'polyfills.js'),
 					style: src('style'),
-					preact$: isProd ? resolve(env.cwd, 'node_modules/preact/dist/preact.min.js') : 'preact',
+					preact$: preact,
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
