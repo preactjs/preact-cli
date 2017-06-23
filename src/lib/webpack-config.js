@@ -451,7 +451,7 @@ const htmlPlugin = config => addPlugins([
 			removeStyleLinkTypeAttributes: true,
 			removeComments: true
 		},
-		favicon: exists(resolve(config.cwd, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../resources/favicon.ico'),
+		favicon: exists(resolve(config.src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../resources/favicon.ico'),
 		manifest: config.manifest,
 		inject: true,
 		compile: true,
