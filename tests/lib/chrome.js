@@ -17,6 +17,8 @@ export default async () => {
 	return { launcher, protocol };
 };
 
+export const delay = time => new Promise(r => setTimeout(() => r(), time));
+
 export const getElementHtml = async (Runtime, selector) => {
 	let { result } = await Runtime.evaluate({ expression: `document.querySelector("${selector}").outerHTML` });
 	return result.value;
@@ -62,8 +64,6 @@ const openPage = async (chrome, url, retryCount, retryInterval) => {
 
 	return result;
 };
-
-const delay = time => new Promise(r => setTimeout(() => r(), time));
 
 const setup = () => new Promise((resolve, reject) => {
 	chrome(protocol => {

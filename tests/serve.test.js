@@ -1,7 +1,7 @@
 import test from './async-test';
 import htmlLooksLike from 'html-looks-like';
 import { create, build, serve } from './lib/cli';
-import startChrome, { loadPage, waitUntil, getElementHtml } from './lib/chrome';
+import startChrome, { delay, loadPage, waitUntil, getElementHtml } from './lib/chrome';
 import { setup, clean } from './lib/output';
 import { homePageHTML, profilePageHtml } from './serve.snapshot';
 
@@ -87,7 +87,7 @@ const unregisterSW = async url => {
 	await ServiceWorker.unregister({ scopeURL: url });
 };
 
-export const pageIsInteractive = async (chrome, retryCount = 10, retryInterval = 500) => {
+export const pageIsInteractive = async (chrome, retryCount = 10, retryInterval = 200) => {
 	if (retryCount < 0) {
 		throw new Error('Waiting for page interactivity timeout out.');
 	}
@@ -99,6 +99,7 @@ export const pageIsInteractive = async (chrome, retryCount = 10, retryInterval =
 	let { listeners } = await DOMDebugger.getEventListeners({ objectId: object.objectId });
 
 	if (!listeners.some(l => l.type === 'click')) {
+		await delay(retryInterval);
 		await pageIsInteractive(chrome, retryCount - 1, retryInterval);
 	}
 };
