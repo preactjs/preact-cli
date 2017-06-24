@@ -5,7 +5,7 @@ import startChrome, { delay, loadPage, waitUntil, getElementHtml } from './lib/c
 import { setup, clean } from './lib/output';
 import { homePageHTML, profilePageHtml } from './serve.snapshot';
 
-const options = { timeout: 120 * 1000 };
+const options = { timeout: 180 * 1000 };
 let chrome, launcher;
 
 test('preact serve - before', options, async () => {
