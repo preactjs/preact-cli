@@ -36,7 +36,7 @@ export default asyncCommand({
 			alias: 'p'
 		},
 		cors: {
-			description: 'List of allowed origins',
+			description: 'Set allowed origins',
 			defaultDescription: 'https://localhost:${PORT}'
 		}
 	},
