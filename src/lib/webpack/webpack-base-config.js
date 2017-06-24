@@ -13,6 +13,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
+import requireRelative from 'require-relative';
 import createBabelConfig from '../babel-config';
 
 export function exists(file) {
@@ -31,6 +32,13 @@ function readJson(file) {
 }
 readJson.cache = {};
 
+// attempt to resolve a dependency, giving $CWD/node_modules priority:
+function resolveDep(dep, cwd) {
+  try { return requireRelative.resolve(dep, cwd || process.cwd()); } catch (e) {}
+  try { return require.resolve(dep); } catch (e) {}
+  return dep;
+}
+
 export default (env) => {
 	let { isProd, cwd, src } = helpers(env);
 	// only use src/ if it exists:
@@ -38,8 +46,10 @@ export default (env) => {
 		env.src = '.';
 	}
 
-	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 	env.manifest = readJson(src('manifest.json')) || {};
+	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
+
+	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
 	return group([
 		setContext(src('.')),
@@ -55,7 +65,7 @@ export default (env) => {
 					'preact-cli-entrypoint': src('index.js'),
 					'preact-cli-polyfills': resolve(__dirname, './polyfills.js'),
 					style: src('style'),
-					preact$: isProd ? 'preact/dist/preact.min.js' : 'preact',
+					preact$: resolveDep(isProd ? 'preact/dist/preact.min.js' : 'preact', env.cwd),
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
@@ -78,7 +88,7 @@ export default (env) => {
 						enforce: 'pre',
 						test: /\.jsx?$/,
 						loader: 'babel-loader',
-						options: createBabelConfig(env)
+						options: createBabelConfig(env, { browsers })
 					}
 				]
 			}
@@ -178,9 +188,7 @@ export default (env) => {
 			new webpack.LoaderOptionsPlugin({
 				options: {
 					postcss: () => [
-						autoprefixer({
-							browsers: ['last 2 versions']
-						})
+						autoprefixer({ browsers })
 					],
 					context: resolve(cwd, env.src || 'src')
 				}
