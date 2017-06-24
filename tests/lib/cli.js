@@ -10,7 +10,7 @@ const cliPath = resolve(__dirname, '../../lib/index.js');
 export const create = async (appName, template) => {
 	let workDir = resolve(outputPath, uuid());
 	await mkdirp(workDir);
-	await run(['create', appName, '--no-install', template ? `--type=${template}` : undefined], workDir);
+	await run(['create', appName, template ? `--type=${template}` : undefined], workDir);
 	return resolve(workDir, appName);
 };
 

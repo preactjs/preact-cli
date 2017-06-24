@@ -12,6 +12,7 @@ node_js:
   - "8"
 cache:
   npm: true
+  directories: $HOME/.npm/_cacache
 
 before_script:
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`

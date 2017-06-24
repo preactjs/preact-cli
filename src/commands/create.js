@@ -47,11 +47,6 @@ export default asyncCommand({
 			description: 'Pre-install SASS/SCSS support',
 			type: 'boolean',
 			default: false
-		},
-		install: {
-			description: 'Install dependencies',
-			type: 'boolean',
-			default: true
 		}
 	},
 
@@ -115,40 +110,36 @@ export default asyncCommand({
 
 		await fs.writeFile(path.resolve(target, 'package.json'), JSON.stringify(pkg, null, 2));
 
-		if (argv.install) {
-			spinner.text = 'Installing dev dependencies';
+		spinner.text = 'Installing dev dependencies';
 
-			await npm(target, [
-				'install', '--save-dev',
-				'preact-cli',
-				'if-env',
-				'eslint',
-				'eslint-config-synacor',
+		await npm(target, [
+			'install', '--save-dev',
+			'preact-cli',
+			'if-env',
+			'eslint',
+			'eslint-config-synacor',
+			// install sass setup if --sass
+			...(argv.sass ? [
+				'node-sass',
+				'sass-loader'
+			] : []),
+			// install less setup if --less
+			...(argv.less ? [
+				'less',
+				'less-loader'
+			] : [])
+		].filter(Boolean));
 
-				// install sass setup if --sass
-				...(argv.sass ? [
-					'node-sass',
-					'sass-loader'
-				] : []),
+		spinner.text = 'Installing dependencies';
 
-				// install less setup if --less
-				...(argv.less ? [
-					'less',
-					'less-loader'
-				] : [])
-			].filter(Boolean));
+		await npm(target, [
+			'install', '--save',
+			'preact',
+			'preact-compat',
+			'preact-router'
+		]);
 
-			spinner.text = 'Installing dependencies';
-
-			await npm(target, [
-				'install', '--save',
-				'preact',
-				'preact-compat',
-				'preact-router'
-			]);
-
-			spinner.succeed('Done!\n');
-		}
+		spinner.succeed('Done!\n');
 
 		return `
 			To get started, cd into the new directory:

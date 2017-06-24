@@ -5,7 +5,7 @@ import { create, build, watch } from './lib/cli';
 import startChrome, { loadPage, waitUntil } from './lib/chrome';
 import { setup, clean } from './lib/output';
 
-const options = { timeout: 120 * 1000 };
+const options = { timeout: 180 * 1000 };
 let chrome, launcher;
 
 test('preact watch - before', options, async () => {
