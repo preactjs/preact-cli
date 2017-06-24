@@ -1,6 +1,6 @@
 import test from 'tape';
 
-const defaultTestTimeout = 60 * 1000;
+const defaultTestTimeout = 90 * 1000;
 
 const asyncTest = (...args) => {
 	let { fn, tapeArgs, hasTimeout } = parseArgs(args);
