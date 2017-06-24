@@ -5,7 +5,7 @@ import lsr from './lib/lsr';
 import { setup, clean } from './lib/output';
 
 const listTemplate = async dir => await lsr(resolve(__dirname, '../examples', dir), ['.gitkeep', 'package.json']);
-const listOutput = async dir => await lsr(dir, ['.gitkeep', 'package.json', 'node_modules']);
+const listOutput = async dir => await lsr(dir, ['.gitkeep', 'package.json', 'package-lock.json', 'node_modules']);
 
 test('preact create - before', async () => {
 	await setup();
