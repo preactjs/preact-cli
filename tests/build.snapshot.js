@@ -77,3 +77,18 @@ export const expectedOutputs = normalize({
 		'style.css.map': { size: 2345 },
 	}
 });
+
+export const withCustomTemplate = `
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Preact App</title>
+		<link rel="shortcut icon" href="/favicon.ico"></link>
+	</head>
+	<body>
+		<h1>This is an app with custom template</h1>
+		<script src="/bundle.js" defer="defer"></script>
+	</body>
+</html>
+`;

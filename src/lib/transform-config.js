@@ -21,7 +21,11 @@ export default async function (env, config) {
 	});
 	const m = require(transformerPath);
 	const transformer = m && m.default || m;
-	await transformer(config, Object.assign({}, env), new WebpackConfigHelpers(env.cwd));
+	try {
+		await transformer(config, Object.assign({}, env), new WebpackConfigHelpers(env.cwd));
+	} catch (err) {
+		throw new Error(`Error at ${transformerPath}: \n` + err);
+	}
 }
 
 /**
