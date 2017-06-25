@@ -1,6 +1,7 @@
 import asyncCommand from '../lib/async-command';
 import webpackConfig from '../lib/webpack-config';
 import transformConfig from '../lib/transform-config';
+import getSslCert from '../lib/ssl-cert';
 import runWebpack, { showStats } from '../lib/run-webpack';
 
 export default asyncCommand({
@@ -43,6 +44,16 @@ export default asyncCommand({
 
 	async handler(argv) {
 		argv.production = false;
+
+		if (argv.https) {
+			let ssl = await getSslCert();
+			if (!ssl) {
+				ssl = true;
+				process.stderr.write('Using webpack-dev-server internal certificate.\n');
+			}
+			argv.https = ssl;
+		}
+
 		let config = webpackConfig(argv);
 		await transformConfig(argv, config);
 

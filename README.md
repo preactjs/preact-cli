@@ -14,9 +14,9 @@
 - Monitor your bundle/chunk sizes with built-in tracking
 - Automatic app mounting, debug helpers & Hot Module Replacement
 - In just **4.5kb** you get a productive environment:
-	- [preact]
-	- [preact-router]
-	- 1.5kb of conditionally-loaded polyfills for [fetch](https://github.com/developit/unfetch) & [Promise](https://npm.im/promise-polyfill)
+  - [preact]
+  - [preact-router]
+  - 1.5kb of conditionally-loaded polyfills for [fetch](https://github.com/developit/unfetch) & [Promise](https://npm.im/promise-polyfill)
 
 
 ### Commands
@@ -80,8 +80,8 @@ $ preact serve
 
   --dir       Directory root to serve static files from.          [default: "build"]
   --cwd       The working directory in which to spawn a server.   [default: .]
-  --server    Which server to run, or "config" to produce a firebase config.      	
-  	      [options: "simplehttp2server", "superstatic", "config"] [default:"simplehttp2server"]
+  --server    Which server to run, or "config" to produce a firebase config.        
+          [options: "simplehttp2server", "superstatic", "config"] [default:"simplehttp2server"]
   --dest      Directory or filename where firebase.json should be written
               (used for --server config)                          [default: -]
   --port, -p  Port to start a server on                           [default: "8080"]
@@ -100,7 +100,24 @@ npm run serve -- --server config
 # Copy your static files to a server!
 ```
 
-### Customizing
+### Custom Configuration
+
+#### Browserslist
+
+You may customize your list of supported browser versions by declaring a [`"browserslist"`](https://github.com/ai/browserslist) key within your `package.json`. Changing these values will modify your JavaScript (via [`babel-preset-env`](https://github.com/babel/babel-preset-env#targetsbrowsers)) and your CSS (via [`autoprefixer`](https://github.com/postcss/autoprefixer)) output.
+
+By default, `preact-cli` emulates the following config:
+
+```js
+// package.json
+{
+  "browserslist": [
+    "> 1%", 
+    "IE >= 9",
+    "last 2 versions"
+  ]
+}
+```
 
 #### Babel
 To customize babel simply create [```.babelrc```](https://babeljs.io/docs/usage/babelrc/) file. [Preact CLI preset] will be applied automatically so you won't have to worry about keeping your ```.babelrc``` updated!
