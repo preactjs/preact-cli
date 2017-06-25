@@ -469,7 +469,7 @@ const htmlPlugin = config => addPlugins([
 		compile: true,
 		preload: config.preload===true,
 		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
-		excludeAssets: [/[polyfills|bundle]\.*\.js$/],
+		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
 		ssr(params) {
 			return config.prerender ? prerender(config, params) : '';
