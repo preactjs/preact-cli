@@ -17,7 +17,7 @@ const smallBuildCommons = {
 		'favicon.ico': { size: 15086 },
 		'icon.png': { size: 51484 }
 	},
-	'polyfills.chunk.*.js': { size: 4068 },
+	'polyfills.js': { size: 4068 },
 	'favicon.ico': { size: 15086 },
 	'sw.js': { size: 3378 },
 	'manifest.json': { size: 298 },
@@ -36,7 +36,7 @@ const fullBuildCommons = {
 			'mstile-150x150.png': { size: 9050 }
 		}
 	},
-	'polyfills.chunk.*.js': { size: 4066 },
+	'polyfills.js': { size: 4066 },
 	'push-manifest.json': { size: 303 },
 	'favicon.ico': { size: 15086 },
 	'manifest.json': { size: 426 },

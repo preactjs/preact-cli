@@ -19,6 +19,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
+import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
@@ -68,11 +69,14 @@ export default env => {
 
 	return createConfig.vanilla([
 		setContext(src('.')),
-		entryPoint(resolve(__dirname, './entry')),
+		entryPoint({
+			'bundle': resolve(__dirname, './entry'),
+			'polyfills': resolve(__dirname, './polyfills'),
+		}),
 		setOutput({
 			path: resolve(cwd, env.dest || 'build'),
 			publicPath: '/',
-			filename: 'bundle.js',
+			filename: '[name].js',
 			chunkFilename: '[name].chunk.[chunkhash:5].js'
 		}),
 
@@ -85,7 +89,6 @@ export default env => {
 				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.css'],
 				alias: {
 					'preact-cli-entrypoint': src('index.js'),
-					'preact-cli-polyfills': resolve(__dirname, 'polyfills.js'),
 					style: src('style'),
 					preact$: resolveDep(isProd ? 'preact/dist/preact.min.js' : 'preact', env.cwd),
 					// preact-compat aliases for supporting React dependencies:
@@ -441,6 +444,7 @@ const production = config => addPlugins([
 		minify: true,
 		stripPrefix: config.cwd,
 		staticFileGlobsIgnorePatterns: [
+			/polyfills\.js$/,
 			/\.map$/,
 			/push-manifest\.json$/
 		]
@@ -465,14 +469,15 @@ const htmlPlugin = config => addPlugins([
 		compile: true,
 		preload: config.preload===true,
 		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
+		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
 		ssr(params) {
 			return config.prerender ? prerender(config, params) : '';
 		}
 	}),
-
+	new HtmlWebpackExcludeAssetsPlugin(),
 	new ScriptExtHtmlWebpackPlugin({
 		// inline: 'bundle.js',
-		defaultAttribute: 'async'
+		defaultAttribute: 'defer'
 	})
 ]);
