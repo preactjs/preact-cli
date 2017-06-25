@@ -53,7 +53,6 @@ export default (env) => {
 
 	return group([
 		setContext(src('.')),
-
 		customConfig({
 			resolve: {
 				modules: [
@@ -63,12 +62,12 @@ export default (env) => {
 				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.css'],
 				alias: {
 					'preact-cli-entrypoint': src('index.js'),
-					'preact-cli-polyfills': resolve(__dirname, './polyfills.js'),
 					style: src('style'),
 					preact$: resolveDep(isProd ? 'preact/dist/preact.min.js' : 'preact', env.cwd),
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
+					'create-react-class': 'preact-compat/lib/create-react-class',
 					'react-addons-css-transition-group': 'preact-css-transition-group'
 				}
 			},

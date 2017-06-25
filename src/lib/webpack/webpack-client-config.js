@@ -12,6 +12,7 @@ import {
 } from '@webpack-blocks/webpack2';
 import devServer from '@webpack-blocks/dev-server2';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
@@ -24,12 +25,15 @@ export default env => {
 	let outputDir = resolve(cwd, env.dest || 'build');
 	return createConfig.vanilla([
 		baseConfig(env),
-		entryPoint(resolve(__dirname, '../entry')),
+		entryPoint({
+			'bundle': resolve(__dirname, './../entry'),
+			'polyfills': resolve(__dirname, './polyfills'),
+		}),
 		setOutput({
 			path: outputDir,
 			publicPath: '/',
-			filename: 'bundle.js',
-			chunkFilename: '[name].chunk.[chunkhash:5].js'
+			filename: '[name].js',
+			chunkFilename: '[name].chunk.[chunkhash:5].js',
 		}),
 
 		// automatic async components :)
@@ -152,6 +156,7 @@ const production = config => addPlugins([
 		minify: true,
 		stripPrefix: config.cwd,
 		staticFileGlobsIgnorePatterns: [
+			/polyfills(\..*)?\.js$/,
 			/\.map$/,
 			/push-manifest\.json$/
 		]
@@ -175,14 +180,15 @@ const htmlPlugin = (config, outputDir) => addPlugins([
 		compile: true,
 		preload: config.preload===true,
 		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
+		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
 		ssr(params) {
 			return config.prerender ? prerender(outputDir, params) : '';
 		}
 	}),
-
+	new HtmlWebpackExcludeAssetsPlugin(),
 	new ScriptExtHtmlWebpackPlugin({
 		// inline: 'bundle.js',
-		defaultAttribute: 'async'
+		defaultAttribute: 'defer'
 	})
 ]);

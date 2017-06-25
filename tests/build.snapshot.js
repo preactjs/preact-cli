@@ -17,9 +17,9 @@ const smallBuildCommons = {
 		'favicon.ico': { size: 15086 },
 		'icon.png': { size: 51484 }
 	},
-	'polyfills.chunk.*.js': { size: 4068 },
+	'polyfills.js': { size: 4580 },
 	'favicon.ico': { size: 15086 },
-	'sw.js': { size: 3378 },
+	'sw.js': { size: 3310 },
 	'manifest.json': { size: 298 },
 	'push-manifest.json': { size: 2 },
 };
@@ -36,18 +36,18 @@ const fullBuildCommons = {
 			'mstile-150x150.png': { size: 9050 }
 		}
 	},
-	'polyfills.chunk.*.js': { size: 4066 },
+	'polyfills.js': { size: 4580 },
 	'push-manifest.json': { size: 303 },
 	'favicon.ico': { size: 15086 },
 	'manifest.json': { size: 426 },
-	'sw.js': { size: 3905 }
+	'sw.js': { size: 3840 }
 };
 
 export const expectedOutputs = normalize({
 	empty: {
 		...smallBuildCommons,
-		'bundle.js': { size: 10760 },
-		'index.html': { size: 534 },
+		'bundle.js': { size: 9780 },
+		'index.html': { size: 630 },
 		'style.css': { size: 130 },
 		'style.css.map': { size: 360 },
 		'ssr-build': {
@@ -58,8 +58,8 @@ export const expectedOutputs = normalize({
 	},
 	simple: {
 		...smallBuildCommons,
-		'bundle.js': { size: 11410 },
-		'index.html': { size: 548 },
+		'bundle.js': { size: 10430 },
+		'index.html': { size: 640 },
 		'style.css': { size: 296},
 		'style.css.map': { size: 621 },
 		'manifest.json': { size: 290 },
@@ -71,10 +71,10 @@ export const expectedOutputs = normalize({
 	},
 	root: {
 		...fullBuildCommons,
-		'bundle.js': { size: 18540 },
+		'bundle.js': { size: 18420 },
 		'route-home.chunk.*.js': { size: 970 },
 		'route-profile.chunk.*.js': { size: 1600 },
-		'index.html': { size: 775 },
+		'index.html': { size: 870 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2246 },
 		'ssr-build': {
@@ -85,10 +85,10 @@ export const expectedOutputs = normalize({
 	},
 	'default': {
 		...fullBuildCommons,
-		'bundle.js': { size: 19390 },
+		'bundle.js': { size: 19270 },
 		'route-home.chunk.*.js': { size: 970 },
 		'route-profile.chunk.*.js': { size: 1610 },
-		'index.html': { size: 775 },
+		'index.html': { size: 870 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2345 },
 		'ssr-build': {
@@ -105,6 +105,7 @@ export const sassPrerendered = `
 		<h1>Header on background</h1>
 		<p>Paragraph on background</p>
 	</div>
-	<script src="/bundle.js" async=""></script>
+	<script src="/bundle.js" defer="defer"></script>
+	{{ ... }}
 </body>
 `;

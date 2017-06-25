@@ -23,13 +23,5 @@ if (typeof app==='function') {
 
 	if (module.hot) module.hot.accept('preact-cli-entrypoint', init);
 
-	if (typeof fetch==='function') {
-		init();
-	}
-	else {
-		require.ensure(['preact-cli-polyfills'], () => {
-			require('preact-cli-polyfills');
-			init();
-		}, 'polyfills');
-	}
+	init();
 }

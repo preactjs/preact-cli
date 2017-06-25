@@ -78,6 +78,7 @@
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^7.0.1",
     "html-looks-like": "^1.0.2",
+    "html-webpack-exclude-assets-plugin": "0.0.5",
     "lodash": "^4.17.4",
     "ncp": "^2.0.0",
     "node-sass": "^4.5.3",
