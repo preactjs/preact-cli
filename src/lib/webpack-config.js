@@ -94,6 +94,7 @@ export default env => {
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
+					'create-react-class': 'preact-compat/lib/create-react-class',
 					'react-addons-css-transition-group': 'preact-css-transition-group'
 				}
 			},
