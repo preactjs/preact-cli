@@ -442,6 +442,7 @@ const production = config => addPlugins([
 	new SWPrecacheWebpackPlugin({
 		filename: 'sw.js',
 		navigateFallback: 'index.html',
+		navigateFallbackWhitelist: [/^(?!\/__).*/],
 		minify: true,
 		stripPrefix: config.cwd,
 		staticFileGlobsIgnorePatterns: [
