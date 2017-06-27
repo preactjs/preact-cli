@@ -3,7 +3,8 @@ import { resolve } from 'path';
 import { create, build } from './lib/cli';
 import lsr from './lib/lsr';
 import { setup, clean } from './lib/output';
-import { normalize, expectedOutputs } from './build.snapshot';
+import expectedOutputs from './build.snapshot';
+import filesMatchSnapshot from './lib/filesMatchSnapshot';
 
 const options = { timeout: 45 * 1000 };
 
@@ -18,7 +19,7 @@ test('preact build - before', async () => {
 
 		let output = await lsr(resolve(app, 'build'));
 
-		t.isEquivalent(normalize(output), expectedOutputs[template]);
+		filesMatchSnapshot(t, output, expectedOutputs[template]);
 	})
 );
 

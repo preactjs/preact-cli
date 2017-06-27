@@ -12,7 +12,7 @@
     "dev": "babel-node src",
     "lint": "eslint src tests",
     "pretest": "npm run -s build",
-    "test": "tape -r babel-register tests/*.test.js",
+    "test": "tape -r babel-register tests/*.test.js | tap-diff",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
     "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
@@ -80,6 +80,7 @@
     "html-looks-like": "^1.0.2",
     "html-webpack-exclude-assets-plugin": "0.0.5",
     "lodash": "^4.17.4",
+    "tap-diff": "^0.1.1",
     "tape": "^4.6.3",
     "uuid": "^3.0.1"
   },

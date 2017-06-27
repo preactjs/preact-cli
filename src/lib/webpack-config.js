@@ -405,6 +405,7 @@ const production = config => addPlugins([
 			comments: false
 		},
 		mangle: true,
+		sourceMap: true,
 		compress: {
 			unsafe_comps: true,
 			properties: true,

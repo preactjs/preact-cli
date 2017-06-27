@@ -4,7 +4,7 @@ module.exports = class PushManifestPlugin {
 			let manifest = {};
 
 			for (let filename in compilation.assets) {
-				if (/route-/.test(filename)) {
+				if (/route-/.test(filename) && !/\.map$/.test(filename)) {
 					let path = filename.replace(/route-/, '/').replace(/\.chunk(\.\w+)?\.js$/, '').replace(/\/home/, '/');
 					manifest[path] = {
 						"style.css": {
