@@ -5,7 +5,8 @@ import htmlLooksLike from 'html-looks-like';
 import { create, build } from './lib/cli';
 import lsr from './lib/lsr';
 import { setup, clean, fromSubject } from './lib/output';
-import { normalize, expectedOutputs, sassPrerendered } from './build.snapshot';
+import expectedOutputs, { sassPrerendered } from './build.snapshot';
+import filesMatchSnapshot from './lib/filesMatchSnapshot';
 
 const options = { timeout: 45 * 1000 };
 
@@ -20,7 +21,7 @@ test('preact build - before', async () => {
 
 		let output = await lsr(resolve(app, 'build'));
 
-		t.isEquivalent(normalize(output), expectedOutputs[template]);
+		filesMatchSnapshot(t, output, expectedOutputs[template]);
 	})
 );
 

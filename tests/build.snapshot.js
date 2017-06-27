@@ -1,25 +1,13 @@
-export const normalize = obj => {
-	let keys = Object.keys(obj);
-
-	if (keys.length === 1 && keys[0] === 'size' && typeof obj.size === 'number') {
-		return { size: Math.round(obj.size / 10) * 10 };
-	}
-
-	return keys.reduce((agg, key) => {
-		let newKey = key.replace(/\.chunk\.\w+\./, '.chunk.*.');
-		agg[newKey] = normalize(obj[key]);
-		return agg;
-	}, {});
-};
 
 const smallBuildCommons = {
 	assets: {
 		'favicon.ico': { size: 15086 },
 		'icon.png': { size: 51484 }
 	},
-	'polyfills.js': { size: 4580 },
+	'polyfills.js': { size: 4620 },
+	'polyfills.js.map': { size: 31760 },
 	'favicon.ico': { size: 15086 },
-	'sw.js': { size: 3310 },
+	'sw.js': { size: 3330 },
 	'manifest.json': { size: 298 },
 	'push-manifest.json': { size: 2 },
 };
@@ -36,68 +24,82 @@ const fullBuildCommons = {
 			'mstile-150x150.png': { size: 9050 }
 		}
 	},
-	'polyfills.js': { size: 4580 },
+	'polyfills.js': { size: 4620 },
 	'push-manifest.json': { size: 303 },
 	'favicon.ico': { size: 15086 },
 	'manifest.json': { size: 426 },
-	'sw.js': { size: 3840 }
+	'sw.js': { size: 3850 }
 };
 
-export const expectedOutputs = normalize({
+export default {
 	empty: {
 		...smallBuildCommons,
-		'bundle.js': { size: 9780 },
+		'bundle.js': { size: 9810 },
+		'bundle.js.map': { size: 44660 },
 		'index.html': { size: 630 },
-		'style.css': { size: 130 },
-		'style.css.map': { size: 360 },
+		'style.css': { size: 131 },
+		'style.css.map': { size: 359 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 9450 },
+			'ssr-bundle.js.map': { size: 42461 },
 			'style.css': { size: 130 },
 			'style.css.map': { size: 360 },
 		}
 	},
 	simple: {
 		...smallBuildCommons,
-		'bundle.js': { size: 10430 },
+		'bundle.js': { size: 10460 },
+		'bundle.js.map': { size: 48670 },
 		'index.html': { size: 640 },
 		'style.css': { size: 296},
 		'style.css.map': { size: 621 },
 		'manifest.json': { size: 290 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 10100 },
+			'ssr-bundle.js.map': { size: 46466 },
 			'style.css': { size: 296 },
 			'style.css.map': { size: 621 },
 		}
 	},
 	root: {
 		...fullBuildCommons,
-		'bundle.js': { size: 18420 },
-		'route-home.chunk.*.js': { size: 970 },
-		'route-profile.chunk.*.js': { size: 1600 },
+		'bundle.js': { size: 18460 },
+		'bundle.js.map': { size: 101500 },
+		'route-home.chunk.*.js': { size: 1020 },
+		'route-home.chunk.*.js.map': { size: 4980 },
+		'route-profile.chunk.*.js': { size: 1660 },
+		'route-profile.chunk.*.js.map': { size: 8610 },
+		'polyfills.js.map': { size: 31750 },
 		'index.html': { size: 870 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2246 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 18960 },
+			'ssr-bundle.js.map': { size: 97442 },
 			'style.css': { size: 1065 },
 			'style.css.map': { size: 2250 },
 		}
 	},
 	'default': {
 		...fullBuildCommons,
-		'bundle.js': { size: 19270 },
-		'route-home.chunk.*.js': { size: 970 },
-		'route-profile.chunk.*.js': { size: 1610 },
-		'index.html': { size: 870 },
+		'bundle.js': { size: 19300 },
+		'bundle.js.map': { size: 105590 },
+		'route-home.chunk.*.js': { size: 1000 },
+		'route-home.chunk.*.js.map': { size: 4980 },
+		'route-profile.chunk.*.js': { size: 1650 },
+		'route-profile.chunk.*.js.map': { size: 8610 },
+		'polyfills.js.map': { size: 31800 },
+		'index.html': { size: 850 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2345 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 19820 },
+			'ssr-bundle.js.map': { size: 101541 },
 			'style.css': { size: 1065 },
 			'style.css.map': { size: 2345 },
 		}
 	}
-});
+};
 
 export const sassPrerendered = `
 <body>
@@ -109,3 +111,4 @@ export const sassPrerendered = `
 	{{ ... }}
 </body>
 `;
+
