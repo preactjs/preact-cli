@@ -1,19 +1,3 @@
-const byteDifferenceThreshold = 50;
-
-export const normalize = obj => {
-	let keys = Object.keys(obj);
-
-	if (keys.length === 1 && keys[0] === 'size' && typeof obj.size === 'number') {
-		return { size: Math.round(obj.size / byteDifferenceThreshold) * byteDifferenceThreshold };
-	}
-
-	return keys.reduce((agg, key) => {
-		let newKey = key.replace(/\.chunk\.\w+\./, '.chunk.*.');
-		agg[newKey] = normalize(obj[key]);
-		return agg;
-	}, {});
-};
-
 const smallBuildCommons = {
 	assets: {
 		'favicon.ico': { size: 15086 },
@@ -46,7 +30,7 @@ const fullBuildCommons = {
 	'sw.js': { size: 3850 }
 };
 
-export const expectedOutputs = normalize({
+export default {
 	empty: {
 		...smallBuildCommons,
 		'bundle.js': { size: 9810 },
@@ -89,4 +73,4 @@ export const expectedOutputs = normalize({
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2345 },
 	}
-});
+};
