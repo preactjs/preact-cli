@@ -407,12 +407,10 @@ const production = config => addPlugins([
 		mangle: true,
 		sourceMap: true,
 		compress: {
-			unsafe_comps: true,
 			properties: true,
 			keep_fargs: false,
 			pure_getters: true,
 			collapse_vars: true,
-			unsafe: true,
 			warnings: false,
 			screw_ie8: true,
 			sequences: true,
