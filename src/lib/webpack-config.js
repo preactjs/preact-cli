@@ -409,6 +409,7 @@ const production = config => addPlugins([
 			comments: false
 		},
 		mangle: true,
+		sourceMap: true,
 		compress: {
 			unsafe_comps: true,
 			properties: true,
@@ -446,6 +447,7 @@ const production = config => addPlugins([
 	new SWPrecacheWebpackPlugin({
 		filename: 'sw.js',
 		navigateFallback: 'index.html',
+		navigateFallbackWhitelist: [/^(?!\/__).*/],
 		minify: true,
 		stripPrefix: config.cwd,
 		staticFileGlobsIgnorePatterns: [
