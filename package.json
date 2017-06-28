@@ -80,6 +80,7 @@
     "html-looks-like": "^1.0.2",
     "html-webpack-exclude-assets-plugin": "0.0.5",
     "lodash": "^4.17.4",
+    "ncp": "^2.0.0",
     "tap-diff": "^0.1.1",
     "tape": "^4.6.3",
     "uuid": "^3.0.1"

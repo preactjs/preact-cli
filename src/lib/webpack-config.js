@@ -25,7 +25,6 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
 import requireRelative from 'require-relative';
-import createBabelConfig from './babel-config';
 import prerender from './prerender';
 import PushManifestPlugin from './push-manifest';
 
@@ -117,7 +116,12 @@ export default env => {
 						enforce: 'pre',
 						test: /\.jsx?$/,
 						loader: 'babel-loader',
-						options: createBabelConfig(env, { browsers })
+						options: {
+							babelrc: true,
+							presets: [
+								[resolve(__dirname, './babel-config'), { browsers }]
+							]
+						}
 					}
 				]
 			}

@@ -25,7 +25,7 @@ export default (watch=false, config, onprogress) => new Promise( (resolve, rejec
 			if (first) {
 				first = false;
 				let devServer = config.devServer;
-				let serverAddr = `${config.https?'https':'http'}://${process.env.HOST || devServer.host || 'localhost'}:${process.env.PORT || devServer.port || 8080}`;
+				let serverAddr = `${devServer.https?'https':'http'}://${process.env.HOST || devServer.host || 'localhost'}:${process.env.PORT || devServer.port || 8080}`;
 				process.stdout.write(`  \u001b[32m> Development server started at ${serverAddr}\u001b[39m\n`);
 			}
 			if (onprogress) onprogress(stats);

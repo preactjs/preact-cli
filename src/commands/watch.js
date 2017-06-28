@@ -1,5 +1,6 @@
 import asyncCommand from '../lib/async-command';
 import webpackConfig from '../lib/webpack-config';
+import transformConfig from '../lib/transform-config';
 import getSslCert from '../lib/ssl-cert';
 import runWebpack, { showStats } from '../lib/run-webpack';
 
@@ -34,6 +35,10 @@ export default asyncCommand({
 		},
 		template: {
 			description: 'HTML template used by webpack'
+		},
+		config: {
+			description: 'Path to custom preact.config.js',
+			alias: 'c'
 		}
 	},
 
@@ -50,6 +55,7 @@ export default asyncCommand({
 		}
 
 		let config = webpackConfig(argv);
+		await transformConfig(argv, config);
 
 		let stats = await runWebpack(true, config, showStats);
 		showStats(stats);
