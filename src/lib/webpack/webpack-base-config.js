@@ -309,6 +309,8 @@ const production = () => addPlugins([
 			]
 		}
 	}),
+
+	new webpack.optimize.ModuleConcatenationPlugin()
 ]);
 
 export function helpers(env) {
