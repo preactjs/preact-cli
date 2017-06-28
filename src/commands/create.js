@@ -7,6 +7,7 @@ import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
 import install from '../lib/install-dependencies';
+import which from 'which';
 
 const TEMPLATES = {
 	default: 'examples/full',
@@ -147,9 +148,11 @@ export default asyncCommand({
 			]);
 
 			spinner.succeed('Done!\n');
+
+			await initializeVersionControl(target);
 		}
 
-		return `
+		return trimLeft(`
 			To get started, cd into the new directory:
 			  \u001b[32mcd ${path.relative(process.cwd(), target)}\u001b[39m
 
@@ -161,6 +164,36 @@ export default asyncCommand({
 
 			To start a production HTTP/2 server:
 			  \u001b[32mnpm run serve\u001b[39m
-		`.trim().replace(/^\t+/gm, '') + '\n';
+		`) + '\n';
 	}
 });
+
+const trimLeft = (string) => string.trim().replace(/^\t+/gm, '');
+
+const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
+
+// Initializes the folder using `git init` and a proper `.gitignore` file
+// if `git` is present in the $PATH.
+async function initializeVersionControl(target) {
+	let git;
+	try {
+		git = await promisify(which)('git');
+	} catch (e) {}
+	if (git) {
+		const gitignore = trimLeft(`
+		node_modules
+		/build
+		/*.log
+		`) + '\n';
+		const gitignorePath = path.resolve(target, '.gitignore');
+		await fs.writeFile(gitignorePath, gitignore);
+
+		const cwd = target;
+
+		await spawn('git', ['init'], { cwd });
+		await spawn('git', ['add', '-A'], { cwd });
+
+		const gitUser = 'Preact CLI<developit@users.noreply.github.com>';
+		await spawn('git', ['commit', '--author', gitUser, '-m', 'initial commit from Preact CLI'], { cwd });
+	}
+}

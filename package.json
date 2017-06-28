@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "main": "lib/index.js",
   "bin": {
@@ -12,7 +12,7 @@
     "dev": "babel-node src",
     "lint": "eslint src tests",
     "pretest": "npm run -s build",
-    "test": "tape -r babel-register tests/*.test.js",
+    "test": "tape -r babel-register tests/*.test.js | tap-diff",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
     "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
@@ -78,7 +78,10 @@
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^7.0.1",
     "html-looks-like": "^1.0.2",
+    "html-webpack-exclude-assets-plugin": "0.0.5",
     "lodash": "^4.17.4",
+    "ncp": "^2.0.0",
+    "tap-diff": "^0.1.1",
     "tape": "^4.6.3",
     "uuid": "^3.0.1"
   },
@@ -127,6 +130,7 @@
     "promise-polyfill": "^6.0.2",
     "raw-loader": "^0.5.1",
     "recursive-copy": "^2.0.6",
+    "require-relative": "^0.8.7",
     "rimraf": "^2.6.1",
     "script-ext-html-webpack-plugin": "^1.8.0",
     "simplehttp2server": "^2.0.0",

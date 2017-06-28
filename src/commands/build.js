@@ -3,6 +3,7 @@ import promisify from 'es6-promisify';
 import rimraf from 'rimraf';
 import asyncCommand from '../lib/async-command';
 import webpackConfig from '../lib/webpack-config';
+import transformConfig from '../lib/transform-config';
 import runWebpack, { showStats, writeJsonStats } from '../lib/run-webpack';
 
 export default asyncCommand({
@@ -38,11 +39,16 @@ export default asyncCommand({
 		},
 		template: {
 			description: 'HTML template used by webpack'
+		},
+		config: {
+			description: 'Path to custom CLI config.',
+			alias: 'c'
 		}
 	},
 
 	async handler(argv) {
 		let config = webpackConfig(argv);
+		await transformConfig(argv, config);
 
 		if (argv.clean) {
 			let dest = resolve(argv.cwd || process.cwd(), argv.dest || 'build');

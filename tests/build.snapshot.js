@@ -1,25 +1,12 @@
-export const normalize = obj => {
-	let keys = Object.keys(obj);
-
-	if (keys.length === 1 && keys[0] === 'size' && typeof keys[0] === 'number') {
-		return { size: Math.round(obj.size / 10) * 10 };
-	}
-
-	return keys.reduce((agg, key) => {
-		let newKey = key.replace(/\.chunk\.\w+\./, '.chunk.*.');
-		agg[newKey] = normalize(obj[key]);
-		return agg;
-	}, {});
-};
-
 const smallBuildCommons = {
 	assets: {
 		'favicon.ico': { size: 15086 },
 		'icon.png': { size: 51484 }
 	},
-	'polyfills.chunk.*.js': { size: 4068 },
+	'polyfills.js': { size: 4620 },
+	'polyfills.js.map': { size: 31760 },
 	'favicon.ico': { size: 15086 },
-	'sw.js': { size: 3378 },
+	'sw.js': { size: 3330 },
 	'manifest.json': { size: 298 },
 	'push-manifest.json': { size: 2 },
 };
@@ -36,44 +23,69 @@ const fullBuildCommons = {
 			'mstile-150x150.png': { size: 9050 }
 		}
 	},
-	'polyfills.chunk.*.js': { size: 4066 },
+	'polyfills.js': { size: 4620 },
 	'push-manifest.json': { size: 303 },
 	'favicon.ico': { size: 15086 },
 	'manifest.json': { size: 426 },
-	'sw.js': { size: 3905 }
+	'sw.js': { size: 3850 }
 };
 
-export const expectedOutputs = normalize({
+export default {
 	empty: {
 		...smallBuildCommons,
-		'bundle.js': { size: 10694 },
-		'index.html': { size: 534 },
+		'bundle.js': { size: 9810 },
+		'bundle.js.map': { size: 44660 },
+		'index.html': { size: 630 },
 		'style.css': { size: 131 },
 		'style.css.map': { size: 359 },
 	},
 	simple: {
 		...smallBuildCommons,
-		'bundle.js': { size: 11336 },
-		'index.html': { size: 548 },
+		'bundle.js': { size: 10460 },
+		'bundle.js.map': { size: 48670 },
+		'index.html': { size: 640 },
 		'style.css': { size: 296},
 		'style.css.map': { size: 621 },
 	},
 	root: {
 		...fullBuildCommons,
-		'bundle.js': { size: 18739 },
-		'route-home.chunk.*.js': { size: 959 },
-		'route-profile.chunk.*.js': { size: 1595 },
-		'index.html': { size: 775 },
+		'bundle.js': { size: 18460 },
+		'bundle.js.map': { size: 101500 },
+		'route-home.chunk.*.js': { size: 1020 },
+		'route-home.chunk.*.js.map': { size: 4283 },
+		'route-profile.chunk.*.js': { size: 1660 },
+		'route-profile.chunk.*.js.map': { size: 7504 },
+		'polyfills.js.map': { size: 31750 },
+		'index.html': { size: 870 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2246 },
 	},
 	'default': {
 		...fullBuildCommons,
-		'bundle.js': { size: 19661 },
-		'route-home.chunk.*.js': { size: 961 },
-		'route-profile.chunk.*.js': { size: 1597 },
-		'index.html': { size: 775 },
+		'bundle.js': { size: 19300 },
+		'bundle.js.map': { size: 105590 },
+		'route-home.chunk.*.js': { size: 1000 },
+		'route-home.chunk.*.js.map': { size: 4285 },
+		'route-profile.chunk.*.js': { size: 1650 },
+		'route-profile.chunk.*.js.map': { size: 7507 },
+		'polyfills.js.map': { size: 31800 },
+		'index.html': { size: 850 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2345 },
 	}
-});
+};
+
+export const withCustomTemplate = `
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Preact App</title>
+		<link rel="shortcut icon" href="/favicon.ico"></link>
+	</head>
+	<body>
+		<h1>This is an app with custom template</h1>
+		<script src="/bundle.js" defer="defer"></script>
+	</body>
+</html>
+`;
