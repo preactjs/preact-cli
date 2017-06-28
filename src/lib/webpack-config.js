@@ -405,7 +405,7 @@ const production = config => addPlugins([
 	}),
 
 	// Webpack 3 Scope Hoisting
-  new webpack.optimize.ModuleConcatenationPlugin(),
+	new webpack.optimize.ModuleConcatenationPlugin(),
 
 	new webpack.optimize.UglifyJsPlugin({
 		output: {
