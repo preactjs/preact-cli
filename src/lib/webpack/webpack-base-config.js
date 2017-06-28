@@ -14,7 +14,6 @@ import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
 import requireRelative from 'require-relative';
-import createBabelConfig from '../babel-config';
 
 export function exists(file) {
 	try {
@@ -87,7 +86,12 @@ export default (env) => {
 						enforce: 'pre',
 						test: /\.jsx?$/,
 						loader: 'babel-loader',
-						options: createBabelConfig(env, { browsers })
+						options: {
+							babelrc: true,
+							presets: [
+								[resolve(__dirname, '../babel-config'), { browsers }]
+							]
+						}
 					}
 				]
 			}
@@ -275,12 +279,10 @@ const production = () => addPlugins([
 		mangle: true,
 		sourceMap: true,
 		compress: {
-			unsafe_comps: true,
 			properties: true,
 			keep_fargs: false,
 			pure_getters: true,
 			collapse_vars: true,
-			unsafe: true,
 			warnings: false,
 			screw_ie8: true,
 			sequences: true,

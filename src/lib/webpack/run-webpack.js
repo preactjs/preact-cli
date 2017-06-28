@@ -5,25 +5,28 @@ import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
 import clientConfig from './webpack-client-config';
 import serverConfig from './webpack-server-config';
+import transformConfig from './transform-config';
 
-export default (watch=false, env, onprogress) => {
+export default async (watch=false, env, onprogress) => {
 	if (watch) {
-		return devBuild(env, onprogress);
+		return await devBuild(env, onprogress);
 	}
 
-	return prodBuild(env);
+	return await prodBuild(env);
 };
 
-const devBuild = (env, onprogress) => {
+const devBuild = async (env, onprogress) => {
 	let config = clientConfig(env);
+	await transformConfig(env, config);
+
 	let compiler = webpack(config);
-	return new Promise((resolve, reject) => {
+	return await new Promise((resolve, reject) => {
 		let first = true;
 		compiler.plugin('done', stats => {
 			if (first) {
 				first = false;
 				let devServer = config.devServer;
-				let serverAddr = `${config.https?'https':'http'}://${process.env.HOST || devServer.host || 'localhost'}:${process.env.PORT || devServer.port || 8080}`;
+				let serverAddr = `${devServer.https?'https':'http'}://${process.env.HOST || devServer.host || 'localhost'}:${process.env.PORT || devServer.port || 8080}`;
 				process.stdout.write(`  \u001b[32m> Development server started at ${serverAddr}\u001b[39m\n`);
 			}
 			if (onprogress) onprogress(stats);
@@ -35,12 +38,20 @@ const devBuild = (env, onprogress) => {
 	});
 };
 
-const prodBuild = (env) => {
-	let compiler = env.prerender
-		? webpack([clientConfig(env), serverConfig(env)])
-		: webpack([clientConfig(env)]);
+const prodBuild = async (env) => {
+	let compiler, client = clientConfig(env);
 
-	return new Promise((resolve, reject) => {
+	await transformConfig(env, client);
+
+	if (env.prerender) {
+		let ssr = serverConfig(env);
+		await transformConfig(env, ssr);
+		compiler = webpack([client, ssr]);
+	} else {
+		compiler = webpack(client);
+	}
+
+	return await new Promise((resolve, reject) => {
 		compiler.run((err, stats) => {
 			if (err || stats.hasErrors()) {
 				reject(err || stats.toJson().errors.join('\n'));

@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "main": "lib/index.js",
   "bin": {
@@ -73,6 +73,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "chrome-launcher": "^0.1.1",
     "chrome-remote-interface": "^0.23.2",
     "eslint": "^3.19.0",
@@ -143,6 +144,7 @@
     "webpack": "^2.3.3",
     "webpack-dev-server": "^2.4.5",
     "webpack-plugin-replace": "^1.1.1",
+    "which": "^1.2.14",
     "yargs": "^8.0.1"
   }
 }

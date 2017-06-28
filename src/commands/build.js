@@ -37,6 +37,10 @@ export default asyncCommand({
 		},
 		template: {
 			description: 'HTML template used by webpack'
+		},
+		config: {
+			description: 'Path to custom CLI config.',
+			alias: 'c'
 		}
 	},
 

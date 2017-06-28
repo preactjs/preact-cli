@@ -66,16 +66,16 @@ export default {
 		'bundle.js': { size: 18460 },
 		'bundle.js.map': { size: 101500 },
 		'route-home.chunk.*.js': { size: 1020 },
-		'route-home.chunk.*.js.map': { size: 4980 },
+		'route-home.chunk.*.js.map': { size: 4283 },
 		'route-profile.chunk.*.js': { size: 1660 },
-		'route-profile.chunk.*.js.map': { size: 8610 },
+		'route-profile.chunk.*.js.map': { size: 7504 },
 		'polyfills.js.map': { size: 31750 },
 		'index.html': { size: 870 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2246 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 18960 },
-			'ssr-bundle.js.map': { size: 97442 },
+			'ssr-bundle.js.map': { size: 91773 },
 			'style.css': { size: 1065 },
 			'style.css.map': { size: 2250 },
 		}
@@ -85,16 +85,16 @@ export default {
 		'bundle.js': { size: 19300 },
 		'bundle.js.map': { size: 105590 },
 		'route-home.chunk.*.js': { size: 1000 },
-		'route-home.chunk.*.js.map': { size: 4980 },
+		'route-home.chunk.*.js.map': { size: 4285 },
 		'route-profile.chunk.*.js': { size: 1650 },
-		'route-profile.chunk.*.js.map': { size: 8610 },
+		'route-profile.chunk.*.js.map': { size: 7507 },
 		'polyfills.js.map': { size: 31800 },
 		'index.html': { size: 850 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2345 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 19820 },
-			'ssr-bundle.js.map': { size: 101541 },
+			'ssr-bundle.js.map': { size: 95581 },
 			'style.css': { size: 1065 },
 			'style.css.map': { size: 2345 },
 		}
@@ -112,3 +112,18 @@ export const sassPrerendered = `
 </body>
 `;
 
+export const withCustomTemplate = `
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Preact App</title>
+		<link rel="shortcut icon" href="/favicon.ico"></link>
+	</head>
+	<body>
+		<h1>Guess what</h1>
+		<h2>This is an app with custom template</h2>
+		<script src="/bundle.js" defer="defer"></script>
+	</body>
+</html>
+`;
