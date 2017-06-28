@@ -44,9 +44,9 @@ const prodBuild = async (env) => {
 	await transformConfig(env, client);
 
 	if (env.prerender) {
-		let ssr = serverConfig(env);
-		await transformConfig(env, ssr);
-		compiler = webpack([client, ssr]);
+		let ssrConfig = serverConfig(env);
+		await transformConfig(env, ssrConfig, true);
+		compiler = webpack([client, ssrConfig]);
 	} else {
 		compiler = webpack(client);
 	}

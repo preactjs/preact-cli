@@ -1,10 +1,9 @@
 import path from 'path';
 
 export default (config, env, helpers) => {
-	let htmlWebpackPluginWrapper = helpers.getPluginsByName(config, 'HtmlWebpackPlugin')[0];
-
-	if (htmlWebpackPluginWrapper && htmlWebpackPluginWrapper.plugin) {
-		let { options } = htmlWebpackPluginWrapper.plugin;
-		options.template = `!!ejs-loader!${path.resolve(__dirname, './template.html')}`;
+	if (env.ssr) {
+		return;
 	}
+	let { plugin: htmlWebpackPlugin } = helpers.getPluginsByName(config, 'HtmlWebpackPlugin')[0];
+	htmlWebpackPlugin.options.template = `!!ejs-loader!${path.resolve(__dirname, './template.html')}`;
 };
