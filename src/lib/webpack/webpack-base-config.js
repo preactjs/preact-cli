@@ -14,6 +14,7 @@ import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
 import requireRelative from 'require-relative';
+import createBabelConfig from '../babel-config';
 
 export function exists(file) {
 	try {
@@ -48,6 +49,7 @@ export default (env) => {
 	env.manifest = readJson(src('manifest.json')) || {};
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
+	let babelrc = readJson(resolve(cwd, '.babelrc')) || {};
 	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
 	return group([
@@ -86,12 +88,10 @@ export default (env) => {
 						enforce: 'pre',
 						test: /\.jsx?$/,
 						loader: 'babel-loader',
-						options: {
-							babelrc: true,
-							presets: [
-								[resolve(__dirname, '../babel-config'), { browsers }]
-							]
-						}
+						options: Object.assign(
+							createBabelConfig(env, { browsers }),
+							babelrc // intentionall overwrite our settings
+						)
 					}
 				]
 			}
