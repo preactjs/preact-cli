@@ -176,15 +176,15 @@ const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
 async function initializeVersionControl(target) {
-  let git;
-  try {
-    git = await promisify(which)('git');
-  } catch (e) {}
+	let git;
+	try {
+		git = await promisify(which)('git');
+	} catch (e) {}
 	if (git) {
 		const gitignore = trimLeft(`
 		node_modules
 		/build
-    /*.log
+		/*.log
 		`) + '\n';
 		const gitignorePath = path.resolve(target, '.gitignore');
 		await fs.writeFile(gitignorePath, gitignore);
