@@ -2,13 +2,12 @@ import crossSpawn from 'cross-spawn-promise';
 import { spawn as spawnChild } from 'child_process';
 import { resolve } from 'path';
 import mkdirp from 'mkdirp';
-import uuid from 'uuid/v4';
-import { outputPath } from './output';
+import { createWorkDir } from './output';
 
 const cliPath = resolve(__dirname, '../../lib/index.js');
 
 export const create = async (appName, template) => {
-	let workDir = resolve(outputPath, uuid());
+	let workDir = createWorkDir();
 	await mkdirp(workDir);
 	await run(['create', appName, '--no-install', template ? `--type=${template}` : undefined], workDir);
 	return resolve(workDir, appName);

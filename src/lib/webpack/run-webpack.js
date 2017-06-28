@@ -1,25 +1,23 @@
-import { resolve } from 'path';
+import path from 'path';
 import fs from 'fs.promised';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
+import clientConfig from './webpack-client-config';
+import serverConfig from './webpack-server-config';
 
-export default (watch=false, config, onprogress) => new Promise( (resolve, reject) => {
-	let compiler = webpack(config);
-
-	let done = (err, stats) => {
-		if (err || stats.hasErrors()) {
-			reject(err || stats.toJson().errors.join('\n'));
-		}
-		else {
-			// Timeout for plugins that work on `after-emit` event of webpack
-			setTimeout(()=>{
-				resolve(stats);
-			},20);
-		}
-	};
-
+export default (watch=false, env, onprogress) => {
 	if (watch) {
+		return devBuild(env, onprogress);
+	}
+
+	return prodBuild(env);
+};
+
+const devBuild = (env, onprogress) => {
+	let config = clientConfig(env);
+	let compiler = webpack(config);
+	return new Promise((resolve, reject) => {
 		let first = true;
 		compiler.plugin('done', stats => {
 			if (first) {
@@ -34,11 +32,26 @@ export default (watch=false, config, onprogress) => new Promise( (resolve, rejec
 
 		let server = new WebpackDevServer(compiler, config.devServer);
 		server.listen(config.devServer.port);
-	}
-	else {
-		compiler.run(done);
-	}
-});
+	});
+};
+
+const prodBuild = (env) => {
+	let compiler = env.prerender
+		? webpack([clientConfig(env), serverConfig(env)])
+		: webpack([clientConfig(env)]);
+
+	return new Promise((resolve, reject) => {
+		compiler.run((err, stats) => {
+			if (err || stats.hasErrors()) {
+				reject(err || stats.toJson().errors.join('\n'));
+			}
+			else {
+				// Timeout for plugins that work on `after-emit` event of webpack
+				setTimeout(()=>	resolve(stats), 20);
+			}
+		});
+	});
+};
 
 export function showStats(stats) {
 	let info = stats.toJson();
@@ -59,12 +72,14 @@ export function showStats(stats) {
 }
 
 export function writeJsonStats(stats) {
-	const outputPath = resolve(process.cwd(), 'stats.json');
-	const jsonStats = stats.toJson({
+	let outputPath = path.resolve(process.cwd(), 'stats.json');
+	let jsonStats = stats.toJson({
 		json: true,
 		chunkModules: true,
 		source: false,
 	});
+
+	jsonStats = (jsonStats.children && jsonStats.children[0]) || jsonStats;
 
 	jsonStats.modules.forEach(normalizeModule);
 	jsonStats.chunks.forEach(c => c.modules.forEach(normalizeModule));

@@ -80,6 +80,9 @@
     "html-looks-like": "^1.0.2",
     "html-webpack-exclude-assets-plugin": "0.0.5",
     "lodash": "^4.17.4",
+    "ncp": "^2.0.0",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
     "tap-diff": "^0.1.1",
     "tape": "^4.6.3",
     "uuid": "^3.0.1"
@@ -133,7 +136,7 @@
     "rimraf": "^2.6.1",
     "script-ext-html-webpack-plugin": "^1.8.0",
     "simplehttp2server": "^2.0.0",
-    "sw-precache-webpack-plugin": "^0.11.0",
+    "sw-precache-webpack-plugin": "^0.11.2",
     "tmp": "0.0.31",
     "unfetch": "^2.1.2",
     "url-loader": "^0.5.8",
