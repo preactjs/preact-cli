@@ -17,7 +17,7 @@ export default async function (env, config, ssr = false) {
 	}
 
 	require('babel-register')({
-		presets: ['env']
+		presets: [require.resolve('babel-preset-env')]
 	});
 	const m = require(transformerPath);
 	const transformer = m && m.default || m;
