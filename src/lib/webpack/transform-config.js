@@ -4,7 +4,7 @@ import {
 	webpack,
 } from '@webpack-blocks/webpack2';
 
-export default async function (env, config) {
+export default async function (env, config, ssr = false) {
 	let transformerPath = path.resolve(env.cwd, env.config || './preact.config.js');
 
 	try {
@@ -22,7 +22,7 @@ export default async function (env, config) {
 	const m = require(transformerPath);
 	const transformer = m && m.default || m;
 	try {
-		await transformer(config, Object.assign({}, env), new WebpackConfigHelpers(env.cwd));
+		await transformer(config, Object.assign({}, env, { ssr }), new WebpackConfigHelpers(env.cwd));
 	} catch (err) {
 		throw new Error(`Error at ${transformerPath}: \n` + err);
 	}

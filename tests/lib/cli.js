@@ -13,8 +13,8 @@ export const create = async (appName, template) => {
 	return resolve(workDir, appName);
 };
 
-export const build = async (appDir, args = []) => {
-	await run(['build', ...args], appDir);
+export const build = async (appDir) => {
+	await run(['build'], appDir);
 };
 
 export const serve = async (appDir, port) => {

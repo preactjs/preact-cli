@@ -1,3 +1,4 @@
+
 const smallBuildCommons = {
 	assets: {
 		'favicon.ico': { size: 15086 },
@@ -38,6 +39,12 @@ export default {
 		'index.html': { size: 630 },
 		'style.css': { size: 131 },
 		'style.css.map': { size: 359 },
+		'ssr-build': {
+			'ssr-bundle.js': { size: 9450 },
+			'ssr-bundle.js.map': { size: 42461 },
+			'style.css': { size: 130 },
+			'style.css.map': { size: 360 },
+		}
 	},
 	simple: {
 		...smallBuildCommons,
@@ -46,6 +53,13 @@ export default {
 		'index.html': { size: 640 },
 		'style.css': { size: 296},
 		'style.css.map': { size: 621 },
+		'manifest.json': { size: 290 },
+		'ssr-build': {
+			'ssr-bundle.js': { size: 10100 },
+			'ssr-bundle.js.map': { size: 46466 },
+			'style.css': { size: 296 },
+			'style.css.map': { size: 621 },
+		}
 	},
 	root: {
 		...fullBuildCommons,
@@ -59,6 +73,12 @@ export default {
 		'index.html': { size: 870 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2246 },
+		'ssr-build': {
+			'ssr-bundle.js': { size: 18960 },
+			'ssr-bundle.js.map': { size: 91773 },
+			'style.css': { size: 1065 },
+			'style.css.map': { size: 2250 },
+		}
 	},
 	'default': {
 		...fullBuildCommons,
@@ -72,8 +92,25 @@ export default {
 		'index.html': { size: 850 },
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2345 },
+		'ssr-build': {
+			'ssr-bundle.js': { size: 19820 },
+			'ssr-bundle.js.map': { size: 95581 },
+			'style.css': { size: 1065 },
+			'style.css.map': { size: 2345 },
+		}
 	}
 };
+
+export const sassPrerendered = `
+<body>
+	<div class="background__21gOq">
+		<h1>Header on background</h1>
+		<p>Paragraph on background</p>
+	</div>
+	<script src="/bundle.js" defer="defer"></script>
+	{{ ... }}
+</body>
+`;
 
 export const withCustomTemplate = `
 <!DOCTYPE html>
@@ -84,7 +121,8 @@ export const withCustomTemplate = `
 		<link rel="shortcut icon" href="/favicon.ico"></link>
 	</head>
 	<body>
-		<h1>This is an app with custom template</h1>
+		<h1>Guess what</h1>
+		<h2>This is an app with custom template</h2>
 		<script src="/bundle.js" defer="defer"></script>
 	</body>
 </html>

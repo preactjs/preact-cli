@@ -5,7 +5,7 @@ import htmlLooksLike from 'html-looks-like';
 import { create, build } from './lib/cli';
 import lsr from './lib/lsr';
 import { setup, clean, fromSubject } from './lib/output';
-import expectedOutputs, { withCustomTemplate } from './build.snapshot';
+import expectedOutputs, { sassPrerendered, withCustomTemplate } from './build.snapshot';
 import filesMatchSnapshot from './lib/filesMatchSnapshot';
 
 const options = { timeout: 45 * 1000 };
@@ -25,13 +25,22 @@ test('preact build - before', async () => {
 	})
 );
 
+test(`preact build - should prerender using webpack.`, options, async t => {
+	let app = await fromSubject('sass');
+	await build(app);
+
+	let output = await fs.readFile(resolve(app, './build/index.html'), 'utf-8');
+	let html = output.match(/<body>.*<\/body>/)[0];
+	htmlLooksLike(html, sassPrerendered);
+	t.pass();
+});
+
 test(`preact build - should use custom .babelrc.`, options, async t => {
 	// app with custom .babelrc enabling async functions
 	let app = await fromSubject('custom-babelrc');
 
 	// UglifyJS throws error when generator is encountered
-	// TODO: Remove '--no-prederender' once #71 is merged - babel-register problem
-	await build(app, ['--no-prerender']);
+	await build(app);
 
 	t.pass();
 });
@@ -40,8 +49,7 @@ test(`preact build - should use custom preact.config.js.`, options, async t => {
 	// app with custom template set via preact.config.js
 	let app = await fromSubject('custom-webpack');
 
-	// TODO: Remove '--no-prederender' once #71 is merged - babel-register problem
-	await build(app, ['--no-prerender']);
+	await build(app);
 
 	let html = await fs.readFile(resolve(app, './build/index.html'), 'utf-8');
 	htmlLooksLike(html, withCustomTemplate);

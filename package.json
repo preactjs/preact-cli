@@ -73,6 +73,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "chrome-launcher": "^0.1.1",
     "chrome-remote-interface": "^0.23.2",
     "eslint": "^3.19.0",
@@ -81,6 +82,8 @@
     "html-webpack-exclude-assets-plugin": "0.0.5",
     "lodash": "^4.17.4",
     "ncp": "^2.0.0",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
     "tap-diff": "^0.1.1",
     "tape": "^4.6.3",
     "uuid": "^3.0.1"
@@ -134,7 +137,7 @@
     "rimraf": "^2.6.1",
     "script-ext-html-webpack-plugin": "^1.8.0",
     "simplehttp2server": "^2.0.0",
-    "sw-precache-webpack-plugin": "^0.11.0",
+    "sw-precache-webpack-plugin": "^0.11.2",
     "tmp": "0.0.31",
     "unfetch": "^3.0.0",
     "url-loader": "^0.5.8",
