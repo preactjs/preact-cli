@@ -48,6 +48,11 @@ export default asyncCommand({
 			description: 'Pre-install SASS/SCSS support',
 			type: 'boolean',
 			default: false
+		},
+		install: {
+			description: 'Install dependencies',
+			type: 'boolean',
+			default: true
 		}
 	},
 
@@ -111,40 +116,42 @@ export default asyncCommand({
 
 		await fs.writeFile(path.resolve(target, 'package.json'), JSON.stringify(pkg, null, 2));
 
-		spinner.text = 'Installing dev dependencies';
+		if (argv.install) {
+			spinner.text = 'Installing dev dependencies';
 
-		await npm(target, [
-			'install', '--save-dev',
-			'preact-cli',
-			'if-env',
-			'eslint',
-			'eslint-config-synacor',
+			await npm(target, [
+				'install', '--save-dev',
+				'preact-cli',
+				'if-env',
+				'eslint',
+				'eslint-config-synacor',
 
-			// install sass setup if --sass
-			...(argv.sass ? [
-				'node-sass',
-				'sass-loader'
-			] : []),
+				// install sass setup if --sass
+				...(argv.sass ? [
+					'node-sass',
+					'sass-loader'
+				] : []),
 
-			// install less setup if --less
-			...(argv.less ? [
-				'less',
-				'less-loader'
-			] : [])
-		].filter(Boolean));
+				// install less setup if --less
+				...(argv.less ? [
+					'less',
+					'less-loader'
+				] : [])
+			].filter(Boolean));
 
-		spinner.text = 'Installing dependencies';
+			spinner.text = 'Installing dependencies';
 
-		await npm(target, [
-			'install', '--save',
-			'preact',
-			'preact-compat',
-			'preact-router'
-		]);
+			await npm(target, [
+				'install', '--save',
+				'preact',
+				'preact-compat',
+				'preact-router'
+			]);
 
-		await initializeVersionControl(target);
-
-		spinner.succeed('Done!\n');
+			spinner.succeed('Done!\n');
+      
+  		await initializeVersionControl(target);
+		}
 
 		return trimLeft(`
 			To get started, cd into the new directory:
@@ -168,11 +175,16 @@ const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
-const initializeVersionControl = async function(target) {
-	if (which.sync('git')) {
+async function initializeVersionControl(target) {
+  let git;
+  try {
+    git = await promisify(which)('git');
+  } catch (e) {}
+	if (git) {
 		const gitignore = trimLeft(`
 		node_modules
-		build
+		/build
+    /*.log
 		`) + '\n';
 		const gitignorePath = path.resolve(target, '.gitignore');
 		await fs.writeFile(gitignorePath, gitignore);
@@ -185,4 +197,4 @@ const initializeVersionControl = async function(target) {
 		const gitUser = 'Preact CLI<developit@users.noreply.github.com>';
 		await spawn('git', ['commit', '--author', gitUser, '-m', 'initial commit from Preact CLI'], { cwd });
 	}
-};
+}

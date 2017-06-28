@@ -1,5 +1,6 @@
 import asyncCommand from '../lib/async-command';
 import webpackConfig from '../lib/webpack-config';
+import getSslCert from '../lib/ssl-cert';
 import runWebpack, { showStats } from '../lib/run-webpack';
 
 export default asyncCommand({
@@ -30,11 +31,24 @@ export default asyncCommand({
 		prerender: {
 			description: 'Pre-render static app content on initial build',
 			default: false
+		},
+		template: {
+			description: 'HTML template used by webpack'
 		}
 	},
 
 	async handler(argv) {
 		argv.production = false;
+
+		if (argv.https) {
+			let ssl = await getSslCert();
+			if (!ssl) {
+				ssl = true;
+				process.stderr.write('Using webpack-dev-server internal certificate.\n');
+			}
+			argv.https = ssl;
+		}
+
 		let config = webpackConfig(argv);
 
 		let stats = await runWebpack(true, config, showStats);

@@ -14,16 +14,17 @@ import {
 	addPlugins,
 	setDevTool
 } from '@webpack-blocks/webpack2';
-import babel from '@webpack-blocks/babel6';
 import devServer from '@webpack-blocks/dev-server2';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
+import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
+import requireRelative from 'require-relative';
 import createBabelConfig from './babel-config';
 import prerender from './prerender';
 import PushManifestPlugin from './push-manifest';
@@ -44,6 +45,13 @@ function readJson(file) {
 }
 readJson.cache = {};
 
+// attempt to resolve a dependency, giving $CWD/node_modules priority:
+function resolveDep(dep, cwd) {
+  try { return requireRelative.resolve(dep, cwd || process.cwd()); } catch (e) {}
+  try { return require.resolve(dep); } catch (e) {}
+  return dep;
+}
+
 export default env => {
 	let isProd = env && env.production;
 	let cwd = env.cwd = resolve(env.cwd || process.cwd());
@@ -54,16 +62,21 @@ export default env => {
 		env.src = '.';
 	}
 
-	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 	env.manifest = readJson(src('manifest.json')) || {};
+	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
+
+	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
 	return createConfig.vanilla([
 		setContext(src('.')),
-		entryPoint(resolve(__dirname, './entry')),
+		entryPoint({
+			'bundle': resolve(__dirname, './entry'),
+			'polyfills': resolve(__dirname, './polyfills'),
+		}),
 		setOutput({
 			path: resolve(cwd, env.dest || 'build'),
 			publicPath: '/',
-			filename: 'bundle.js',
+			filename: '[name].js',
 			chunkFilename: '[name].chunk.[chunkhash:5].js'
 		}),
 
@@ -76,12 +89,12 @@ export default env => {
 				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.css'],
 				alias: {
 					'preact-cli-entrypoint': src('index.js'),
-					'preact-cli-polyfills': resolve(__dirname, 'polyfills.js'),
 					style: src('style'),
-					preact$: isProd ? 'preact/dist/preact.min.js' : 'preact'
+					preact$: resolveDep(isProd ? 'preact/dist/preact.min.js' : 'preact', env.cwd),
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
+					'create-react-class': 'preact-compat/lib/create-react-class',
 					'react-addons-css-transition-group': 'preact-css-transition-group'
 				}
 			},
@@ -97,14 +110,17 @@ export default env => {
 		}),
 
 		// ES2015
-		babel({
-			include(filepath) {
-				if (filepath.indexOf(src('.'))===0 || filepath.indexOf(resolve(__dirname, '../..'))===0 || filepath.split(/[/\\]/).indexOf('node_modules')===-1) return true;
-				let manifest = resolve(filepath.replace(/(.*([\/\\]node_modules|\.\.)[\/\\](@[^\/\\]+[\/\\])?[^\/\\]+)([\/\\].*)?$/g, '$1'), 'package.json'),
-					pkg = readJson(manifest) || {};
-				return !!(pkg.module || pkg['jsnext:main']);
-			},
-			...createBabelConfig(env)
+		customConfig({
+			module: {
+				loaders: [
+					{
+						enforce: 'pre',
+						test: /\.jsx?$/,
+						loader: 'babel-loader',
+						options: createBabelConfig(env, { browsers })
+					}
+				]
+			}
 		}),
 
 		// automatic async components :)
@@ -230,9 +246,7 @@ export default env => {
 			new webpack.LoaderOptionsPlugin({
 				options: {
 					postcss: () => [
-						autoprefixer({
-							browsers: ['last 2 versions']
-						})
+						autoprefixer({ browsers })
 					],
 					context: resolve(cwd, env.src || 'src')
 				}
@@ -345,7 +359,7 @@ const development = config => {
 			host,
 			inline: true,
 			hot: true,
-			https: config.https===true,
+			https: config.https,
 			compress: true,
 			publicPath: '/',
 			contentBase: resolve(config.cwd, config.src || './src'),
@@ -391,13 +405,12 @@ const production = config => addPlugins([
 			comments: false
 		},
 		mangle: true,
+		sourceMap: true,
 		compress: {
-			unsafe_comps: true,
 			properties: true,
 			keep_fargs: false,
 			pure_getters: true,
 			collapse_vars: true,
-			unsafe: true,
 			warnings: false,
 			screw_ie8: true,
 			sequences: true,
@@ -428,9 +441,11 @@ const production = config => addPlugins([
 	new SWPrecacheWebpackPlugin({
 		filename: 'sw.js',
 		navigateFallback: 'index.html',
+		navigateFallbackWhitelist: [/^(?!\/__).*/],
 		minify: true,
 		stripPrefix: config.cwd,
 		staticFileGlobsIgnorePatterns: [
+			/polyfills\.js$/,
 			/\.map$/,
 			/push-manifest\.json$/
 		]
@@ -449,20 +464,21 @@ const htmlPlugin = config => addPlugins([
 			removeStyleLinkTypeAttributes: true,
 			removeComments: true
 		},
-		favicon: exists(resolve(config.cwd, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../resources/favicon.ico'),
+		favicon: exists(resolve(config.src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../resources/favicon.ico'),
 		manifest: config.manifest,
 		inject: true,
 		compile: true,
 		preload: config.preload===true,
 		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
+		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
 		ssr(params) {
 			return config.prerender ? prerender(config, params) : '';
 		}
 	}),
-
+	new HtmlWebpackExcludeAssetsPlugin(),
 	new ScriptExtHtmlWebpackPlugin({
 		// inline: 'bundle.js',
-		defaultAttribute: 'async'
+		defaultAttribute: 'defer'
 	})
 ]);
