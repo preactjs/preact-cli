@@ -149,8 +149,8 @@ export default asyncCommand({
 			]);
 
 			spinner.succeed('Done!\n');
-      
-  		await initializeVersionControl(target);
+
+			await initializeVersionControl(target);
 		}
 
 		return trimLeft(`
