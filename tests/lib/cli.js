@@ -2,13 +2,11 @@ import crossSpawn from 'cross-spawn-promise';
 import { spawn as spawnChild } from 'child_process';
 import path from 'path';
 import mkdirp from 'mkdirp';
-import uuid from 'uuid/v4';
-import { outputPath } from './output';
+import { createWorkDir } from './output';
 import withLog from './log';
 
 export const create = async (appName, template) => {
-	let workDir = path.resolve(outputPath, uuid());
-
+	let workDir = createWorkDir();
 	await withLog(() => mkdirp(workDir), 'Create work directory');
 	await withLog(
 		() => createApp(template, appName, workDir),
