@@ -1,6 +1,7 @@
 {
   "plugins": [
     "transform-regenerator",
+    ["transform-react-jsx", { "pragma": "h" }],
     ["transform-runtime", {
       "helpers": false,
       "polyfill": false,

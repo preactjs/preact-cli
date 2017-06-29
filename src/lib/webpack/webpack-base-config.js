@@ -14,6 +14,7 @@ import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
 import requireRelative from 'require-relative';
+import createBabelConfig from '../babel-config';
 
 export function exists(file) {
 	try {
@@ -33,9 +34,9 @@ readJson.cache = {};
 
 // attempt to resolve a dependency, giving $CWD/node_modules priority:
 function resolveDep(dep, cwd) {
-  try { return requireRelative.resolve(dep, cwd || process.cwd()); } catch (e) {}
-  try { return require.resolve(dep); } catch (e) {}
-  return dep;
+	try { return requireRelative.resolve(dep, cwd || process.cwd()); } catch (e) {}
+	try { return require.resolve(dep); } catch (e) {}
+	return dep;
 }
 
 export default (env) => {
@@ -48,6 +49,7 @@ export default (env) => {
 	env.manifest = readJson(src('manifest.json')) || {};
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
+	let babelrc = readJson(resolve(cwd, '.babelrc')) || {};
 	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
 	return group([
@@ -86,12 +88,10 @@ export default (env) => {
 						enforce: 'pre',
 						test: /\.jsx?$/,
 						loader: 'babel-loader',
-						options: {
-							babelrc: true,
-							presets: [
-								[resolve(__dirname, '../babel-config'), { browsers }]
-							]
-						}
+						options: Object.assign(
+							createBabelConfig(env, { browsers }),
+							babelrc // intentionall overwrite our settings
+						)
 					}
 				]
 			}
@@ -255,7 +255,7 @@ export default (env) => {
 	].filter(Boolean));
 };
 
-const development = () =>  group([]);
+const development = () =>	group([]);
 
 const production = () => addPlugins([
 	new webpack.HashedModuleIdsPlugin(),
@@ -315,7 +315,7 @@ const production = () => addPlugins([
 
 export function helpers(env) {
 	return {
-		isProd:  env && env.production,
+		isProd:	env && env.production,
 		cwd: env.cwd = resolve(env.cwd || process.cwd()),
 		src: dir => resolve(env.cwd, env.src || 'src', dir)
 	};

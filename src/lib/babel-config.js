@@ -1,4 +1,5 @@
 export default (env, options={}) => ({
+	babelrc: false,
 	presets: [
 		[require.resolve('babel-preset-env'), {
 			loose: true,
