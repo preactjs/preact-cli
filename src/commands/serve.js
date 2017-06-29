@@ -75,6 +75,7 @@ async function serve(options) {
 	await fs.writeFile(configFile, JSON.stringify(config));
 
 	await serveHttp2({
+		options,
 		config: configFile,
 		configObj: config,
 		server: options.server,
@@ -196,13 +197,13 @@ const SERVERS = {
 		];
 	},
 	/** Writes the firebase/superstatic/simplehttp2server configuration to stdout or a file. */
-	async config(options) {
+	async config({ configObj, options }) {
 		let dir = process.cwd(),
 			outfile;
 		if (options.dest && options.dest!=='-') {
 			let isDir = false;
 			try {
-				isDir = (await fs.stat()).isDirectory();
+				isDir = (await fs.stat(options.dest)).isDirectory();
 			} catch (e) {}
 			if (isDir) {
 				dir = options.dest;
@@ -215,12 +216,13 @@ const SERVERS = {
 		}
 
 		let config = JSON.stringify({
-			...options.configObj,
-			public: path.relative(dir, options.configObj.public)
+			...configObj,
+			public: path.relative(dir, configObj.public)
 		}, null, 2);
 
 		if (outfile) {
 			await fs.writeFile(path.resolve(dir, outfile), config);
+			return `Configuration written to ${outfile}.`;
 		}
 		else {
 			return config;
