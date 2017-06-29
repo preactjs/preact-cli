@@ -42,7 +42,7 @@ export const getSpawnedProcesses = () => spawnedProcesses;
 
 const createApp = async (template, appName, workDir) => {
 	let cliPath = path.resolve(__dirname, '../../lib/index.js');
-	let args = [cliPath, 'create', appName, template ? `--type=${template}` : undefined];
+	let args = [cliPath, 'create', '--no-git', appName, template ? `--type=${template}` : undefined];
 
 	await run('node', args, workDir);
 };

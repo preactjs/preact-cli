@@ -4,6 +4,7 @@ import promisify from 'es6-promisify';
 import mkdirp from 'mkdirp';
 import uuid from 'uuid/v4';
 import ncp from 'ncp';
+import spawn from 'cross-spawn-promise';
 import withLog from './log';
 
 const rm = promisify(rimraf);
@@ -20,5 +21,7 @@ export const createWorkDir = () => resolve(outputPath, uuid());
 export const fromSubject = async (subjectName) => {
 	let workDir = createWorkDir();
 	await withLog(() => cp(resolve(subjectsPath, subjectName), workDir), `Copy subject: ${subjectName}`);
+	await withLog(() => spawn('npm', ['install'], { cwd: workDir }), `Install subject dependencies`);
+
 	return workDir;
 };
