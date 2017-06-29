@@ -82,8 +82,8 @@ export function showStats(stats) {
 	return stats;
 }
 
-export function writeJsonStats(stats) {
-	let outputPath = path.resolve(process.cwd(), 'stats.json');
+export async function writeJsonStats(stats) {
+	const outputPath = path.resolve(process.cwd(), 'stats.json');
 	let jsonStats = stats.toJson({
 		json: true,
 		chunkModules: true,
@@ -95,13 +95,12 @@ export function writeJsonStats(stats) {
 	jsonStats.modules.forEach(normalizeModule);
 	jsonStats.chunks.forEach(c => c.modules.forEach(normalizeModule));
 
-	return fs.writeFile(outputPath, JSON.stringify(jsonStats))
-		.then(() => {
-			process.stdout.write('\nWebpack output stats generated.\n\n');
-			process.stdout.write('You can upload your stats.json to:\n');
-			process.stdout.write('- https://chrisbateman.github.io/webpack-visualizer/\n');
-			process.stdout.write('- https://webpack.github.io/analyse/\n');
-		});
+	await fs.writeFile(outputPath, JSON.stringify(jsonStats));
+
+	process.stdout.write('\nWebpack output stats generated.\n\n');
+	process.stdout.write('You can upload your stats.json to:\n');
+	process.stdout.write('- https://chrisbateman.github.io/webpack-visualizer/\n');
+	process.stdout.write('- https://webpack.github.io/analyse/\n');
 }
 
 const normalizeModule = m => {

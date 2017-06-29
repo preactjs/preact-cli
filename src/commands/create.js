@@ -6,6 +6,7 @@ import ora from 'ora';
 import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
+import install from '../lib/install-dependencies';
 import which from 'which';
 
 const TEMPLATES = {
@@ -90,7 +91,7 @@ export default asyncCommand({
 
 		spinner.text = 'Initializing project';
 
-		await npm(target, ['init', '-y']);
+		await spawn('npm', ['init', '-y'], { cwd: target, stdio: 'ignore' });
 
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
@@ -119,8 +120,7 @@ export default asyncCommand({
 		if (argv.install) {
 			spinner.text = 'Installing dev dependencies';
 
-			await npm(target, [
-				'install', '--save-dev',
+		await install(target, [
 				'preact-cli',
 				'if-env',
 				'eslint',
@@ -137,12 +137,11 @@ export default asyncCommand({
 					'less',
 					'less-loader'
 				] : [])
-			].filter(Boolean));
+		], 'dev');
 
 			spinner.text = 'Installing dependencies';
 
-			await npm(target, [
-				'install', '--save',
+		await install(target, [
 				'preact',
 				'preact-compat',
 				'preact-router'
@@ -170,8 +169,6 @@ export default asyncCommand({
 });
 
 const trimLeft = (string) => string.trim().replace(/^\t+/gm, '');
-
-const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
