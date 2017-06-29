@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { readFileSync, statSync } from 'fs';
+import webpack from 'webpack';
 import {
-	webpack,
 	group,
 	customConfig,
 	setContext,
@@ -145,7 +145,14 @@ export default (env) => {
 							fallback: 'style-loader',
 							use: [
 								`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${isProd}`,
-								`postcss-loader`
+								{
+									loader: 'postcss-loader',
+									options: {
+										plugins: [
+											autoprefixer({ browsers })
+										]
+									}
+								}
 							]
 						})
 					},
@@ -159,7 +166,14 @@ export default (env) => {
 							fallback: 'style-loader',
 							use: [
 								`css-loader?sourceMap=${isProd}`,
-								`postcss-loader`
+								{
+									loader: 'postcss-loader',
+									options: {
+										plugins: [
+											autoprefixer({ browsers })
+										]
+									}
+								}
 							]
 						})
 					}
@@ -186,17 +200,6 @@ export default (env) => {
 				]
 			}
 		}),
-
-		addPlugins([
-			new webpack.LoaderOptionsPlugin({
-				options: {
-					postcss: () => [
-						autoprefixer({ browsers })
-					],
-					context: resolve(cwd, env.src || 'src')
-				}
-			}),
-		]),
 
 		defineConstants({
 			'process.env.NODE_ENV': isProd ? 'production' : 'development'
@@ -259,9 +262,6 @@ const development = () =>  group([]);
 
 const production = () => addPlugins([
 	new webpack.HashedModuleIdsPlugin(),
-	new webpack.LoaderOptionsPlugin({
-		minimize: true
-	}),
 
 	// strip out babel-helper invariant checks
 	new ReplacePlugin({
