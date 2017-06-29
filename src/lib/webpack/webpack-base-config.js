@@ -114,7 +114,12 @@ export default (env) => {
 							},
 							{
 								loader: 'less-loader',
-								options: { sourceMap: true }
+								options: {
+                  sourceMap: true,
+                  paths: [
+                    resolve(cwd, 'node_modules')
+                  ]
+                }
 							}
 						]
 					},
@@ -131,7 +136,12 @@ export default (env) => {
 							},
 							{
 								loader: 'sass-loader',
-								options: { sourceMap: true }
+								options: {
+                  sourceMap: true,
+                  includePaths: [
+                    resolve(cwd, 'node_modules')
+                  ]
+                }
 							}
 						]
 					},
