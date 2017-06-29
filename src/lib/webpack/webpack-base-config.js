@@ -33,9 +33,9 @@ readJson.cache = {};
 
 // attempt to resolve a dependency, giving $CWD/node_modules priority:
 function resolveDep(dep, cwd) {
-  try { return requireRelative.resolve(dep, cwd || process.cwd()); } catch (e) {}
-  try { return require.resolve(dep); } catch (e) {}
-  return dep;
+	try { return requireRelative.resolve(dep, cwd || process.cwd()); } catch (e) {}
+	try { return require.resolve(dep); } catch (e) {}
+	return dep;
 }
 
 export default (env) => {
@@ -115,11 +115,11 @@ export default (env) => {
 							{
 								loader: 'less-loader',
 								options: {
-                  sourceMap: true,
-                  paths: [
-                    resolve(cwd, 'node_modules')
-                  ]
-                }
+									sourceMap: true,
+									paths: [
+										resolve(cwd, 'node_modules')
+									]
+								}
 							}
 						]
 					},
@@ -137,11 +137,11 @@ export default (env) => {
 							{
 								loader: 'sass-loader',
 								options: {
-                  sourceMap: true,
-                  includePaths: [
-                    resolve(cwd, 'node_modules')
-                  ]
-                }
+									sourceMap: true,
+									includePaths: [
+										resolve(cwd, 'node_modules')
+									]
+								}
 							}
 						]
 					},
@@ -265,7 +265,7 @@ export default (env) => {
 	].filter(Boolean));
 };
 
-const development = () =>  group([]);
+const development = () =>	group([]);
 
 const production = () => addPlugins([
 	new webpack.HashedModuleIdsPlugin(),
@@ -323,7 +323,7 @@ const production = () => addPlugins([
 
 export function helpers(env) {
 	return {
-		isProd:  env && env.production,
+		isProd:	env && env.production,
 		cwd: env.cwd = resolve(env.cwd || process.cwd()),
 		src: dir => resolve(env.cwd, env.src || 'src', dir)
 	};
