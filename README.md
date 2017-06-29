@@ -56,6 +56,7 @@ $ preact create
               [Options: "default", "root", "simple", "empty"]     [default: "default"]
   --less      Pre-install LESS support                 [boolean]  [default: false]
   --sass      Pre-install SASS/SCSS support            [boolean]  [default: false]
+  --git       Initialize version control using git     [boolean]  [default: true]
 
 $ preact build
 
