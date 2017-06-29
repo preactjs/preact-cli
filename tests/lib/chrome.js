@@ -1,5 +1,6 @@
 import { Launcher } from 'chrome-launcher';
 import chrome from 'chrome-remote-interface';
+import withLog from './log';
 
 export default async () => {
 	let launcher = new Launcher({
@@ -12,8 +13,11 @@ export default async () => {
 		]
 	});
 	launcher.pollInterval = 1000;
-	await launcher.launch();
-	let protocol = await setup();
+
+	await withLog(() => launcher.launch(), 'Launching Chrome');
+
+	let protocol = await withLog(() => setup(), 'Connecting to Chrome');
+
 	return { launcher, protocol };
 };
 
@@ -29,7 +33,11 @@ export const waitUntil = async (Runtime, expression, retryCount = 10, retryInter
 		throw new Error(`Wait until: '${expression}' timed out.`);
 	}
 
-	let { result } = await Runtime.evaluate({ expression });
+	let { result } = await withLog(
+		() => Runtime.evaluate({ expression }),
+		`Waiting for ${expression} - tries left: ${retryCount}`
+	);
+
 	if (result && result.subtype === 'promise') {
 		let message = await Runtime.awaitPromise({
 			promiseObjectId: result.objectId,
@@ -45,7 +53,10 @@ export const waitUntil = async (Runtime, expression, retryCount = 10, retryInter
 };
 
 export const loadPage = async (chrome, url, retryCount = 10, retryInterval = 5000) => {
-	let result = await openPage(chrome, url, retryCount, retryInterval);
+	let result = await withLog(
+		() => openPage(chrome, url, retryCount, retryInterval),
+		`Navigating to ${url}`
+	);
 	await chrome.Page.loadEventFired();
 	return result;
 };

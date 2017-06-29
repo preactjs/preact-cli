@@ -1,38 +1,62 @@
 import crossSpawn from 'cross-spawn-promise';
 import { spawn as spawnChild } from 'child_process';
-import { resolve } from 'path';
+import path from 'path';
 import mkdirp from 'mkdirp';
 import uuid from 'uuid/v4';
 import { outputPath } from './output';
-
-const cliPath = resolve(__dirname, '../../lib/index.js');
+import withLog from './log';
 
 export const create = async (appName, template) => {
-	let workDir = resolve(outputPath, uuid());
-	await mkdirp(workDir);
-	await run(['create', appName, template ? `--type=${template}` : undefined], workDir);
-	return resolve(workDir, appName);
+	let workDir = path.resolve(outputPath, uuid());
+
+	await withLog(() => mkdirp(workDir), 'Create work directory');
+	await withLog(
+		() => createApp(template, appName, workDir),
+		'preact create'
+	);
+
+	let appDir = path.resolve(workDir, appName);
+	await withLog(
+		() => run('npm', ['i', '--save-dev', path.relative(appDir, process.cwd())], appDir),
+		'Install local preact-cli'
+	);
+
+	return appDir;
 };
 
-export const build = async (appDir) => {
-	await run(['build'], appDir);
+export const build = appDir => withLog(
+	() => preact(['build'], appDir),
+	'preact build'
+);
+
+
+export const serve = (appDir, port) => withLog(
+	() => spawn(['serve', port ? `-p=${port}` : undefined], appDir),
+	'preact serve'
+);
+
+export const watch = (appDir, port) => withLog(
+	() => spawn(['watch', port ? `-p=${port}` : undefined], appDir),
+	'preact watch'
+);
+
+export const getSpawnedProcesses = () => spawnedProcesses;
+
+const createApp = async (template, appName, workDir) => {
+	let cliPath = path.resolve(__dirname, '../../lib/index.js');
+	let args = [cliPath, 'create', appName, template ? `--type=${template}` : undefined];
+
+	await run('node', args, workDir);
 };
 
-export const serve = async (appDir, port) => {
-	return await spawn(['serve', port ? `-p=${port}` : undefined], appDir);
+const preact = async (args, cwd) => {
+	let cliPath = path.resolve(cwd, './node_modules/.bin/preact');
+	await run(cliPath, args, cwd);
 };
 
-export const watch = async (appDir, port) => {
-	return await spawn(['watch', port ? `-p=${port}` : undefined], appDir);
-};
-
-export const getSpawnedProcesses = () => {
-	return spawnedProcesses;
-};
-
-const run = async (args, cwd) => {
+const run = async (command, args, cwd) => {
 	try {
-		await crossSpawn('node', [cliPath, ...args.filter(Boolean)], { cwd });
+		await crossSpawn(command, args.filter(Boolean), { cwd });
 	} catch (err) {
 		if (err.stderr) {
 			console.error(err.stderr.toString()); //eslint-disable-line no-console
@@ -45,6 +69,7 @@ const run = async (args, cwd) => {
 let spawnedProcesses = [];
 
 const spawn = (args, cwd) => new Promise((resolve, reject) => {
+	let cliPath = path.resolve(cwd, './node_modules/.bin/preact');
 	let child = spawnChild('node', [cliPath, ...args.filter(Boolean)], { cwd });
 
 	let errListener = err => {
