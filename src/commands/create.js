@@ -53,6 +53,11 @@ export default asyncCommand({
 			description: 'Initialize version control using git',
 			type: 'boolean',
 			default: true
+		},
+		install: {
+			description: 'Install dependencies',
+			type: 'boolean',
+			default: true
 		}
 	},
 
@@ -116,38 +121,40 @@ export default asyncCommand({
 
 		await fs.writeFile(path.resolve(target, 'package.json'), JSON.stringify(pkg, null, 2));
 
-		spinner.text = 'Installing dev dependencies';
+		if (argv.install) {
+			spinner.text = 'Installing dev dependencies';
 
-		await npm(target, [
-			'install', '--save-dev',
-			'preact-cli',
-			'if-env',
-			'eslint',
-			'eslint-config-synacor',
+			await npm(target, [
+				'install', '--save-dev',
+				'preact-cli',
+				'if-env',
+				'eslint',
+				'eslint-config-synacor',
 
-			// install sass setup if --sass
-			...(argv.sass ? [
-				'node-sass',
-				'sass-loader'
-			] : []),
+				// install sass setup if --sass
+				...(argv.sass ? [
+					'node-sass',
+					'sass-loader'
+				] : []),
 
-			// install less setup if --less
-			...(argv.less ? [
-				'less',
-				'less-loader'
-			] : [])
-		].filter(Boolean));
+				// install less setup if --less
+				...(argv.less ? [
+					'less',
+					'less-loader'
+				] : [])
+			].filter(Boolean));
 
-		spinner.text = 'Installing dependencies';
+			spinner.text = 'Installing dependencies';
 
-		await npm(target, [
-			'install', '--save',
-			'preact',
-			'preact-compat',
-			'preact-router'
-		]);
+			await npm(target, [
+				'install', '--save',
+				'preact',
+				'preact-compat',
+				'preact-router'
+			]);
 
-		spinner.succeed('Done!\n');
+			spinner.succeed('Done!\n');
+		}
 
 		if (argv.git) {
 			await initializeVersionControl(target);

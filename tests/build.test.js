@@ -1,61 +1,52 @@
-import test from 'tape-async';
 import { resolve } from 'path';
 import fs from 'fs.promised';
 import htmlLooksLike from 'html-looks-like';
 import { create, build } from './lib/cli';
 import lsr from './lib/lsr';
-import { setup, clean, fromSubject } from './lib/output';
+import { setup, fromSubject } from './lib/output';
 import expectedOutputs, { sassPrerendered, withCustomTemplate } from './build.snapshot';
 import filesMatchSnapshot from './lib/filesMatchSnapshot';
 
-const options = { timeout: 150 * 1000 };
+describe('preact build', () => {
+	beforeAll(async () => {
+		await setup();
+	});
 
-test('preact build - before', async () => {
-	await setup();
-});
+	['empty', 'simple', 'root', 'default'].forEach(template =>
+		it(`should produce output. Veryfing ${template}`, async () => {
+			let app = await create('app', template);
+			await build(app);
 
-['empty', 'simple', 'root', 'default'].forEach(template =>
-	test(`preact build - should produce output. Veryfing ${template}`, options, async t => {
-		let app = await create('app', template);
+			let output = await lsr(resolve(app, 'build'));
+
+			filesMatchSnapshot(output, expectedOutputs[template]);
+		})
+	);
+
+	it(`preact build - should prerender using webpack.`, async () => {
+		let app = await fromSubject('sass');
 		await build(app);
 
-		let output = await lsr(resolve(app, 'build'));
+		let output = await fs.readFile(resolve(app, './build/index.html'), 'utf-8');
+		let html = output.match(/<body>.*<\/body>/)[0];
+		htmlLooksLike(html, sassPrerendered);
+	});
 
-		filesMatchSnapshot(t, output, expectedOutputs[template]);
-	})
-);
+	it(`preact build - should use custom .babelrc.`, async () => {
+		// app with custom .babelrc enabling async functions
+		let app = await fromSubject('custom-babelrc');
 
-test(`preact build - should prerender using webpack.`, options, async t => {
-	let app = await fromSubject('sass');
-	await build(app);
+		// UglifyJS throws error when generator is encountered
+		expect(async () => await build(app)).not;
+	});
 
-	let output = await fs.readFile(resolve(app, './build/index.html'), 'utf-8');
-	let html = output.match(/<body>.*<\/body>/)[0];
-	htmlLooksLike(html, sassPrerendered);
-	t.pass();
-});
+	it(`preact build - should use custom preact.config.js.`, async () => {
+		// app with custom template set via preact.config.js
+		let app = await fromSubject('custom-webpack');
 
-test(`preact build - should use custom .babelrc.`, options, async t => {
-	// app with custom .babelrc enabling async functions
-	let app = await fromSubject('custom-babelrc');
+		await build(app);
 
-	// UglifyJS throws error when generator is encountered
-	await build(app);
-
-	t.pass();
-});
-
-test(`preact build - should use custom preact.config.js.`, options, async t => {
-	// app with custom template set via preact.config.js
-	let app = await fromSubject('custom-webpack');
-
-	await build(app);
-
-	let html = await fs.readFile(resolve(app, './build/index.html'), 'utf-8');
-	htmlLooksLike(html, withCustomTemplate);
-	t.pass();
-});
-
-test('preact build - after', async () => {
-	await clean();
+		let html = await fs.readFile(resolve(app, './build/index.html'), 'utf-8');
+		htmlLooksLike(html, withCustomTemplate);
+	});
 });

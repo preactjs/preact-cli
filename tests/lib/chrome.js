@@ -4,7 +4,6 @@ import withLog from './log';
 
 export default async () => {
 	let launcher = new Launcher({
-		port: 9222,
 		autoSelectChrome: true,
 		additionalFlags: [
 			'--window-size=1024,768',
@@ -16,7 +15,7 @@ export default async () => {
 
 	await withLog(() => launcher.launch(), 'Launching Chrome');
 
-	let protocol = await withLog(() => setup(), 'Connecting to Chrome');
+	let protocol = await withLog(() => setup(launcher.port), 'Connecting to Chrome');
 
 	return { launcher, protocol };
 };
@@ -76,8 +75,8 @@ const openPage = async (chrome, url, retryCount, retryInterval) => {
 	return result;
 };
 
-const setup = () => new Promise((resolve, reject) => {
-	chrome(protocol => {
+const setup = port => new Promise((resolve, reject) => {
+	chrome({ port }, protocol => {
 		const { Page, Runtime, Network, DOM, ServiceWorker } = protocol;
 
 		Promise.all([

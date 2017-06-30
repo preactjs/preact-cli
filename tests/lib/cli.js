@@ -4,6 +4,9 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 import { createWorkDir } from './output';
 import withLog from './log';
+import { shouldInstallDeps } from './tests-config';
+
+const builtPreactCliPath = path.resolve(__dirname, '../../lib/index.js');
 
 export const create = async (appName, template) => {
 	let workDir = createWorkDir();
@@ -14,10 +17,13 @@ export const create = async (appName, template) => {
 	);
 
 	let appDir = path.resolve(workDir, appName);
-	await withLog(
-		() => run('npm', ['i', '--save-dev', path.relative(appDir, process.cwd())], appDir),
-		'Install local preact-cli'
-	);
+
+	if (shouldInstallDeps()) {
+		await withLog(
+			() => run('npm', ['i', '--save-dev', path.relative(appDir, process.cwd())], appDir),
+			'Install local preact-cli'
+		);
+	}
 
 	return appDir;
 };
@@ -27,29 +33,25 @@ export const build = appDir => withLog(
 	'preact build'
 );
 
-
 export const serve = (appDir, port) => withLog(
-	() => spawn(['serve', port ? `-p=${port}` : undefined], appDir),
+	() => spawnPreact(['serve', port ? `-p=${port}` : undefined], appDir),
 	'preact serve'
 );
 
 export const watch = (appDir, port) => withLog(
-	() => spawn(['watch', port ? `-p=${port}` : undefined], appDir),
+	() => spawnPreact(['watch', port ? `-p=${port}` : undefined], appDir),
 	'preact watch'
 );
 
-export const getSpawnedProcesses = () => spawnedProcesses;
-
 const createApp = async (template, appName, workDir) => {
-	let cliPath = path.resolve(__dirname, '../../lib/index.js');
-	let args = [cliPath, 'create', '--no-git', appName, template ? `--type=${template}` : undefined];
-
+	let cliPath = builtPreactCliPath;
+	let install = process.env.WITH_INSTALL ? '--install' : '--no-install';
+	let args = [cliPath, 'create', '--no-git', install, appName, template ? `--type=${template}` : undefined];
 	await run('node', args, workDir);
 };
 
 const preact = async (args, cwd) => {
-	let cliPath = path.resolve(cwd, './node_modules/.bin/preact');
-	await run(cliPath, args, cwd);
+	await run('node', [cliPath(cwd), ...args], cwd);
 };
 
 const run = async (command, args, cwd) => {
@@ -64,11 +66,8 @@ const run = async (command, args, cwd) => {
 	}
 };
 
-let spawnedProcesses = [];
-
-const spawn = (args, cwd) => new Promise((resolve, reject) => {
-	let cliPath = path.resolve(cwd, './node_modules/.bin/preact');
-	let child = spawnChild('node', [cliPath, ...args.filter(Boolean)], { cwd });
+const spawnPreact = (args, cwd) => new Promise((resolve, reject) => {
+	let child = spawnChild('node', [cliPath(cwd), ...args.filter(Boolean)], { cwd });
 
 	let errListener = err => {
 		reject(err);
@@ -78,11 +77,6 @@ const spawn = (args, cwd) => new Promise((resolve, reject) => {
 
 	let origKill = child.kill.bind(child);
 	child.kill = () => new Promise((resolve) => {
-		let index = spawnedProcesses.findIndex(p => p.pid === child.pid);
-		if (index > -1) {
-			spawnedProcesses.splice(index, 1);
-		}
-
 		child.stdout.unpipe(process.stdout);
 		child.stderr.unpipe(process.stderr);
 		child.on('exit', code => {
@@ -94,10 +88,12 @@ const spawn = (args, cwd) => new Promise((resolve, reject) => {
 	child.stdout.pipe(process.stdout);
 	child.stderr.pipe(process.stderr);
 
-	spawnedProcesses.push(child);
-
 	setTimeout(() => {
 		child.removeListener('error', errListener);
 		resolve(child);
 	}, 500);
 });
+
+const cliPath = (cwd) => shouldInstallDeps()
+		? path.resolve(cwd, './node_modules/.bin/preact')
+		: builtPreactCliPath;

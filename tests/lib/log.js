@@ -1,14 +1,22 @@
 /* eslint-disable no-console */
+import { shouldLog } from './tests-config';
+
 const withLog = async (operation, message) => {
-	console.log(`${message} - started...`);
+	log('info', `${message} - started...`);
 
 	try {
 		let result = await operation();
-		console.log(`${message} - done.`);
+		log('info', `${message} - done.`);
 		return result;
 	} catch (err) {
-		console.error(`${message} - failed!`);
+		log('error', `${message} - failed!`);
 		throw err;
+	}
+};
+
+const log = (level, message) => {
+	if (level === 'error' || shouldLog()) {
+		console[level](message);
 	}
 };
 
