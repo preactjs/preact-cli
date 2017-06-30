@@ -174,7 +174,7 @@ class WebpackConfigHelpers {
 		} catch (e) {}
 
 		let templatePath = isPath ? `!!ejs-loader!${path.resolve(this._cwd, template)}` : template;
-		let htmlWebpackPlugin = this.getPluginsByName(config, 'HtmlWebpackPlugin')[0];
+		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(config, 'HtmlWebpackPlugin')[0];
 		htmlWebpackPlugin.options.template = templatePath;
 	}
 }
