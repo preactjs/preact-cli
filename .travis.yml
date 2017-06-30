@@ -20,7 +20,6 @@ before_install:
 
 before_script:
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
-- google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 - if [ "$TRAVIS_BRANCH" = "master" ]; then export WITH_INSTALL=true; fi
 - export WITH_INSTALL=true;
 
