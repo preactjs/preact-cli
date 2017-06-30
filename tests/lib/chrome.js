@@ -4,11 +4,12 @@ import withLog from './log';
 
 export default async () => {
 	let launcher = new Launcher({
-		autoSelectChrome: true,
-		additionalFlags: [
+		chromeFlags: [
 			'--window-size=1024,768',
 			'--disable-gpu',
-			'--headless'
+			'--headless',
+			'--enable-logging',
+			'--no-sandbox'
 		]
 	});
 	launcher.pollInterval = 1000;
