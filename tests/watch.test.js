@@ -1,4 +1,4 @@
-import test from './async-test';
+import test from 'tape-async';
 import { resolve } from 'path';
 import fs from 'fs.promised';
 import { create, build, watch } from './lib/cli';

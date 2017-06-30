@@ -1,4 +1,4 @@
-import test from './async-test';
+import test from 'tape-async';
 import htmlLooksLike from 'html-looks-like';
 import { create, build, serve } from './lib/cli';
 import startChrome, { delay, loadPage, waitUntil, getElementHtml } from './lib/chrome';
