@@ -23,7 +23,7 @@ describe('preact build', () => {
 		})
 	);
 
-	it(`preact build - should prerender using webpack.`, async () => {
+	it(`should prerender using webpack.`, async () => {
 		let app = await fromSubject('sass');
 		await build(app);
 
@@ -32,7 +32,7 @@ describe('preact build', () => {
 		htmlLooksLike(html, sassPrerendered);
 	});
 
-	it(`preact build - should use custom .babelrc.`, async () => {
+	it(`should use custom .babelrc.`, async () => {
 		// app with custom .babelrc enabling async functions
 		let app = await fromSubject('custom-babelrc');
 
@@ -40,7 +40,7 @@ describe('preact build', () => {
 		expect(async () => await build(app)).not;
 	});
 
-	it(`preact build - should use custom preact.config.js.`, async () => {
+	it(`should use custom preact.config.js.`, async () => {
 		// app with custom template set via preact.config.js
 		let app = await fromSubject('custom-webpack');
 

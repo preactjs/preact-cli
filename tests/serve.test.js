@@ -29,7 +29,7 @@ describe('preact serve', () => {
 		if (server) await server.kill();
 	});
 
-	it(`preact serve - should spawn server hosting the app.`, async () => {
+	it(`should spawn server hosting the app.`, async () => {
 		let { Runtime } = chrome;
 		let app = await create('app');
 		await build(app);
@@ -42,7 +42,7 @@ describe('preact serve', () => {
 		htmlLooksLike(html, homePageHTML);
 	});
 
-	it(`preact serve - should serve interactive page.`, async () => {
+	it(`should serve interactive page.`, async () => {
 		let { Runtime } = chrome;
 		let app = await create('app');
 		await build(app);
@@ -62,7 +62,7 @@ describe('preact serve', () => {
 		htmlLooksLike(html, profilePageHtml);
 	});
 
-	it(`preact serve - should register service worker on first visit.`, async () => {
+	it(`should register service worker on first visit.`, async () => {
 		let { Runtime } = chrome;
 		let app = await create('app');
 		await build(app);

@@ -12,7 +12,7 @@ describe('preact create', () => {
 		await setup();
 	});
 
-	it('preact create - should create project using full template by default.', async () => {
+	it('should create project using full template by default.', async () => {
 		let fullExample = await listTemplate('full');
 		let app = await create('app');
 		let generated = await listOutput(app);
@@ -21,7 +21,7 @@ describe('preact create', () => {
 	});
 
 	['root', 'simple', 'empty'].forEach(template =>
-		it(`preact create - should create project using provided template. Verifying ${template}`, async () => {
+		it(`should create project using provided template. Verifying ${template}`, async () => {
 			let example = await listTemplate(template);
 			let app = await create('app', template);
 			let generated = await listOutput(app);
