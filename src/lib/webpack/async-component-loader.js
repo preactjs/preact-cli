@@ -1,5 +1,4 @@
-var loaderUtils = require('loader-utils'),
-	path = require('path');
+var loaderUtils = require('loader-utils');
 
 module.exports = function() {};
 module.exports.pitch = function(remainingRequest) {
