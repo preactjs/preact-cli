@@ -8,13 +8,15 @@
     "preact": "./lib/index.js"
   },
   "scripts": {
+    "prebuild": "rimraf lib",
     "build": "babel src -d lib -D",
     "prepublish": "npm run -s build",
     "dev": "babel-node src",
     "lint": "eslint src tests",
-    "pretest": "npm run -s build",
+    "pretest": "npm run -s build && rimraf ./tests/output",
+    "test": "jest",
+    "posttest": "rimraf ./tests/output",
     "postinstall": "node check.js",
-    "test": "tape -r babel-register tests/*.test.js | tap-diff",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
     "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
@@ -71,6 +73,9 @@
       "react/jsx-uses-vars": 2
     }
   },
+  "jest": {
+    "setupTestFrameworkScriptFile": "<rootDir>/tests/setup.js"
+  },
   "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
   "license": "MIT",
   "bugs": "https://github.com/developit/preact-cli/issues",
@@ -84,12 +89,11 @@
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^7.0.1",
     "html-looks-like": "^1.0.2",
+    "jest": "^20.0.4",
     "lodash": "^4.17.4",
     "ncp": "^2.0.0",
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",
-    "tap-diff": "^0.1.1",
-    "tape": "^4.6.3",
     "uuid": "^3.0.1"
   },
   "dependencies": {

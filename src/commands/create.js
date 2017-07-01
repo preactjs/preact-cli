@@ -49,6 +49,11 @@ export default asyncCommand({
 			type: 'boolean',
 			default: false
 		},
+		git: {
+			description: 'Initialize version control using git',
+			type: 'boolean',
+			default: true
+		},
 		install: {
 			description: 'Install dependencies',
 			type: 'boolean',
@@ -149,7 +154,9 @@ export default asyncCommand({
 			]);
 
 			spinner.succeed('Done!\n');
+		}
 
+		if (argv.git) {
 			await initializeVersionControl(target);
 		}
 
@@ -179,7 +186,10 @@ async function initializeVersionControl(target) {
 	let git;
 	try {
 		git = await promisify(which)('git');
-	} catch (e) {}
+	} catch (e) {
+		process.stderr.write('Could not find git in $PATH.\n');
+		process.stdout.write('Continuing without initializing version control...\n');
+	}
 	if (git) {
 		const gitignore = trimLeft(`
 		node_modules

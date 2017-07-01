@@ -4,7 +4,7 @@ const minimumSizeDifference = 10;
 const percentageThreshold = 0.05;
 const minimumFileSize = 1;
 
-export default (test, actual, expected) => {
+export default (actual, expected) => {
 	let normalizedExpected = normalize(expected);
 	let normalizedActual = normalize(actual);
 
@@ -27,7 +27,7 @@ export default (test, actual, expected) => {
 		return Object.assign(acc, { [path]: actualValue });
 	}, {});
 
-	test.deepEquals(comparisonResult, expectedBoundaries);
+	expect(comparisonResult).toEqual(expectedBoundaries);
 };
 
 const boundary = (direction, val) => {
