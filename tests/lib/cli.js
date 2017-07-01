@@ -5,6 +5,7 @@ import mkdirp from 'mkdirp';
 import { createWorkDir } from './output';
 import withLog from './log';
 import { shouldInstallDeps } from './tests-config';
+import fs from 'fs.promised';
 
 const builtPreactCliPath = path.resolve(__dirname, '../../lib/index.js');
 
@@ -47,6 +48,12 @@ const createApp = async (template, appName, workDir) => {
 	let cliPath = builtPreactCliPath;
 	let install = process.env.WITH_INSTALL ? '--install' : '--no-install';
 	let args = [cliPath, 'create', '--no-git', install, appName, template ? `--type=${template}` : undefined];
+
+	let cliPathExists = await fs.exists(cliPath);
+	console.log('CLI PathExists: ' + cliPathExists);
+	let workDirExists = await fs.exists(workDir);
+	console.log('Work Dir Exists: ' + workDirExists);
+
 	await run('node', args, workDir);
 };
 

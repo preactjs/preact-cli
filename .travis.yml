@@ -18,6 +18,7 @@ cache:
 before_script:
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
 - if [ "$TRAVIS_BRANCH" = "master" ]; then export WITH_INSTALL=true; fi
+- export WITH_LOG=true;
 
 script:
 - npm run lint
