@@ -1,6 +1,7 @@
 import fs from 'fs.promised';
 import { difference } from 'lodash';
 import { resolve } from 'path';
+import { withLog } from './utils';
 
 const lsr = async (path, excludes = []) => {
 	let contents = difference(await fs.readdir(path), excludes);
@@ -24,4 +25,4 @@ const lsr = async (path, excludes = []) => {
 	return stats;
 };
 
-export default lsr;
+export default (path, excludes) => withLog(() => lsr(path, excludes), `List directory: ${path}`);

@@ -117,7 +117,7 @@ export const withCustomTemplate = `
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Preact App</title>
+		<title>preact-app</title>
 		<link rel="shortcut icon" href="/favicon.ico"></link>
 	</head>
 	<body>
