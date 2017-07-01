@@ -13,7 +13,7 @@
     "dev": "babel-node src",
     "lint": "eslint src tests",
     "pretest": "npm run -s build",
-    "postinstall": "babel-node check.js",
+    "postinstall": "node check.js",
     "test": "tape -r babel-register tests/*.test.js | tap-diff",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",

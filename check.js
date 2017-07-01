@@ -1,26 +1,22 @@
-import colors from "chalk";
-import pkg from "./package.json";
+const colors = require('chalk');
+const pkg = require('./package.json');
 
-export default function checkVersion() {
-	const version = parseFloat( process.version.substr(1) );
-	const minimum = parseFloat( pkg.engines.node.match(/\d+/g).join('.') );
+const version = parseFloat( process.version.substr(1) );
+const minimum = parseFloat( pkg.engines.node.match(/\d+/g).join('.') );
 
+module.exports = function () {
   if (version >= minimum) {
-		return true;
+    return true;
   }
 
-	const errorMessage = colors.yellow(
-		"\n⚠️ " +
-			"preact-cli requires at least " +
-			"node@" +
-			minimum +
-			"\n\n" +
-			"Your node version is " +
-			version +
-		"\n"
-	);
+	const errorMessage = colors.yellow(`
 
-	// version not supported && exit
-	process.stdout.write(errorMessage) + '\n';
-	process.exit(1);
-}
+		⚠️ preact-cli requires at least node@${minimum}!
+		You have node@${version}
+
+	`);
+
+  // version not supported && exit
+  process.stdout.write(errorMessage) + '\n';
+  process.exit(1);
+};
