@@ -8,7 +8,7 @@ import serve from './commands/serve';
 import installHooks from './lib/output-hooks';
 import pkg from '../package.json';
 import logo from './lib/logo';
-import checkVersion from './lib/check-engine';
+import checkVersion from './../check';
 
 global.Promise = require('promise-polyfill');
 

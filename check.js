@@ -1,5 +1,5 @@
 import colors from "chalk";
-import pkg from "./../../package.json";
+import pkg from "./package.json";
 
 export default function checkVersion() {
 	const version = parseFloat( process.version.substr(1) );
