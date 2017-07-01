@@ -32,7 +32,7 @@ export default env => {
 		setOutput({
 			path: outputDir,
 			publicPath: '/',
-			filename: isProd ? "bundle.[chunkhash:5].js" : "bundle.js",
+			filename: isProd ? "[name].[chunkhash:5].js" : "[name].js",
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
 		}),
 

@@ -220,7 +220,7 @@ export default (env) => {
 		// produce HTML & CSS:
 		addPlugins([
 			new ExtractTextPlugin({
-				filename: isProd ? "style.[contenthash].css" : "style.css",
+				filename: isProd ? "style.[contenthash:5].css" : "style.css",
 				disable: !isProd,
 				allChunks: true
 			})
