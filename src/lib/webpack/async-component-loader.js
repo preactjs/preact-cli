@@ -16,7 +16,7 @@ module.exports.pitch = function(remainingRequest) {
 	}
 
 	return `
-		import async from ${JSON.stringify(path.resolve(__dirname, '../../components/async'))};
+		import async from 'preact-cli/async-component';
 
 		function load(cb) {
 			require.ensure([], function(require) {
