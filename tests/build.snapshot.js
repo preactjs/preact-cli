@@ -9,7 +9,7 @@ const smallBuildCommons = {
 	'favicon.ico': { size: 15086 },
 	'sw.js': { size: 3330 },
 	'manifest.json': { size: 298 },
-	'push-manifest.json': { size: 2 },
+	'push-manifest.json': { size: 88 },
 };
 
 const fullBuildCommons = {
