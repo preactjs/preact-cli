@@ -4,7 +4,7 @@ import mkdirp from 'mkdirp';
 import uuid from 'uuid/v4';
 import ncp from 'ncp';
 import spawn from 'cross-spawn-promise';
-import withLog from './log';
+import { withLog } from './utils';
 import { shouldInstallDeps } from './tests-config';
 
 const cp = promisify(ncp);

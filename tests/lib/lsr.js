@@ -1,7 +1,7 @@
 import fs from 'fs.promised';
 import { difference } from 'lodash';
 import { resolve } from 'path';
-import withLog from './log';
+import { withLog } from './utils';
 
 const lsr = async (path, excludes = []) => {
 	let contents = difference(await fs.readdir(path), excludes);

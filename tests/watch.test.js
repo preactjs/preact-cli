@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import fs from 'fs.promised';
 import { create, build, watch } from './lib/cli';
-import startChrome, { loadPage, waitUntil } from './lib/chrome';
+import startChrome, { loadPage, waitUntilExpression } from './lib/chrome';
 import { setup } from './lib/output';
 
 let chrome, launcher, server;
@@ -31,7 +31,7 @@ describe('preact', () => {
 		let newSourceCode = headerComponentSourceCode.replace('<h1>Preact App</h1>', '<h1>Test App</h1>');
 		await fs.writeFile(headerComponentSourceFile, newSourceCode);
 
-		await waitUntil(
+		await waitUntilExpression(
 			Runtime,
 			`document.querySelector('header > h1').innerText === 'Test App'`,
 		);

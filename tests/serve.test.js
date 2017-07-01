@@ -1,7 +1,8 @@
 import htmlLooksLike from 'html-looks-like';
 import { create, build, serve } from './lib/cli';
-import startChrome, { delay, loadPage, waitUntil, getElementHtml } from './lib/chrome';
+import startChrome, { loadPage,  waitUntilExpression, getElementHtml } from './lib/chrome';
 import { setup } from './lib/output';
+import { waitUntil } from './lib/utils';
 import { homePageHTML, profilePageHtml } from './serve.snapshot';
 
 let chrome, launcher, server;
@@ -20,8 +21,12 @@ describe('preact serve', () => {
 		await launcher.kill();
 	});
 
+	beforeEach(() => {
+		server = undefined;
+	});
+
 	afterEach(async () => {
-		await server.kill();
+		if (server) await server.kill();
 	});
 
 	it(`preact serve - should spawn server hosting the app.`, async () => {
@@ -47,7 +52,10 @@ describe('preact serve', () => {
 		await loadPage(chrome, url);
 		await pageIsInteractive(chrome);
 		await Runtime.evaluate({ expression: `document.querySelector('a[href="/profile"]').click()` });
-		await waitUntil(Runtime, `document.querySelector('div > h1').innerText === 'Profile: me'`);
+		await waitUntilExpression(
+			Runtime,
+			`document.querySelector('div > h1').innerText === 'Profile: me'`
+		);
 
 		let html = await getElementHtml(Runtime, 'body');
 
@@ -64,14 +72,14 @@ describe('preact serve', () => {
 		await loadPage(chrome, url);
 		await pageIsInteractive(chrome);
 
-		await waitUntil(Runtime, `
+		await waitUntilExpression(Runtime, `
 			navigator.serviceWorker
 				.getRegistration()
 				.then(r => !!r && !!r.active && r.active.state === 'activated')
 		`);
 
 		await server.kill();
-		server.kill = () => {};
+		server = undefined;
 
 		await loadPage(chrome, url);
 		await pageIsInteractive(chrome);
@@ -86,19 +94,18 @@ const unregisterSW = async url => {
 	await ServiceWorker.unregister({ scopeURL: url });
 };
 
-export const pageIsInteractive = async (chrome, retryCount = 10, retryInterval = 200) => {
-	if (retryCount < 0) {
-		throw new Error('Waiting for page interactivity timeout out.');
-	}
+export const pageIsInteractive = chrome => waitUntil(
+	async () => {
+		let { DOM, DOMDebugger } = chrome;
+		let { root: document} = await DOM.getDocument();
+		let a = await DOM.querySelector({ selector: 'a', nodeId: document.nodeId });
+		let { object } = await DOM.resolveNode({ nodeId: a.nodeId });
+		let { listeners } = await DOMDebugger.getEventListeners({ objectId: object.objectId });
 
-	let { DOM, DOMDebugger } = chrome;
-	let { root: document} = await DOM.getDocument();
-	let a = await DOM.querySelector({ selector: 'a', nodeId: document.nodeId });
-	let { object } = await DOM.resolveNode({ nodeId: a.nodeId });
-	let { listeners } = await DOMDebugger.getEventListeners({ objectId: object.objectId });
+		return listeners.some(l => l.type === 'click');
+	},
+	'Waiting for page interactivity timeout out.',
+	20,
+	100
+);
 
-	if (!listeners.some(l => l.type === 'click')) {
-		await delay(retryInterval);
-		await pageIsInteractive(chrome, retryCount - 1, retryInterval);
-	}
-};

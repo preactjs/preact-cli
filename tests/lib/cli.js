@@ -2,10 +2,10 @@ import crossSpawn from 'cross-spawn-promise';
 import { spawn as spawnChild } from 'child_process';
 import path from 'path';
 import mkdirp from 'mkdirp';
-import { createWorkDir } from './output';
-import withLog from './log';
-import { shouldInstallDeps } from './tests-config';
 import fs from 'fs.promised';
+import { createWorkDir } from './output';
+import { waitUntil, withLog } from './utils';
+import { shouldInstallDeps } from './tests-config';
 
 const builtPreactCliPath = path.resolve(__dirname, '../../lib/index.js');
 
@@ -49,10 +49,8 @@ const createApp = async (template, appName, workDir) => {
 	let install = process.env.WITH_INSTALL ? '--install' : '--no-install';
 	let args = [cliPath, 'create', '--no-git', install, appName, template ? `--type=${template}` : undefined];
 
-	let cliPathExists = await fs.exists(cliPath);
-	console.log('CLI PathExists: ' + cliPathExists);
-	let workDirExists = await fs.exists(workDir);
-	console.log('Work Dir Exists: ' + workDirExists);
+	await exists(cliPath);
+	await exists(workDir);
 
 	await run('node', args, workDir);
 };
@@ -75,20 +73,29 @@ const run = async (command, args, cwd) => {
 
 const spawnPreact = (args, cwd) => new Promise((resolve, reject) => {
 	let child = spawnChild('node', [cliPath(cwd), ...args.filter(Boolean)], { cwd });
-
+	let exitCode, killed = false;
 	let errListener = err => {
 		reject(err);
 	};
 
 	child.on('error', errListener);
+	child.on('exit', code => {
+		killed = true;
+		exitCode = code;
+	});
 
 	let origKill = child.kill.bind(child);
 	child.kill = () => new Promise((resolve) => {
 		child.stdout.unpipe(process.stdout);
 		child.stderr.unpipe(process.stderr);
-		child.on('exit', code => {
-			resolve(code);
-		});
+		if (killed) {
+			resolve(exitCode);
+		} else {
+			child.on('exit', (code) => {
+				resolve(code);
+			});
+		}
+
 		origKill();
 	});
 
@@ -104,3 +111,8 @@ const spawnPreact = (args, cwd) => new Promise((resolve, reject) => {
 const cliPath = (cwd) => shouldInstallDeps()
 		? path.resolve(cwd, './node_modules/.bin/preact')
 		: builtPreactCliPath;
+
+const exists = (path) => waitUntil(
+	() => withLog(() => fs.exists(path), `Check path exists: ${path}`),
+	`${path} doesn\'t exist`
+);
