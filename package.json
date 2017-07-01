@@ -13,6 +13,7 @@
     "dev": "babel-node src",
     "lint": "eslint src tests",
     "pretest": "npm run -s build",
+    "postinstall": "node check.js",
     "test": "tape -r babel-register tests/*.test.js | tap-diff",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
@@ -27,7 +28,8 @@
   },
   "files": [
     "lib",
-    "examples"
+    "examples",
+    "check.js"
   ],
   "keywords": [
     "preact",
@@ -115,8 +117,8 @@
     "es6-promisify": "^5.0.0",
     "file-loader": "^0.11.1",
     "fs.promised": "^3.0.0",
-    "html-webpack-plugin": "^2.28.0",
     "html-webpack-exclude-assets-plugin": "0.0.5",
+    "html-webpack-plugin": "^2.28.0",
     "isomorphic-unfetch": "^2.0.0",
     "json-loader": "^0.5.4",
     "less": "^2.7.2",
