@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "noEmitHelpers": true,
+    "module": "es2015",
+    "moduleResolution": "node",
+    "target": "es2017",
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "jsx": "preserve"
+  }
+}

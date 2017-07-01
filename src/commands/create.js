@@ -49,6 +49,11 @@ export default asyncCommand({
 			type: 'boolean',
 			default: false
 		},
+		typescript: {
+			description: 'Pre-install TypeScript support',
+			type: 'boolean',
+			default: false
+		},
 		install: {
 			description: 'Install dependencies',
 			type: 'boolean',
@@ -136,6 +141,12 @@ export default asyncCommand({
 				...(argv.less ? [
 					'less',
 					'less-loader'
+				] : []),
+
+				// install typescript setup if --typescript
+				...(argv.typescript ? [
+					'typescript',
+					'awesome-typescript-loader'
 				] : [])
 			].filter(Boolean));
 

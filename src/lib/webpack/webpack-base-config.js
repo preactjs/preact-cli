@@ -52,6 +52,9 @@ export default (env) => {
 	let babelrc = readJson(resolve(cwd, '.babelrc')) || {};
 	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
+	// use user specified tsconfig.json if present
+	let tsconfig = resolve(cwd, 'tsconfig.json');
+
 	return group([
 		setContext(src('.')),
 		customConfig({
@@ -92,6 +95,37 @@ export default (env) => {
 							createBabelConfig(env, { browsers }),
 							babelrc // intentionall overwrite our settings
 						)
+					}
+				]
+			}
+		}),
+
+		// TypeScript
+		customConfig({
+			module: {
+				loaders: [
+					{
+						enforce: 'pre',
+						test: /\.tsx?$/,
+						use: [
+							{
+								loader: resolve(__dirname, './npm-install-loader'),
+								options: {
+									modules: ['typescript', 'awesome-typescript-loader'],
+									save: true
+								}
+							},
+							{
+								loader: 'awesome-typescript-loader',
+								options: {
+									sourceMap: true,
+									useBabel: true,
+									babelOptions: createBabelConfig(env),
+									useCache: true,
+									configFileName: tsconfig,
+								}
+							}
+						]
 					}
 				]
 			}
