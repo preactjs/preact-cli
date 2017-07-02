@@ -108,7 +108,6 @@ export const sassPrerendered = `
 		<h1>Header on background</h1>
 		<p>Paragraph on background</p>
 	</div>
-	<script src="/bundle.1ab24.js" defer="defer"></script>
 	{{ ... }}
 </body>
 `;
@@ -124,7 +123,7 @@ export const withCustomTemplate = `
 	<body>
 		<h1>Guess what</h1>
 		<h2>This is an app with custom template</h2>
-		<script src="/bundle.72548.js" defer="defer"></script>
+		{{ ... }}
 	</body>
 </html>
 `;

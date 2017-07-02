@@ -14,7 +14,6 @@ export const homePageHTML = `
 			<p>This is the Home component.</p>
 		</div>
 	</div>
-	<script src="/bundle.a5f01.js" defer="defer"></script>
 	{{ ... }}
 </body>
 `;
@@ -37,7 +36,6 @@ export const profilePageHtml = `
 			<p><button>Click Me</button> Clicked 10 times.</p>
 		</div>
 	</div>
-	<script src="/bundle.a5f01.js" defer="defer"></script>
 	{{ ... }}
 </body>
 `;
