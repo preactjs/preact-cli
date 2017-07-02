@@ -13,6 +13,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
+import WebpackChunkHash from 'webpack-chunk-hash';
 import requireRelative from 'require-relative';
 import createBabelConfig from '../babel-config';
 
@@ -260,6 +261,7 @@ const development = () =>	group([]);
 
 const production = () => addPlugins([
 	new webpack.HashedModuleIdsPlugin(),
+	new WebpackChunkHash(),
 	new webpack.LoaderOptionsPlugin({
 		minimize: true
 	}),
