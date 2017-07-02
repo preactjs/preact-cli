@@ -5,9 +5,9 @@ const version = parseFloat( process.version.substr(1) );
 const minimum = parseFloat( pkg.engines.node.match(/\d+/g).join('.') );
 
 module.exports = function () {
-  if (version >= minimum) {
-    return true;
-  }
+	if (version >= minimum) {
+		return true;
+	}
 
 	const errorMessage = colors.yellow(`
 
@@ -16,7 +16,7 @@ module.exports = function () {
 
 	`);
 
-  // version not supported && exit
-  process.stdout.write(errorMessage) + '\n';
-  process.exit(1);
+	// version not supported && exit
+	process.stdout.write(errorMessage) + '\n';
+	process.exit(1);
 };
