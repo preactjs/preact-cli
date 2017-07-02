@@ -27,8 +27,14 @@ const devBuild = async (env, onprogress) => {
 			if (first) {
 				first = false;
 				let devServer = config.devServer;
-				let serverAddr = `${devServer.https?'https':'http'}://${process.env.HOST || devServer.host || 'localhost'}:${process.env.PORT || devServer.port || 8080}`;
-				let localIpAddr = `${devServer.https?'https':'http'}://${ip.address()}:${process.env.PORT || devServer.port || 8080}`;
+
+				let protocol = devServer.https ? 'https' : 'http';
+				let host = process.env.HOST || devServer.host || 'localhost';
+				let port = process.env.PORT || devServer.port || 8080;
+
+				let serverAddr = `${protocol}://${host}:${port}`;
+				let localIpAddr = `${protocol}://${ip.address()}:${port}`;
+
 				process.stdout.write(chalk.green('Compiled successfully!!\n\n'));
 				process.stdout.write('You can view the application in the browser.\n\n');
 				process.stdout.write(`${chalk.bold('Local:')}            ${serverAddr}\n`);
