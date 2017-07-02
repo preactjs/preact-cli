@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs.promised';
+import ip from 'ip';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
@@ -27,7 +28,11 @@ const devBuild = async (env, onprogress) => {
 				first = false;
 				let devServer = config.devServer;
 				let serverAddr = `${devServer.https?'https':'http'}://${process.env.HOST || devServer.host || 'localhost'}:${process.env.PORT || devServer.port || 8080}`;
-				process.stdout.write(`  \u001b[32m> Development server started at ${serverAddr}\u001b[39m\n`);
+				let localIpAddr = `${devServer.https?'https':'http'}://${ip.address()}:${process.env.PORT || devServer.port || 8080}`;
+				process.stdout.write(chalk.green('Compiled successfully!!\n\n'));
+				process.stdout.write('You can view the application in the browser.\n\n');
+				process.stdout.write(`${chalk.bold('Local:')}            ${serverAddr}\n`);
+				process.stdout.write(`${chalk.bold('On Your Network:')}  ${localIpAddr}\n`);
 			}
 			if (onprogress) onprogress(stats);
 		});
