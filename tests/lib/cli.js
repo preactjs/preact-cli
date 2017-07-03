@@ -39,8 +39,8 @@ export const serve = (appDir, port) => withLog(
 	'preact serve'
 );
 
-export const watch = (appDir, port) => withLog(
-	() => spawnPreact(['watch', port ? `-p=${port}` : undefined], appDir),
+export const watch = (appDir, host, port) => withLog(
+	() => spawnPreact(['watch', host ? `--host=${host}` : undefined, port ? `-p=${port}` : undefined], appDir),
 	'preact watch'
 );
 

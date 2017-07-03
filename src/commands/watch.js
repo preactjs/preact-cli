@@ -19,8 +19,7 @@ export default asyncCommand({
 		},
 		host: {
 			description: 'Hostname to start a server on',
-			default: '0.0.0.0',
-			alias: 'h'
+			default: '0.0.0.0'
 		},
 		https: {
 			description: 'Use HTTPS?',
