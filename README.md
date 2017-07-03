@@ -125,7 +125,7 @@ To customize babel simply create [```.babelrc```](https://babeljs.io/docs/usage/
 
 #### Webpack
 
-To customize babel create ```preact.config.js``` file which exports function that will change webpack's config.
+To customize webpack create ```preact.config.js``` file which exports function that will change webpack's config.
 
 ```
 /**
