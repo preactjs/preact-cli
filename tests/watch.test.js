@@ -23,7 +23,7 @@ describe('preact', () => {
 		let { Runtime } = chrome;
 		let app = await create('app');
 		await build(app);
-		server = await watch(app, 8083);
+		server = await watch(app, '127.0.0.1', 8083);
 		let headerComponentSourceFile = resolve(app, './src/components/header/index.js');
 
 		await loadPage(chrome, 'http://localhost:8083/');
