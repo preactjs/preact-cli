@@ -12,7 +12,6 @@ import {
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import WorkboxWebpackPlugin from 'workbox-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
 import requireRelative from 'require-relative';
 import createBabelConfig from '../babel-config';
@@ -310,16 +309,6 @@ const production = () => addPlugins([
 			]
 		}
 	}),
-
-	new WorkboxWebpackPlugin({
-		navigateFallback: 'index.html',
-		skipWaiting: true,
-		clientsClaim: true,
-		globIgnores: [
-			'**\/.map',
-			'**\/push-manifest.json'
-		],
-	})
 ]);
 
 export function helpers(env) {
