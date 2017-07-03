@@ -155,7 +155,7 @@ const production = config => addPlugins([
 		skipWaiting: true,
 		clientsClaim: true,
 		globIgnores: [
-			'**/polyfills/*',
+			'**/polyfills*',
 			'**\/.map',
 			'**\/push-manifest.json'
 		],

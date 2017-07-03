@@ -7,7 +7,7 @@ const smallBuildCommons = {
 	'polyfills.js': { size: 4620 },
 	'polyfills.js.map': { size: 31760 },
 	'favicon.ico': { size: 15086 },
-	'sw.js': { size: 1716 },
+	'sw.js': { size: 1628 },
 	'workbox-sw.prod.v1.0.1.js': {size: 47026},
 	'manifest.json': { size: 298 },
 	'push-manifest.json': { size: 88 },
@@ -29,7 +29,7 @@ const fullBuildCommons = {
 	'push-manifest.json': { size: 303 },
 	'favicon.ico': { size: 15086 },
 	'manifest.json': { size: 426 },
-	'sw.js': { size: 1716 },
+	'sw.js': { size: 1628 },
 	'workbox-sw.prod.v1.0.1.js': {size: 47026}
 };
 
@@ -41,7 +41,7 @@ export default {
 		'index.html': { size: 630 },
 		'style.css': { size: 131 },
 		'style.css.map': { size: 359 },
-		'sw.js': { size: 1511 },
+		'sw.js': { size: 1423 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 9450 },
 			'ssr-bundle.js.map': { size: 42461 },
@@ -57,7 +57,7 @@ export default {
 		'style.css': { size: 296},
 		'style.css.map': { size: 621 },
 		'manifest.json': { size: 290 },
-		'sw.js': { size: 1511 },
+		'sw.js': { size: 1423 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 10100 },
 			'ssr-bundle.js.map': { size: 46466 },
