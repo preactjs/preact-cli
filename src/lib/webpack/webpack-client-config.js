@@ -149,7 +149,7 @@ const development = config => {
 	]);
 };
 
-const production = config => addPlugins([
+const production = () => addPlugins([
 	new WorkboxWebpackPlugin({
 		navigateFallback: 'index.html',
 		skipWaiting: true,
