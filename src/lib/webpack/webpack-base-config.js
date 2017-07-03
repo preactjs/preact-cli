@@ -1,35 +1,23 @@
 import { resolve } from 'path';
 import { readFileSync, statSync } from 'fs';
-import { filter } from 'minimatch';
 import {
 	webpack,
 	group,
-	createConfig,
 	customConfig,
 	setContext,
-	entryPoint,
-	setOutput,
 	defineConstants,
-	performance,
 	addPlugins,
 	setDevTool
 } from '@webpack-blocks/webpack2';
-import babel from '@webpack-blocks/babel6';
-import devServer from '@webpack-blocks/dev-server2';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import ReplacePlugin from 'replace-bundle-webpack-plugin';
 import WorkboxWebpackPlugin from 'workbox-webpack-plugin';
-import createBabelConfig from './babel-config';
-import prerender from './prerender';
-import PushManifestPlugin from './push-manifest';
-import path from 'path';
+import ReplacePlugin from 'webpack-plugin-replace';
+import requireRelative from 'require-relative';
+import createBabelConfig from '../babel-config';
 
-function exists(file) {
+export function exists(file) {
 	try {
 		if (statSync(file)) return true;
 	} catch (e) {}
@@ -45,93 +33,66 @@ function readJson(file) {
 }
 readJson.cache = {};
 
-export default env => {
-	let isProd = env && env.production;
-	let cwd = env.cwd = resolve(env.cwd || process.cwd());
-	let src = dir => resolve(env.cwd, env.src || 'src', dir);
+// attempt to resolve a dependency, giving $CWD/node_modules priority:
+function resolveDep(dep, cwd) {
+	try { return requireRelative.resolve(dep, cwd || process.cwd()); } catch (e) {}
+	try { return require.resolve(dep); } catch (e) {}
+	return dep;
+}
 
+export default (env) => {
+	let { isProd, cwd, src } = helpers(env);
 	// only use src/ if it exists:
 	if (!exists(src('.'))) {
 		env.src = '.';
 	}
 
-	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 	env.manifest = readJson(src('manifest.json')) || {};
+	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
-	return createConfig.vanilla([
+	let babelrc = readJson(resolve(cwd, '.babelrc')) || {};
+	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
+
+	return group([
 		setContext(src('.')),
-		entryPoint(resolve(__dirname, './entry')),
-		setOutput({
-			path: resolve(cwd, env.dest || 'build'),
-			publicPath: '/',
-			filename: 'bundle.js',
-			chunkFilename: '[name].chunk.[chunkhash:5].js'
-		}),
-
 		customConfig({
 			resolve: {
 				modules: [
 					'node_modules',
-					resolve(__dirname, '../../node_modules')
+					resolve(__dirname, '../../../node_modules')
 				],
 				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.css'],
 				alias: {
 					'preact-cli-entrypoint': src('index.js'),
-					'preact-cli-polyfills': resolve(__dirname, 'polyfills.js'),
 					style: src('style'),
-					preact$: isProd ? 'preact/dist/preact.min.js' : 'preact',
+					preact$: resolveDep(isProd ? 'preact/dist/preact.min.js' : 'preact', env.cwd),
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
+					'create-react-class': 'preact-compat/lib/create-react-class',
 					'react-addons-css-transition-group': 'preact-css-transition-group'
 				}
 			},
 			resolveLoader: {
-				alias: {
-					'async': resolve(__dirname, './async-component-loader')
-				},
 				modules: [
-					resolve(__dirname, '../../node_modules'),
+					resolve(__dirname, '../../../node_modules'),
 					resolve(cwd, 'node_modules')
 				]
 			}
 		}),
 
 		// ES2015
-		babel({
-			include(filepath) {
-				if (filepath.indexOf(src('.'))===0 || filepath.indexOf(resolve(__dirname, '../..'))===0 || filepath.split(/[/\\]/).indexOf('node_modules')===-1) return true;
-				let manifest = resolve(filepath.replace(/(.*([\/\\]node_modules|\.\.)[\/\\](@[^\/\\]+[\/\\])?[^\/\\]+)([\/\\].*)?$/g, '$1'), 'package.json'),
-					pkg = readJson(manifest) || {};
-				return !!(pkg.module || pkg['jsnext:main']);
-			},
-			...createBabelConfig(env)
-		}),
-
-		// automatic async components :)
 		customConfig({
 			module: {
 				loaders: [
 					{
+						enforce: 'pre',
 						test: /\.jsx?$/,
-						include: [
-							filter(src('routes')+'/{*.js,*/index.js}'),
-							filter(src('components')+'/{routes,async}/{*.js,*/index.js}')
-						],
-						loader: resolve(__dirname, './async-component-loader'),
-						options: {
-							name(filename) {
-								let relative = filename.replace(src('.'), '');
-								let isRoute = filename.indexOf('/routes/') >= 0;
-
-								return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
-							},
-							formatName(filename) {
-								let relative = filename.replace(src('.'), '');
-								// strip out context dir & any file/ext suffix
-								return relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
-							}
-						}
+						loader: 'babel-loader',
+						options: Object.assign(
+							createBabelConfig(env, { browsers }),
+							babelrc // intentionall overwrite our settings
+						)
 					}
 				]
 			}
@@ -220,7 +181,7 @@ export default env => {
 						loader: 'raw-loader'
 					},
 					{
-						test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif)(\?.*)?$/i,
+						test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
 						loader: isProd ? 'file-loader' : 'url-loader'
 					}
 				]
@@ -231,9 +192,7 @@ export default env => {
 			new webpack.LoaderOptionsPlugin({
 				options: {
 					postcss: () => [
-						autoprefixer({
-							browsers: ['last 2 versions']
-						})
+						autoprefixer({ browsers })
 					],
 					context: resolve(cwd, env.src || 'src')
 				}
@@ -243,13 +202,6 @@ export default env => {
 		defineConstants({
 			'process.env.NODE_ENV': isProd ? 'production' : 'development'
 		}),
-
-		// monitor output size and warn if it exceeds 200kb:
-		isProd && performance(Object.assign({
-			maxAssetSize: 200 * 1000,
-			maxEntrypointSize: 200 * 1000,
-			hints: 'warning'
-		}, env.pkg.performance || {})),
 
 		// Source maps for dev/prod:
 		setDevTool(isProd ? 'source-map' : 'cheap-module-eval-source-map'),
@@ -265,28 +217,6 @@ export default env => {
 				setImmediate: false
 			}
 		}),
-
-		// copy any static files
-		addPlugins([
-			new CopyWebpackPlugin([
-				...(exists(src('manifest.json')) ? [
-					{ from: 'manifest.json' }
-				] : [
-					{
-						from: resolve(__dirname, '../resources/manifest.json'),
-						to: 'manifest.json'
-					},
-					{
-						from: resolve(__dirname, '../resources/icon.png'),
-						to: 'assets/icon.png'
-					}
-				]),
-				exists(src('assets')) && {
-					from: 'assets',
-					to: 'assets'
-				}
-			].filter(Boolean))
-		]),
 
 		// produce HTML & CSS:
 		addPlugins([
@@ -305,9 +235,7 @@ export default env => {
 		// 	})
 		// ]),
 
-		htmlPlugin(env),
-
-		isProd ? production(env) : development(env),
+		isProd ? production() : development(),
 
 		addPlugins([
 			new webpack.NoEmitOnErrorsPlugin(),
@@ -323,56 +251,14 @@ export default env => {
 				async: false,
 				children: true,
 				minChunks: 3
-			}),
-
-			new PushManifestPlugin()
+			})
 		])
 	].filter(Boolean));
 };
 
+const development = () =>	group([]);
 
-const development = config => {
-	let port = process.env.PORT || config.port || 8080,
-		host = process.env.HOST || config.host || '0.0.0.0',
-		origin = `${config.https===true?'https':'http'}://${host}:${port}/`;
-
-	return group([
-		addPlugins([
-			new webpack.NamedModulesPlugin()
-		]),
-
-		devServer({
-			port,
-			host,
-			inline: true,
-			hot: true,
-			https: config.https===true,
-			compress: true,
-			publicPath: '/',
-			contentBase: resolve(config.cwd, config.src || './src'),
-			// setup(app) {
-			// 	app.use(middleware);
-			// },
-			disableHostCheck: true,
-			historyApiFallback: true,
-			quiet: true,
-			clientLogLevel: 'none',
-			overlay: false,
-			stats: 'minimal',
-			watchOptions: {
-				ignored: [
-					resolve(config.cwd, 'build'),
-					resolve(config.cwd, 'node_modules')
-				]
-			}
-		}, [
-			`webpack-dev-server/client?${origin}`,
-			`webpack/hot/dev-server?${origin}`
-		])
-	]);
-};
-
-const production = config => addPlugins([
+const production = () => addPlugins([
 	new webpack.HashedModuleIdsPlugin(),
 	new webpack.LoaderOptionsPlugin({
 		minimize: true
@@ -392,13 +278,12 @@ const production = config => addPlugins([
 			comments: false
 		},
 		mangle: true,
+		sourceMap: true,
 		compress: {
-			unsafe_comps: true,
 			properties: true,
 			keep_fargs: false,
 			pure_getters: true,
 			collapse_vars: true,
-			unsafe: true,
 			warnings: false,
 			screw_ie8: true,
 			sequences: true,
@@ -437,32 +322,10 @@ const production = config => addPlugins([
 	})
 ]);
 
-
-const htmlPlugin = config => addPlugins([
-	new HtmlWebpackPlugin({
-		filename: 'index.html',
-		template: `!!ejs-loader!${config.template || resolve(__dirname, '../resources/template.html')}`,
-		minify: config.production && {
-			collapseWhitespace: true,
-			removeScriptTypeAttributes: true,
-			removeRedundantAttributes: true,
-			removeStyleLinkTypeAttributes: true,
-			removeComments: true
-		},
-		favicon: exists(resolve(config.cwd, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../resources/favicon.ico'),
-		manifest: config.manifest,
-		inject: true,
-		compile: true,
-		preload: config.preload===true,
-		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
-		config,
-		ssr(params) {
-			return config.prerender ? prerender(config, params) : '';
-		}
-	}),
-
-	new ScriptExtHtmlWebpackPlugin({
-		// inline: 'bundle.js',
-		defaultAttribute: 'async'
-	})
-]);
+export function helpers(env) {
+	return {
+		isProd:	env && env.production,
+		cwd: env.cwd = resolve(env.cwd || process.cwd()),
+		src: dir => resolve(env.cwd, env.src || 'src', dir)
+	};
+}

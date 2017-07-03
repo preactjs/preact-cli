@@ -1,0 +1,25 @@
+dist: trusty
+sudo: required
+addons:
+  chrome: stable
+  apt:
+    packages: libnss3-tools
+
+language: node_js
+node_js:
+  - 6
+  - 8
+
+cache:
+  npm: true
+  directories:
+    - $HOME/.npm
+    - ./node_modules
+
+before_script:
+- export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
+- if [ "$TRAVIS_BRANCH" = "master" ]; then export WITH_INSTALL=true; export WITH_LOG=true; fi
+
+script:
+- npm run lint
+- npm run test -- --verbose
