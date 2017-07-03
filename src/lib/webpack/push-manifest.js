@@ -13,7 +13,7 @@ module.exports = class PushManifestPlugin {
 						mainJs = filename;
 					}
 				}
-      }
+			}
 
 			let defaults = {
 				[mainCss]: {
@@ -31,14 +31,14 @@ module.exports = class PushManifestPlugin {
 
 			routes.forEach(filename => {
 				let path = filename.replace(/route-/, '/').replace(/\.chunk(\.\w+)?\.js$/, '').replace(/\/home/, '/');
-        manifest[path] = {
-          ...defaults,
-          [filename]: {
-            type: "script",
-            weight: 0.9
-          }
-        };
-      });
+				manifest[path] = {
+					...defaults,
+					[filename]: {
+						type: "script",
+						weight: 0.9
+					}
+				};
+			});
 
 			let output = JSON.stringify(manifest);
 			compilation.assets['push-manifest.json'] = {
