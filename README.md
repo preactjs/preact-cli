@@ -10,7 +10,7 @@
 - Auto-generated [Service Workers] for offline caching powered by [sw-precache]
 - [PRPL](https://developers.google.com/web/fundamentals/performance/prpl-pattern/) pattern support for efficient loading
 - Zero-configuration pre-rendering / server-side rendering hydration
-- Support for CSS Modules, LESS & autoprefixer
+- Support for CSS Modules, LESS, Sass, Stylus; with Autoprefixer
 - Monitor your bundle/chunk sizes with built-in tracking
 - Automatic app mounting, debug helpers & Hot Module Replacement
 - In just **4.5kb** you get a productive environment:
@@ -56,6 +56,7 @@ $ preact create
               [Options: "default", "root", "simple", "empty"]     [default: "default"]
   --less      Pre-install LESS support.                [boolean]  [default: false]
   --sass      Pre-install SASS/SCSS support.           [boolean]  [default: false]
+  --stylus    Pre-install STYLUS support               [boolean]  [default: false]
   --git       Initialize version control using git.    [boolean]  [default: true]
 
 $ preact build
