@@ -21,8 +21,8 @@ const devBuild = async (env, onprogress) => {
 	let config = clientConfig(env);
 	await transformConfig(env, config);
 
-	let userPort = parseInt(process.env.PORT || config.devServer.port, 10);
-	let port = await getPort(userPort || 8080);
+	let userPort = parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
+	let port = await getPort(userPort);
 
 	let compiler = webpack(config);
 	return await new Promise((resolve, reject) => {
@@ -39,7 +39,7 @@ const devBuild = async (env, onprogress) => {
 				let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
 
 				process.stdout.write(chalk.green('\nCompiled successfully!!\n\n'));
-				if (userPort && userPort !== port) {
+				if (userPort !== port) {
 					process.stdout.write(`Port ${chalk.bold(userPort)} is in use, using ${chalk.bold(port)} instead\n\n`);
 				}
 				process.stdout.write('You can view the application in browser.\n\n');
