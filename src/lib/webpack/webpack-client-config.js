@@ -197,4 +197,4 @@ const htmlPlugin = (config, outputDir) => {
 				defaultAttribute: 'defer'
 			})
 		]));
-}
+};
