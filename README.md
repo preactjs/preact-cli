@@ -66,7 +66,7 @@ $ preact build
   --less, -l        Build and compile LESS files.                 [default: false]
   --sass, -s        Build and compile SASS files.                 [default: false]
   --prerender       Pre-render static app content.                [default: true]
-  --template        Path to template file.                        [default: ]
+  --template        Path to template file.
   --clean           Clear output directory before building.       [default: true]
   --json            Generate build statistics for analysis.       [default: false]
   --config, -c      Path to custom CLI config.
@@ -77,7 +77,7 @@ $ preact watch
   --port, -p   Port to start a server on.                         [default: "8080"]
   --host                                              [boolean]   [default: "0.0.0.0"]
   --prerender  Pre-render static app content on initial build.    [default: false]
-  --template        Path to template file.                        [default: ]
+  --template   Path to template file.
 
 $ preact serve
 
