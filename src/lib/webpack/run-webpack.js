@@ -21,7 +21,7 @@ const devBuild = async (env, onprogress) => {
 	let config = clientConfig(env);
 	await transformConfig(env, config);
 
-	let port = await getPort(config.devServer.port);
+	let port = await getPort(process.env.PORT || config.devServer.port || 8080);
 
 	let compiler = webpack(config);
 	return await new Promise((resolve, reject) => {
