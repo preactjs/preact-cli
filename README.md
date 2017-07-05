@@ -66,6 +66,7 @@ $ preact build
   --less, -l        Build and compile LESS files.                 [default: false]
   --sass, -s        Build and compile SASS files.                 [default: false]
   --prerender       Pre-render static app content.                [default: true]
+  --prerenderUrls   Path to pre-render routes configuration.      [default "prerender-urls.json"]
   --template        Path to template file.
   --clean           Clear output directory before building.       [default: true]
   --json            Generate build statistics for analysis.       [default: false]
@@ -143,6 +144,26 @@ export default function (config, env, helpers) {
 }
 ```
 See [WebpackConfigHelpers] docs for more info on ```helpers``` argument.
+
+#### Prerender multiple routes
+
+The `--prerender` flag will prerender by default only the root of your application.
+If you want to prerender other routes you can create a `prerender-urls.json` file, which contains the set of routes you want to render.
+The format required for defining your routes is an array of objects with a `url` key and an optional `title` key.
+```js
+// prerender-urls.json
+[{
+  "url": "/",
+  "title": "Homepage"
+}, { 
+  "url": "/route/random"
+}]
+```
+
+You can customise the path of `prerender-urls.json` by using the flag `--prerenderUrls`.
+```
+preact build --prerenderUrls src/prerender-urls.json
+```
 
 #### Template
 A template is used to render your page.

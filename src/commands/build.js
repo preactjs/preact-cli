@@ -27,6 +27,10 @@ export default asyncCommand({
 			description: 'Pre-render static app content.',
 			default: true
 		},
+		prerenderUrls: {
+			description: 'Path to pre-render routes configuration.',
+			default: 'prerender-urls.json'
+		},
 		clean: {
 			description: 'Clear output directory before building.',
 			default: true
