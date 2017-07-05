@@ -39,7 +39,7 @@ const devBuild = async (env, onprogress) => {
 
 				process.stdout.write(chalk.green('\nCompiled successfully!!\n\n'));
 				if (parseInt(port, 10) !== parseInt(config.devServer.port, 10)) {
-					process.stdout.write(`Another process is running on ${chalk.bold(config.devServer.port)} port, development server is running on ${chalk.bold(port)}\n\n`);
+					process.stdout.write(`Port ${chalk.bold(config.devServer.port)} is in use, using ${chalk.bold(port)} instead\n\n`);
 				}
 				process.stdout.write('You can view the application in browser.\n\n');
 				process.stdout.write(`${chalk.bold('Local:')}            ${serverAddr}\n`);
