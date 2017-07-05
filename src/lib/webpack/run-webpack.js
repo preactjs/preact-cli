@@ -4,6 +4,7 @@ import ip from 'ip';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
+import getPort from 'get-port';
 import clientConfig from './webpack-client-config';
 import serverConfig from './webpack-server-config';
 import transformConfig from './transform-config';
@@ -20,6 +21,9 @@ const devBuild = async (env, onprogress) => {
 	let config = clientConfig(env);
 	await transformConfig(env, config);
 
+	let userPort = parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
+	let port = await getPort(userPort);
+
 	let compiler = webpack(config);
 	return await new Promise((resolve, reject) => {
 		let first = true;
@@ -30,13 +34,15 @@ const devBuild = async (env, onprogress) => {
 
 				let protocol = devServer.https ? 'https' : 'http';
 				let host = process.env.HOST || devServer.host || 'localhost';
-				let port = process.env.PORT || devServer.port || 8080;
 
-				let serverAddr = `${protocol}://${host}:${port}`;
-				let localIpAddr = `${protocol}://${ip.address()}:${port}`;
+				let serverAddr = `${protocol}://${host}:${chalk.bold(port)}`;
+				let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
 
-				process.stdout.write(chalk.green('Compiled successfully!!\n\n'));
-				process.stdout.write('You can view the application in the browser.\n\n');
+				process.stdout.write(chalk.green('\nCompiled successfully!!\n\n'));
+				if (userPort !== port) {
+					process.stdout.write(`Port ${chalk.bold(userPort)} is in use, using ${chalk.bold(port)} instead\n\n`);
+				}
+				process.stdout.write('You can view the application in browser.\n\n');
 				process.stdout.write(`${chalk.bold('Local:')}            ${serverAddr}\n`);
 				process.stdout.write(`${chalk.bold('On Your Network:')}  ${localIpAddr}\n`);
 			}
@@ -45,7 +51,7 @@ const devBuild = async (env, onprogress) => {
 		compiler.plugin('failed', reject);
 
 		let server = new WebpackDevServer(compiler, config.devServer);
-		server.listen(config.devServer.port);
+		server.listen(port);
 	});
 };
 
