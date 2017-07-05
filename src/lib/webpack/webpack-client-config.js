@@ -17,7 +17,7 @@ import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
 import PushManifestPlugin from './push-manifest';
-import baseConfig, { exists, helpers } from './webpack-base-config';
+import baseConfig, { exists, readJson, helpers } from './webpack-base-config';
 import prerender from './prerender';
 
 export default env => {
@@ -164,9 +164,9 @@ const production = config => addPlugins([
 	})
 ]);
 
-const htmlPlugin = (config, outputDir) => addPlugins([
-	new HtmlWebpackPlugin({
-		filename: 'index.html',
+const htmlPlugin = (config, outputDir) => {
+	const htmlWebpackConfig = ({ url, title }) => ({
+		filename: resolve(outputDir, url.substring(1), 'index.html'),
 		template: `!!ejs-loader!${config.template || resolve(__dirname, '../../resources/template.html')}`,
 		minify: config.production && {
 			collapseWhitespace: true,
@@ -180,16 +180,21 @@ const htmlPlugin = (config, outputDir) => addPlugins([
 		inject: true,
 		compile: true,
 		preload: config.preload===true,
-		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
+		title: title || config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
 		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
 		ssr(params) {
-			return config.prerender ? prerender(outputDir, params) : '';
+			return config.prerender ? prerender(outputDir, { ...params, url }) : '';
 		}
-	}),
-	new HtmlWebpackExcludeAssetsPlugin(),
-	new ScriptExtHtmlWebpackPlugin({
-		// inline: 'bundle.js',
-		defaultAttribute: 'defer'
-	})
-]);
+	});
+	const pages = readJson(resolve(config.cwd, config.prerenderUrls || '')) || [{ url: "/" }];
+	return addPlugins(pages
+		.map((page) => new HtmlWebpackPlugin(htmlWebpackConfig(page)))
+		.concat([
+			new HtmlWebpackExcludeAssetsPlugin(),
+			new ScriptExtHtmlWebpackPlugin({
+				// inline: 'bundle.js',
+				defaultAttribute: 'defer'
+			})
+		]));
+};

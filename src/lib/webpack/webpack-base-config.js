@@ -23,7 +23,7 @@ export function exists(file) {
 	return false;
 }
 
-function readJson(file) {
+export function readJson(file) {
 	if (file in readJson.cache) return readJson.cache[file];
 	let ret;
 	try { ret = JSON.parse(readFileSync(file)); }

@@ -127,3 +127,23 @@ export const withCustomTemplate = `
 	</body>
 </html>
 `;
+
+export const multiplePrerenderingHome = `
+<body>
+	<div id="app">
+		<div>Home</div>
+	</div>
+	<script defer="defer" src="/bundle.js"></script>
+	{{ ... }}
+</body>
+`;
+
+export const multiplePrerenderingRoute = `
+<body>
+	<div id="app">
+		<div>Route66</div>
+	</div>
+	<script defer="defer" src="/bundle.js"></script>
+	{{ ... }}
+</body>
+`;
