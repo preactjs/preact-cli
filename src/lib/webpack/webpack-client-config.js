@@ -21,8 +21,8 @@ import baseConfig, { exists, helpers } from './webpack-base-config';
 import prerender from './prerender';
 
 export default env => {
-	let { isProd, cwd, src } = helpers(env);
-	let outputDir = resolve(cwd, env.dest || 'build');
+	let { isProd, src } = helpers(env);
+
 	return createConfig.vanilla([
 		baseConfig(env),
 		entryPoint({
@@ -30,7 +30,7 @@ export default env => {
 			'polyfills': resolve(__dirname, './polyfills'),
 		}),
 		setOutput({
-			path: outputDir,
+			path: env.dest,
 			publicPath: '/',
 			filename: '[name].js',
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
@@ -94,7 +94,7 @@ export default env => {
 			new PushManifestPlugin()
 		]),
 
-		htmlPlugin(env, outputDir),
+		htmlPlugin(env, src('.')),
 
 		isProd ? production(env) : development(env),
 
@@ -150,6 +150,43 @@ const development = config => {
 };
 
 const production = config => addPlugins([
+	new webpack.optimize.UglifyJsPlugin({
+		output: {
+			comments: false
+		},
+		mangle: true,
+		sourceMap: true,
+		compress: {
+			properties: true,
+			keep_fargs: false,
+			pure_getters: true,
+			collapse_vars: true,
+			warnings: false,
+			screw_ie8: true,
+			sequences: true,
+			dead_code: true,
+			drop_debugger: true,
+			comparisons: true,
+			conditionals: true,
+			evaluate: true,
+			booleans: true,
+			loops: true,
+			unused: true,
+			hoist_funs: true,
+			if_return: true,
+			join_vars: true,
+			cascade: true,
+			drop_console: false,
+			pure_funcs: [
+				'classCallCheck',
+				'_classCallCheck',
+				'_possibleConstructorReturn',
+				'Object.freeze',
+				'invariant',
+				'warning'
+			]
+		}
+	}),
 	new SWPrecacheWebpackPlugin({
 		filename: 'sw.js',
 		navigateFallback: 'index.html',
@@ -164,7 +201,7 @@ const production = config => addPlugins([
 	})
 ]);
 
-const htmlPlugin = (config, outputDir) => addPlugins([
+const htmlPlugin = (config, src) => addPlugins([
 	new HtmlWebpackPlugin({
 		filename: 'index.html',
 		template: `!!ejs-loader!${config.template || resolve(__dirname, '../../resources/template.html')}`,
@@ -184,7 +221,7 @@ const htmlPlugin = (config, outputDir) => addPlugins([
 		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
 		ssr(params) {
-			return config.prerender ? prerender(outputDir, params) : '';
+			return config.prerender ? prerender({ dest: config.dest, src }, params) : '';
 		}
 	}),
 	new HtmlWebpackExcludeAssetsPlugin(),
