@@ -11,7 +11,6 @@ import {
 } from '@webpack-blocks/webpack2';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
-import UglifyPlugin from 'uglifyjs-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
 import requireRelative from 'require-relative';
@@ -273,7 +272,7 @@ const production = () => addPlugins([
 		}]
 	}),
 
-	new UglifyPlugin({
+	new webpack.optimize.UglifyJsPlugin({
 		output: {
 			comments: false
 		},
