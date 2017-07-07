@@ -50,14 +50,15 @@ npm run build
 ```sh
 $ preact create
 
-  --name      directory and package name for the new app.
-  --dest      Directory to create the app within.                 [default: <name>]
-  --type      A project template to start from.
-              [Options: "default", "root", "simple", "empty"]     [default: "default"]
-  --less      Pre-install LESS support.                [boolean]  [default: false]
-  --sass      Pre-install SASS/SCSS support.           [boolean]  [default: false]
-  --stylus    Pre-install STYLUS support               [boolean]  [default: false]
-  --git       Initialize version control using git.    [boolean]  [default: true]
+  --name        Directory and package name for the new app.
+  --dest        Directory to create the app within.                 [default: <name>]
+  --type        A project template to start from.
+                [Options: "default", "root", "simple", "empty"]     [default: "default"]
+  --less        Pre-install LESS support.                [boolean]  [default: false]
+  --sass        Pre-install SASS/SCSS support.           [boolean]  [default: false]
+  --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
+  --git         Initialize version control using git.    [boolean]  [default: true]
+  --no-install  Disables installing of dependensies.     [boolean]  [default: false]
 
 $ preact build
 
