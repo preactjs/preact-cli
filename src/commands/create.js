@@ -29,6 +29,10 @@ export default asyncCommand({
 			description: 'Directory to create the app within',
 			defaultDescription: '<name>'
 		},
+		force: {
+			description: 'Force option to create the directory for the new app',
+			default: false
+		},
 		type: {
 			description: 'A project template to start from',
 			choices: [
@@ -81,7 +85,7 @@ export default asyncCommand({
 		}
 		catch (err) {}
 
-		if (exists) {
+		if (exists && !argv.force) {
 			throw Error('Directory already exists.');
 		}
 
@@ -90,7 +94,9 @@ export default asyncCommand({
 			color: 'magenta'
 		}).start();
 
-		await promisify(mkdirp)(target);
+		if (!exists) {
+			await promisify(mkdirp)(target);
+		}
 
 		await copy(
 			path.resolve(__dirname, '../..', template),
