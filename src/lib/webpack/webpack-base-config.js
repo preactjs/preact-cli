@@ -23,7 +23,7 @@ export function exists(file) {
 	return false;
 }
 
-function readJson(file) {
+export function readJson(file) {
 	if (file in readJson.cache) return readJson.cache[file];
 	let ret;
 	try { ret = JSON.parse(readFileSync(file)); }
@@ -61,7 +61,7 @@ export default (env) => {
 					'node_modules',
 					resolve(__dirname, '../../../node_modules')
 				],
-				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.css'],
+				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.styl','.css'],
 				alias: {
 					'preact-cli-entrypoint': src('index.js'),
 					style: src('style'),
@@ -98,7 +98,7 @@ export default (env) => {
 			}
 		}),
 
-		// LESS, SASS & CSS
+		// LESS, SASS & CSS, STYLUS
 		customConfig({
 			module: {
 				loaders: [
@@ -137,7 +137,24 @@ export default (env) => {
 						]
 					},
 					{
-						test: /\.(css|less|s[ac]ss)$/,
+						enforce: 'pre',
+						test: /\.styl$/,
+						use: [
+							{
+								loader: resolve(__dirname, './npm-install-loader'),
+								options: {
+									modules: ['stylus', 'stylus-loader'],
+									save: true
+								}
+							},
+							{
+								loader: 'stylus-loader',
+								options: { sourceMap: true }
+							}
+						]
+					},
+					{
+						test: /\.(css|less|s[ac]ss|styl)$/,
 						include: [
 							src('components'),
 							src('routes')
@@ -151,7 +168,7 @@ export default (env) => {
 						})
 					},
 					{
-						test: /\.(css|less|s[ac]ss)$/,
+						test: /\.(css|less|s[ac]ss|styl)$/,
 						exclude: [
 							src('components'),
 							src('routes')

@@ -49,6 +49,11 @@ export default asyncCommand({
 			type: 'boolean',
 			default: false
 		},
+		stylus: {
+			description: 'Pre-install STYLUS support',
+			type: 'boolean',
+			default: false
+		},
 		git: {
 			description: 'Initialize version control using git',
 			type: 'boolean',
@@ -141,6 +146,12 @@ export default asyncCommand({
 				...(argv.less ? [
 					'less',
 					'less-loader'
+				] : []),
+
+				// install stylus if --stylus
+				...(argv.stylus ? [
+					'stylus',
+					'stylus-loader'
 				] : [])
 			].filter(Boolean));
 
