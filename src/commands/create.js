@@ -215,7 +215,32 @@ async function initializeVersionControl(target) {
 		await spawn('git', ['init'], { cwd });
 		await spawn('git', ['add', '-A'], { cwd });
 
-		const gitUser = 'Preact CLI<developit@users.noreply.github.com>';
+		let currentGitUserEmail;
+		try {
+			currentGitUserEmail = await spawn('git', ['config', '--global', 'user.email']);
+		} catch (e) {
+			/*
+				
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+			 */
+		}
+
+		if(!currentGitUserEmail) {
+			await spawn('git', ['config', '--global', 'user.email', gitEmail]);
+		}
+
 		await spawn('git', ['commit', '--author', gitUser, '-m', 'initial commit from Preact CLI'], { cwd });
+
+		if(!currentGitUserEmail) {
+			await spawn('git', ['config', '--global', '--unset', 'user.email']);
+		}
 	}
 }
