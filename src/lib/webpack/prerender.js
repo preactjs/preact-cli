@@ -77,5 +77,6 @@ const handlePrerenderError = (err, env, stack, entry) => {
 	}
 	process.stderr.write('\n');
 	process.stderr.write(`Alternatively use 'preact build --no-prerender' to disable prerendering.\n\n`);
+	process.stderr.write('See https://github.com/developit/preact-cli#pre-rendering for further information.');
 	process.exit(1);
 };
