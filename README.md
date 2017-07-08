@@ -8,7 +8,7 @@
 - Fully **automatic code splitting** for routes
 - Transparently code-split any component with an [`async!`] prefix
 - Auto-generated [Service Workers] for offline caching powered by [sw-precache]
-- [PRPL](https://developers.google.com/web/fundamentals/performance/prpl-pattern/) pattern support for efficient loading
+- [PRPL] pattern support for efficient loading
 - Zero-configuration pre-rendering / server-side rendering hydration
 - Support for CSS Modules, LESS, Sass, Stylus; with Autoprefixer
 - Monitor your bundle/chunk sizes with built-in tracking
@@ -106,6 +106,14 @@ npm run serve -- --server config
 # Copy your static files to a server!
 ```
 
+### Pre-rendering
+
+Preact CLI in order to follow [PRPL] pattern renders initial route (`/`) into generated static `index.html` - this ensures that users get to see your page before any JavaScript is run, and thus providing users with slow devices or poor connection your website's content much faster.
+
+Preact CLI does this by rendering your app inside node - this means that we don't have access to DOM or other global variables available in browsers, similar how it would be in server-side rendering scenarios. In case you need to rely on browser APIs you could:
+- drop out of prerendering by passing `--no-prerender` flag to `preact build`,
+- write your code in a way that supports server-side rendering by wrapping code that requires browser's APIs in conditional statements `if (typeof window !== "undefined") { ... }` ensuring that on server those lines of code are never reached. Alternatively you could use a helper library like [window-or-global](https://www.npmjs.com/package/window-or-global).
+
 ### Custom Configuration
 
 #### Browserslist
@@ -189,3 +197,4 @@ preact watch --template src/template.html
 [```.babelrc```]: https://babeljs.io/docs/usage/babelrc/
 [Preact CLI preset]: https://github.com/developit/preact-cli/blob/master/src/lib/babel-config.js
 [WebpackConfigHelpers]: docs/webpack-helpers.md
+[PRPL]: https://developers.google.com/web/fundamentals/performance/prpl-pattern/
