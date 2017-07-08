@@ -26,23 +26,21 @@ const devBuild = async (env, onprogress) => {
 
 	let compiler = webpack(config);
 	return await new Promise((resolve, reject) => {
-		let first = true;
+
 		compiler.plugin('done', stats => {
-			if (first) {
-				first = false;
-				let devServer = config.devServer;
+			let devServer = config.devServer;
 
-				let protocol = devServer.https ? 'https' : 'http';
-				let host = process.env.HOST || devServer.host || 'localhost';
+			let protocol = devServer.https ? 'https' : 'http';
+			let host = process.env.HOST || devServer.host || 'localhost';
 
-				let serverAddr = `${protocol}://${host}:${chalk.bold(port)}`;
-				let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
+			let serverAddr = `${protocol}://${host}:${chalk.bold(port)}`;
+			let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
 
-				if (stats.hasErrors()) {
-					process.stdout.write(chalk.red('\Build failed!\n\n'));
-				} else {
-					process.stdout.write(chalk.green('\nCompiled successfully!\n\n'));
-				}
+			clearConsole();
+			if (stats.hasErrors()) {
+				process.stdout.write(chalk.red('\Build failed!\n\n'));
+			} else {
+				process.stdout.write(chalk.green('\nCompiled successfully!\n\n'));
 
 				if (userPort !== port) {
 					process.stdout.write(`Port ${chalk.bold(userPort)} is in use, using ${chalk.bold(port)} instead\n\n`);
@@ -51,6 +49,7 @@ const devBuild = async (env, onprogress) => {
 				process.stdout.write(`${chalk.bold('Local:')}            ${serverAddr}\n`);
 				process.stdout.write(`${chalk.bold('On Your Network:')}  ${localIpAddr}\n`);
 			}
+
 			if (onprogress) onprogress(stats);
 		});
 		compiler.plugin('failed', reject);
@@ -126,6 +125,12 @@ export function writeJsonStats(stats) {
 			process.stdout.write('- https://webpack.github.io/analyse/\n');
 		});
 }
+
+const clearConsole = () => {
+	process.stdout.write(
+		process.platform === 'win32' ? '\x1Bc' : '\x1B[2J\x1B[3J\x1B[H'
+	);
+};
 
 const stripBabelLoaderFromModuleNames = m => {
 	const keysToNormalize = ['identifier', 'name', 'module', 'moduleName', 'moduleIdentifier'];
