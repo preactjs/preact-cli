@@ -13,19 +13,19 @@ export default function prerender(env, params) {
 	global.location = { href:url, pathname:url };
 	global.history = {};
 
-	let m = require(entry),
+	try {
+		let m = require(entry),
 		app = m && m.default || m;
 
-	if (typeof app!=='function') {
-		// eslint-disable-next-line no-console
-		console.warn('Entry does not export a Component function/class, aborting prerendering.');
-		return '';
-	}
+		if (typeof app!=='function') {
+			// eslint-disable-next-line no-console
+			console.warn('Entry does not export a Component function/class, aborting prerendering.');
+			return '';
+		}
 
-	let preact = require('preact'),
-		renderToString = require('preact-render-to-string');
+		let preact = require('preact'),
+			renderToString = require('preact-render-to-string');
 
-	try {
 		return renderToString(preact.h(app, { url }));
 	} catch (err) {
 		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
@@ -57,13 +57,14 @@ const handlePrerenderError = (err, env, stack, entry) => {
 	for (var i = -4; i <= 4; i++) {
 		let color = i === 0 ? chalk.red : chalk.yellow;
 		let line = position.line + i;
-		sourceCodeHighlight += `${color(sourceLines[line - 1])}\n`;
+		let sourceLine = sourceLines[line - 1];
+		sourceCodeHighlight += sourceLine ? `${color(sourceLine)}\n` : '';
 	}
 
 	process.stderr.write('\n');
 	process.stderr.write(chalk.red(`${errorMessage}\n`));
 	process.stderr.write(`method: ${methodName}\n`);
-	process.stderr.write(`at: ${sourcePath}\n`);
+	process.stderr.write(`at: ${sourcePath}:${position.line}:${position.column}\n`);
 	process.stderr.write('\n');
 	process.stderr.write('Source code:\n\n');
 	process.stderr.write(sourceCodeHighlight);
