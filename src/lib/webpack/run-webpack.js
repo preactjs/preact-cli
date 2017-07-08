@@ -38,7 +38,12 @@ const devBuild = async (env, onprogress) => {
 				let serverAddr = `${protocol}://${host}:${chalk.bold(port)}`;
 				let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
 
-				process.stdout.write(chalk.green('\nCompiled successfully!!\n\n'));
+				if (stats.hasErrors()) {
+					process.stdout.write(chalk.red('\Build failed!\n\n'));
+				} else {
+					process.stdout.write(chalk.green('\nCompiled successfully!\n\n'));
+				}
+
 				if (userPort !== port) {
 					process.stdout.write(`Port ${chalk.bold(userPort)} is in use, using ${chalk.bold(port)} instead\n\n`);
 				}
@@ -71,7 +76,8 @@ const prodBuild = async (env) => {
 	return await new Promise((resolve, reject) => {
 		compiler.run((err, stats) => {
 			if (err || stats.hasErrors()) {
-				reject(err || stats.toJson().errors.join('\n'));
+				showStats(stats);
+				reject(chalk.red('Build failed!'));
 			}
 			else {
 				// Timeout for plugins that work on `after-emit` event of webpack
@@ -82,16 +88,16 @@ const prodBuild = async (env) => {
 };
 
 export function showStats(stats) {
-	let info = stats.toJson();
+	let info = stats.toJson("errors-only");
 
 	if (stats.hasErrors()) {
-		info.errors.forEach( message => {
-			process.stderr.write(message+'\n');
+		info.errors.map(stripBabelLoaderPrefix).forEach( message => {
+			process.stderr.write(chalk.red(message)+'\n');
 		});
 	}
 
 	if (stats.hasWarnings()) {
-		info.warnings.forEach( message => {
+		info.warnings.map(stripBabelLoaderPrefix).forEach( message => {
 			process.stderr.write(chalk.yellow(message)+'\n');
 		});
 	}
@@ -109,8 +115,8 @@ export function writeJsonStats(stats) {
 
 	jsonStats = (jsonStats.children && jsonStats.children[0]) || jsonStats;
 
-	jsonStats.modules.forEach(normalizeModule);
-	jsonStats.chunks.forEach(c => c.modules.forEach(normalizeModule));
+	jsonStats.modules.forEach(stripBabelLoaderFromModuleNames);
+	jsonStats.chunks.forEach(c => c.modules.forEach(stripBabelLoaderFromModuleNames));
 
 	return fs.writeFile(outputPath, JSON.stringify(jsonStats))
 		.then(() => {
@@ -121,20 +127,20 @@ export function writeJsonStats(stats) {
 		});
 }
 
-const normalizeModule = m => {
+const stripBabelLoaderFromModuleNames = m => {
 	const keysToNormalize = ['identifier', 'name', 'module', 'moduleName', 'moduleIdentifier'];
 
 	keysToNormalize.forEach(key => {
 		if (key in m) {
-			m[key] = normalizeName(m[key]);
+			m[key] = stripBabelLoaderPrefix(m[key]);
 		}
 	});
 
 	if (m.reasons) {
-		m.reasons.forEach(normalizeModule);
+		m.reasons.forEach(stripBabelLoaderFromModuleNames);
 	}
 
 	return m;
 };
 
-const normalizeName = p => p.substr(p.lastIndexOf('!') + 1);
+const stripBabelLoaderPrefix = log => log.replace(/@?\s*(\.\/~\/babel-loader\/lib\?{[\s\S]*?}!)/g, '');
