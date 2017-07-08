@@ -215,39 +215,31 @@ async function initializeVersionControl(target) {
 		await spawn('git', ['init'], { cwd });
 		await spawn('git', ['add', '-A'], { cwd });
 
-		const gitEmail = 'developit@users.noreply.github.com';
-		const gitUser = 'Preact CLI';
+		const defaultGitEmail = 'developit@users.noreply.github.com';
+		const defaultGitUser = 'Preact CLI';
+		let gitUser;
+		let gitEmail;
 
-		let isUserEmailSet = true;
 		try {
-			await spawn('git', ['config', 'user.email']);
+			gitEmail = (await spawn('git', ['config', 'user.email'])).toString();
 		} catch (e) {
-			isUserEmailSet = false;
+			gitEmail = defaultGitEmail;
 		}
 
-		let isUserNameSet = true;
 		try {
-			await spawn('git', ['config', 'user.name']);
+			gitUser = (await spawn('git', ['config', 'user.name'])).toString();
 		} catch (e) {
-			isUserNameSet = false;
+			gitUser = defaultGitUser;
 		}
 
-		if (!isUserEmailSet) {
-			await spawn('git', ['config', '--global', 'user.email', gitEmail]);
-		}
-
-		if (!isUserNameSet) {
-			await spawn('git', ['config', '--global', 'user.name', gitUser]);
-		}
-
-		await spawn('git', ['commit', '--author', `${gitUser}<${gitEmail}>`, '-m', 'initial commit from Preact CLI'], { cwd });
-
-		if (!isUserEmailSet) {
-			await spawn('git', ['config', '--global', '--unset', 'user.email']);
-		}
-
-		if (!isUserNameSet) {
-			await spawn('git', ['config', '--global', '--unset', 'user.name']);
-		}
+		await spawn('git', ['commit', '-m', 'initial commit from Preact CLI'], {
+			cwd,
+			env: {
+				GIT_COMMITTER_NAME: gitUser,
+				GIT_COMMITTER_EMAIL: gitEmail,
+				GIT_AUTHOR_NAME: defaultGitUser,
+				GIT_AUTHOR_EMAIL: defaultGitEmail
+			}
+		});
 	}
 }
