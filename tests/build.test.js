@@ -4,7 +4,7 @@ import htmlLooksLike from 'html-looks-like';
 import { create, build } from './lib/cli';
 import lsr from './lib/lsr';
 import { setup, fromSubject } from './lib/output';
-import expectedOutputs, { sassPrerendered, withCustomTemplate } from './build.snapshot';
+import expectedOutputs, { sassPrerendered, withCustomTemplate, multiplePrerenderingHome, multiplePrerenderingRoute } from './build.snapshot';
 import filesMatchSnapshot from './lib/filesMatchSnapshot';
 
 describe('preact build', () => {
@@ -38,6 +38,18 @@ describe('preact build', () => {
 
 		// UglifyJS throws error when generator is encountered
 		expect(async () => await build(app)).not;
+	});
+
+	it(`should prerender the routes provided with prerenderUrls.`, async () => {
+		let app = await fromSubject('multiple-prerendering');
+		await build(app);
+
+		let output = await fs.readFile(resolve(app, './build/index.html'), 'utf-8');
+		let html = output.match(/<body>.*<\/body>/)[0];
+		htmlLooksLike(html, multiplePrerenderingHome);
+		output = await fs.readFile(resolve(app, './build/route66/index.html'), 'utf-8');
+		html = output.match(/<body>.*<\/body>/)[0];
+		htmlLooksLike(html, multiplePrerenderingRoute);
 	});
 
 	it(`should use custom preact.config.js.`, async () => {

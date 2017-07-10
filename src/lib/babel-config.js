@@ -13,7 +13,7 @@ export default (env, options={}) => ({
 				'transform-es2015-typeof-symbol'
 			]
 		}],
-		require.resolve('babel-preset-stage-0')
+		require.resolve('babel-preset-stage-1')
 	],
 	plugins: [
 		require.resolve('babel-plugin-transform-object-assign'),

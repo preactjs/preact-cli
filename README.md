@@ -8,9 +8,9 @@
 - Fully **automatic code splitting** for routes
 - Transparently code-split any component with an [`async!`] prefix
 - Auto-generated [Service Workers] for offline caching powered by [sw-precache]
-- [PRPL](https://developers.google.com/web/fundamentals/performance/prpl-pattern/) pattern support for efficient loading
+- [PRPL] pattern support for efficient loading
 - Zero-configuration pre-rendering / server-side rendering hydration
-- Support for CSS Modules, LESS & autoprefixer
+- Support for CSS Modules, LESS, Sass, Stylus; with Autoprefixer
 - Monitor your bundle/chunk sizes with built-in tracking
 - Automatic app mounting, debug helpers & Hot Module Replacement
 - In just **4.5kb** you get a productive environment:
@@ -50,32 +50,37 @@ npm run build
 ```sh
 $ preact create
 
-  --name      directory and package name for the new app
-  --dest      Directory to create the app within                  [default: <name>]
-  --type      A project template to start from
-              [Options: "default", "root", "simple", "empty"]     [default: "default"]
-  --less      Pre-install LESS support                 [boolean]  [default: false]
-  --sass      Pre-install SASS/SCSS support            [boolean]  [default: false]
-  --git       Initialize version control using git     [boolean]  [default: true]
+  --name        Directory and package name for the new app.
+  --dest        Directory to create the app within.                 [default: <name>]
+  --type        A project template to start from.
+                [Options: "default", "root", "simple", "empty"]     [default: "default"]
+  --less        Pre-install LESS support.                [boolean]  [default: false]
+  --sass        Pre-install SASS/SCSS support.           [boolean]  [default: false]
+  --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
+  --git         Initialize version control using git.    [boolean]  [default: true]
+  --no-install  Disables installing of dependensies.     [boolean]  [default: false]
 
 $ preact build
 
-  --src             Entry file (index.js)                         [default: "src"]
-  --dest            Directory root for output                     [default: "build"]
+  --src             Entry file (index.js).                        [default: "src"]
+  --dest            Directory root for output.                    [default: "build"]
   --production, -p  Create a minified production build.           [default: true]
-  --less, -l        Build and compile LESS files                  [default: false]
-  --sass, -s        Build and compile SASS files                  [default: false]
+  --less, -l        Build and compile LESS files.                 [default: false]
+  --sass, -s        Build and compile SASS files.                 [default: false]
   --prerender       Pre-render static app content.                [default: true]
+  --prerenderUrls   Path to pre-render routes configuration.      [default "prerender-urls.json"]
+  --template        Path to template file.
   --clean           Clear output directory before building.       [default: true]
   --json            Generate build statistics for analysis.       [default: false]
   --config, -c      Path to custom CLI config.
 
 $ preact watch
 
-  --src        Entry file (index.js)                              [default: "src"]
-  --port, -p   Port to start a server on                          [default: "8080"]
+  --src        Entry file (index.js).                             [default: "src"]
+  --port, -p   Port to start a server on.                         [default: "8080"]
   --host                                              [boolean]   [default: "0.0.0.0"]
-  --prerender  Pre-render static app content on initial build     [default: false]
+  --prerender  Pre-render static app content on initial build.    [default: false]
+  --template   Path to template file.
 
 $ preact serve
 
@@ -83,9 +88,9 @@ $ preact serve
   --cwd       The working directory in which to spawn a server.   [default: .]
   --server    Which server to run, or "config" to produce a firebase config.        
           [options: "simplehttp2server", "superstatic", "config"] [default:"simplehttp2server"]
-  --dest      Directory or filename where firebase.json should be written
+  --dest      Directory or filename where firebase.json should be written.
               (used for --server config)                          [default: -]
-  --port, -p  Port to start a server on                           [default: "8080"]
+  --port, -p  Port to start a server on.                          [default: "8080"]
 
 ```
 
@@ -100,6 +105,14 @@ npm run serve -- --server config
 
 # Copy your static files to a server!
 ```
+
+### Pre-rendering
+
+Preact CLI in order to follow [PRPL] pattern renders initial route (`/`) into generated static `index.html` - this ensures that users get to see your page before any JavaScript is run, and thus providing users with slow devices or poor connection your website's content much faster.
+
+Preact CLI does this by rendering your app inside node - this means that we don't have access to DOM or other global variables available in browsers, similar how it would be in server-side rendering scenarios. In case you need to rely on browser APIs you could:
+- drop out of prerendering by passing `--no-prerender` flag to `preact build`,
+- write your code in a way that supports server-side rendering by wrapping code that requires browser's APIs in conditional statements `if (typeof window !== "undefined") { ... }` ensuring that on server those lines of code are never reached. Alternatively you could use a helper library like [window-or-global](https://www.npmjs.com/package/window-or-global).
 
 ### Custom Configuration
 
@@ -125,7 +138,7 @@ To customize babel simply create [```.babelrc```](https://babeljs.io/docs/usage/
 
 #### Webpack
 
-To customize babel create ```preact.config.js``` file which exports function that will change webpack's config.
+To customize webpack create ```preact.config.js``` file which exports function that will change webpack's config.
 
 ```
 /**
@@ -142,6 +155,38 @@ export default function (config, env, helpers) {
 ```
 See [WebpackConfigHelpers] docs for more info on ```helpers``` argument.
 
+#### Prerender multiple routes
+
+The `--prerender` flag will prerender by default only the root of your application.
+If you want to prerender other routes you can create a `prerender-urls.json` file, which contains the set of routes you want to render.
+The format required for defining your routes is an array of objects with a `url` key and an optional `title` key.
+```js
+// prerender-urls.json
+[{
+  "url": "/",
+  "title": "Homepage"
+}, { 
+  "url": "/route/random"
+}]
+```
+
+You can customise the path of `prerender-urls.json` by using the flag `--prerenderUrls`.
+```
+preact build --prerenderUrls src/prerender-urls.json
+```
+
+#### Template
+A template is used to render your page.
+
+The default one is visible [here](src/resources/template.html) and it's going to be enough for the majority of cases.
+
+If you want to customise your template you can pass a custom template with the `--template` flag.
+
+The `--template` flag is available on the `build` and `watch` commands.
+```
+preact build --template src/template.html
+preact watch --template src/template.html
+```
 
 [preact]: https://github.com/developit/preact
 [preact-router]: https://github.com/developit/preact-router
@@ -152,3 +197,4 @@ See [WebpackConfigHelpers] docs for more info on ```helpers``` argument.
 [```.babelrc```]: https://babeljs.io/docs/usage/babelrc/
 [Preact CLI preset]: https://github.com/developit/preact-cli/blob/master/src/lib/babel-config.js
 [WebpackConfigHelpers]: docs/webpack-helpers.md
+[PRPL]: https://developers.google.com/web/fundamentals/performance/prpl-pattern/
