@@ -53,7 +53,7 @@ $ preact create
   --name        Directory and package name for the new app.
   --dest        Directory to create the app within.                 [default: <name>]
   --type        A project template to start from.
-                [Options: "default", "root", "simple", "empty"]     [default: "default"]
+                  [Options: "full", "root", "simple", "empty"]     [default: "full"]
   --less        Pre-install LESS support.                [boolean]  [default: false]
   --sass        Pre-install SASS/SCSS support.           [boolean]  [default: false]
   --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
@@ -126,7 +126,7 @@ By default, `preact-cli` emulates the following config:
 // package.json
 {
   "browserslist": [
-    "> 1%", 
+    "> 1%",
     "IE >= 9",
     "last 2 versions"
   ]
@@ -143,8 +143,8 @@ To customize webpack create ```preact.config.js``` file which exports function t
 ```
 /**
  * Function that mutates original webpack config.
- * Supports asynchronous changes when promise is returned. 
- * 
+ * Supports asynchronous changes when promise is returned.
+ *
  * @param {object} config - original webpack config.
  * @param {object} env - options passed to CLI.
  * @param {WebpackConfigHelpers} helpers - object with useful helpers when working with config.
@@ -165,7 +165,7 @@ The format required for defining your routes is an array of objects with a `url`
 [{
   "url": "/",
   "title": "Homepage"
-}, { 
+}, {
   "url": "/route/random"
 }]
 ```

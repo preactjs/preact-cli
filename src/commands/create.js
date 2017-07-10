@@ -9,7 +9,6 @@ import path from 'path';
 import which from 'which';
 
 const TEMPLATES = {
-	default: 'examples/full',
 	full: 'examples/full',
 	empty: 'examples/empty',
 	root: 'examples/root',
@@ -32,12 +31,12 @@ export default asyncCommand({
 		type: {
 			description: 'A project template to start from',
 			choices: [
-				'default',
+				'full',
 				'root',
 				'simple',
 				'empty'
 			],
-			default: 'default'
+			default: 'full'
 		},
 		less: {
 			description: 'Pre-install LESS support',

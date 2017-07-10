@@ -80,7 +80,7 @@ export default {
 			'style.css.map': { size: 2250 },
 		}
 	},
-	'default': {
+	'full': {
 		...fullBuildCommons,
 		'bundle.js': { size: 19300 },
 		'bundle.js.map': { size: 105590 },
