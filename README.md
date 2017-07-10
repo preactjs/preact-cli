@@ -116,6 +116,14 @@ Preact CLI does this by rendering your app inside node - this means that we don'
 
 ### Custom Configuration
 
+#### Plugins
+
+On an effort of making customisation as easier as we can we are also creating plugins that allow custom configuration just from installing. Current Plugins are:
+
+- [Preact CLI Lodash] (https://www.npmjs.com/package/preact-cli-lodash): Optimize your builds using babel-plugin-lodash and the lodash webpack plugin.
+
+
+
 #### Browserslist
 
 You may customize your list of supported browser versions by declaring a [`"browserslist"`](https://github.com/ai/browserslist) key within your `package.json`. Changing these values will modify your JavaScript (via [`babel-preset-env`](https://github.com/babel/babel-preset-env#targetsbrowsers)) and your CSS (via [`autoprefixer`](https://github.com/postcss/autoprefixer)) output.
