@@ -17,6 +17,7 @@ export default (env, options={}) => ({
 	],
 	plugins: [
 		require.resolve('babel-plugin-transform-object-assign'),
+		require.resolve('babel-plugin-lodash'),
 		require.resolve('babel-plugin-transform-decorators-legacy'),
 		require.resolve('babel-plugin-transform-react-constant-elements'),
 		require.resolve('babel-plugin-transform-react-remove-prop-types'),

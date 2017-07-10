@@ -16,6 +16,7 @@ import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
+import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
 import PushManifestPlugin from './push-manifest';
 import baseConfig, { exists, readJson, helpers } from './webpack-base-config';
 import prerender from './prerender';
@@ -198,6 +199,10 @@ const production = config => addPlugins([
 			/\.map$/,
 			/push-manifest\.json$/
 		]
+	}),
+	new LodashModuleReplacementPlugin({
+		currying: true,
+		paths: true,
 	})
 ]);
 
