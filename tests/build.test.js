@@ -12,7 +12,7 @@ describe('preact build', () => {
 		await setup();
 	});
 
-	['empty', 'simple', 'root', 'default'].forEach(template =>
+	['empty', 'full', 'simple', 'root'].forEach(template =>
 		it(`should produce output. Veryfing ${template}`, async () => {
 			let app = await create('app', template);
 			await build(app);
