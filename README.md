@@ -139,7 +139,7 @@ To customize Babel, you have two options:
 
 1. You may create a [`.babelrc`](https://babeljs.io/docs/usage/babelrc/) file in your project's root directory. Any settings you define here will overwrite matching config-keys within [Preact CLI preset]. For example, if you pass a `"plugins"` object, it will replace & reset all Babel plugins that Preact CLI defaults to.
 
-2. If you'd like to modify or add to the existing Babel config, `preact.config.js` must be used (see the [Webpack](#webpack) section for reference) - [here's an example](https://github.com/developit/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers) on how to achieve that.
+2. If you'd like to modify or add to the existing Babel config, you must use a `preact.config.js` file. Visit the [Webpack](#webpack) section for more info, or check out the [Customize Babel](https://github.com/developit/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers) example!
 
 #### Webpack
 
