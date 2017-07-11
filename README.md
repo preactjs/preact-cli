@@ -116,15 +116,7 @@ Preact CLI does this by rendering your app inside node - this means that we don'
 
 ### Custom Configuration
 
-#### Plugins
-
-On an effort of making customization easier, we are also creating plugins that allow custom configuration just from installing.
-
-Current Plugins:
-
-- [Preact CLI Lodash] (https://www.npmjs.com/package/preact-cli-lodash): Optimize your builds using `babel-plugin-lodash` and `lodash-webpack-plugin`.
-
-
+#### [Plugins](https://github.com/developit/preact-cli/wiki/Plugins)
 
 #### Browserslist
 
