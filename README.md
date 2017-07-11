@@ -134,7 +134,8 @@ By default, `preact-cli` emulates the following config:
 ```
 
 #### Babel
-To customize babel simply create [```.babelrc```](https://babeljs.io/docs/usage/babelrc/) file. [Preact CLI preset] will be applied automatically so you won't have to worry about keeping your ```.babelrc``` updated!
+
+To customize babel create [```.babelrc```](https://babeljs.io/docs/usage/babelrc/) file. [Preact CLI preset] will be shallow merged with settings in `.babelrc` (using `Object.assign` meaning that ```{ "plugins": ["plugin-a"] }``` will replace all plugins used internally by `preact-cli` and won't transform `jsx` anymore).
 
 #### Webpack
 
