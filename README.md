@@ -135,7 +135,11 @@ By default, `preact-cli` emulates the following config:
 
 #### Babel
 
-To customize babel create [```.babelrc```](https://babeljs.io/docs/usage/babelrc/) file. [Preact CLI preset] will be shallow merged with settings in `.babelrc` (using `Object.assign` meaning that ```{ "plugins": ["plugin-a"] }``` will replace all plugins used internally by `preact-cli` and won't transform `jsx` anymore).
+To customize Babel, you have two options:
+
+1. You may create a [`.babelrc`](https://babeljs.io/docs/usage/babelrc/) file in your project's root directory. Any settings you define here will overwrite matching config-keys within [Preact CLI preset]. For example, if you pass a `"plugins"` object, it will replace & reset all Babel plugins that Preact CLI defaults to.
+
+2. If you'd like to modify or add to the existing Babel config, `preact.config.js` must be used (see the [Webpack](#webpack) section for reference) - [here's an example](https://github.com/developit/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers) on how to achieve that.
 
 #### Webpack
 
@@ -154,7 +158,7 @@ export default function (config, env, helpers) {
 	/** you can change config here **/
 }
 ```
-See [WebpackConfigHelpers] docs for more info on ```helpers``` argument.
+See [WebpackConfigHelpers] docs for more info on ```helpers``` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki](https://github.com/developit/preact-cli/wiki/Config-Recipes) containing examples on how to change webpack configuration.
 
 #### Prerender multiple routes
 
