@@ -56,7 +56,7 @@ export default asyncCommand({
 		git: {
 			description: 'Initialize version control using git',
 			type: 'boolean',
-			default: true
+			default: false
 		},
 		install: {
 			description: 'Install dependencies',
@@ -214,7 +214,6 @@ async function initializeVersionControl(target) {
 		await spawn('git', ['init'], { cwd });
 		await spawn('git', ['add', '-A'], { cwd });
 
-		const gitUser = 'Preact CLI<developit@users.noreply.github.com>';
-		await spawn('git', ['commit', '--author', gitUser, '-m', 'initial commit from Preact CLI'], { cwd });
+		await spawn('git', ['commit', '-m', 'initial commit from Preact CLI'], { cwd });
 	}
 }
