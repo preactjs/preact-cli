@@ -89,11 +89,11 @@ export default asyncCommand({
 
 		if (exists && argv.force) {
 			const question = {
-        type: 'confirm',
-        name: 'enableForce',
-        message: `You are using '--force'. Do you wish to continue?`,
-        default: false,
-      };
+				type: 'confirm',
+				name: 'enableForce',
+				message: `You are using '--force'. Do you wish to continue?`,
+				default: false,
+			};
 
 			let forceInit = await inquirer.prompt(question);
 
