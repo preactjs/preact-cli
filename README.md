@@ -58,7 +58,7 @@ $ preact create
   --sass        Pre-install SASS/SCSS support.           [boolean]  [default: false]
   --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
   --git         Initialize version control using git.    [boolean]  [default: true]
-  --no-install  Disables installing of dependensies.     [boolean]  [default: false]
+  --no-install  Disables installing of dependencies.     [boolean]  [default: false]
 
 $ preact build
 
