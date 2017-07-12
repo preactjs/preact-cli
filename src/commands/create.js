@@ -3,6 +3,7 @@ import fs from 'fs.promised';
 import copy from 'recursive-copy';
 import mkdirp from 'mkdirp';
 import ora from 'ora';
+import chalk from 'chalk';
 import inquirer from 'inquirer';
 import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
@@ -91,7 +92,7 @@ export default asyncCommand({
         type: 'confirm',
         name: 'enableForce',
         message: `You are using '--force'. Do you wish to continue?`,
-        default: true,
+        default: false,
       };
 
 			let forceInit = await inquirer.prompt(question);
@@ -99,12 +100,14 @@ export default asyncCommand({
 			if (forceInit.enableForce) {
 				process.stdout.write('Initializing project in the current directory...\n');
 			} else {
-				throw Error('Cannot initialize the project in the current directory');
+				process.stdout.write(`${chalk.red('Error:')} Cannot initialize in the current directory`);
+				process.exit(1);
 			}
 		}
 
 		if (exists && !argv.force) {
-			throw Error('Cannot intialize in the current directory, please specify a different destination.');
+			process.stdout.write(`${chalk.red('Error:')} Cannot initialize in the current directory, please specify a different destination`);
+			process.exit(1);
 		}
 
 		let spinner = ora({
