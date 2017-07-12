@@ -116,7 +116,9 @@ Preact CLI does this by rendering your app inside node - this means that we don'
 
 ### Custom Configuration
 
-#### [Plugins](https://github.com/developit/preact-cli/wiki/Plugins)
+#### Plugins
+
+To make customizing your configuration easier, preact-cli supports plugins. Visit the [Plugins wiki](https://github.com/developit/preact-cli/wiki/Plugins) for a tutorial on how to use them.
 
 #### Browserslist
 
