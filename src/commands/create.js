@@ -3,7 +3,6 @@ import fs from 'fs.promised';
 import copy from 'recursive-copy';
 import mkdirp from 'mkdirp';
 import ora from 'ora';
-import chalk from 'chalk';
 import inquirer from 'inquirer';
 import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
