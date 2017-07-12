@@ -95,18 +95,18 @@ export default asyncCommand({
 				default: false,
 			};
 
-			let forceInit = await inquirer.prompt(question);
+			let { enableForce } = await inquirer.prompt(question);
 
-			if (forceInit.enableForce) {
+			if (enableForce) {
 				process.stdout.write('Initializing project in the current directory...\n');
 			} else {
-				process.stdout.write(`${chalk.red('Error:')} Cannot initialize in the current directory`);
+				process.stderr.write(chalk.red('Error: Cannot initialize in the current directory\n'));
 				process.exit(1);
 			}
 		}
 
 		if (exists && !argv.force) {
-			process.stdout.write(`${chalk.red('Error:')} Cannot initialize in the current directory, please specify a different destination`);
+			process.stderr.write(chalk.red('Error: Cannot initialize in the current directory, please specify a different destination\n'));
 			process.exit(1);
 		}
 
