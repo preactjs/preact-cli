@@ -1,4 +1,4 @@
-# preact-cli
+# preact-cli [![Build Status](https://travis-ci.org/developit/preact-cli.svg?branch=master)](https://travis-ci.org/developit/preact-cli)
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
 
