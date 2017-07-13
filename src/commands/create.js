@@ -3,13 +3,14 @@ import fs from 'fs.promised';
 import copy from 'recursive-copy';
 import mkdirp from 'mkdirp';
 import ora from 'ora';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
 import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
 import which from 'which';
 
 const TEMPLATES = {
-	default: 'examples/full',
 	full: 'examples/full',
 	empty: 'examples/empty',
 	root: 'examples/root',
@@ -29,15 +30,19 @@ export default asyncCommand({
 			description: 'Directory to create the app within',
 			defaultDescription: '<name>'
 		},
+		force: {
+			description: 'Force option to create the directory for the new app',
+			default: false
+		},
 		type: {
 			description: 'A project template to start from',
 			choices: [
-				'default',
+				'full',
 				'root',
 				'simple',
 				'empty'
 			],
-			default: 'default'
+			default: 'full'
 		},
 		less: {
 			description: 'Pre-install LESS support',
@@ -46,6 +51,11 @@ export default asyncCommand({
 		},
 		sass: {
 			description: 'Pre-install SASS/SCSS support',
+			type: 'boolean',
+			default: false
+		},
+		stylus: {
+			description: 'Pre-install STYLUS support',
 			type: 'boolean',
 			default: false
 		},
@@ -76,8 +86,27 @@ export default asyncCommand({
 		}
 		catch (err) {}
 
-		if (exists) {
-			throw Error('Directory already exists.');
+		if (exists && argv.force) {
+			const question = {
+				type: 'confirm',
+				name: 'enableForce',
+				message: `You are using '--force'. Do you wish to continue?`,
+				default: false,
+			};
+
+			let { enableForce } = await inquirer.prompt(question);
+
+			if (enableForce) {
+				process.stdout.write('Initializing project in the current directory...\n');
+			} else {
+				process.stderr.write(chalk.red('Error: Cannot initialize in the current directory\n'));
+				process.exit(1);
+			}
+		}
+
+		if (exists && !argv.force) {
+			process.stderr.write(chalk.red('Error: Cannot initialize in the current directory, please specify a different destination\n'));
+			process.exit(1);
 		}
 
 		let spinner = ora({
@@ -85,7 +114,9 @@ export default asyncCommand({
 			color: 'magenta'
 		}).start();
 
-		await promisify(mkdirp)(target);
+		if (!exists) {
+			await promisify(mkdirp)(target);
+		}
 
 		await copy(
 			path.resolve(__dirname, '../..', template),
@@ -141,6 +172,12 @@ export default asyncCommand({
 				...(argv.less ? [
 					'less',
 					'less-loader'
+				] : []),
+
+				// install stylus if --stylus
+				...(argv.stylus ? [
+					'stylus',
+					'stylus-loader'
 				] : [])
 			].filter(Boolean));
 

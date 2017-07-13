@@ -43,8 +43,8 @@ export default {
 		'style.css.map': { size: 359 },
 		'sw.js': { size: 1423 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 9450 },
-			'ssr-bundle.js.map': { size: 42461 },
+			'ssr-bundle.js': { size: 16245 },
+			'ssr-bundle.js.map': { size: 31821 },
 			'style.css': { size: 130 },
 			'style.css.map': { size: 360 },
 		}
@@ -59,8 +59,8 @@ export default {
 		'manifest.json': { size: 290 },
 		'sw.js': { size: 1423 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 10100 },
-			'ssr-bundle.js.map': { size: 46466 },
+			'ssr-bundle.js': { size: 18205 },
+			'ssr-bundle.js.map': { size: 33478 },
 			'style.css': { size: 296 },
 			'style.css.map': { size: 621 },
 		}
@@ -78,13 +78,13 @@ export default {
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2246 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 18960 },
-			'ssr-bundle.js.map': { size: 97403 },
+			'ssr-bundle.js': { size: 39459 },
+			'ssr-bundle.js.map': { size: 65629 },
 			'style.css': { size: 1065 },
 			'style.css.map': { size: 2250 },
 		}
 	},
-	'default': {
+	'full': {
 		...fullBuildCommons,
 		'bundle.js': { size: 19300 },
 		'bundle.js.map': { size: 105590 },
@@ -97,8 +97,8 @@ export default {
 		'style.css': { size: 1065 },
 		'style.css.map': { size: 2345 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 19820 },
-			'ssr-bundle.js.map': { size: 101502 },
+			'ssr-bundle.js': { size: 41715 },
+			'ssr-bundle.js.map': { size: 66661 },
 			'style.css': { size: 1065 },
 			'style.css.map': { size: 2345 },
 		}
@@ -130,4 +130,24 @@ export const withCustomTemplate = `
 		<script src="/bundle.js" defer="defer"></script>
 	</body>
 </html>
+`;
+
+export const multiplePrerenderingHome = `
+<body>
+	<div id="app">
+		<div>Home</div>
+	</div>
+	<script defer="defer" src="/bundle.js"></script>
+	{{ ... }}
+</body>
+`;
+
+export const multiplePrerenderingRoute = `
+<body>
+	<div id="app">
+		<div>Route66</div>
+	</div>
+	<script defer="defer" src="/bundle.js"></script>
+	{{ ... }}
+</body>
 `;

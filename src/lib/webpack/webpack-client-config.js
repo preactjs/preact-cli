@@ -17,12 +17,12 @@ import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import WorkboxWebpackPlugin from 'workbox-webpack-plugin';
 import PushManifestPlugin from './push-manifest';
-import baseConfig, { exists, helpers } from './webpack-base-config';
+import baseConfig, { exists, readJson, helpers } from './webpack-base-config';
 import prerender from './prerender';
 
 export default env => {
-	let { isProd, cwd, src } = helpers(env);
-	let outputDir = resolve(cwd, env.dest || 'build');
+	let { isProd, src } = helpers(env);
+
 	return createConfig.vanilla([
 		baseConfig(env),
 		entryPoint({
@@ -30,7 +30,7 @@ export default env => {
 			'polyfills': resolve(__dirname, './polyfills'),
 		}),
 		setOutput({
-			path: outputDir,
+			path: env.dest,
 			publicPath: '/',
 			filename: '[name].js',
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
@@ -94,7 +94,7 @@ export default env => {
 			new PushManifestPlugin()
 		]),
 
-		htmlPlugin(env, outputDir),
+		htmlPlugin(env, src('.')),
 
 		isProd ? production(env) : development(env),
 
@@ -123,7 +123,7 @@ const development = config => {
 			host,
 			inline: true,
 			hot: true,
-			https: config.https===true,
+			https: config.https,
 			compress: true,
 			publicPath: '/',
 			contentBase: resolve(config.cwd, config.src || './src'),
@@ -150,6 +150,43 @@ const development = config => {
 };
 
 const production = () => addPlugins([
+	new webpack.optimize.UglifyJsPlugin({
+		output: {
+			comments: false
+		},
+		mangle: true,
+		sourceMap: true,
+		compress: {
+			properties: true,
+			keep_fargs: false,
+			pure_getters: true,
+			collapse_vars: true,
+			warnings: false,
+			screw_ie8: true,
+			sequences: true,
+			dead_code: true,
+			drop_debugger: true,
+			comparisons: true,
+			conditionals: true,
+			evaluate: true,
+			booleans: true,
+			loops: true,
+			unused: true,
+			hoist_funs: true,
+			if_return: true,
+			join_vars: true,
+			cascade: true,
+			drop_console: false,
+			pure_funcs: [
+				'classCallCheck',
+				'_classCallCheck',
+				'_possibleConstructorReturn',
+				'Object.freeze',
+				'invariant',
+				'warning'
+			]
+		}
+	}),
 	new WorkboxWebpackPlugin({
 		navigateFallback: 'index.html',
 		skipWaiting: true,
@@ -162,9 +199,9 @@ const production = () => addPlugins([
 	})
 ]);
 
-const htmlPlugin = (config, outputDir) => addPlugins([
-	new HtmlWebpackPlugin({
-		filename: 'index.html',
+const htmlPlugin = (config, src) => {
+	const htmlWebpackConfig = ({ url, title }) => ({
+		filename: resolve(config.dest, url.substring(1), 'index.html'),
 		template: `!!ejs-loader!${config.template || resolve(__dirname, '../../resources/template.html')}`,
 		minify: config.production && {
 			collapseWhitespace: true,
@@ -178,16 +215,21 @@ const htmlPlugin = (config, outputDir) => addPlugins([
 		inject: true,
 		compile: true,
 		preload: config.preload===true,
-		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
+		title: title || config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
 		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
 		ssr(params) {
-			return config.prerender ? prerender(outputDir, params) : '';
+			return config.prerender ? prerender({ dest: config.dest, src }, { ...params, url }) : '';
 		}
-	}),
-	new HtmlWebpackExcludeAssetsPlugin(),
-	new ScriptExtHtmlWebpackPlugin({
-		// inline: 'bundle.js',
-		defaultAttribute: 'defer'
-	})
-]);
+	});
+	const pages = readJson(resolve(config.cwd, config.prerenderUrls || '')) || [{ url: "/" }];
+	return addPlugins(pages
+		.map((page) => new HtmlWebpackPlugin(htmlWebpackConfig(page)))
+		.concat([
+			new HtmlWebpackExcludeAssetsPlugin(),
+			new ScriptExtHtmlWebpackPlugin({
+				// inline: 'bundle.js',
+				defaultAttribute: 'defer'
+			})
+		]));
+};
