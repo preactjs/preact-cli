@@ -65,8 +65,6 @@ $ preact build
   --src             Entry file (index.js).                        [default: "src"]
   --dest            Directory root for output.                    [default: "build"]
   --production, -p  Create a minified production build.           [default: true]
-  --less, -l        Build and compile LESS files.                 [default: false]
-  --sass, -s        Build and compile SASS files.                 [default: false]
   --prerender       Pre-render static app content.                [default: true]
   --prerenderUrls   Path to pre-render routes configuration.      [default "prerender-urls.json"]
   --template        Path to template file.
