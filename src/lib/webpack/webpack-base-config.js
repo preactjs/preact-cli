@@ -107,7 +107,7 @@ export default (env) => {
 						test: /\.less$/,
 						use: [
 							{
-								loader: resolve(__dirname, './npm-install-loader'),
+								loader: resolve(__dirname, './dependency-install-loader'),
 								options: {
 									modules: ['less', 'less-loader'],
 									save: true
@@ -124,7 +124,7 @@ export default (env) => {
 						test: /\.s[ac]ss$/,
 						use: [
 							{
-								loader: resolve(__dirname, './npm-install-loader'),
+								loader: resolve(__dirname, './dependency-install-loader'),
 								options: {
 									modules: ['node-sass', 'sass-loader'],
 									save: true
@@ -141,7 +141,7 @@ export default (env) => {
 						test: /\.styl$/,
 						use: [
 							{
-								loader: resolve(__dirname, './npm-install-loader'),
+								loader: resolve(__dirname, './dependency-install-loader'),
 								options: {
 									modules: ['stylus', 'stylus-loader'],
 									save: true
