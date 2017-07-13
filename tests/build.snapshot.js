@@ -8,7 +8,7 @@ const smallBuildCommons = {
 	'polyfills.js.map': { size: 31760 },
 	'favicon.ico': { size: 15086 },
 	'sw.js': { size: 1628 },
-	'workbox-sw.prod.v1.0.1.js': {size: 47026},
+	'workbox-sw.prod.v1.1.0.js': {size: 47026},
 	'manifest.json': { size: 298 },
 	'push-manifest.json': { size: 88 },
 };
@@ -30,7 +30,7 @@ const fullBuildCommons = {
 	'favicon.ico': { size: 15086 },
 	'manifest.json': { size: 426 },
 	'sw.js': { size: 1628 },
-	'workbox-sw.prod.v1.0.1.js': {size: 47026}
+	'workbox-sw.prod.v1.1.0.js': {size: 47026}
 };
 
 export default {
