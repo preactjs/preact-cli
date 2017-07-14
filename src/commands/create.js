@@ -1,6 +1,7 @@
 import asyncCommand from '../lib/async-command';
 import fs from 'fs.promised';
 import copy from 'recursive-copy';
+import glob from 'glob';
 import mkdirp from 'mkdirp';
 import ora from 'ora';
 import chalk from 'chalk';
@@ -188,6 +189,19 @@ export default asyncCommand({
 			]);
 
 			spinner.succeed('Done!\n');
+		}
+
+		if (argv.less || argv.sass || argv.stylus) {
+			let extension;
+
+			if (argv.less) extension = '.less';
+			if (argv.sass) extension = '.scss';
+			if (argv.stylus) extension = '.styl';
+
+			const cssFiles = await promisify(glob)(`${target}/**/*.css`, { ignore: `${target}/build/**` });
+			const changeExtension = fileName => fs.rename(fileName, fileName.replace(/.css$/, extension));
+
+			await Promise.all(cssFiles.map(changeExtension));
 		}
 
 		if (argv.git) {
