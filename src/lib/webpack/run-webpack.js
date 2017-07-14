@@ -27,6 +27,18 @@ const devBuild = async (env, onprogress) => {
 	let compiler = webpack(config);
 	return await new Promise((resolve, reject) => {
 
+		compiler.plugin('emit', (compilation, callback) => {
+			var missingDeps = compilation.missingDependencies;
+			var nodeModulesPath = path.resolve(__dirname, '../../../node_modules');
+
+			if (missingDeps.some(file => file.indexOf(nodeModulesPath) !== -1)) {
+				// ...tell webpack to watch node_modules recursively until they appear.
+				compilation.contextDependencies.push(nodeModulesPath);
+			}
+
+			callback();
+		});
+
 		compiler.plugin('done', stats => {
 			let devServer = config.devServer;
 
