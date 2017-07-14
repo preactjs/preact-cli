@@ -1,7 +1,7 @@
 import loaderUtils from 'loader-utils';
 import fs from 'fs';
 import path from 'path';
-import { install } from './../install-dependencies';
+import { install } from './../setup';
 // import spawn from 'cross-spawn-promise';
 
 /**

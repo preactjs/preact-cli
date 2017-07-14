@@ -9,7 +9,7 @@ import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
 import which from 'which';
-import { install, initialize, pkgScripts } from './../lib/install-dependencies';
+import { install, initialize, pkgScripts } from './../lib/setup';
 
 const TEMPLATES = {
 	full: 'examples/full',
