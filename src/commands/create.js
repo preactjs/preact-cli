@@ -134,8 +134,6 @@ export default asyncCommand({
 
 		await initialize(argv.yarn, target);
 
-		await npm(target, ['init', '-y']);
-
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
 		pkg.scripts = await pkgScripts(argv.yarn, pkg);
@@ -213,8 +211,6 @@ export default asyncCommand({
 });
 
 const trimLeft = (string) => string.trim().replace(/^\t+/gm, '');
-
-const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.

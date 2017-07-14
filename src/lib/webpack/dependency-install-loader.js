@@ -40,7 +40,7 @@ function isInstalled(dep) {
 
 function installDeps(deps, save) {
 	process.stdout.write(`\nInstalling ${deps.join(' ')}..`);
-	return install(process.cwd(), deps, save).then( () => {
+	return install(false, process.cwd(), deps, save).then( () => {
 		process.stdout.write(` ..${deps.length} installed.\n`);
 	});
 }
