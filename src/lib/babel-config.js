@@ -3,19 +3,17 @@ export default (env, options={}) => ({
 	presets: [
 		[require.resolve('babel-preset-env'), {
 			loose: true,
-			modules: options.modules || false,
 			uglify: true,
-			browsers: env.browsers ? env.browsers.split() : [
-				'> 1%',
-				'Last 2 versions',
-				'IE >= 9'
-			],
+			modules: options.modules || false,
+			targets: {
+				browsers: options.browsers
+			},
 			exclude: [
 				'transform-regenerator',
 				'transform-es2015-typeof-symbol'
 			]
 		}],
-		require.resolve('babel-preset-stage-0')
+		require.resolve('babel-preset-stage-1')
 	],
 	plugins: [
 		require.resolve('babel-plugin-transform-object-assign'),

@@ -1,6 +1,6 @@
 import asyncCommand from '../lib/async-command';
-import webpackConfig from '../lib/webpack-config';
-import runWebpack, { showStats } from '../lib/run-webpack';
+import getSslCert from '../lib/ssl-cert';
+import runWebpack, { showStats } from '../lib/webpack/run-webpack';
 
 export default asyncCommand({
 	command: 'watch [src]',
@@ -20,7 +20,7 @@ export default asyncCommand({
 		host: {
 			description: 'Hostname to start a server on',
 			default: '0.0.0.0',
-			alias: 'h'
+			alias: 'H'
 		},
 		https: {
 			description: 'Use HTTPS?',
@@ -33,14 +33,26 @@ export default asyncCommand({
 		},
 		template: {
 			description: 'HTML template used by webpack'
+		},
+		config: {
+			description: 'Path to custom preact.config.js',
+			alias: 'c'
 		}
 	},
 
 	async handler(argv) {
 		argv.production = false;
-		let config = webpackConfig(argv);
 
-		let stats = await runWebpack(true, config, showStats);
+		if (argv.https) {
+			let ssl = await getSslCert();
+			if (!ssl) {
+				ssl = true;
+				process.stderr.write('Using webpack-dev-server internal certificate.\n');
+			}
+			argv.https = ssl;
+		}
+
+		let stats = await runWebpack(true, argv, showStats);
 		showStats(stats);
 	}
 });

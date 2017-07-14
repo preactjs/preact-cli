@@ -2,8 +2,7 @@ import { resolve } from 'path';
 import promisify from 'es6-promisify';
 import rimraf from 'rimraf';
 import asyncCommand from '../lib/async-command';
-import webpackConfig from '../lib/webpack-config';
-import runWebpack, { showStats, writeJsonStats } from '../lib/run-webpack';
+import runWebpack, { showStats, writeJsonStats } from '../lib/webpack/run-webpack';
 
 export default asyncCommand({
 	command: 'build [src] [dest]',
@@ -28,6 +27,10 @@ export default asyncCommand({
 			description: 'Pre-render static app content.',
 			default: true
 		},
+		prerenderUrls: {
+			description: 'Path to pre-render routes configuration.',
+			default: 'prerender-urls.json'
+		},
 		clean: {
 			description: 'Clear output directory before building.',
 			default: true
@@ -38,18 +41,20 @@ export default asyncCommand({
 		},
 		template: {
 			description: 'HTML template used by webpack'
+		},
+		config: {
+			description: 'Path to custom CLI config.',
+			alias: 'c'
 		}
 	},
 
 	async handler(argv) {
-		let config = webpackConfig(argv);
-
 		if (argv.clean) {
 			let dest = resolve(argv.cwd || process.cwd(), argv.dest || 'build');
 			await promisify(rimraf)(dest);
 		}
 
-		let stats = await runWebpack(false, config);
+		let stats = await runWebpack(false, argv);
 		showStats(stats);
 
 		if (argv.json) {
