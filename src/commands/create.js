@@ -9,6 +9,7 @@ import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
 import which from 'which';
+import rimraf from 'rimraf';
 
 const TEMPLATES = {
 	full: 'examples/full',
@@ -191,6 +192,21 @@ export default asyncCommand({
 			]);
 
 			spinner.succeed('Done!\n');
+		}
+
+		if (argv.type === 'full') {
+			const { sass, stylus } = argv;
+			const srcDir = path.resolve(target, 'src');
+
+			if (sass || stylus) {
+				await copy(srcDir, srcDir, {
+					overwrite: true, // do not work? that's why we use rimraf
+					filter: ['**/*.less'],
+					rename: filepath => filepath.replace('.less', sass ? '.scss' : '.styl')
+				});
+
+				await promisify(rimraf)(`${srcDir}/**/*.less`);
+			}
 		}
 
 		if (argv.git) {
