@@ -15,7 +15,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
+import WorkboxWebpackPlugin from 'workbox-webpack-plugin';
 import PushManifestPlugin from './push-manifest';
 import baseConfig, { exists, readJson, helpers } from './webpack-base-config';
 import prerender from './prerender';
@@ -149,7 +149,7 @@ const development = config => {
 	]);
 };
 
-const production = config => addPlugins([
+const production = () => addPlugins([
 	new webpack.optimize.UglifyJsPlugin({
 		output: {
 			comments: false
@@ -187,17 +187,15 @@ const production = config => addPlugins([
 			]
 		}
 	}),
-	new SWPrecacheWebpackPlugin({
-		filename: 'sw.js',
+	new WorkboxWebpackPlugin({
 		navigateFallback: 'index.html',
-		navigateFallbackWhitelist: [/^(?!\/__).*/],
-		minify: true,
-		stripPrefix: config.cwd,
-		staticFileGlobsIgnorePatterns: [
-			/polyfills(\..*)?\.js$/,
-			/\.map$/,
-			/push-manifest\.json$/
-		]
+		skipWaiting: true,
+		clientsClaim: true,
+		globIgnores: [
+			'**/polyfills*',
+			'**\/.map',
+			'**\/push-manifest.json'
+		],
 	})
 ]);
 

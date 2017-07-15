@@ -153,12 +153,12 @@
     "simplehttp2server": "^2.0.0",
     "source-map": "^0.5.6",
     "stack-trace": "0.0.10",
-    "sw-precache-webpack-plugin": "^0.11.2",
     "tmp": "0.0.31",
     "unfetch": "^3.0.0",
     "url-loader": "^0.5.8",
     "webpack": "^2.3.3",
     "webpack-dev-server": "^2.4.5",
+    "workbox-webpack-plugin": "^1.0.1",
     "webpack-plugin-replace": "^1.1.1",
     "which": "^1.2.14",
     "yargs": "^8.0.1"
