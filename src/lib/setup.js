@@ -1,3 +1,5 @@
+import path from 'path';
+import fs from 'fs.promised';
 import spawn from 'cross-spawn-promise';
 import { commandExists } from './shell';
 
@@ -15,6 +17,12 @@ const install = async (yarn, cwd, packages, env) => {
 	let isDev = env === 'dev' ? true : false;
 	let isYarnAvailable = await commandExists('yarn');
 	let toInstall = packages.filter(Boolean);
+
+	// pass null to use yarn only if yarn.lock is present
+	if (!yarn) {
+		try { yarn = await fs.stat(path.resolve(cwd, 'yarn.lock')).isFile(); }
+		catch (e) { yarn = false; }
+	}
 
 	if (isYarnAvailable && yarn) {
 		let args = ['add'];
