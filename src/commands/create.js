@@ -236,7 +236,31 @@ async function initializeVersionControl(target) {
 		await spawn('git', ['init'], { cwd });
 		await spawn('git', ['add', '-A'], { cwd });
 
-		const gitUser = 'Preact CLI<developit@users.noreply.github.com>';
-		await spawn('git', ['commit', '--author', gitUser, '-m', 'initial commit from Preact CLI'], { cwd });
+		const defaultGitEmail = 'developit@users.noreply.github.com';
+		const defaultGitUser = 'Preact CLI';
+		let gitUser;
+		let gitEmail;
+
+		try {
+			gitEmail = (await spawn('git', ['config', 'user.email'])).toString();
+		} catch (e) {
+			gitEmail = defaultGitEmail;
+		}
+
+		try {
+			gitUser = (await spawn('git', ['config', 'user.name'])).toString();
+		} catch (e) {
+			gitUser = defaultGitUser;
+		}
+
+		await spawn('git', ['commit', '-m', 'initial commit from Preact CLI'], {
+			cwd,
+			env: {
+				GIT_COMMITTER_NAME: gitUser,
+				GIT_COMMITTER_EMAIL: gitEmail,
+				GIT_AUTHOR_NAME: defaultGitUser,
+				GIT_AUTHOR_EMAIL: defaultGitEmail
+			}
+		});
 	}
 }

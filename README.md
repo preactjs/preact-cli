@@ -1,4 +1,4 @@
-# preact-cli
+# preact-cli [![Build Status](https://travis-ci.org/developit/preact-cli.svg?branch=master)](https://travis-ci.org/developit/preact-cli) [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg?style=flat)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg?style=flat)](https://www.npmjs.com/package/preact-cli)
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
 
@@ -65,8 +65,6 @@ $ preact build
   --src             Entry file (index.js).                        [default: "src"]
   --dest            Directory root for output.                    [default: "build"]
   --production, -p  Create a minified production build.           [default: true]
-  --less, -l        Build and compile LESS files.                 [default: false]
-  --sass, -s        Build and compile SASS files.                 [default: false]
   --prerender       Pre-render static app content.                [default: true]
   --prerenderUrls   Path to pre-render routes configuration.      [default "prerender-urls.json"]
   --template        Path to template file.
@@ -115,6 +113,10 @@ Preact CLI does this by rendering your app inside node - this means that we don'
 - write your code in a way that supports server-side rendering by wrapping code that requires browser's APIs in conditional statements `if (typeof window !== "undefined") { ... }` ensuring that on server those lines of code are never reached. Alternatively you could use a helper library like [window-or-global](https://www.npmjs.com/package/window-or-global).
 
 ### Custom Configuration
+
+#### Plugins
+
+To make customizing your configuration easier, preact-cli supports plugins. Visit the [Plugins wiki](https://github.com/developit/preact-cli/wiki/Plugins) for a tutorial on how to use them.
 
 #### Browserslist
 
