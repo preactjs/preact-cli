@@ -13,6 +13,7 @@ import {
 import devServer from '@webpack-blocks/dev-server2';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
+import HtmlWebpackWaitForAssetsPlugin from 'html-webpack-wait-for-assets-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
@@ -232,6 +233,9 @@ const htmlPlugin = (config, src) => {
 			new ScriptExtHtmlWebpackPlugin({
 				// inline: 'bundle.js',
 				defaultAttribute: 'defer'
+			}),
+			new HtmlWebpackWaitForAssetsPlugin({
+				assets: [resolve(config.dest, './ssr-build/ssr-bundle.js')]
 			})
 		]));
 };
