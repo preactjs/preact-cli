@@ -20,7 +20,7 @@ describe('preact create', () => {
 		expect(generated).toEqual(fullExample);
 	});
 
-	['root', 'simple', 'empty'].forEach(template =>
+	['full', 'root', 'simple', 'empty'].forEach(template =>
 		it(`should create project using provided template. Verifying ${template}`, async () => {
 			let example = await listTemplate(template);
 			let app = await create('app', template);
