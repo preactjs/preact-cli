@@ -9,6 +9,7 @@ import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
 import which from 'which';
+import { install, initialize, pkgScripts } from './../lib/setup';
 
 const TEMPLATES = {
 	full: 'examples/full',
@@ -43,6 +44,11 @@ export default asyncCommand({
 				'empty'
 			],
 			default: 'full'
+		},
+		yarn: {
+			description: "Use 'yarn' instead of 'npm'",
+			type: 'boolean',
+			default: false
 		},
 		less: {
 			description: 'Pre-install LESS support',
@@ -126,18 +132,11 @@ export default asyncCommand({
 
 		spinner.text = 'Initializing project';
 
-		await npm(target, ['init', '-y']);
+		await initialize(argv.yarn, target);
 
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
-		pkg.scripts = {
-			...(pkg.scripts || {}),
-			start: 'if-env NODE_ENV=production && npm run -s serve || npm run -s dev',
-			build: 'preact build',
-			serve: 'preact build && preact serve',
-			dev: 'preact watch',
-			test: 'eslint src && preact test'
-		};
+		pkg.scripts = await pkgScripts(argv.yarn, pkg);
 
 		try {
 			await fs.stat(path.resolve(target, 'src'));
@@ -155,8 +154,7 @@ export default asyncCommand({
 		if (argv.install) {
 			spinner.text = 'Installing dev dependencies';
 
-			await npm(target, [
-				'install', '--save-dev',
+			await install(argv.yarn, target, [
 				'preact-cli',
 				'if-env',
 				'eslint',
@@ -179,12 +177,11 @@ export default asyncCommand({
 					'stylus',
 					'stylus-loader'
 				] : [])
-			].filter(Boolean));
+			], 'dev');
 
 			spinner.text = 'Installing dependencies';
 
-			await npm(target, [
-				'install', '--save',
+			await install(argv.yarn, target, [
 				'preact',
 				'preact-compat',
 				'preact-router'
@@ -202,20 +199,18 @@ export default asyncCommand({
 			  \u001b[32mcd ${path.relative(process.cwd(), target)}\u001b[39m
 
 			To start a development live-reload server:
-			  \u001b[32mnpm start\u001b[39m
+			  \u001b[32m${argv.yarn === true ? 'yarnpkg start' : 'npm start'}\u001b[39m
 
 			To create a production build (in ./build):
-			  \u001b[32mnpm run build\u001b[39m
+			  \u001b[32m${argv.yarn === true ? 'yarnpkg build' : 'npm run build'}\u001b[39m
 
 			To start a production HTTP/2 server:
-			  \u001b[32mnpm run serve\u001b[39m
+			  \u001b[32m${argv.yarn === true ? 'yarnpkg serve' : 'npm run serve'}\u001b[39m
 		`) + '\n';
 	}
 });
 
 const trimLeft = (string) => string.trim().replace(/^\t+/gm, '');
-
-const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
