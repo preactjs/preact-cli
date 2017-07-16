@@ -20,7 +20,10 @@ const install = async (yarn, cwd, packages, env) => {
 
 	// pass null to use yarn only if yarn.lock is present
 	if (!yarn) {
-		try { yarn = await fs.stat(path.resolve(cwd, 'yarn.lock')).isFile(); }
+		try {
+			let stat = await fs.stat(path.resolve(cwd, 'yarn.lock'));
+			yarn = stat.isFile();
+		}
 		catch (e) { yarn = false; }
 	}
 
