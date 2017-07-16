@@ -2,7 +2,6 @@ import loaderUtils from 'loader-utils';
 import fs from 'fs';
 import path from 'path';
 import { install } from './../setup';
-// import spawn from 'cross-spawn-promise';
 
 /**
  * This is a pass-through loader that runs `npm install --save` for the specified dependencies when invoked.
