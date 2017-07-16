@@ -4,12 +4,12 @@
     ["env", {
       "loose": true,
       "targets": {
-        "node": 4
+        "node": 6
       },
       "exclude": [
         "transform-regenerator"
       ]
     }],
-    "stage-0"
+    "stage-1"
   ]
 }
