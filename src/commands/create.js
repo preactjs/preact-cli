@@ -198,7 +198,13 @@ export default asyncCommand({
 			if (argv.sass) extension = '.scss';
 			if (argv.stylus) extension = '.styl';
 
-			const cssFiles = await promisify(glob)(`${target}/**/*.css`, { ignore: `${target}/build/**` });
+			const cssFiles = await promisify(glob)(`${target}/**/*.css`, {
+				ignore: [
+					`${target}/build/**`,
+					`${target}/node_modules/**`
+				]
+			});
+
 			const changeExtension = fileName => fs.rename(fileName, fileName.replace(/.css$/, extension));
 
 			await Promise.all(cssFiles.map(changeExtension));
