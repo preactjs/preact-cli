@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { Minimatch } from 'minimatch';
 
 const minimumSizeDifference = 10;
 const percentageThreshold = 0.05;
@@ -8,6 +9,7 @@ export default (actual, expected) => {
 	let normalizedExpected = normalize(expected);
 	let normalizedActual = normalize(actual);
 
+	let expectedPaths = Object.keys(normalizedExpected).map(p => new Minimatch(p));
 	let expectedBoundaries = Object.keys(normalizedExpected)
 		.reduce((acc, path) => Object.assign(acc, {
 			[path]: {
@@ -17,11 +19,20 @@ export default (actual, expected) => {
 		}), {});
 
 	let comparisonResult = Object.keys(normalizedActual).reduce((acc, path) => {
-		let expectedValues = expectedBoundaries[path];
+		let expectedFilePaths = expectedPaths.filter(p => p.match(path)).map(p => p.pattern);
+
+		if (expectedFilePaths > 1) {
+			throw new Error(`Invalid snapshot configuration!
+				Found duplicate matches for path: ${path}.
+				Mathes: ${expectedFilePaths.join(',')}
+			`);
+		}
+		let expectedPath = expectedFilePaths[0];
+		let expectedValues = expectedBoundaries[expectedPath];
 		let actualValue = normalizedActual[path].size;
 
 		if (expectedValues && expectedValues.min <= actualValue && actualValue <= expectedValues.max) {
-			return Object.assign(acc, { [path]: expectedValues });
+			return Object.assign(acc, { [expectedPath]: expectedValues });
 		}
 
 		return Object.assign(acc, { [path]: actualValue });
@@ -37,15 +48,7 @@ const boundary = (direction, val) => {
 	return Math.max(minimumFileSize, val + rounded);
 };
 
-const normalize = obj => {
-	let flat = flatten(obj, o => Object.keys(o).length === 1 && typeof o.size === 'number');
-
-	return Object.keys(flat).reduce((agg, key) => {
-		let newKey = key.replace(/\.chunk\.\w+\./, '.chunk.*.');
-		agg[newKey] = flat[key];
-		return agg;
-	}, {});
-};
+const normalize = obj => flatten(obj, o => Object.keys(o).length === 1 && typeof o.size === 'number');
 
 const flatten = (obj, stop, path = '') => Object.keys(obj)
 	.reduce((agg, key) => {

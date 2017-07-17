@@ -1,12 +1,16 @@
 import asyncCommand from '../lib/async-command';
 import fs from 'fs.promised';
 import copy from 'recursive-copy';
+import glob from 'glob';
 import mkdirp from 'mkdirp';
 import ora from 'ora';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
 import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import path from 'path';
 import which from 'which';
+import { install, initialize, pkgScripts } from './../lib/setup';
 
 const TEMPLATES = {
 	full: 'examples/full',
@@ -28,6 +32,10 @@ export default asyncCommand({
 			description: 'Directory to create the app within',
 			defaultDescription: '<name>'
 		},
+		force: {
+			description: 'Force option to create the directory for the new app',
+			default: false
+		},
 		type: {
 			description: 'A project template to start from',
 			choices: [
@@ -37,6 +45,11 @@ export default asyncCommand({
 				'empty'
 			],
 			default: 'full'
+		},
+		yarn: {
+			description: "Use 'yarn' instead of 'npm'",
+			type: 'boolean',
+			default: false
 		},
 		less: {
 			description: 'Pre-install LESS support',
@@ -80,8 +93,27 @@ export default asyncCommand({
 		}
 		catch (err) {}
 
-		if (exists) {
-			throw Error('Directory already exists.');
+		if (exists && argv.force) {
+			const question = {
+				type: 'confirm',
+				name: 'enableForce',
+				message: `You are using '--force'. Do you wish to continue?`,
+				default: false,
+			};
+
+			let { enableForce } = await inquirer.prompt(question);
+
+			if (enableForce) {
+				process.stdout.write('Initializing project in the current directory...\n');
+			} else {
+				process.stderr.write(chalk.red('Error: Cannot initialize in the current directory\n'));
+				process.exit(1);
+			}
+		}
+
+		if (exists && !argv.force) {
+			process.stderr.write(chalk.red('Error: Cannot initialize in the current directory, please specify a different destination\n'));
+			process.exit(1);
 		}
 
 		let spinner = ora({
@@ -89,7 +121,9 @@ export default asyncCommand({
 			color: 'magenta'
 		}).start();
 
-		await promisify(mkdirp)(target);
+		if (!exists) {
+			await promisify(mkdirp)(target);
+		}
 
 		await copy(
 			path.resolve(__dirname, '../..', template),
@@ -99,18 +133,11 @@ export default asyncCommand({
 
 		spinner.text = 'Initializing project';
 
-		await npm(target, ['init', '-y']);
+		await initialize(argv.yarn, target);
 
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
-		pkg.scripts = {
-			...(pkg.scripts || {}),
-			start: 'if-env NODE_ENV=production && npm run -s serve || npm run -s dev',
-			build: 'preact build',
-			serve: 'preact build && preact serve',
-			dev: 'preact watch',
-			test: 'eslint src && preact test'
-		};
+		pkg.scripts = await pkgScripts(argv.yarn, pkg);
 
 		try {
 			await fs.stat(path.resolve(target, 'src'));
@@ -128,8 +155,7 @@ export default asyncCommand({
 		if (argv.install) {
 			spinner.text = 'Installing dev dependencies';
 
-			await npm(target, [
-				'install', '--save-dev',
+			await install(argv.yarn, target, [
 				'preact-cli',
 				'if-env',
 				'eslint',
@@ -152,18 +178,30 @@ export default asyncCommand({
 					'stylus',
 					'stylus-loader'
 				] : [])
-			].filter(Boolean));
+			], 'dev');
 
 			spinner.text = 'Installing dependencies';
 
-			await npm(target, [
-				'install', '--save',
+			await install(argv.yarn, target, [
 				'preact',
 				'preact-compat',
 				'preact-router'
 			]);
 
 			spinner.succeed('Done!\n');
+		}
+
+		if (argv.less || argv.sass || argv.stylus) {
+			let extension;
+
+			if (argv.less) extension = '.less';
+			if (argv.sass) extension = '.scss';
+			if (argv.stylus) extension = '.styl';
+
+			const cssFiles = await promisify(glob)(`${target}/**/*.css`, { ignore: `${target}/build/**` });
+			const changeExtension = fileName => fs.rename(fileName, fileName.replace(/.css$/, extension));
+
+			await Promise.all(cssFiles.map(changeExtension));
 		}
 
 		if (argv.git) {
@@ -175,20 +213,18 @@ export default asyncCommand({
 			  \u001b[32mcd ${path.relative(process.cwd(), target)}\u001b[39m
 
 			To start a development live-reload server:
-			  \u001b[32mnpm start\u001b[39m
+			  \u001b[32m${argv.yarn === true ? 'yarnpkg start' : 'npm start'}\u001b[39m
 
 			To create a production build (in ./build):
-			  \u001b[32mnpm run build\u001b[39m
+			  \u001b[32m${argv.yarn === true ? 'yarnpkg build' : 'npm run build'}\u001b[39m
 
 			To start a production HTTP/2 server:
-			  \u001b[32mnpm run serve\u001b[39m
+			  \u001b[32m${argv.yarn === true ? 'yarnpkg serve' : 'npm run serve'}\u001b[39m
 		`) + '\n';
 	}
 });
 
 const trimLeft = (string) => string.trim().replace(/^\t+/gm, '');
-
-const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
@@ -214,6 +250,31 @@ async function initializeVersionControl(target) {
 		await spawn('git', ['init'], { cwd });
 		await spawn('git', ['add', '-A'], { cwd });
 
-		await spawn('git', ['commit', '-m', 'initial commit from Preact CLI'], { cwd });
+		const defaultGitEmail = 'developit@users.noreply.github.com';
+		const defaultGitUser = 'Preact CLI';
+		let gitUser;
+		let gitEmail;
+
+		try {
+			gitEmail = (await spawn('git', ['config', 'user.email'])).toString();
+		} catch (e) {
+			gitEmail = defaultGitEmail;
+		}
+
+		try {
+			gitUser = (await spawn('git', ['config', 'user.name'])).toString();
+		} catch (e) {
+			gitUser = defaultGitUser;
+		}
+
+		await spawn('git', ['commit', '-m', 'initial commit from Preact CLI'], {
+			cwd,
+			env: {
+				GIT_COMMITTER_NAME: gitUser,
+				GIT_COMMITTER_EMAIL: gitEmail,
+				GIT_AUTHOR_NAME: defaultGitUser,
+				GIT_AUTHOR_EMAIL: defaultGitEmail
+			}
+		});
 	}
 }

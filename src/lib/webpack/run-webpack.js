@@ -27,6 +27,18 @@ const devBuild = async (env, onprogress) => {
 	let compiler = webpack(config);
 	return await new Promise((resolve, reject) => {
 
+		compiler.plugin('emit', (compilation, callback) => {
+			var missingDeps = compilation.missingDependencies;
+			var nodeModulesPath = path.resolve(__dirname, '../../../node_modules');
+
+			if (missingDeps.some(file => file.indexOf(nodeModulesPath) !== -1)) {
+				// ...tell webpack to watch node_modules recursively until they appear.
+				compilation.contextDependencies.push(nodeModulesPath);
+			}
+
+			callback();
+		});
+
 		compiler.plugin('done', stats => {
 			let devServer = config.devServer;
 
@@ -60,31 +72,36 @@ const devBuild = async (env, onprogress) => {
 };
 
 const prodBuild = async (env) => {
-	let compiler, client = clientConfig(env);
+	let config = clientConfig(env);
 
-	await transformConfig(env, client);
+	await transformConfig(env, config);
+	let serverCompiler, clientCompiler = webpack(config);
 
 	if (env.prerender) {
 		let ssrConfig = serverConfig(env);
 		await transformConfig(env, ssrConfig, true);
-		compiler = webpack([client, ssrConfig]);
-	} else {
-		compiler = webpack(client);
+		serverCompiler = webpack(ssrConfig);
+		await runCompiler(serverCompiler);
 	}
 
-	return await new Promise((resolve, reject) => {
-		compiler.run((err, stats) => {
-			if (err || stats.hasErrors()) {
-				showStats(stats);
-				reject(chalk.red('Build failed!'));
-			}
-			else {
-				// Timeout for plugins that work on `after-emit` event of webpack
-				setTimeout(()=>	resolve(stats), 20);
-			}
-		});
-	});
+	let stats = await runCompiler(clientCompiler);
+
+	// Timeout for plugins that work on `after-emit` event of webpack
+	await new Promise(r => setTimeout(()=>	r(), 20));
+
+	return stats;
 };
+
+const runCompiler = compiler => new Promise((resolve, reject) => {
+	compiler.run((err, stats) => {
+		if (err || stats.hasErrors()) {
+			showStats(stats);
+			reject(chalk.red('Build failed!'));
+		}
+
+		resolve(stats);
+	});
+});
 
 export function showStats(stats) {
 	let info = stats.toJson("errors-only");
