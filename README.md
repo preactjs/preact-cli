@@ -45,6 +45,22 @@ npm start
 npm run build
 ```
 
+### Using Yarn
+
+```sh
+# create a new project:
+preact create your-app-name --yarn
+
+# start a live-reload/HMR dev server:
+yarn watch
+
+# go to production:
+yarn build
+
+# generate configuration in Firebase Hosting format:
+yarn serve -- --server config
+```
+
 ### CLI Options
 
 ```sh
