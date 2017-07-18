@@ -79,7 +79,10 @@ export default (env) => {
 				modules: [
 					resolve(__dirname, '../../../node_modules'),
 					resolve(cwd, 'node_modules')
-				]
+				],
+				alias: {
+					'proxy-loader': require.resolve('./proxy-loader')
+				}
 			}
 		}),
 
@@ -109,15 +112,21 @@ export default (env) => {
 						test: /\.less$/,
 						use: [
 							{
+								loader: 'proxy-loader',
+								options: {
+									cwd,
+									loader: 'less-loader',
+									options: {
+										sourceMap: true
+									}
+								}
+							},
+							{
 								loader: resolve(__dirname, './dependency-install-loader'),
 								options: {
 									modules: ['less', 'less-loader'],
 									save: true
 								}
-							},
-							{
-								loader: 'less-loader',
-								options: { sourceMap: true }
 							}
 						]
 					},
@@ -126,15 +135,19 @@ export default (env) => {
 						test: /\.s[ac]ss$/,
 						use: [
 							{
+								loader: 'proxy-loader',
+								options: {
+									cwd,
+									loader: 'sass-loader',
+									options: { sourceMap: true }
+								}
+							},
+							{
 								loader: resolve(__dirname, './dependency-install-loader'),
 								options: {
 									modules: ['node-sass', 'sass-loader'],
 									save: true
 								}
-							},
-							{
-								loader: 'sass-loader',
-								options: { sourceMap: true }
 							}
 						]
 					},
@@ -143,15 +156,20 @@ export default (env) => {
 						test: /\.styl$/,
 						use: [
 							{
-								loader: resolve(__dirname, './dependency-install-loader'),
+								loader: 'proxy-loader',
 								options: {
-									modules: ['stylus', 'stylus-loader'],
-									save: true
+									cwd,
+									loader: 'stylus-loader',
+									options: { sourceMap: true }
 								}
 							},
 							{
-								loader: 'stylus-loader',
-								options: { sourceMap: true }
+								loader: resolve(__dirname, './dependency-install-loader'),
+								options: {
+									cwd,
+									modules: ['stylus', 'stylus-loader'],
+									save: true
+								}
 							}
 						]
 					},

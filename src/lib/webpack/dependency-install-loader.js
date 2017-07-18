@@ -58,7 +58,6 @@ module.exports = function(source, map) {
 	Promise.all(deps.map(isInstalled))
 		.then( installed => {
 			let toInstall = deps.filter( (dep, index) => !installed[index] );
-
 			if (toInstall.length) {
 				return installDeps(toInstall, query.save);
 			}
