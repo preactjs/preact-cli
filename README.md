@@ -57,7 +57,7 @@ $ preact create
   --less        Pre-install LESS support.                [boolean]  [default: false]
   --sass        Pre-install SASS/SCSS support.           [boolean]  [default: false]
   --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
-  --git         Initialize version control using git.    [boolean]  [default: true]
+  --git         Initialize version control using git.    [boolean]  [default: false]
   --no-install  Disables installing of dependencies.     [boolean]  [default: false]
 
 $ preact build
@@ -84,7 +84,7 @@ $ preact serve
 
   --dir       Directory root to serve static files from.          [default: "build"]
   --cwd       The working directory in which to spawn a server.   [default: .]
-  --server    Which server to run, or "config" to produce a firebase config.        
+  --server    Which server to run, or "config" to produce a firebase config.
           [options: "simplehttp2server", "superstatic", "config"] [default:"simplehttp2server"]
   --dest      Directory or filename where firebase.json should be written.
               (used for --server config)                          [default: -]

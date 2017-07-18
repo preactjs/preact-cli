@@ -69,7 +69,7 @@ export default asyncCommand({
 		git: {
 			description: 'Initialize version control using git',
 			type: 'boolean',
-			default: true
+			default: false
 		},
 		install: {
 			description: 'Install dependencies',
