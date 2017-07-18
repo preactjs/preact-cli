@@ -1,7 +1,7 @@
 var utils = require('loader-utils');
 var requireRelative = require('require-relative');
 
-function proxyLader(source, map) {
+function proxyLoader(source, map) {
 	var options = utils.getOptions(this);
 
 	// First run proxy-loader run
@@ -45,4 +45,4 @@ function swapOptions(loaderContext, newOptions) {
 	}
 }
 
-module.exports = proxyLader;
+module.exports = proxyLoader;
