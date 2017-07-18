@@ -4,14 +4,15 @@ var requireRelative = require('require-relative');
 function proxyLader(source, map) {
 	var options = utils.getOptions(this);
 
-	// First loader run store passed options & remove proxy-loader specific
+	// First run proxy-loader run
 	if (!this.query.__proxy_loader__) {
+		// Store passed options for future calls to proxy-loader with same loaderContext (this)
+		// e.g. calls via 'this.addDependency' from actual loader
 		this.query.__proxy_loader__ = { loader: options.loader, cwd: options.cwd };
 
-		// remove proxy-loader options and make this.query act as requested loader query
-		swapOptions(this, options);
+		// Remove proxy-loader options and make this.query act as requested loader query
+		swapOptions(this, options.options);
 	}
-	// Save it for future calls that use this loader (via this.addDependency)
 	var proxyOptions = this.query.__proxy_loader__;
 
 	var loader;
@@ -21,22 +22,24 @@ function proxyLader(source, map) {
 		loader = require(proxyOptions.loader);
 	}
 
-	// run loader
-	return loader.bind(this)(source, map);
+	// Run actual loader
+	return loader.call(this, source, map);
 }
 
 function swapOptions(loaderContext, newOptions) {
 	var copy = {};
 	var key = '';
 
-	for (key in loaderContext.options) {
+	for (key in newOptions) {
 		copy[key] = newOptions[key];
 	}
 
+	// Delete all existing loader options
 	delete loaderContext.query.options;
 	delete loaderContext.query.loader;
 	delete loaderContext.query.cwd;
 
+	// Add new options
 	for (key in copy) {
 		loaderContext.query[key] = copy[key];
 	}
