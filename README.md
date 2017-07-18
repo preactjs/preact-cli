@@ -52,13 +52,13 @@ npm run build
 preact create your-app-name --yarn
 
 # start a live-reload/HMR dev server:
-yarnpkg watch
+yarn watch
 
 # go to production:
-yarnpkg build
+yarn build
 
 # generate configuration in Firebase Hosting format:
-yarnpkg serve -- --server config
+yarn serve -- --server config
 ```
 
 ### CLI Options
