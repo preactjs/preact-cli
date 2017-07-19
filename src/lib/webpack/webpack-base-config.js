@@ -13,6 +13,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
+import WebpackChunkHash from 'webpack-chunk-hash';
 import requireRelative from 'require-relative';
 import createBabelConfig from '../babel-config';
 
@@ -70,14 +71,18 @@ export default (env) => {
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
 					'create-react-class': 'preact-compat/lib/create-react-class',
-					'react-addons-css-transition-group': 'preact-css-transition-group'
+					'react-addons-css-transition-group': 'preact-css-transition-group',
+					'preact-cli/async-component': resolve(__dirname, '../../components/async')
 				}
 			},
 			resolveLoader: {
 				modules: [
 					resolve(__dirname, '../../../node_modules'),
 					resolve(cwd, 'node_modules')
-				]
+				],
+				alias: {
+					'proxy-loader': require.resolve('./proxy-loader')
+				}
 			}
 		}),
 
@@ -107,15 +112,21 @@ export default (env) => {
 						test: /\.less$/,
 						use: [
 							{
-								loader: resolve(__dirname, './npm-install-loader'),
+								loader: 'proxy-loader',
+								options: {
+									cwd,
+									loader: 'less-loader',
+									options: {
+										sourceMap: true
+									}
+								}
+							},
+							{
+								loader: resolve(__dirname, './dependency-install-loader'),
 								options: {
 									modules: ['less', 'less-loader'],
 									save: true
 								}
-							},
-							{
-								loader: 'less-loader',
-								options: { sourceMap: true }
 							}
 						]
 					},
@@ -124,15 +135,19 @@ export default (env) => {
 						test: /\.s[ac]ss$/,
 						use: [
 							{
-								loader: resolve(__dirname, './npm-install-loader'),
+								loader: 'proxy-loader',
+								options: {
+									cwd,
+									loader: 'sass-loader',
+									options: { sourceMap: true }
+								}
+							},
+							{
+								loader: resolve(__dirname, './dependency-install-loader'),
 								options: {
 									modules: ['node-sass', 'sass-loader'],
 									save: true
 								}
-							},
-							{
-								loader: 'sass-loader',
-								options: { sourceMap: true }
 							}
 						]
 					},
@@ -141,15 +156,20 @@ export default (env) => {
 						test: /\.styl$/,
 						use: [
 							{
-								loader: resolve(__dirname, './npm-install-loader'),
+								loader: 'proxy-loader',
 								options: {
-									modules: ['stylus', 'stylus-loader'],
-									save: true
+									cwd,
+									loader: 'stylus-loader',
+									options: { sourceMap: true }
 								}
 							},
 							{
-								loader: 'stylus-loader',
-								options: { sourceMap: true }
+								loader: resolve(__dirname, './dependency-install-loader'),
+								options: {
+									cwd,
+									modules: ['stylus', 'stylus-loader'],
+									save: true
+								}
 							}
 						]
 					},
@@ -238,7 +258,7 @@ export default (env) => {
 		// produce HTML & CSS:
 		addPlugins([
 			new ExtractTextPlugin({
-				filename: 'style.css',
+				filename: isProd ? "style.[contenthash:5].css" : "style.css",
 				disable: !isProd,
 				allChunks: true
 			})
@@ -277,6 +297,7 @@ const development = () =>	group([]);
 
 const production = () => addPlugins([
 	new webpack.HashedModuleIdsPlugin(),
+	new WebpackChunkHash(),
 	new webpack.LoaderOptionsPlugin({
 		minimize: true
 	}),
