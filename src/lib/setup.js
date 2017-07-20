@@ -45,7 +45,7 @@ const pkgScripts = async (yarn, pkg) => {
 	if (isYarnAvailable && yarn) {
 		return {
 			...(pkg.scripts || {}),
-			start: 'if-env NODE_ENV=production && yarnpkg -s serve || yarnpkg -s dev',
+			start: 'if-env NODE_ENV=production && yarn run -s serve || yarn run -s dev',
 			build: 'preact build',
 			serve: 'preact build && preact serve',
 			dev: 'preact watch',

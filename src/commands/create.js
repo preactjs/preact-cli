@@ -219,13 +219,13 @@ export default asyncCommand({
 			  \u001b[32mcd ${path.relative(process.cwd(), target)}\u001b[39m
 
 			To start a development live-reload server:
-			  \u001b[32m${argv.yarn === true ? 'yarnpkg start' : 'npm start'}\u001b[39m
+			  \u001b[32m${argv.yarn === true ? 'yarn start' : 'npm start'}\u001b[39m
 
 			To create a production build (in ./build):
-			  \u001b[32m${argv.yarn === true ? 'yarnpkg build' : 'npm run build'}\u001b[39m
+			  \u001b[32m${argv.yarn === true ? 'yarn build' : 'npm run build'}\u001b[39m
 
 			To start a production HTTP/2 server:
-			  \u001b[32m${argv.yarn === true ? 'yarnpkg serve' : 'npm run serve'}\u001b[39m
+			  \u001b[32m${argv.yarn === true ? 'yarn serve' : 'npm run serve'}\u001b[39m
 		`) + '\n';
 	}
 });
