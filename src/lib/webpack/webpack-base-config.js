@@ -180,7 +180,12 @@ const base = env => {
 						fallback: 'style-loader',
 						use: [
 							`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${isProd}`,
-							`postcss-loader`
+							{
+								loader: `postcss-loader`,
+								options: {
+									plugins: [autoprefixer({ browsers })]
+								}
+							}
 						]
 					})
 				},
@@ -194,7 +199,12 @@ const base = env => {
 						fallback: 'style-loader',
 						use: [
 							`css-loader?sourceMap=${isProd}`,
-							`postcss-loader`
+							{
+								loader: `postcss-loader`,
+								options: {
+									plugins: [autoprefixer({ browsers })]
+								}
+							}
 						]
 					})
 				},
@@ -217,9 +227,6 @@ const base = env => {
 		plugins: [
 			new webpack.LoaderOptionsPlugin({
 				options: {
-					postcss: () => [
-						autoprefixer({ browsers })
-					],
 					context: resolve(cwd, env.src || 'src')
 				}
 			}),
