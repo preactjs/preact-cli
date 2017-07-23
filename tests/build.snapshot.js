@@ -11,8 +11,6 @@ const smallBuildCommons = {
 		'favicon.ico': { size: 15086 },
 		'icon.png': { size: 51484 }
 	},
-	'polyfills.js': { size: 4620 },
-	'polyfills.js.map': { size: 30155 },
 	'sw.js': { size: 3330 },
 	'manifest.json': { size: 298 },
 	'push-manifest.json': { size: 100 },

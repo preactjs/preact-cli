@@ -95,11 +95,6 @@
     "uuid": "^3.0.1"
   },
   "dependencies": {
-    "@webpack-blocks/css-modules": "^0.4.0",
-    "@webpack-blocks/dev-server2": "^0.4.0",
-    "@webpack-blocks/extract-text2": "^0.4.0",
-    "@webpack-blocks/postcss": "^0.4.3",
-    "@webpack-blocks/webpack2": "^0.4.0",
     "autoprefixer": "^7.1.0",
     "babel-loader": "^7.0.0",
     "babel-plugin-jsx-pragmatic": "^1.0.2",
@@ -157,6 +152,7 @@
     "webpack": "^3.0.0",
     "webpack-chunk-hash": "^0.4.0",
     "webpack-dev-server": "^2.4.5",
+    "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.1.1",
     "which": "^1.2.14",
     "yargs": "^8.0.1"
