@@ -112,7 +112,7 @@ export default asyncCommand({
 		}
 
 		if (exists && !argv.force) {
-			process.stderr.write(chalk.red('Error: Cannot initialize in the current directory, please specify a different destination\n'));
+			process.stderr.write(chalk.red('Error: Cannot initialize in the current directory, please specify a different destination or use --force\n'));
 			process.exit(1);
 		}
 
