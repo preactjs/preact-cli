@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "developit/preact-cli",
   "main": "lib/index.js",
@@ -156,7 +156,7 @@
     "url-loader": "^0.5.8",
     "webpack": "^2.3.3",
     "webpack-chunk-hash": "^0.4.0",
-    "webpack-dev-server": "^2.4.5",
+    "webpack-dev-server": "^2.6.1",
     "webpack-plugin-replace": "^1.1.1",
     "which": "^1.2.14",
     "yargs": "^8.0.1"
