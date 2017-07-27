@@ -41,9 +41,8 @@ const devBuild = async (env, onprogress) => {
 
 		compiler.plugin('done', stats => {
 			let devServer = config.devServer;
-
 			let protocol = devServer.https ? 'https' : 'http';
-			let host = process.env.HOST || devServer.host || 'localhost';
+			let host = process.env.HOST || 'localhost';
 
 			let serverAddr = `${protocol}://${host}:${chalk.bold(port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
@@ -52,7 +51,7 @@ const devBuild = async (env, onprogress) => {
 			if (stats.hasErrors()) {
 				process.stdout.write(chalk.red('\Build failed!\n\n'));
 			} else {
-				process.stdout.write(chalk.green('\nCompiled successfully!\n\n'));
+				process.stdout.write(chalk.green('Compiled successfully!\n\n'));
 
 				if (userPort !== port) {
 					process.stdout.write(`Port ${chalk.bold(userPort)} is in use, using ${chalk.bold(port)} instead\n\n`);
