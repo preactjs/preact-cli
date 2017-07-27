@@ -92,7 +92,7 @@ $ preact watch
 
   --src        Entry file (index.js).                             [default: "src"]
   --port, -p   Port to start a server on.                         [default: "8080"]
-  --host                                              [boolean]   [default: "0.0.0.0"]
+  --host                                                          [default: "localhost"]
   --prerender  Pre-render static app content on initial build.    [default: false]
   --template   Path to template file.
 
