@@ -22,17 +22,26 @@ export default asyncCommand({
 
 	desc: 'Create a new application interactively',
 
-	async handler() {
+	builder: {
+		default: {
+			description: 'Use default values',
+			type: 'boolean',
+			alias: 'y',
+			default: false
+		}
+	},
+
+	async handler(argv) {
 		const questions = [
 			{
 				type: 'input',
-				name: 'appName',
+				name: 'name',
 				message: 'Directory and package name for the app',
 				default: 'my_app'
 			},
 			{
 				type: 'input',
-				name: 'destination',
+				name: 'dest',
 				message: 'Directory to create the app within',
 				default: '<appName>'
 			},
@@ -81,11 +90,29 @@ export default asyncCommand({
 			}
 		];
 
-		process.stderr.write('\n');
-		let response = await inquirer.prompt(questions);
+		let response;
 
-		if (response.destination === '<appName>') {
-			response.destination = response.appName;
+		if (argv.default) {
+			response = {
+				name: 'my_app',
+				dest: 'my_app',
+				type: 'full',
+				style: 'css',
+				yarn: false,
+				git: false,
+				install: true,
+				enableForce: false
+			};
+
+			process.stdout.write('\nUsing the following default values:\n');
+			process.stdout.write(JSON.stringify(response, null, '  ') + '\n\n');
+		} else {
+			process.stdout.write('\n');
+			response = await inquirer.prompt(questions);
+
+			if (response.dest === '<name>') {
+				response.dest = response.name;
+			}
 		}
 
 		let template = TEMPLATES[response.type];
@@ -94,7 +121,7 @@ export default asyncCommand({
 			throw Error(`Unknown app template "${response.type}".`);
 		}
 
-		let target = path.resolve(process.cwd(), response.destination || response.appName);
+		let target = path.resolve(process.cwd(), response.dest || response.name);
 
 		let exists = false;
 		try {
