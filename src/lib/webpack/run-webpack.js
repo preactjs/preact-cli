@@ -44,7 +44,9 @@ const devBuild = async (env, onprogress) => {
 			let protocol = devServer.https ? 'https' : 'http';
 			let host = process.env.HOST || devServer.host || 'localhost';
 
-			let serverAddr = `${protocol}://${host === '0.0.0.0' ? 'localhost' : host}:${chalk.bold(port)}`;
+			if (host === '0.0.0.0') host = 'localhost';
+
+			let serverAddr = `${protocol}://${host}:${chalk.bold(port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
 
 			clearConsole();
