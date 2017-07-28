@@ -19,7 +19,7 @@ export default asyncCommand({
 		},
 		host: {
 			description: 'Hostname to start a server on',
-			default: 'localhost',
+			default: '0.0.0.0',
 			alias: 'H'
 		},
 		https: {

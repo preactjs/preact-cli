@@ -110,7 +110,7 @@ export default env => {
 
 const development = config => {
 	let port = process.env.PORT || config.port || 8080,
-		host = process.env.HOST || config.host || 'localhost',
+		host = process.env.HOST || config.host || '0.0.0.0',
 		origin = `${config.https===true?'https':'http'}://${host}:${port}/`;
 
 	return group([
