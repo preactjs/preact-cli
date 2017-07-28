@@ -43,7 +43,7 @@ export default asyncCommand({
 				type: 'input',
 				name: 'dest',
 				message: 'Directory to create the app within',
-				default: '<appName>'
+				default: '<name>'
 			},
 			{
 				type: 'list',
