@@ -41,7 +41,7 @@ const devBuild = async (env, onprogress) => {
 
 		compiler.plugin('done', stats => {
 			let devServer = config.devServer;
-			let protocol = devServer.https ? 'https' : 'http';
+			let protocol = (process.env.HTTPS || devServer.https) ? 'https' : 'http';
 			let host = process.env.HOST || devServer.host || 'localhost';
 
 			let serverAddr = `${protocol}://${host === '0.0.0.0' ? 'localhost' : host}:${chalk.bold(port)}`;
