@@ -69,7 +69,7 @@ $ preact create
   --name        Directory and package name for the new app.
   --dest        Directory to create the app within.                 [default: <name>]
   --type        A project template to start from.
-                  [Options: "full", "root", "simple", "empty"]     [default: "full"]
+                  [Options: "full", "root", "simple", "empty"]      [default: "full"]
   --less        Pre-install LESS support.                [boolean]  [default: false]
   --sass        Pre-install SASS/SCSS support.           [boolean]  [default: false]
   --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
@@ -163,7 +163,7 @@ To customize Babel, you have two options:
 
 To customize webpack create ```preact.config.js``` file which exports function that will change webpack's config.
 
-```
+```js
 /**
  * Function that mutates original webpack config.
  * Supports asynchronous changes when promise is returned.
@@ -206,7 +206,8 @@ The default one is visible [here](src/resources/template.html) and it's going to
 If you want to customise your template you can pass a custom template with the `--template` flag.
 
 The `--template` flag is available on the `build` and `watch` commands.
-```
+
+```sh
 preact build --template src/template.html
 preact watch --template src/template.html
 ```
