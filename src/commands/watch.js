@@ -43,7 +43,7 @@ export default asyncCommand({
 	async handler(argv) {
 		argv.production = false;
 
-		if (argv.https) {
+		if (argv.https || process.env.HTTPS) {
 			let ssl = await getSslCert();
 			if (!ssl) {
 				ssl = true;
