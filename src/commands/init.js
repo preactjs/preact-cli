@@ -36,7 +36,7 @@ export default asyncCommand({
 			{
 				type: 'input',
 				name: 'name',
-				message: 'Directory and package name for the app',
+				message: 'Package name for the app',
 				default: 'my_app'
 			},
 			{
