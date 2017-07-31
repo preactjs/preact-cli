@@ -18,72 +18,110 @@ const TEMPLATES = {
 };
 
 export default asyncCommand({
-	command: 'create <name> [dest]',
+	command: 'init',
 
-	desc: 'Create a new application.',
+	desc: 'Create a new application interactively',
 
 	builder: {
-		name: {
-			description: 'directory and package name for the new app'
-		},
-		dest: {
-			description: 'Directory to create the app within',
-			defaultDescription: '<name>'
-		},
-		force: {
-			description: 'Force option to create the directory for the new app',
-			default: false
-		},
-		type: {
-			description: 'A project template to start from',
-			choices: [
-				'full',
-				'root',
-				'simple',
-				'empty'
-			],
-			default: 'full'
-		},
-		yarn: {
-			description: "Use 'yarn' instead of 'npm'",
+		default: {
+			description: 'Use default values',
 			type: 'boolean',
+			alias: 'y',
 			default: false
-		},
-		less: {
-			description: 'Pre-install LESS support',
-			type: 'boolean',
-			default: false
-		},
-		sass: {
-			description: 'Pre-install SASS/SCSS support',
-			type: 'boolean',
-			default: false
-		},
-		stylus: {
-			description: 'Pre-install STYLUS support',
-			type: 'boolean',
-			default: false
-		},
-		git: {
-			description: 'Initialize version control using git',
-			type: 'boolean',
-			default: false
-		},
-		install: {
-			description: 'Install dependencies',
-			type: 'boolean',
-			default: true
 		}
 	},
 
 	async handler(argv) {
-		let template = TEMPLATES[argv.type];
+		const questions = [
+			{
+				type: 'input',
+				name: 'name',
+				message: 'Package name for the app',
+				default: 'my_app'
+			},
+			{
+				type: 'input',
+				name: 'dest',
+				message: 'Directory to create the app within',
+				default: '<name>'
+			},
+			{
+				type: 'list',
+				name: 'type',
+				message: 'A project template to start from',
+				choices: ['full', 'root', 'simple', 'empty'],
+				default: 'full',
+			},
+			{
+				type: 'list',
+				name: 'style',
+				message: 'Choose CSS type for the application',
+				choices: [
+					'css',
+					'less',
+					'sass',
+					'stylus'
+				],
+				default: 'css'
+			},
+			{
+				type: 'confirm',
+				name: 'yarn',
+				message: "Use 'YARN' instead of 'NPM'",
+				default: false
+			},
+			{
+				type: 'confirm',
+				name: 'git',
+				message: "Initiate version control using git",
+				default: false
+			},
+			{
+				type: 'confirm',
+				name: 'install',
+				message: 'Install dependencies for the app',
+				deafult: true
+			},
+			{
+				type: 'confirm',
+				name: 'enableForce',
+				message: 'Force option to create the directory for the new app',
+				default: false,
+			}
+		];
 
-		if (!template) {
-			throw Error(`Unknown app template "${argv.type}".`);
+		let response;
+
+		if (argv.default) {
+			response = {
+				name: 'my_app',
+				dest: 'my_app',
+				type: 'full',
+				style: 'css',
+				yarn: false,
+				git: false,
+				install: true,
+				enableForce: false
+			};
+
+			process.stdout.write('\nUsing the following default values:\n');
+			process.stdout.write(JSON.stringify(response, null, '  ') + '\n\n');
+		} else {
+			process.stdout.write('\n');
+			response = await inquirer.prompt(questions);
+
+			if (response.dest === '<name>') {
+				response.dest = response.name;
+			}
 		}
 
-		let target = path.resolve(process.cwd(), argv.dest || argv.name);
+		let template = TEMPLATES[response.type];
+
+		if (!template) {
+			throw Error(`Unknown app template "${response.type}".`);
+		}
+
+		let target = path.resolve(process.cwd(), response.dest || response.name);
 
 		let exists = false;
 		try {
@@ -91,17 +129,8 @@ export default asyncCommand({
 		}
 		catch (err) {}
 
-		if (exists && argv.force) {
-			const question = {
-				type: 'confirm',
-				name: 'enableForce',
-				message: `You are using '--force'. Do you wish to continue?`,
-				default: false,
-			};
-
-			let { enableForce } = await inquirer.prompt(question);
-
-			if (enableForce) {
+		if (exists && response.force) {
+			if (response.enableForce) {
 				process.stdout.write('Initializing project in the current directory...\n');
 			} else {
 				process.stderr.write(chalk.red('Error: Cannot initialize in the current directory\n'));
@@ -109,7 +138,7 @@ export default asyncCommand({
 			}
 		}
 
-		if (exists && !argv.force) {
+		if (exists && !response.force) {
 			process.stderr.write(chalk.red('Error: Cannot initialize in the current directory, please specify a different destination or use --force\n'));
 			process.exit(1);
 		}
@@ -131,11 +160,11 @@ export default asyncCommand({
 
 		spinner.text = 'Initializing project';
 
-		await initialize(argv.yarn, target);
+		await initialize(response.yarn, target);
 
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
-		pkg.scripts = await pkgScripts(argv.yarn, pkg);
+		pkg.scripts = await pkgScripts(response.yarn, pkg);
 
 		try {
 			await fs.stat(path.resolve(target, 'src'));
@@ -150,29 +179,29 @@ export default asyncCommand({
 
 		await fs.writeFile(path.resolve(target, 'package.json'), JSON.stringify(pkg, null, 2));
 
-		if (argv.install) {
+		if (response.install) {
 			spinner.text = 'Installing dev dependencies';
 
-			await install(argv.yarn, target, [
+			await install(response.yarn, target, [
 				'preact-cli',
 				'if-env',
 				'eslint',
 				'eslint-config-synacor',
 
 				// install sass setup if --sass
-				...(argv.sass ? [
+				...(response.style === 'sass' ? [
 					'node-sass',
 					'sass-loader'
 				] : []),
 
 				// install less setup if --less
-				...(argv.less ? [
+				...(response.style === 'less' ? [
 					'less',
 					'less-loader'
 				] : []),
 
 				// install stylus if --stylus
-				...(argv.stylus ? [
+				...(response.style === 'stylus' ? [
 					'stylus',
 					'stylus-loader'
 				] : [])
@@ -180,7 +209,7 @@ export default asyncCommand({
 
 			spinner.text = 'Installing dependencies';
 
-			await install(argv.yarn, target, [
+			await install(response.yarn, target, [
 				'preact',
 				'preact-compat',
 				'preact-router'
@@ -189,12 +218,12 @@ export default asyncCommand({
 			spinner.succeed('Done!\n');
 		}
 
-		if (argv.less || argv.sass || argv.stylus) {
+		if (response.style !== 'css') {
 			let extension;
 
-			if (argv.less) extension = '.less';
-			if (argv.sass) extension = '.scss';
-			if (argv.stylus) extension = '.styl';
+			if (response.style === 'less') extension = '.less';
+			if (response.style === 'sass') extension = '.scss';
+			if (response.style === 'stylus') extension = '.styl';
 
 			const cssFiles = await promisify(glob)(`${target}/**/*.css`, {
 				ignore: [
@@ -208,7 +237,7 @@ export default asyncCommand({
 			await Promise.all(cssFiles.map(changeExtension));
 		}
 
-		if (argv.git) {
+		if (response.git) {
 			await initGit(target);
 		}
 
@@ -217,13 +246,13 @@ export default asyncCommand({
 			  \u001b[32mcd ${path.relative(process.cwd(), target)}\u001b[39m
 
 			To start a development live-reload server:
-			  \u001b[32m${argv.yarn === true ? 'yarn start' : 'npm start'}\u001b[39m
+			  \u001b[32m${response.yarn === true ? 'yarn start' : 'npm start'}\u001b[39m
 
 			To create a production build (in ./build):
-			  \u001b[32m${argv.yarn === true ? 'yarn build' : 'npm run build'}\u001b[39m
+			  \u001b[32m${response.yarn === true ? 'yarn build' : 'npm run build'}\u001b[39m
 
 			To start a production HTTP/2 server:
-			  \u001b[32m${argv.yarn === true ? 'yarn serve' : 'npm run serve'}\u001b[39m
+			  \u001b[32m${response.yarn === true ? 'yarn serve' : 'npm run serve'}\u001b[39m
 		`) + '\n';
 	}
 });

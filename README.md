@@ -23,6 +23,8 @@
 
 `preact create your-app-name`: create a new app
 
+`preact init`: create a new app interactively
+
 `preact build`: build an app
 
 `preact watch`: start a dev server
@@ -35,7 +37,7 @@
 npm i -g preact-cli
 
 # create a new project:
-preact create my-great-app
+preact create my-great-app (or) preact init
 cd my-great-app
 
 # start a live-reload/HMR dev server:
@@ -64,6 +66,24 @@ yarn serve -- --server config
 ### CLI Options
 
 ```sh
+$ preact init
+  This command will ask a set of questions for creating an application.
+  You can also bootstrap an app using default values with "preact init -y".
+
+  --default     Initialize the application with default values.
+
+  The default values are as follows:
+  {
+    name: 'my_app',
+    dest: 'my_app',
+    type: 'full',
+    style: 'css',
+    yarn: false,
+    git: false,
+    install: true,
+    enableForce: false
+  }
+
 $ preact create
 
   --name        Directory and package name for the new app.
