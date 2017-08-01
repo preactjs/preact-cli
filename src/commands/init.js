@@ -214,9 +214,9 @@ export default asyncCommand({
 				'preact-compat',
 				'preact-router'
 			]);
-
-			spinner.succeed('Done!\n');
 		}
+
+		spinner.succeed('Done!\n');
 
 		if (response.style !== 'css') {
 			let extension;
