@@ -56,12 +56,7 @@ export default asyncCommand({
 				type: 'list',
 				name: 'style',
 				message: 'What do you want to use for your styling?',
-				choices: [
-					'css',
-					'less',
-					'sass',
-					'stylus'
-				],
+				choices: ['css', 'less', 'sass', 'stylus'],
 				default: 'css'
 			},
 			{
