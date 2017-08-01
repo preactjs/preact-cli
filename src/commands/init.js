@@ -55,7 +55,7 @@ export default asyncCommand({
 			{
 				type: 'list',
 				name: 'style',
-				message: 'Choose CSS type for the application',
+				message: 'What do you want to use for your styling?',
 				choices: [
 					'css',
 					'less',
