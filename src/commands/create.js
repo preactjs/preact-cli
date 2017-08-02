@@ -185,9 +185,9 @@ export default asyncCommand({
 				'preact-compat',
 				'preact-router'
 			]);
-
-			spinner.succeed('Done!\n');
 		}
+
+		spinner.succeed('Done!\n');
 
 		if (argv.less || argv.sass || argv.stylus) {
 			let extension;

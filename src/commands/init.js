@@ -55,13 +55,8 @@ export default asyncCommand({
 			{
 				type: 'list',
 				name: 'style',
-				message: 'Choose CSS type for the application',
-				choices: [
-					'css',
-					'less',
-					'sass',
-					'stylus'
-				],
+				message: 'What do you want to use for your styling?',
+				choices: ['css', 'less', 'sass', 'stylus'],
 				default: 'css'
 			},
 			{
@@ -214,9 +209,9 @@ export default asyncCommand({
 				'preact-compat',
 				'preact-router'
 			]);
-
-			spinner.succeed('Done!\n');
 		}
+
+		spinner.succeed('Done!\n');
 
 		if (response.style !== 'css') {
 			let extension;
