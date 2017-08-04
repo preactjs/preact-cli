@@ -20,7 +20,7 @@ export default asyncCommand({
 		host: {
 			description: 'Hostname to start a server on',
 			default: '0.0.0.0',
-			alias: 'h'
+			alias: 'H'
 		},
 		https: {
 			description: 'Use HTTPS?',
@@ -43,7 +43,7 @@ export default asyncCommand({
 	async handler(argv) {
 		argv.production = false;
 
-		if (argv.https) {
+		if (argv.https || process.env.HTTPS) {
 			let ssl = await getSslCert();
 			if (!ssl) {
 				ssl = true;

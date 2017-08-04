@@ -7,16 +7,19 @@ addons:
 
 language: node_js
 node_js:
-  - "6"
-  - "7"
-  - "8"
+  - 6
+  - 8
+
 cache:
   npm: true
+  directories:
+    - $HOME/.npm
+    - ./node_modules
 
 before_script:
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
-- google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+- if [ "$TRAVIS_BRANCH" = "master" ]; then export WITH_INSTALL=true; export WITH_LOG=true; fi
 
 script:
 - npm run lint
-- npm run test
+- npm run test -- --verbose

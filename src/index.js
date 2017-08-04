@@ -5,15 +5,20 @@ import create from './commands/create';
 import build from './commands/build';
 import watch from './commands/watch';
 import serve from './commands/serve';
+import init from './commands/init';
 import installHooks from './lib/output-hooks';
 import pkg from '../package.json';
 import logo from './lib/logo';
+import checkVersion from './../check';
 
 global.Promise = require('promise-polyfill');
+
+checkVersion();
 
 installHooks();
 
 yargs
+	.command(init)
 	.command(create)
 	.command(build)
 	.command(watch)
