@@ -62,7 +62,7 @@ npm run build
 preact create your-app-name --yarn
 
 # start a live-reload/HMR dev server:
-yarn watch
+yarn start
 
 # go to production:
 yarn build
