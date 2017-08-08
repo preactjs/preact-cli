@@ -194,7 +194,8 @@ const production = config => ({
 			staticFileGlobsIgnorePatterns: [
 				/polyfills(\..*)?\.js$/,
 				/\.map$/,
-				/push-manifest\.json$/
+				/push-manifest\.json$/,
+				/.DS_Store/
 			]
 		})
 	]
