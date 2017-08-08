@@ -13,4 +13,7 @@
 
 **If this is a feature request, what is motivation or use case for changing the behavior?**
 
-**Please mention other relevant information such as the `node` version, `preact-cli` version and Operating System.**
+**Please mention other relevant information.**
+- node version
+- npm version
+- Operating system
