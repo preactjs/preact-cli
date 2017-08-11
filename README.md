@@ -2,6 +2,14 @@
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
 
+---
+
+This is the documentation for our **development** version. For the documentation of the latest **stable** release, please visit the latest tagged. For example:
+
+[**1.4.1**: https://github.com/developit/preact-cli/tree/1.4.1](https://github.com/developit/preact-cli/tree/1.4.1)
+
+---
+
 ### Features:
 
 - **100/100 Lighthouse score**, right out of the box ([proof])
@@ -23,6 +31,8 @@
 
 `preact create your-app-name`: create a new app
 
+`preact init`: create a new app interactively
+
 `preact build`: build an app
 
 `preact watch`: start a dev server
@@ -35,7 +45,7 @@
 npm i -g preact-cli
 
 # create a new project:
-preact create my-great-app
+preact create my-great-app (or) preact init
 cd my-great-app
 
 # start a live-reload/HMR dev server:
@@ -52,7 +62,7 @@ npm run build
 preact create your-app-name --yarn
 
 # start a live-reload/HMR dev server:
-yarn watch
+yarn start
 
 # go to production:
 yarn build
@@ -64,12 +74,30 @@ yarn serve -- --server config
 ### CLI Options
 
 ```sh
+$ preact init
+  This command will ask a set of questions for creating an application.
+  You can also bootstrap an app using default values with "preact init -y".
+
+  --default     Initialize the application with default values.
+
+  The default values are as follows:
+  {
+    name: 'my_app',
+    dest: 'my_app',
+    type: 'full',
+    style: 'css',
+    yarn: false,
+    git: false,
+    install: true,
+    enableForce: false
+  }
+
 $ preact create
 
   --name        Directory and package name for the new app.
   --dest        Directory to create the app within.                 [default: <name>]
   --type        A project template to start from.
-                  [Options: "full", "root", "simple", "empty"]     [default: "full"]
+                  [Options: "full", "root", "simple", "empty"]      [default: "full"]
   --less        Pre-install LESS support.                [boolean]  [default: false]
   --sass        Pre-install SASS/SCSS support.           [boolean]  [default: false]
   --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
@@ -163,7 +191,7 @@ To customize Babel, you have two options:
 
 To customize webpack create ```preact.config.js``` file which exports function that will change webpack's config.
 
-```
+```js
 /**
  * Function that mutates original webpack config.
  * Supports asynchronous changes when promise is returned.
@@ -206,7 +234,8 @@ The default one is visible [here](src/resources/template.html) and it's going to
 If you want to customise your template you can pass a custom template with the `--template` flag.
 
 The `--template` flag is available on the `build` and `watch` commands.
-```
+
+```sh
 preact build --template src/template.html
 preact watch --template src/template.html
 ```

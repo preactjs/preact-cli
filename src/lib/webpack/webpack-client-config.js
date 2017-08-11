@@ -196,7 +196,8 @@ const production = config => addPlugins([
 		staticFileGlobsIgnorePatterns: [
 			/polyfills(\..*)?\.js$/,
 			/\.map$/,
-			/push-manifest\.json$/
+			/push-manifest\.json$/,
+			/.DS_Store/
 		]
 	})
 ]);
