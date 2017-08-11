@@ -2,6 +2,14 @@
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
 
+---
+
+This is the documentation for our **development** version. For the documentation of the latest **stable** release, please visit the latest tagged. For example:
+
+[**1.4.1**: https://github.com/developit/preact-cli/tree/1.4.1](https://github.com/developit/preact-cli/tree/1.4.1)
+
+---
+
 ### Features:
 
 - **100/100 Lighthouse score**, right out of the box ([proof])
@@ -54,7 +62,7 @@ npm run build
 preact create your-app-name --yarn
 
 # start a live-reload/HMR dev server:
-yarn watch
+yarn start
 
 # go to production:
 yarn build
