@@ -176,8 +176,7 @@ export default (env) => {
 					{
 						test: /\.(css|less|s[ac]ss|styl)$/,
 						include: [
-							src('components'),
-							src('routes')
+							src('./')
 						],
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
@@ -190,8 +189,7 @@ export default (env) => {
 					{
 						test: /\.(css|less|s[ac]ss|styl)$/,
 						exclude: [
-							src('components'),
-							src('routes')
+							src('./')
 						],
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
