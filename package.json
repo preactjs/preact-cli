@@ -155,6 +155,7 @@
     "tmp": "0.0.31",
     "unfetch": "^3.0.0",
     "url-loader": "^0.5.8",
+    "url-parse": "^1.1.9",
     "webpack": "^2.3.3",
     "webpack-chunk-hash": "^0.4.0",
     "webpack-dev-server": "^2.6.1",

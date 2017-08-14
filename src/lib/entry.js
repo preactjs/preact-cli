@@ -1,11 +1,18 @@
 import { h, render } from 'preact';
+const path = require('path');
 
 if (process.env.NODE_ENV==='development') {
 	// enable preact devtools
 	require('preact/devtools');
 }
 else if ('serviceWorker' in navigator && location.protocol === 'https:') {
-	navigator.serviceWorker.register('/sw.js');
+  const homepageFullUrl = new URL(process.env.HOMEPAGE, window.location);
+  if (homepageFullUrl.origin === window.location.origin) {
+    //This path should be well-formed, since we know HOMEPAGE
+    //has a trailing slash already.
+    const swLocation = process.env.HOMEPAGE + 'sw.js';
+    navigator.serviceWorker.register(swLocation);
+  }
 }
 
 

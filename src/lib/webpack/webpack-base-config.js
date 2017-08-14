@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import { readFileSync, statSync } from 'fs';
+import URL from 'url-parse';
 import {
 	webpack,
 	group,
@@ -40,6 +41,25 @@ function resolveDep(dep, cwd) {
 	return dep;
 }
 
+function getPublicUrl(pkg) {
+  if (pkg.homepage) {
+    //If pkg.homepage is not absolute, example.com will be
+    //taken as the host. It doesn't matter, since all we
+    //care about is the pathname.
+    let path = new URL(pkg.homepage, "http://example.com").pathname;
+
+    //Enforce a trailing slash on the homepage, since
+    //Webpack assumes it's there
+    if (!path.endsWith('/')) {
+      return path + '/';
+    } else {
+      return path;
+    }
+  } else {
+    return '/';
+  }
+}
+
 export default (env) => {
 	let { isProd, cwd, src } = helpers(env);
 	// only use src/ if it exists:
@@ -49,7 +69,9 @@ export default (env) => {
 
 	env.dest = resolve(cwd, env.dest || 'build');
 	env.manifest = readJson(src('manifest.json')) || {};
-	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
+  env.pkg = readJson(resolve(cwd, 'package.json')) || {};
+  env.homepage = getPublicUrl(env.pkg);
+  
 
 	let babelrc = readJson(resolve(cwd, '.babelrc')) || {};
 	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
@@ -237,7 +259,8 @@ export default (env) => {
 		]),
 
 		defineConstants({
-			'process.env.NODE_ENV': isProd ? 'production' : 'development'
+      'process.env.NODE_ENV': isProd ? 'production' : 'development',
+      'process.env.HOMEPAGE': env.homepage
 		}),
 
 		// Source maps for dev/prod:
