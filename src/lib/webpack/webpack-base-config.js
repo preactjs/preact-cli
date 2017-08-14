@@ -70,7 +70,7 @@ export default (env) => {
 	env.dest = resolve(cwd, env.dest || 'build');
 	env.manifest = readJson(src('manifest.json')) || {};
   env.pkg = readJson(resolve(cwd, 'package.json')) || {};
-  env.homepage = getPublicUrl(env.pkg);
+  env.homepage = isProd ? getPublicUrl(env.pkg) : '/';
   
 
 	let babelrc = readJson(resolve(cwd, '.babelrc')) || {};
