@@ -1,5 +1,4 @@
 import { h, render } from 'preact';
-const path = require('path');
 
 if (process.env.NODE_ENV==='development') {
 	// enable preact devtools
