@@ -6,13 +6,8 @@ if (process.env.NODE_ENV==='development') {
 	require('preact/devtools');
 }
 else if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  const homepageFullUrl = new URL(process.env.HOMEPAGE, window.location);
-  if (homepageFullUrl.origin === window.location.origin) {
-    //This path should be well-formed, since we know HOMEPAGE
-    //has a trailing slash already.
-    const swLocation = process.env.HOMEPAGE + 'sw.js';
-    navigator.serviceWorker.register(swLocation);
-  }
+  const swLocation = process.env.HOMEPAGE + 'sw.js';
+  navigator.serviceWorker.register(swLocation);
 }
 
 
