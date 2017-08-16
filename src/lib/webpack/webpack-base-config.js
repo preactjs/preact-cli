@@ -62,7 +62,7 @@ export default (env) => {
 					'node_modules',
 					resolve(__dirname, '../../../node_modules')
 				],
-				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.styl','.css'],
+				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.styl', '.css'],
 				alias: {
 					'preact-cli-entrypoint': src('index.js'),
 					style: src('style'),
