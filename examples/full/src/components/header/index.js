@@ -2,6 +2,7 @@ import { h, Component } from 'preact';
 import { Link } from 'preact-router/match';
 import style from './style';
 
+// eslint-disable-next-line
 export default class Header extends Component {
 	render() {
 		return (
