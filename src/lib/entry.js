@@ -5,7 +5,7 @@ if (process.env.NODE_ENV==='development') {
 	require('preact/devtools');
 }
 else if ('serviceWorker' in navigator && location.protocol === 'https:') {
-	navigator.serviceWorker.register('/sw.js');
+	navigator.serviceWorker.register(__webpack_public_path__ + 'sw.js');
 }
 
 
