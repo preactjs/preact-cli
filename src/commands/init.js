@@ -46,20 +46,6 @@ export default asyncCommand({
 				default: '<name>'
 			},
 			{
-				type: 'list',
-				name: 'type',
-				message: 'A project template to start from',
-				choices: ['full', 'root', 'simple', 'empty'],
-				default: 'full',
-			},
-			{
-				type: 'list',
-				name: 'style',
-				message: 'What do you want to use for your styling?',
-				choices: ['css', 'less', 'sass', 'stylus'],
-				default: 'css'
-			},
-			{
 				type: 'confirm',
 				name: 'yarn',
 				message: "Use 'YARN' instead of 'NPM'",

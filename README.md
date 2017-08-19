@@ -95,12 +95,6 @@ $ preact init
 $ preact create
 
   --name        Directory and package name for the new app.
-  --dest        Directory to create the app within.                 [default: <name>]
-  --type        A project template to start from.
-                  [Options: "full", "root", "simple", "empty"]      [default: "full"]
-  --less        Pre-install LESS support.                [boolean]  [default: false]
-  --sass        Pre-install SASS/SCSS support.           [boolean]  [default: false]
-  --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
   --git         Initialize version control using git.    [boolean]  [default: false]
   --no-install  Disables installing of dependencies.     [boolean]  [default: false]
   --yarn        Installs dependencies with yarn.         [boolean]  [default: false]

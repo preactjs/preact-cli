@@ -26,41 +26,12 @@ export default asyncCommand({
 		name: {
 			description: 'directory and package name for the new app'
 		},
-		dest: {
-			description: 'Directory to create the app within',
-			defaultDescription: '<name>'
-		},
 		force: {
 			description: 'Force option to create the directory for the new app',
 			default: false
 		},
-		type: {
-			description: 'A project template to start from',
-			choices: [
-				'full',
-				'root',
-				'simple',
-				'empty'
-			],
-			default: 'full'
-		},
 		yarn: {
 			description: "Use 'yarn' instead of 'npm'",
-			type: 'boolean',
-			default: false
-		},
-		less: {
-			description: 'Pre-install LESS support',
-			type: 'boolean',
-			default: false
-		},
-		sass: {
-			description: 'Pre-install SASS/SCSS support',
-			type: 'boolean',
-			default: false
-		},
-		stylus: {
-			description: 'Pre-install STYLUS support',
 			type: 'boolean',
 			default: false
 		},
