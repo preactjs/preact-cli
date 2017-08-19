@@ -128,25 +128,7 @@ export default asyncCommand({
 				'preact-cli',
 				'if-env',
 				'eslint',
-				'eslint-config-synacor',
-
-				// install sass setup if --sass
-				...(argv.sass ? [
-					'node-sass',
-					'sass-loader'
-				] : []),
-
-				// install less setup if --less
-				...(argv.less ? [
-					'less',
-					'less-loader'
-				] : []),
-
-				// install stylus if --stylus
-				...(argv.stylus ? [
-					'stylus',
-					'stylus-loader'
-				] : [])
+				'eslint-config-synacor'
 			], 'dev');
 
 			spinner.text = 'Installing dependencies';
@@ -159,25 +141,6 @@ export default asyncCommand({
 		}
 
 		spinner.succeed('Done!\n');
-
-		if (argv.less || argv.sass || argv.stylus) {
-			let extension;
-
-			if (argv.less) extension = '.less';
-			if (argv.sass) extension = '.scss';
-			if (argv.stylus) extension = '.styl';
-
-			const cssFiles = await promisify(glob)(`${target}/**/*.css`, {
-				ignore: [
-					`${target}/build/**`,
-					`${target}/node_modules/**`
-				]
-			});
-
-			const changeExtension = fileName => fs.rename(fileName, fileName.replace(/.css$/, extension));
-
-			await Promise.all(cssFiles.map(changeExtension));
-		}
 
 		if (argv.git) {
 			await initGit(target);
