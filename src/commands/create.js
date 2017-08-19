@@ -1,7 +1,6 @@
 import asyncCommand from '../lib/async-command';
 import fs from 'fs.promised';
 import copy from 'recursive-copy';
-import glob from 'glob';
 import mkdirp from 'mkdirp';
 import ora from 'ora';
 import chalk from 'chalk';
@@ -151,16 +150,16 @@ export default asyncCommand({
 
 		return trimLeft(`
 			To get started, cd into the new directory:
-			  \u001b[32mcd ${path.relative(process.cwd(), target)}\u001b[39m
+			  ${ chalk.green('cd ' + path.relative(process.cwd(), target)) }
 
 			To start a development live-reload server:
-			  \u001b[32m${pfx} start\u001b[39m
+			  ${ chalk.green(pfx + ' start') }
 
 			To create a production build (in ./build):
-			  \u001b[32m${pfx} build\u001b[39m
+			  ${ chalk.green(pfx + ' build') }
 
 			To start a production HTTP/2 server:
-			  \u001b[32m${pfx} serve\u001b[39m
+			  ${ chalk.green(pfx + ' serve') }
 		`) + '\n';
 	}
 });
