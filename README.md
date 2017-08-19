@@ -137,6 +137,25 @@ $ preact serve
 
 ```
 
+### Templates
+
+### Full: 
+
+- Preact Router Included
+- Dynamic routes
+
+<a href="https://build-gqqxvrjtbx.now.sh/" target="_blank">Demo</a>
+
+### Simple: 
+
+- Github API 
+<a href="https://build-xsepqcgvue.now.sh/" target="_blank">Demo</a>
+
+### Empty
+- Boilerplate removed of styles and router
+
+<a href="https://build-zdcjjqmreu.now.sh" target="_blank">Demo</a>
+
 ### Deploying
 
 ```sh
