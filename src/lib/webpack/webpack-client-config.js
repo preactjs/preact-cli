@@ -222,7 +222,11 @@ const htmlPlugin = (config, src) => {
 		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
 		ssr(params) {
-			return config.prerender ? prerender({ dest: config.dest, src }, { ...params, url }) : '';
+			return config.prerender ? prerender({
+				dest: config.dest,
+				src,
+				cwd: config.cwd
+			}, { ...params, url }) : '';
 		}
 	});
 	const pages = readJson(resolve(config.cwd, config.prerenderUrls || '')) || [{ url: "/" }];
