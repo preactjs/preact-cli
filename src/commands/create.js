@@ -6,7 +6,6 @@ import mkdirp from 'mkdirp';
 import ora from 'ora';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import promisify from 'es6-promisify';
 import path from 'path';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
 
@@ -120,7 +119,7 @@ export default asyncCommand({
 		}).start();
 
 		if (!exists) {
-			await promisify(mkdirp)(target);
+			await Promise.promisify(mkdirp)(target);
 		}
 
 		await copy(
@@ -196,7 +195,7 @@ export default asyncCommand({
 			if (argv.sass) extension = '.scss';
 			if (argv.stylus) extension = '.styl';
 
-			const cssFiles = await promisify(glob)(`${target}/**/*.css`, {
+			const cssFiles = await Promise.promisify(glob)(`${target}/**/*.css`, {
 				ignore: [
 					`${target}/build/**`,
 					`${target}/node_modules/**`

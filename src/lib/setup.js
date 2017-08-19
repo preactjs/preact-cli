@@ -1,7 +1,6 @@
 import path from 'path';
 import which from 'which';
 import fs from 'fs.promised';
-import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import { commandExists } from './shell';
 
@@ -74,7 +73,7 @@ const initGit = async (target) => {
 	let git;
 
 	try {
-		git = await promisify(which)('git');
+		git = await Promise.promisify(which)('git');
 	} catch (e) {
 		process.stderr.write('Could not find git in $PATH.\n');
 		process.stdout.write('Continuing without initializing version control...\n');
