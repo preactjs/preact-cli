@@ -48,6 +48,7 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
+		let isYarn = argv.yarn === true;
 		let template = TEMPLATES[argv.type];
 
 		if (!template) {
@@ -102,11 +103,11 @@ export default asyncCommand({
 
 		spinner.text = 'Initializing project';
 
-		await initialize(argv.yarn, target);
+		await initialize(isYarn, target);
 
 		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
 
-		pkg.scripts = await pkgScripts(argv.yarn, pkg);
+		pkg.scripts = await pkgScripts(isYarn, pkg);
 
 		try {
 			await fs.stat(path.resolve(target, 'src'));
@@ -124,7 +125,7 @@ export default asyncCommand({
 		if (argv.install) {
 			spinner.text = 'Installing dev dependencies';
 
-			await install(argv.yarn, target, [
+			await install(isYarn, target, [
 				'preact-cli',
 				'if-env',
 				'eslint',
@@ -133,7 +134,7 @@ export default asyncCommand({
 
 			spinner.text = 'Installing dependencies';
 
-			await install(argv.yarn, target, [
+			await install(isYarn, target, [
 				'preact',
 				'preact-compat',
 				'preact-router'
@@ -146,18 +147,20 @@ export default asyncCommand({
 			await initGit(target);
 		}
 
+		let pfx = isYarn ? 'yarn' : 'npm run';
+
 		return trimLeft(`
 			To get started, cd into the new directory:
 			  \u001b[32mcd ${path.relative(process.cwd(), target)}\u001b[39m
 
 			To start a development live-reload server:
-			  \u001b[32m${argv.yarn === true ? 'yarn start' : 'npm start'}\u001b[39m
+			  \u001b[32m${pfx} start\u001b[39m
 
 			To create a production build (in ./build):
-			  \u001b[32m${argv.yarn === true ? 'yarn build' : 'npm run build'}\u001b[39m
+			  \u001b[32m${pfx} build\u001b[39m
 
 			To start a production HTTP/2 server:
-			  \u001b[32m${argv.yarn === true ? 'yarn serve' : 'npm run serve'}\u001b[39m
+			  \u001b[32m${pfx} serve\u001b[39m
 		`) + '\n';
 	}
 });
