@@ -104,22 +104,23 @@ export default asyncCommand({
 
 		await initialize(isYarn, target);
 
-		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
+		// Construct user's `package.json` file
+		let pkgFile = path.resolve(target, 'package.json');
+		let pkgData = JSON.parse(await fs.readFile(pkgFile));
 
-		pkg.scripts = await pkgScripts(isYarn, pkg);
+		pkgData.scripts = await pkgScripts(isYarn, pkgData);
 
 		try {
 			await fs.stat(path.resolve(target, 'src'));
-		}
-		catch (err) {
-			pkg.scripts.test = pkg.scripts.test.replace('src', '.');
+		} catch (_) {
+			pkgData.scripts.test = pkgData.scripts.test.replace('src', '.');
 		}
 
-		pkg.eslintConfig = {
+		pkgData.eslintConfig = {
 			extends: 'eslint-config-synacor'
 		};
 
-		await fs.writeFile(path.resolve(target, 'package.json'), JSON.stringify(pkg, null, 2));
+		await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 
 		if (argv.install) {
 			spinner.text = 'Installing dev dependencies';
