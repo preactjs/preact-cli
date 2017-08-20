@@ -84,7 +84,7 @@ export default asyncCommand({
 		await gittar.extract(archive, target, {
 			filter(path) {
 				// TODO: remove this?
-				return !path.test(/\/build\//);
+				return !/\/build\//.test(path);
 			}
 		});
 
