@@ -8,7 +8,7 @@ import { prompt } from 'inquirer';
 import logSymbols from 'log-symbols';
 import promisify from 'es6-promisify';
 import path from 'path';
-import { statSync, existSync } from 'fs';
+import { statSync, existsSync } from 'fs';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
 
 function error(text, code) {
@@ -17,7 +17,7 @@ function error(text, code) {
 }
 
 function isDir(str) {
-	return existSync(str) && statSync(str).isDirectory();
+	return existsSync(str) && statSync(str).isDirectory();
 }
 
 export default asyncCommand({
