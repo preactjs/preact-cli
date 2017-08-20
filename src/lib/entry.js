@@ -9,7 +9,7 @@ else if ('serviceWorker' in navigator && location.protocol === 'https:') {
 }
 
 
-const interopDefault = m => m && m.default || m;
+const interopDefault = m => m && m.default ? m.default : m;
 
 let app = interopDefault(require('preact-cli-entrypoint'));
 

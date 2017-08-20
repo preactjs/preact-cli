@@ -103,6 +103,7 @@ $ preact create
   --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
   --git         Initialize version control using git.    [boolean]  [default: false]
   --no-install  Disables installing of dependencies.     [boolean]  [default: false]
+  --yarn        Installs dependencies with yarn.         [boolean]  [default: false]
 
 $ preact build
 
@@ -135,6 +136,25 @@ $ preact serve
   --port, -p  Port to start a server on.                          [default: "8080"]
 
 ```
+
+### Templates
+
+### Full: 
+
+- Preact Router Included
+- Dynamic routes
+
+<a href="https://build-gqqxvrjtbx.now.sh/" target="_blank">Demo</a>
+
+### Simple: 
+
+- Github API 
+<a href="https://build-xsepqcgvue.now.sh/" target="_blank">Demo</a>
+
+### Empty
+- Boilerplate removed of styles and router
+
+<a href="https://build-zdcjjqmreu.now.sh" target="_blank">Demo</a>
 
 ### Deploying
 
