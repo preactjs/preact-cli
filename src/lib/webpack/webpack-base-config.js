@@ -1,14 +1,7 @@
 import { resolve } from 'path';
 import { readFileSync, statSync } from 'fs';
-import {
-	webpack,
-	group,
-	customConfig,
-	setContext,
-	defineConstants,
-	addPlugins,
-	setDevTool
-} from '@webpack-blocks/webpack2';
+import webpack from 'webpack';
+import merge from 'webpack-merge';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
@@ -20,7 +13,7 @@ import createBabelConfig from '../babel-config';
 export function exists(file) {
 	try {
 		if (statSync(file)) return true;
-	} catch (e) {}
+	} catch (e) { }
 	return false;
 }
 
@@ -35,12 +28,21 @@ readJson.cache = {};
 
 // attempt to resolve a dependency, giving $CWD/node_modules priority:
 function resolveDep(dep, cwd) {
-	try { return requireRelative.resolve(dep, cwd || process.cwd()); } catch (e) {}
-	try { return require.resolve(dep); } catch (e) {}
+	try { return requireRelative.resolve(dep, cwd || process.cwd()); } catch (e) { }
+	try { return require.resolve(dep); } catch (e) { }
 	return dep;
 }
 
-export default (env) => {
+export default env => {
+	let { isProd } = helpers(env);
+
+	return merge(
+		base(env),
+		isProd ? production() : development()
+	);
+};
+
+const base = env => {
 	let { isProd, cwd, src } = helpers(env);
 	// only use src/ if it exists:
 	if (!exists(src('.'))) {
@@ -54,267 +56,241 @@ export default (env) => {
 	let babelrc = readJson(resolve(cwd, '.babelrc')) || {};
 	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
-	return group([
-		setContext(src('.')),
-		customConfig({
-			resolve: {
-				modules: [
-					'node_modules',
-					resolve(__dirname, '../../../node_modules')
-				],
-				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.styl', '.css'],
-				alias: {
-					'preact-cli-entrypoint': src('index.js'),
-					style: src('style'),
-					preact$: resolveDep(isProd ? 'preact/dist/preact.min.js' : 'preact', env.cwd),
-					// preact-compat aliases for supporting React dependencies:
-					react: 'preact-compat',
-					'react-dom': 'preact-compat',
-					'create-react-class': 'preact-compat/lib/create-react-class',
-					'react-addons-css-transition-group': 'preact-css-transition-group',
-					'preact-cli/async-component': resolve(__dirname, '../../components/async')
+	return ({
+		context: src('.'),
+
+		// Source maps for dev/prod:
+		devtool: isProd ? 'source-map' : 'cheap-module-eval-source-map',
+
+		resolve: {
+			modules: [
+				'node_modules',
+				resolve(__dirname, '../../../node_modules')
+			],
+			extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.styl', '.css'],
+			alias: {
+				'preact-cli-entrypoint': src('index.js'),
+				style: src('style'),
+				preact$: resolveDep(isProd ? 'preact/dist/preact.min.js' : 'preact', env.cwd),
+				// preact-compat aliases for supporting React dependencies:
+				react: 'preact-compat',
+				'react-dom': 'preact-compat',
+				'create-react-class': 'preact-compat/lib/create-react-class',
+				'react-addons-css-transition-group': 'preact-css-transition-group',
+				'preact-cli/async-component': resolve(__dirname, '../../components/async')
+			}
+		},
+
+		resolveLoader: {
+			modules: [
+				resolve(__dirname, '../../../node_modules'),
+				resolve(cwd, 'node_modules')
+			],
+			alias: {
+				'proxy-loader': require.resolve('./proxy-loader')
+			}
+		},
+
+		module: {
+			loaders: [
+				// ES2015
+				{
+					enforce: 'pre',
+					test: /\.jsx?$/,
+					loader: 'babel-loader',
+					options: Object.assign(
+						createBabelConfig(env, { browsers }),
+						babelrc // intentionall overwrite our settings
+					)
+				},
+				// LESS, SASS & CSS, STYLUS
+				{
+					enforce: 'pre',
+					test: /\.less$/,
+					use: [
+						{
+							loader: 'proxy-loader',
+							options: {
+								cwd,
+								loader: 'less-loader',
+								options: {
+									sourceMap: true
+								}
+							}
+						},
+						{
+							loader: resolve(__dirname, './dependency-install-loader'),
+							options: {
+								modules: ['less', 'less-loader'],
+								save: true
+							}
+						}
+					]
+				},
+				{
+					enforce: 'pre',
+					test: /\.s[ac]ss$/,
+					use: [
+						{
+							loader: 'proxy-loader',
+							options: {
+								cwd,
+								loader: 'sass-loader',
+								options: { sourceMap: true }
+							}
+						},
+						{
+							loader: resolve(__dirname, './dependency-install-loader'),
+							options: {
+								modules: ['node-sass', 'sass-loader'],
+								save: true
+							}
+						}
+					]
+				},
+				{
+					enforce: 'pre',
+					test: /\.styl$/,
+					use: [
+						{
+							loader: 'proxy-loader',
+							options: {
+								cwd,
+								loader: 'stylus-loader',
+								options: { sourceMap: true }
+							}
+						},
+						{
+							loader: resolve(__dirname, './dependency-install-loader'),
+							options: {
+								cwd,
+								modules: ['stylus', 'stylus-loader'],
+								save: true
+							}
+						}
+					]
+				},
+				{
+					test: /\.(css|less|s[ac]ss|styl)$/,
+					include: [
+						src('components'),
+						src('routes')
+					],
+					loader: ExtractTextPlugin.extract({
+						fallback: 'style-loader',
+						use: [
+							`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${isProd}`,
+							{
+								loader: `postcss-loader`,
+								options: {
+									plugins: [autoprefixer({ browsers })]
+								}
+							}
+						]
+					})
+				},
+				{
+					test: /\.(css|less|s[ac]ss|styl)$/,
+					exclude: [
+						src('components'),
+						src('routes')
+					],
+					loader: ExtractTextPlugin.extract({
+						fallback: 'style-loader',
+						use: [
+							`css-loader?sourceMap=${isProd}`,
+							{
+								loader: `postcss-loader`,
+								options: {
+									plugins: [autoprefixer({ browsers })]
+								}
+							}
+						]
+					})
+				},
+				// Arbitrary file loaders
+				{
+					test: /\.json$/,
+					loader: 'json-loader'
+				},
+				{
+					test: /\.(xml|html|txt|md)$/,
+					loader: 'raw-loader'
+				},
+				{
+					test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
+					loader: isProd ? 'file-loader' : 'url-loader'
 				}
-			},
-			resolveLoader: {
-				modules: [
-					resolve(__dirname, '../../../node_modules'),
-					resolve(cwd, 'node_modules')
-				],
-				alias: {
-					'proxy-loader': require.resolve('./proxy-loader')
-				}
-			}
-		}),
+			]
+		},
 
-		// ES2015
-		customConfig({
-			module: {
-				loaders: [
-					{
-						enforce: 'pre',
-						test: /\.jsx?$/,
-						loader: 'babel-loader',
-						options: Object.assign(
-							createBabelConfig(env, { browsers }),
-							babelrc // intentionall overwrite our settings
-						)
-					}
-				]
-			}
-		}),
-
-		// LESS, SASS & CSS, STYLUS
-		customConfig({
-			module: {
-				loaders: [
-					{
-						enforce: 'pre',
-						test: /\.less$/,
-						use: [
-							{
-								loader: 'proxy-loader',
-								options: {
-									cwd,
-									loader: 'less-loader',
-									options: {
-										sourceMap: true
-									}
-								}
-							},
-							{
-								loader: resolve(__dirname, './dependency-install-loader'),
-								options: {
-									modules: ['less', 'less-loader'],
-									save: true
-								}
-							}
-						]
-					},
-					{
-						enforce: 'pre',
-						test: /\.s[ac]ss$/,
-						use: [
-							{
-								loader: 'proxy-loader',
-								options: {
-									cwd,
-									loader: 'sass-loader',
-									options: { sourceMap: true }
-								}
-							},
-							{
-								loader: resolve(__dirname, './dependency-install-loader'),
-								options: {
-									modules: ['node-sass', 'sass-loader'],
-									save: true
-								}
-							}
-						]
-					},
-					{
-						enforce: 'pre',
-						test: /\.styl$/,
-						use: [
-							{
-								loader: 'proxy-loader',
-								options: {
-									cwd,
-									loader: 'stylus-loader',
-									options: { sourceMap: true }
-								}
-							},
-							{
-								loader: resolve(__dirname, './dependency-install-loader'),
-								options: {
-									cwd,
-									modules: ['stylus', 'stylus-loader'],
-									save: true
-								}
-							}
-						]
-					},
-					{
-						test: /\.(css|less|s[ac]ss|styl)$/,
-						include: [
-							src('components'),
-							src('routes')
-						],
-						loader: ExtractTextPlugin.extract({
-							fallback: 'style-loader',
-							use: [
-								`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${isProd}`,
-								`postcss-loader`
-							]
-						})
-					},
-					{
-						test: /\.(css|less|s[ac]ss|styl)$/,
-						exclude: [
-							src('components'),
-							src('routes')
-						],
-						loader: ExtractTextPlugin.extract({
-							fallback: 'style-loader',
-							use: [
-								`css-loader?sourceMap=${isProd}`,
-								`postcss-loader`
-							]
-						})
-					}
-				]
-			}
-		}),
-
-		// Arbitrary file loaders
-		customConfig({
-			module: {
-				loaders: [
-					{
-						test: /\.json$/,
-						loader: 'json-loader'
-					},
-					{
-						test: /\.(xml|html|txt|md)$/,
-						loader: 'raw-loader'
-					},
-					{
-						test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
-						loader: isProd ? 'file-loader' : 'url-loader'
-					}
-				]
-			}
-		}),
-
-		addPlugins([
+		plugins: [
 			new webpack.LoaderOptionsPlugin({
 				options: {
-					postcss: () => [
-						autoprefixer({ browsers })
-					],
 					context: resolve(cwd, env.src || 'src')
 				}
 			}),
-		]),
-
-		defineConstants({
-			'process.env.NODE_ENV': isProd ? 'production' : 'development'
-		}),
-
-		// Source maps for dev/prod:
-		setDevTool(isProd ? 'source-map' : 'cheap-module-eval-source-map'),
-
-		// remove unnecessary shims:
-		customConfig({
-			node: {
-				console: false,
-				process: false,
-				Buffer: false,
-				__filename: false,
-				__dirname: false,
-				setImmediate: false
-			}
-		}),
-
-		// produce HTML & CSS:
-		addPlugins([
+			new webpack.DefinePlugin({
+				'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
+			}),
+			// produce HTML & CSS:
 			new ExtractTextPlugin({
 				filename: isProd ? "style.[contenthash:5].css" : "style.css",
 				disable: !isProd,
 				allChunks: true
-			})
-		]),
-
-		// Causes issues because it gets injected into the ServiceWorker
-		// addPlugins([
-		// 	new webpack.ProvidePlugin({
-		// 		Promise: 'promise-polyfill',
-		// 		fetch: 'isomorphic-unfetch'
-		// 	})
-		// ]),
-
-		isProd ? production() : development(),
-
-		addPlugins([
+			}),
 			new webpack.NoEmitOnErrorsPlugin(),
-
 			new ProgressBarPlugin({
 				format: '\u001b[90m\u001b[44mBuild\u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
 				renderThrottle: 100,
 				summary: false,
 				clear: true
 			}),
-
 			new webpack.optimize.CommonsChunkPlugin({
 				async: false,
 				children: true,
 				minChunks: 3
 			})
-		])
-	].filter(Boolean));
+		],
+
+		// remove unnecessary shims:
+		node: {
+			console: false,
+			process: false,
+			Buffer: false,
+			__filename: false,
+			__dirname: false,
+			setImmediate: false
+		}
+	});
 };
 
-const development = () =>	group([]);
+const development = () => ({});
 
-const production = () => addPlugins([
-	new webpack.HashedModuleIdsPlugin(),
-	new WebpackChunkHash(),
-	new webpack.LoaderOptionsPlugin({
-		minimize: true
-	}),
+const production = () => ({
+	plugins: [
+		new webpack.HashedModuleIdsPlugin(),
+		new WebpackChunkHash(),
+		new webpack.LoaderOptionsPlugin({
+			minimize: true
+		}),
 
-	// strip out babel-helper invariant checks
-	new ReplacePlugin({
-		include: /babel-helper$/,
-		patterns: [{
-			regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-			value: s => `return;${ Array(s.length-7).join(' ') }(`
-		}]
-	}),
-]);
+		// strip out babel-helper invariant checks
+		new ReplacePlugin({
+			include: /babel-helper$/,
+			patterns: [{
+				regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
+				value: s => `return;${Array(s.length - 7).join(' ')}(`
+			}]
+		}),
+
+		new webpack.optimize.ModuleConcatenationPlugin()
+	]
+});
 
 export function helpers(env) {
 	return {
-		isProd:	env && env.production,
+		isProd: env && env.production,
 		cwd: env.cwd = resolve(env.cwd || process.cwd()),
 		src: dir => resolve(env.cwd, env.src || 'src', dir)
 	};

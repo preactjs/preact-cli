@@ -54,14 +54,14 @@ export default {
 		'bundle.*.js': { size: 10460 },
 		'bundle.*.js.map': { size: 48670 },
 		'index.html': { size: 640 },
-		'style.*.css': { size: 296},
-		'style.*.css.map': { size: 621 },
+		'style.*.css': { size: 346},
+		'style.*.css.map': { size: 673 },
 		'manifest.json': { size: 290 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 18205 },
 			'ssr-bundle.js.map': { size: 33478 },
-			'style.*.css': { size: 296 },
-			'style.*.css.map': { size: 621 },
+			'style.*.css': { size: 346 },
+			'style.*.css.map': { size: 673 },
 		}
 	},
 	root: {
@@ -73,12 +73,12 @@ export default {
 		'route-profile.chunk.*.js': { size: 1660 },
 		'route-profile.chunk.*.js.map': { size: 8607 },
 		'index.html': { size: 870 },
-		'style.*.css': { size: 1065 },
+		'style.*.css': { size: 1135 },
 		'style.*.css.map': { size: 2246 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 39459 },
 			'ssr-bundle.js.map': { size: 65629 },
-			'style.*.css': { size: 1065 },
+			'style.*.css': { size: 1135 },
 			'style.*.css.map': { size: 2250 },
 		}
 	},
@@ -91,12 +91,12 @@ export default {
 		'route-profile.chunk.*.js': { size: 1650 },
 		'route-profile.chunk.*.js.map': { size: 8609 },
 		'index.html': { size: 850 },
-		'style.*.css': { size: 1065 },
+		'style.*.css': { size: 1135 },
 		'style.*.css.map': { size: 2345 },
 		'ssr-build': {
 			'ssr-bundle.js': { size: 41715 },
 			'ssr-bundle.js.map': { size: 66661 },
-			'style.*.css': { size: 1065 },
+			'style.*.css': { size: 1135 },
 			'style.*.css.map': { size: 2345 },
 		}
 	}
