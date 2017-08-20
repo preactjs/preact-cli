@@ -162,7 +162,7 @@ export default asyncCommand({
 
 		return trimLeft(`
 			To get started, cd into the new directory:
-			  ${ chalk.green('cd ' + path.relative(process.cwd(), target)) }
+			  ${ chalk.green('cd ' + argv.dest) }
 
 			To start a development live-reload server:
 			  ${ chalk.green(pfx + ' start') }
