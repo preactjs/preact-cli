@@ -1,6 +1,7 @@
-import asyncCommand from '../lib/async-command';
 import getSslCert from '../lib/ssl-cert';
+import asyncCommand from '../lib/async-command';
 import runWebpack, { showStats } from '../lib/webpack/run-webpack';
+import { warn } from '../util';
 
 export default asyncCommand({
 	command: 'watch [src]',
@@ -47,7 +48,7 @@ export default asyncCommand({
 			let ssl = await getSslCert();
 			if (!ssl) {
 				ssl = true;
-				process.stderr.write('Using webpack-dev-server internal certificate.\n');
+				warn('Reverting to `webpack-dev-server` internal certificate.');
 			}
 			argv.https = ssl;
 		}
