@@ -5,21 +5,20 @@ import mkdirp from 'mkdirp';
 import glob from 'glob';
 import ora from 'ora';
 import chalk from 'chalk';
+import gittar from 'gittar';
 import inquirer from 'inquirer';
 import logSymbols from 'log-symbols';
 import promisify from 'es6-promisify';
 import path from 'path';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
 
-const TEMPLATES = {
-	full: 'examples/full',
-	empty: 'examples/empty',
-	root: 'examples/root',
-	simple: 'examples/simple'
-};
+function error(text, code) {
+	process.stderr.write(logSymbols.error + chalk.red(' ERROR ') + text + '\n');
+	process.exit(code || 1);
+}
 
 export default asyncCommand({
-	command: 'create <name> [dest]',
+	command: 'create <template> <dest>',
 
 	desc: 'Create a new application.',
 
@@ -50,11 +49,12 @@ export default asyncCommand({
 
 	async handler(argv) {
 		let isYarn = argv.yarn === true;
-		let template = TEMPLATES[argv.type];
 
-		if (!template) {
-			throw Error(`Unknown app template "${argv.type}".`);
-		}
+		// Attempt to fetch the `template`
+		let archive = await gittar.fetch(argv.template).catch(err => {
+			err = err || { message:'An error occured while fetching template.' };
+			return error(err.code === 404 ? `Could not find repostory: ${argv.template}` : err.message);
+		});
 
 		let target = path.resolve(process.cwd(), argv.dest);
 
@@ -76,14 +76,12 @@ export default asyncCommand({
 			if (enableForce) {
 				process.stdout.write('Initializing project in the current directory...\n');
 			} else {
-				process.stderr.write(chalk.red('Error: Cannot initialize in the current directory\n'));
-				process.exit(1);
+				return error('Cannot initialize in the current directory');
 			}
 		}
 
 		if (exists && !argv.force) {
-			process.stderr.write(chalk.red('Error: Cannot initialize in the current directory, please specify a different destination or use --force\n'));
-			process.exit(1);
+			return error('Cannot initialize in the current directory, please specify a different destination or use the `--force` flag');
 		}
 
 		let spinner = ora({
