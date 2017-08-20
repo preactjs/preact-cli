@@ -5,7 +5,7 @@ import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
 import { commandExists } from './shell';
 
-const initialize = async (yarn, cwd) => {
+export async function initialize(yarn, cwd) {
 	let isYarnAvailable = await commandExists('yarn');
 
 	if (isYarnAvailable && yarn) {
@@ -13,9 +13,9 @@ const initialize = async (yarn, cwd) => {
 	}
 
 	await spawn('npm', ['init', '-y'], { cwd, stdio: 'ignore' });
-};
+}
 
-const install = async (yarn, cwd, packages, env) => {
+export async function install(yarn, cwd, packages, env) {
 	let isDev = env === 'dev' ? true : false;
 	let isYarnAvailable = await commandExists('yarn');
 	let toInstall = packages.filter(Boolean);
@@ -39,9 +39,9 @@ const install = async (yarn, cwd, packages, env) => {
 	}
 
 	await spawn('npm', ['install', isDev ? '--save-dev' : '--save', ...toInstall], { cwd, stdio: 'ignore' });
-};
+}
 
-const pkgScripts = async (yarn, pkg) => {
+export async function pkgScripts(yarn, pkg) {
 	let isYarnAvailable = await commandExists('yarn');
 
 	if (isYarnAvailable && yarn) {
@@ -63,13 +63,13 @@ const pkgScripts = async (yarn, pkg) => {
 		dev: 'preact watch',
 		test: 'eslint src && preact test'
 	};
-};
+}
 
-const trimLeft = (string) => string.trim().replace(/^\t+/gm, '');
+export const trimLeft = str => str.trim().replace(/^\t+/gm, '');
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
-const initGit = async (target) => {
+export async function initGit(target) {
 	process.stdout.write('inside initGit func');
 	let git;
 
@@ -121,6 +121,4 @@ const initGit = async (target) => {
 			}
 		});
 	}
-};
-
-export { install, initialize, pkgScripts, initGit, trimLeft };
+}
