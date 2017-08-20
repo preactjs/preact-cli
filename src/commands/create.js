@@ -94,15 +94,13 @@ export default asyncCommand({
 			color: 'magenta'
 		}).start();
 
-		if (!exists) {
-			await promisify(mkdirp)(target);
-		}
-
-		await copy(
-			path.resolve(__dirname, '../..', template),
-			target,
-			{ filter: ['**/*', '!build'] }
-		);
+		// Extract files from `archive` to `target`
+		await gittar.extract(archive, target, {
+			filter(path) {
+				// TODO: remove this?
+				return !path.test(/\/build\//);
+			}
+		});
 
 		spinner.text = 'Initializing project';
 
