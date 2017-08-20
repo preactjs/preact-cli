@@ -1,9 +1,14 @@
 import chalk from 'chalk';
 import { statSync, existsSync } from 'fs';
 import logSymbols from 'log-symbols';
+import which from 'which';
 
 export function isDir(str) {
 	return existsSync(str) && statSync(str).isDirectory();
+}
+
+export function hasCommand(str) {
+	return !!which.sync(str, { nothrow:true });
 }
 
 export function info(text, code) {

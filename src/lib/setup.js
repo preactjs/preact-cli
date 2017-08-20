@@ -1,12 +1,10 @@
 import path from 'path';
-import which from 'which';
 import fs from 'fs.promised';
-import promisify from 'es6-promisify';
 import spawn from 'cross-spawn-promise';
-import { commandExists } from './shell';
+import { hasCommand } from '../util';
 
 export async function initialize(yarn, cwd) {
-	let isYarnAvailable = await commandExists('yarn');
+	let isYarnAvailable = hasCommand('yarn');
 
 	if (isYarnAvailable && yarn) {
 		return await spawn('yarn', ['init', '-y'], { cwd, stdio: 'ignore' });
@@ -17,7 +15,7 @@ export async function initialize(yarn, cwd) {
 
 export async function install(yarn, cwd, packages, env) {
 	let isDev = env === 'dev' ? true : false;
-	let isYarnAvailable = await commandExists('yarn');
+	let isYarnAvailable = hasCommand('yarn');
 	let toInstall = packages.filter(Boolean);
 
 	// pass null to use yarn only if yarn.lock is present
@@ -41,8 +39,8 @@ export async function install(yarn, cwd, packages, env) {
 	await spawn('npm', ['install', isDev ? '--save-dev' : '--save', ...toInstall], { cwd, stdio: 'ignore' });
 }
 
-export async function pkgScripts(yarn, pkg) {
-	let isYarnAvailable = await commandExists('yarn');
+export function pkgScripts(yarn, pkg) {
+	let isYarnAvailable = hasCommand('yarn');
 
 	if (isYarnAvailable && yarn) {
 		return {
@@ -70,11 +68,9 @@ export const trimLeft = str => str.trim().replace(/^\t+/gm, '');
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
 export async function initGit(target) {
-	let git;
+	let git = hasCommand('git');
 
-	try {
-		git = await promisify(which)('git');
-	} catch (e) {
+	if (!git) {
 		process.stderr.write('Could not find git in $PATH.\n');
 		process.stdout.write('Continuing without initializing version control...\n');
 	}
