@@ -1,12 +1,10 @@
 import asyncCommand from '../lib/async-command';
 import fs from 'fs.promised';
-import copy from 'recursive-copy';
-import mkdirp from 'mkdirp';
 import glob from 'glob';
 import ora from 'ora';
 import chalk from 'chalk';
 import gittar from 'gittar';
-import inquirer from 'inquirer';
+import { prompt } from 'inquirer';
 import logSymbols from 'log-symbols';
 import promisify from 'es6-promisify';
 import path from 'path';
@@ -54,40 +52,38 @@ export default asyncCommand({
 
 	async handler(argv) {
 		let isYarn = argv.yarn === true;
+		let cwd = argv.cwd ? path.resolve(argv.cwd) : process.cwd();
+		let target = argv.dest && path.resolve(cwd, argv.dest);
+		let exists = target && isDir(target);
+
+		if (target) {
+			if (exists && !argv.force) {
+				return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag');
+			}
+
+			if (exists && argv.force) {
+				let { enableForce } = await prompt({
+					type: 'confirm',
+					name: 'enableForce',
+					message: `You are using '--force'. Do you wish to continue?`,
+					default: false
+				});
+
+				if (enableForce) {
+					process.stdout.write('Initializing project in the current directory...\n');
+				} else {
+					return error('Refusing to overwrite current directory!');
+				}
+			}
+		} else {
+			// TODO: interactive
+		}
 
 		// Attempt to fetch the `template`
 		let archive = await gittar.fetch(argv.template).catch(err => {
 			err = err || { message:'An error occured while fetching template.' };
 			return error(err.code === 404 ? `Could not find repostory: ${argv.template}` : err.message);
 		});
-
-		let target = path.resolve(process.cwd(), argv.dest);
-
-		let exists = false;
-		try {
-			exists = (await fs.stat(target)).isDirectory();
-		} catch (err) {}
-
-		if (exists && argv.force) {
-			const question = {
-				type: 'confirm',
-				name: 'enableForce',
-				message: `You are using '--force'. Do you wish to continue?`,
-				default: false,
-			};
-
-			let { enableForce } = await inquirer.prompt(question);
-
-			if (enableForce) {
-				process.stdout.write('Initializing project in the current directory...\n');
-			} else {
-				return error('Cannot initialize in the current directory');
-			}
-		}
-
-		if (exists && !argv.force) {
-			return error('Cannot initialize in the current directory, please specify a different destination or use the `--force` flag');
-		}
 
 		let spinner = ora({
 			text: 'Creating project',
