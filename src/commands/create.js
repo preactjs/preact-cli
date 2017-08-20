@@ -96,7 +96,7 @@ export default asyncCommand({
 		let pkgFile = resolve(target, 'package.json');
 		let pkgData = JSON.parse(await fs.readFile(pkgFile));
 
-		pkgData.scripts = pkgScripts(isYarn, pkgData);
+		pkgData.scripts = pkgScripts(pkgData, isYarn);
 
 		if (argv.name) {
 			pkgData.name = argv.name;

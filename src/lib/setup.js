@@ -34,23 +34,11 @@ export async function install(yarn, cwd, packages, env) {
 	await spawn('npm', ['install', isDev ? '--save-dev' : '--save', ...toInstall], { cwd, stdio: 'ignore' });
 }
 
-export function pkgScripts(yarn, pkg) {
-	let isYarnAvailable = hasCommand('yarn');
-
-	if (isYarnAvailable && yarn) {
-		return {
-			...(pkg.scripts || {}),
-			start: 'if-env NODE_ENV=production && yarn run -s serve || yarn run -s dev',
-			build: 'preact build',
-			serve: 'preact build && preact serve',
-			dev: 'preact watch',
-			test: 'eslint src && preact test'
-		};
-	}
-
+export function pkgScripts(pkg, isYarn) {
+	let cmd = isYarn ? 'yarn' : 'npm run';
 	return {
 		...(pkg.scripts || {}),
-		start: 'if-env NODE_ENV=production && npm run -s serve || npm run -s dev',
+		start: `if-env NODE_ENV=production && ${cmd} -s serve || ${cmd} -s dev`,
 		build: 'preact build',
 		serve: 'preact build && preact serve',
 		dev: 'preact watch',
