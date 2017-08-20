@@ -10,11 +10,16 @@ import inquirer from 'inquirer';
 import logSymbols from 'log-symbols';
 import promisify from 'es6-promisify';
 import path from 'path';
+import { statSync, existSync } from 'fs';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
 
 function error(text, code) {
 	process.stderr.write(logSymbols.error + chalk.red(' ERROR ') + text + '\n');
 	process.exit(code || 1);
+}
+
+function isDir(str) {
+	return existSync(str) && statSync(str).isDirectory();
 }
 
 export default asyncCommand({
@@ -124,9 +129,7 @@ export default asyncCommand({
 			}
 		}
 
-		try {
-			await fs.stat(path.resolve(target, 'src'));
-		} catch (_) {
+		if (!isDir(path.resolve(target, 'src'))) {
 			pkgData.scripts.test = pkgData.scripts.test.replace('src', '.');
 		}
 
