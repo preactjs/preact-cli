@@ -1,6 +1,7 @@
 import './style';
 import { Component } from 'preact';
 
+// eslint-disable-next-line
 export default class App extends Component {
 	render() {
 		return (
