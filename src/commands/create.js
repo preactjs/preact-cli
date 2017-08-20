@@ -2,23 +2,13 @@ import asyncCommand from '../lib/async-command';
 import fs from 'fs.promised';
 import glob from 'glob';
 import ora from 'ora';
-import chalk from 'chalk';
 import gittar from 'gittar';
+import { green } from 'chalk';
 import { prompt } from 'inquirer';
-import logSymbols from 'log-symbols';
 import promisify from 'es6-promisify';
-import path from 'path';
-import { statSync, existsSync } from 'fs';
+import { resolve } from 'path';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
-
-function error(text, code) {
-	process.stderr.write(logSymbols.error + chalk.red(' ERROR ') + text + '\n');
-	process.exit(code || 1);
-}
-
-function isDir(str) {
-	return existsSync(str) && statSync(str).isDirectory();
-}
+import { isDir, error, warn } from '../util';
 
 export default asyncCommand({
 	command: 'create <template> <dest>',
@@ -52,8 +42,8 @@ export default asyncCommand({
 
 	async handler(argv) {
 		let isYarn = argv.yarn === true;
-		let cwd = argv.cwd ? path.resolve(argv.cwd) : process.cwd();
-		let target = argv.dest && path.resolve(cwd, argv.dest);
+		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
+		let target = argv.dest && resolve(cwd, argv.dest);
 		let exists = target && isDir(target);
 
 		if (target) {
@@ -103,7 +93,7 @@ export default asyncCommand({
 		await initialize(isYarn, target);
 
 		// Construct user's `package.json` file
-		let pkgFile = path.resolve(target, 'package.json');
+		let pkgFile = resolve(target, 'package.json');
 		let pkgData = JSON.parse(await fs.readFile(pkgFile));
 
 		pkgData.scripts = await pkgScripts(isYarn, pkgData);
@@ -118,12 +108,13 @@ export default asyncCommand({
 				await fs.writeFile(files[0], JSON.stringify(manifest, null, 2));
 				if (argv.name.length > 12) {
 					// @see https://developer.chrome.com/extensions/manifest/name#short_name
-					process.stdout.write(`\n${logSymbols.warning} Your \`short_name\` should be fewer than 12 characters.\n`);
+					process.stdout.write('\n');
+					warn('Your `short_name` should be fewer than 12 characters.');
 				}
 			}
 		}
 
-		if (!isDir(path.resolve(target, 'src'))) {
+		if (!isDir(resolve(target, 'src'))) {
 			pkgData.scripts.test = pkgData.scripts.test.replace('src', '.');
 		}
 
@@ -162,16 +153,16 @@ export default asyncCommand({
 
 		return trimLeft(`
 			To get started, cd into the new directory:
-			  ${ chalk.green('cd ' + argv.dest) }
+			  ${ green('cd ' + argv.dest) }
 
 			To start a development live-reload server:
-			  ${ chalk.green(pfx + ' start') }
+			  ${ green(pfx + ' start') }
 
 			To create a production build (in ./build):
-			  ${ chalk.green(pfx + ' build') }
+			  ${ green(pfx + ' build') }
 
 			To start a production HTTP/2 server:
-			  ${ chalk.green(pfx + ' serve') }
+			  ${ green(pfx + ' serve') }
 		`) + '\n';
 	}
 });
