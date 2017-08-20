@@ -10,7 +10,7 @@ import pkg from '../package.json';
 import logo from './lib/logo';
 import checkVersion from './../check';
 
-global.Promise = require('promise-polyfill');
+global.Promise = require('bluebird');
 
 checkVersion();
 

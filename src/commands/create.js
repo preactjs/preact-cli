@@ -5,7 +5,6 @@ import ora from 'ora';
 import gittar from 'gittar';
 import { green } from 'chalk';
 import { prompt } from 'inquirer';
-import promisify from 'es6-promisify';
 import { resolve } from 'path';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
 import { isDir, hasCommand, error, warn } from '../util';
@@ -101,7 +100,7 @@ export default asyncCommand({
 		if (argv.name) {
 			pkgData.name = argv.name;
 			// Find a `manifest.json`; use the first match, if any
-			let files = await promisify(glob)(target + '/**/manifest.json');
+			let files = await Promise.promisify(glob)(target + '/**/manifest.json');
 			let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
 			if (manifest) {
 				manifest.name = manifest.short_name = argv.name;

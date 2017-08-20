@@ -1,8 +1,8 @@
 import { resolve } from 'path';
-import promisify from 'es6-promisify';
 import mkdirp from 'mkdirp';
 import uuid from 'uuid/v4';
 import ncp from 'ncp';
+import { promisify } from 'bluebird';
 import spawn from 'cross-spawn-promise';
 import { withLog } from './utils';
 import { shouldInstallDeps } from './tests-config';
