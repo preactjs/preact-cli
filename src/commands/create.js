@@ -48,7 +48,7 @@ export default asyncCommand({
 
 		if (target) {
 			if (exists && !argv.force) {
-				return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag');
+				return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag', 1);
 			}
 
 			if (exists && argv.force) {
@@ -62,7 +62,7 @@ export default asyncCommand({
 				if (enableForce) {
 					process.stdout.write('Initializing project in the current directory...\n');
 				} else {
-					return error('Refusing to overwrite current directory!');
+					return error('Refusing to overwrite current directory!', 1);
 				}
 			}
 		} else {
@@ -72,7 +72,7 @@ export default asyncCommand({
 		// Attempt to fetch the `template`
 		let archive = await gittar.fetch(argv.template).catch(err => {
 			err = err || { message:'An error occured while fetching template.' };
-			return error(err.code === 404 ? `Could not find repostory: ${argv.template}` : err.message);
+			return error(err.code === 404 ? `Could not find repostory: ${argv.template}` : err.message, 1);
 		});
 
 		let spinner = ora({

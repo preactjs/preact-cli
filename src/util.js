@@ -13,7 +13,7 @@ export function hasCommand(str) {
 
 export function info(text, code) {
 	process.stderr.write(logSymbols.info + chalk.blue(' INFO ') + text + '\n');
-	process.exit(code || 1);
+	code && process.exit(code);
 }
 
 export function warn(text, code) {
@@ -23,5 +23,5 @@ export function warn(text, code) {
 
 export function error(text, code) {
 	process.stderr.write(logSymbols.error + chalk.red(' ERROR ') + text + '\n');
-	process.exit(code || 1);
+	code && process.exit(code);
 }
