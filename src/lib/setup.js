@@ -3,14 +3,9 @@ import fs from 'fs.promised';
 import spawn from 'cross-spawn-promise';
 import { hasCommand } from '../util';
 
-export async function initialize(yarn, cwd) {
-	let isYarnAvailable = hasCommand('yarn');
-
-	if (isYarnAvailable && yarn) {
-		return await spawn('yarn', ['init', '-y'], { cwd, stdio: 'ignore' });
-	}
-
-	await spawn('npm', ['init', '-y'], { cwd, stdio: 'ignore' });
+export function initialize(cwd, isYarn) {
+	let cmd = isYarn ? 'yarn' : 'npm';
+	return spawn(cmd, ['init', '-y'], { cwd, stdio:'ignore' });
 }
 
 export async function install(yarn, cwd, packages, env) {

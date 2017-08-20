@@ -8,7 +8,7 @@ import { prompt } from 'inquirer';
 import promisify from 'es6-promisify';
 import { resolve } from 'path';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
-import { isDir, error, warn } from '../util';
+import { isDir, hasCommand, error, warn } from '../util';
 
 export default asyncCommand({
 	command: 'create <template> <dest>',
@@ -41,7 +41,7 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
-		let isYarn = argv.yarn === true;
+		let isYarn = argv.yarn && hasCommand('yarn');
 		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
 		let target = argv.dest && resolve(cwd, argv.dest);
 		let exists = target && isDir(target);
@@ -90,7 +90,7 @@ export default asyncCommand({
 
 		spinner.text = 'Initializing project';
 
-		await initialize(isYarn, target);
+		await initialize(target, isYarn);
 
 		// Construct user's `package.json` file
 		let pkgFile = resolve(target, 'package.json');
