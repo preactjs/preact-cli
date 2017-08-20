@@ -2,9 +2,11 @@ import asyncCommand from '../lib/async-command';
 import fs from 'fs.promised';
 import copy from 'recursive-copy';
 import mkdirp from 'mkdirp';
+import glob from 'glob';
 import ora from 'ora';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import logSymbols from 'log-symbols';
 import promisify from 'es6-promisify';
 import path from 'path';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
@@ -23,7 +25,7 @@ export default asyncCommand({
 
 	builder: {
 		name: {
-			description: 'directory and package name for the new app'
+			description: 'The application\'s name'
 		},
 		force: {
 			description: 'Force option to create the directory for the new app',
@@ -54,13 +56,12 @@ export default asyncCommand({
 			throw Error(`Unknown app template "${argv.type}".`);
 		}
 
-		let target = path.resolve(process.cwd(), argv.dest || argv.name);
+		let target = path.resolve(process.cwd(), argv.dest);
 
 		let exists = false;
 		try {
 			exists = (await fs.stat(target)).isDirectory();
-		}
-		catch (err) {}
+		} catch (err) {}
 
 		if (exists && argv.force) {
 			const question = {
@@ -109,6 +110,21 @@ export default asyncCommand({
 		let pkgData = JSON.parse(await fs.readFile(pkgFile));
 
 		pkgData.scripts = await pkgScripts(isYarn, pkgData);
+
+		if (argv.name) {
+			pkgData.name = argv.name;
+			// Find a `manifest.json`; use the first match, if any
+			let files = await promisify(glob)(target + '/**/manifest.json');
+			let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
+			if (manifest) {
+				manifest.name = manifest.short_name = argv.name;
+				await fs.writeFile(files[0], JSON.stringify(manifest, null, 2));
+				if (argv.name.length > 12) {
+					// @see https://developer.chrome.com/extensions/manifest/name#short_name
+					process.stdout.write(`\n${logSymbols.warning} Your \`short_name\` should be fewer than 12 characters.\n`);
+				}
+			}
+		}
 
 		try {
 			await fs.stat(path.resolve(target, 'src'));

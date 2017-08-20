@@ -132,6 +132,7 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
     "loader-utils": "^1.1.0",
+    "log-symbols": "^2.0.0",
     "minimatch": "^3.0.3",
     "mkdirp": "^0.5.1",
     "offline-plugin": "^4.6.2",
