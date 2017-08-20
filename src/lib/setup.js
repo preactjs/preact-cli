@@ -59,14 +59,6 @@ export async function initGit(target) {
 	}
 
 	if (git) {
-		const gitignore = trimLeft(`
-		node_modules
-		/build
-		/*.log
-		`) + '\n';
-		const gitignorePath = path.resolve(target, '.gitignore');
-		await fs.writeFile(gitignorePath, gitignore);
-
 		const cwd = target;
 
 		await spawn('git', ['init'], { cwd });
