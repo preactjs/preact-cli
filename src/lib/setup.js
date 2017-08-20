@@ -1,7 +1,7 @@
-import path from 'path';
 import fs from 'fs.promised';
+import { resolve } from 'path';
 import spawn from 'cross-spawn-promise';
-import { hasCommand } from '../util';
+import { hasCommand, warn } from '../util';
 
 export function initialize(cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
@@ -16,7 +16,7 @@ export async function install(yarn, cwd, packages, env) {
 	// pass null to use yarn only if yarn.lock is present
 	if (!yarn) {
 		try {
-			let stat = await fs.stat(path.resolve(cwd, 'yarn.lock'));
+			let stat = await fs.stat(resolve(cwd, 'yarn.lock'));
 			yarn = stat.isFile();
 		}
 		catch (e) { yarn = false; }
@@ -53,21 +53,15 @@ export const trimLeft = str => str.trim().replace(/^\t+/gm, '');
 export async function initGit(target) {
 	let git = hasCommand('git');
 
-	if (!git) {
-		process.stderr.write('Could not find git in $PATH.\n');
-		process.stdout.write('Continuing without initializing version control...\n');
-	}
-
 	if (git) {
 		const cwd = target;
 
 		await spawn('git', ['init'], { cwd });
 		await spawn('git', ['add', '-A'], { cwd });
 
-		const defaultGitEmail = 'developit@users.noreply.github.com';
+		let gitUser, gitEmail;
 		const defaultGitUser = 'Preact CLI';
-		let gitUser;
-		let gitEmail;
+		const defaultGitEmail = 'developit@users.noreply.github.com';
 
 		try {
 			gitEmail = (await spawn('git', ['config', 'user.email'])).toString();
@@ -90,5 +84,7 @@ export async function initGit(target) {
 				GIT_AUTHOR_EMAIL: defaultGitEmail
 			}
 		});
+	} else {
+		warn('Could not locate `git` binary in `$PATH`. Skipping!');
 	}
 }
