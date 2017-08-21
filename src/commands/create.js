@@ -9,6 +9,14 @@ import { resolve } from 'path';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
 import { isDir, hasCommand, error, warn } from '../util';
 
+const TEMPLATES = {
+	full: 'preactjs-templates/default',
+	default: 'preactjs-templates/default',
+	// simple: 'examples/simple',
+	// empty: 'examples/empty',
+	// root: 'examples/root',
+};
+
 export default asyncCommand({
 	command: 'create <template> <dest>',
 
@@ -68,10 +76,12 @@ export default asyncCommand({
 			// TODO: interactive
 		}
 
+		let repo = TEMPLATES[argv.template] || argv.template;
+
 		// Attempt to fetch the `template`
-		let archive = await gittar.fetch(argv.template).catch(err => {
+		let archive = await gittar.fetch(repo).catch(err => {
 			err = err || { message:'An error occured while fetching template.' };
-			return error(err.code === 404 ? `Could not find repostory: ${argv.template}` : err.message, 1);
+			return error(err.code === 404 ? `Could not find repostory: ${repo}` : err.message, 1);
 		});
 
 		let spinner = ora({
