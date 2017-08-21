@@ -23,8 +23,6 @@ export function pkgScripts(pkg, isYarn) {
 	};
 }
 
-export const trimLeft = str => str.trim().replace(/^\t+/gm, '');
-
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
 export async function initGit(target) {

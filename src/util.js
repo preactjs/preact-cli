@@ -11,6 +11,10 @@ export function hasCommand(str) {
 	return !!which.sync(str, { nothrow:true });
 }
 
+export function trim(str) {
+	return str.trim().replace(/^\t+/gm, '');
+}
+
 export function info(text, code) {
 	process.stderr.write(logSymbols.info + chalk.blue(' INFO ') + text + '\n');
 	code && process.exit(code);

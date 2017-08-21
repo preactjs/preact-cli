@@ -7,7 +7,7 @@ import { green } from 'chalk';
 import { prompt } from 'inquirer';
 import { resolve } from 'path';
 import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
-import { isDir, hasCommand, error, warn } from '../util';
+import { isDir, hasCommand, error, trim, warn } from '../util';
 
 const TEMPLATES = {
 	full: 'preactjs-templates/default',
