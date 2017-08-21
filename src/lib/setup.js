@@ -1,5 +1,3 @@
-import fs from 'fs.promised';
-import { resolve } from 'path';
 import spawn from 'cross-spawn-promise';
 import { hasCommand, warn } from '../util';
 
@@ -8,30 +6,9 @@ export function initialize(cwd, isYarn) {
 	return spawn(cmd, ['init', '-y'], { cwd, stdio:'ignore' });
 }
 
-export async function install(yarn, cwd, packages, env) {
-	let isDev = env === 'dev' ? true : false;
-	let isYarnAvailable = hasCommand('yarn');
-	let toInstall = packages.filter(Boolean);
-
-	// pass null to use yarn only if yarn.lock is present
-	if (!yarn) {
-		try {
-			let stat = await fs.stat(resolve(cwd, 'yarn.lock'));
-			yarn = stat.isFile();
-		}
-		catch (e) { yarn = false; }
-	}
-
-	if (isYarnAvailable && yarn) {
-		let args = ['add'];
-		if (isDev) {
-			args.push('-D');
-		}
-
-		return await spawn('yarn', [...args, ...toInstall], { cwd, stdio: 'ignore' });
-	}
-
-	await spawn('npm', ['install', isDev ? '--save-dev' : '--save', ...toInstall], { cwd, stdio: 'ignore' });
+export function install(cwd, isYarn) {
+	let cmd = isYarn ? 'yarn' : 'npm';
+	return spawn(cmd, ['install'], { cwd, stdio:'ignore' });
 }
 
 export function pkgScripts(pkg, isYarn) {

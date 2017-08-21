@@ -134,22 +134,8 @@ export default asyncCommand({
 		await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 
 		if (argv.install) {
-			spinner.text = 'Installing dev dependencies';
-
-			await install(isYarn, target, [
-				'preact-cli',
-				'if-env',
-				'eslint',
-				'eslint-config-synacor'
-			], 'dev');
-
-			spinner.text = 'Installing dependencies';
-
-			await install(isYarn, target, [
-				'preact',
-				'preact-compat',
-				'preact-router'
-			]);
+			spinner.text = 'Installing all dependencies';
+			await install(target, isYarn);
 		}
 
 		spinner.succeed('Done!\n');
