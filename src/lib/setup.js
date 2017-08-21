@@ -6,15 +6,18 @@ export function install(cwd, isYarn) {
 	return spawn(cmd, ['install'], { cwd, stdio:'ignore' });
 }
 
-export function pkgScripts(pkg, isYarn) {
-	let cmd = isYarn ? 'yarn' : 'npm run';
+export async function addScripts(obj, cwd, isYarn) {
+	let cmd = isYarn ? 'yarn' : 'npm';
+	let args = isYarn ? ['add', '--dev'] : ['install', '--save-dev'];
+
+	// Install `if-env`
+	await spawn(cmd, [...args, 'if-env'], { cwd, stdio:'ignore '});
+
 	return {
-		...(pkg.scripts || {}),
-		start: `if-env NODE_ENV=production && ${cmd} -s serve || ${cmd} -s dev`,
 		build: 'preact build',
 		serve: 'preact build && preact serve',
-		dev: 'preact watch',
-		test: 'eslint src && preact test'
+		start: `if-env NODE_ENV=production && ${cmd} run -s serve || ${cmd} run -s watch`,
+		watch: 'preact watch'
 	};
 }
 

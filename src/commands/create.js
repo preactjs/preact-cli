@@ -1,12 +1,12 @@
-import asyncCommand from '../lib/async-command';
 import fs from 'fs.promised';
-import glob from 'glob';
+import { resolve } from 'path';
 import ora from 'ora';
+import glob from 'glob';
 import gittar from 'gittar';
 import { green } from 'chalk';
 import { prompt } from 'inquirer';
-import { resolve } from 'path';
-import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
+import asyncCommand from '../lib/async-command';
+import { install, initGit, addScripts } from './../lib/setup';
 import { isDir, hasCommand, error, trim, warn } from '../util';
 
 const TEMPLATES = {
@@ -97,23 +97,31 @@ export default asyncCommand({
 			}
 		});
 
-		spinner.text = 'Initializing project';
+		spinner.text = 'Parsing `package.json` file';
 
-		await initialize(target, isYarn);
-
-		// Construct user's `package.json` file
+		// Validate user's `package.json` file
+		let pkgData;
 		let pkgFile = resolve(target, 'package.json');
-		let pkgData = JSON.parse(await fs.readFile(pkgFile));
 
-		pkgData.scripts = pkgScripts(pkgData, isYarn);
+		if (pkgFile) {
+			pkgData = JSON.parse(await fs.readFile(pkgFile));
+			// Write default "scripts" if none found
+			pkgData.scripts = pkgData.scripts || (await addScripts(pkgData, target, isYarn));
+		} else {
+			warn('Could not locate `package.json` file!');
+		}
 
 		if (argv.name) {
-			pkgData.name = argv.name;
+			spinner.text = 'Updating `name` within `package.json` file';
+			// Update `package.json` key
+			pkgData && (pkgData.name = argv.name);
 			// Find a `manifest.json`; use the first match, if any
 			let files = await Promise.promisify(glob)(target + '/**/manifest.json');
 			let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
 			if (manifest) {
+				spinner.text = 'Updating `name` within `manifest.json` file';
 				manifest.name = manifest.short_name = argv.name;
+				// Write changes to `manifest.json`
 				await fs.writeFile(files[0], JSON.stringify(manifest, null, 2));
 				if (argv.name.length > 12) {
 					// @see https://developer.chrome.com/extensions/manifest/name#short_name
@@ -123,18 +131,13 @@ export default asyncCommand({
 			}
 		}
 
-		if (!isDir(resolve(target, 'src'))) {
-			pkgData.scripts.test = pkgData.scripts.test.replace('src', '.');
+		if (pkgData) {
+			// Assume changes were made ¯\_(ツ)_/¯
+			await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 		}
 
-		pkgData.eslintConfig = {
-			extends: 'eslint-config-synacor'
-		};
-
-		await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
-
 		if (argv.install) {
-			spinner.text = 'Installing all dependencies';
+			spinner.text = 'Installing dependencies';
 			await install(target, isYarn);
 		}
 
@@ -146,7 +149,7 @@ export default asyncCommand({
 
 		let pfx = isYarn ? 'yarn' : 'npm run';
 
-		return trimLeft(`
+		return trim(`
 			To get started, cd into the new directory:
 			  ${ green('cd ' + argv.dest) }
 
