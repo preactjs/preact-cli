@@ -91,9 +91,10 @@ export default asyncCommand({
 
 		// Extract files from `archive` to `target`
 		await gittar.extract(archive, target, {
+			strip: 2,
 			filter(path) {
-				// TODO: remove this?
-				return !/\/build\//.test(path);
+				// TODO: remove `/build/`?
+				return path.includes('/template/') && !path.includes('/build/');
 			}
 		});
 
