@@ -1,11 +1,6 @@
 import spawn from 'cross-spawn-promise';
 import { hasCommand, warn } from '../util';
 
-export function initialize(cwd, isYarn) {
-	let cmd = isYarn ? 'yarn' : 'npm';
-	return spawn(cmd, ['init', '-y'], { cwd, stdio:'ignore' });
-}
-
 export function install(cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
 	return spawn(cmd, ['install'], { cwd, stdio:'ignore' });
