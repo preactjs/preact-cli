@@ -58,7 +58,7 @@ export default {
 		'style.*.css.map': { size: 673 },
 		'manifest.json': { size: 290 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 18205 },
+			'ssr-bundle.js': { size: 17200 },
 			'ssr-bundle.js.map': { size: 33478 },
 			'style.*.css': { size: 346 },
 			'style.*.css.map': { size: 673 },
@@ -76,7 +76,7 @@ export default {
 		'style.*.css': { size: 1135 },
 		'style.*.css.map': { size: 2246 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 39459 },
+			'ssr-bundle.js': { size: 36400 },
 			'ssr-bundle.js.map': { size: 65629 },
 			'style.*.css': { size: 1135 },
 			'style.*.css.map': { size: 2250 },
@@ -94,7 +94,7 @@ export default {
 		'style.*.css': { size: 1135 },
 		'style.*.css.map': { size: 2345 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 41715 },
+			'ssr-bundle.js': { size: 38310 },
 			'ssr-bundle.js.map': { size: 66661 },
 			'style.*.css': { size: 1135 },
 			'style.*.css.map': { size: 2345 },
