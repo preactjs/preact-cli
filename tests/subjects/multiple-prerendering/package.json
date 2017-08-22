@@ -1,5 +1,5 @@
 {
-  "name": "preact-app",
+  "name": "preact-prerender",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
