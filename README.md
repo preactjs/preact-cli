@@ -103,6 +103,7 @@ $ preact create
   --stylus      Pre-install STYLUS support.              [boolean]  [default: false]
   --git         Initialize version control using git.    [boolean]  [default: false]
   --no-install  Disables installing of dependencies.     [boolean]  [default: false]
+  --yarn        Installs dependencies with yarn.         [boolean]  [default: false]
 
 $ preact build
 
