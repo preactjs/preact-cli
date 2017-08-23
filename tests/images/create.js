@@ -1,7 +1,7 @@
 exports.default = [
 	'.gitignore',
-	'README.md',
 	'package.json',
+	'README.md',
 	'src/assets/favicon.ico',
 	'src/assets/icons/android-chrome-192x192.png',
 	'src/assets/icons/android-chrome-512x512.png',
