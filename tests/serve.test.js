@@ -1,7 +1,6 @@
 import htmlLooksLike from 'html-looks-like';
 import { create, build, serve } from './lib/cli';
 import startChrome, { loadPage,  waitUntilExpression, getElementHtml } from './lib/chrome';
-import { setup } from './lib/output';
 import { waitUntil } from './lib/utils';
 import { homePageHTML, profilePageHtml } from './serve.snapshot';
 
@@ -9,7 +8,6 @@ let chrome, launcher, server;
 
 describe('preact serve', () => {
 	beforeAll(async () => {
-		await setup();
 		let result = await startChrome();
 		chrome = result.protocol;
 		launcher = result.launcher;
@@ -31,7 +29,7 @@ describe('preact serve', () => {
 
 	it(`should spawn server hosting the app.`, async () => {
 		let { Runtime } = chrome;
-		let app = await create('app');
+		let app = await create('default');
 		await build(app);
 		server = await serve(app, 8081);
 
@@ -44,7 +42,7 @@ describe('preact serve', () => {
 
 	it(`should serve interactive page.`, async () => {
 		let { Runtime } = chrome;
-		let app = await create('app');
+		let app = await create('default');
 		await build(app);
 		server = await serve(app, 8081);
 		let url = 'https://localhost:8081/';
@@ -64,7 +62,7 @@ describe('preact serve', () => {
 
 	it(`should register service worker on first visit.`, async () => {
 		let { Runtime } = chrome;
-		let app = await create('app');
+		let app = await create('default');
 		await build(app);
 		server = await serve(app, 8081);
 		let url = 'https://localhost:8081/';

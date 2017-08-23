@@ -1,32 +1,21 @@
-import { resolve } from 'path';
+import { relative } from 'path';
 import { create } from './lib/cli';
-import lsr from './lib/lsr';
-import { setup } from './lib/output';
+import { expand } from './lib/utils';
+import snapshots from './images/create';
 
-const listTemplate = async dir => await lsr(resolve(__dirname, '../examples', dir), ['.gitkeep', 'package.json']);
-const listOutput = async dir => await lsr(dir, ['.gitkeep', 'package.json', 'package-lock.json', 'node_modules']);
-
+// TODO: Move all `examples/` to `preactjs-templates`
+const ours = ['default', 'full'];
 
 describe('preact create', () => {
-	beforeAll(async () => {
-		await setup();
+	ours.forEach(key => {
+		it(`scaffolds the '${key}' official template`, async () => {
+			let dir = await create(key);
+
+			let output = await expand(dir).then(arr => {
+				return arr.map(x => relative(dir, x));
+			});
+
+			expect(output).toEqual(snapshots[key]);
+		});
 	});
-
-	it('should create project using full template by default.', async () => {
-		let fullExample = await listTemplate('full');
-		let app = await create('app');
-		let generated = await listOutput(app);
-
-		expect(generated).toEqual(fullExample);
-	});
-
-	['full', 'root', 'simple', 'empty'].forEach(template =>
-		it(`should create project using provided template. Verifying ${template}`, async () => {
-			let example = await listTemplate(template);
-			let app = await create('app', template);
-			let generated = await listOutput(app);
-
-			expect(generated).toEqual(example);
-		})
-	);
 });

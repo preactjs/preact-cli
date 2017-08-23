@@ -1,59 +1,39 @@
 import crossSpawn from 'cross-spawn-promise';
 import { spawn as spawnChild } from 'child_process';
 import path from 'path';
-import mkdirp from 'mkdirp';
 import fs from 'fs.promised';
-import { createWorkDir } from './output';
-import { waitUntil, withLog } from './utils';
-import { shouldInstallDeps } from './tests-config';
+import { tmpDir } from './output';
+import { waitUntil, log } from './utils';
 
-const builtPreactCliPath = path.resolve(__dirname, '../../lib/index.js');
+const CLI = require.resolve('../../lib');
+const NOINSTALL = !!process.env.SKIP_INSTALL;
 
-export const create = async (appName, template) => {
-	let workDir = createWorkDir();
-	await withLog(() => mkdirp(workDir), 'Create work directory');
-	await withLog(
-		() => createApp(template, appName, workDir),
-		'preact create'
-	);
+export async function create(template, name) {
+	let dest = tmpDir();
+	let args = [CLI, 'create', template, dest];
 
-	let appDir = path.resolve(workDir, appName);
+	name && args.push(`--name ${name}`);
+	NOINSTALL && args.push('--no-install');
 
-	if (shouldInstallDeps()) {
-		await withLog(
-			() => run('npm', ['i', '--save-dev', path.relative(appDir, process.cwd())], appDir),
-			'Install local preact-cli'
-		);
-	}
+	await run('node', args);
 
-	return appDir;
-};
+	return dest;
+}
 
-export const build = appDir => withLog(
+export const build = appDir => log(
 	() => preact(['build'], appDir),
 	'preact build'
 );
 
-export const serve = (appDir, port) => withLog(
+export const serve = (appDir, port) => log(
 	() => spawnPreact(['serve', port ? `-p=${port}` : undefined], appDir),
 	'preact serve'
 );
 
-export const watch = (appDir, host, port) => withLog(
+export const watch = (appDir, host, port) => log(
 	() => spawnPreact(['watch', host ? `--host=${host}` : undefined, port ? `-p=${port}` : undefined], appDir),
 	'preact watch'
 );
-
-const createApp = async (template, appName, workDir) => {
-	let cliPath = builtPreactCliPath;
-	let install = process.env.WITH_INSTALL ? '--install' : '--no-install';
-	let args = [cliPath, 'create', '--no-git', install, appName, template ? `--type=${template}` : undefined];
-
-	await exists(cliPath);
-	await exists(workDir);
-
-	await run('node', args, workDir);
-};
 
 const preact = async (args, cwd) => {
 	await run('node', [cliPath(cwd), ...args], cwd);
@@ -108,11 +88,9 @@ const spawnPreact = (args, cwd) => new Promise((resolve, reject) => {
 	}, 500);
 });
 
-const cliPath = (cwd) => shouldInstallDeps()
-		? path.resolve(cwd, './node_modules/.bin/preact')
-		: builtPreactCliPath;
+const cliPath = cwd => NOINSTALL ? CLI : path.resolve(cwd, './node_modules/.bin/preact');
 
 const exists = (path) => waitUntil(
-	() => withLog(() => fs.exists(path), `Check path exists: ${path}`),
+	() => log(() => fs.exists(path), `Check path exists: ${path}`),
 	`${path} doesn\'t exist`
 );

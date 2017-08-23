@@ -1,28 +1,27 @@
-import { resolve } from 'path';
-import mkdirp from 'mkdirp';
-import uuid from 'uuid/v4';
 import ncp from 'ncp';
+import uuid from 'uuid/v4';
+import { resolve } from 'path';
 import { promisify } from 'bluebird';
 import spawn from 'cross-spawn-promise';
-import { withLog } from './utils';
-import { shouldInstallDeps } from './tests-config';
+import { log } from './utils';
 
-const cp = promisify(ncp);
+const INSTALL = !process.env.SKIP_INSTALL;
 
-export const outputPath = resolve(__dirname, '../output');
-const subjectsPath = resolve(__dirname, '../subjects');
+const copy = promisify(ncp);
+const output = resolve(__dirname, '../output');
+const subjects = resolve(__dirname, '../subjects');
 
-export const setup = () => withLog(() => mkdirp(outputPath), 'Setup');
+export const tmpDir = () => resolve(output, uuid());
 
-export const createWorkDir = () => resolve(outputPath, uuid());
+export async function fromSubject(name) {
+	let dest = tmpDir();
+	let dir = resolve(subjects, name);
 
-export const fromSubject = async (subjectName) => {
-	let workDir = createWorkDir();
-	await withLog(() => cp(resolve(subjectsPath, subjectName), workDir), `Copy subject: ${subjectName}`);
+	await log(() => copy(dir, dest), `Copy subject: ${name}`);
 
-	if (shouldInstallDeps()) {
-		await withLog(() => spawn('npm', ['install'], { cwd: workDir }), `Install subject dependencies`);
+	if (INSTALL) {
+		await log(() => spawn('npm', ['install'], { cwd:dest }), `Install subject dependencies`);
 	}
 
-	return workDir;
-};
+	return dest;
+}
