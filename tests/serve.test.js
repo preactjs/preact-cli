@@ -1,8 +1,8 @@
-import htmlLooksLike from 'html-looks-like';
+import looksLike from 'html-looks-like';
 import { create, build, serve } from './lib/cli';
 import startChrome, { loadPage,  waitUntilExpression, getElementHtml } from './lib/chrome';
 import { waitUntil } from './lib/utils';
-import { homePageHTML, profilePageHtml } from './serve.snapshot';
+import images from './images/serve';
 
 let chrome, launcher, server;
 
@@ -37,7 +37,7 @@ describe('preact serve', () => {
 		await pageIsInteractive(chrome);
 		let html = await getElementHtml(Runtime, 'body');
 
-		htmlLooksLike(html, homePageHTML);
+		looksLike(html, images.home);
 	});
 
 	it(`should serve interactive page.`, async () => {
@@ -57,7 +57,7 @@ describe('preact serve', () => {
 
 		let html = await getElementHtml(Runtime, 'body');
 
-		htmlLooksLike(html, profilePageHtml);
+		looksLike(html, images.profile);
 	});
 
 	it(`should register service worker on first visit.`, async () => {
@@ -83,7 +83,7 @@ describe('preact serve', () => {
 		await pageIsInteractive(chrome);
 		let html = await getElementHtml(Runtime, 'body');
 
-		htmlLooksLike(html, homePageHTML);
+		looksLike(html, images.home);
 	});
 });
 
