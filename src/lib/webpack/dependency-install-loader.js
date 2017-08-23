@@ -63,5 +63,9 @@ module.exports = function(source, map) {
 			}
 		})
 		.then( () => callback(null, source, map) )
-		.catch( err => callback(`Error installing dependencies: ${err}`) );
+		.catch( err => {
+			/* eslint-disable no-console */
+			console.log('ERROR', err);
+			return callback(`Error installing dependencies: ${err}`);
+		});
 };
