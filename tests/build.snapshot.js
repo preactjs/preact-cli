@@ -1,3 +1,8 @@
+/**
+ * Unused
+ * @date 08/22/2017
+ * --> keep stats for other templates
+ */
 
 const commons = {
 	'polyfills.*.js': { size: 4620 },
@@ -80,24 +85,6 @@ export default {
 			'ssr-bundle.js.map': { size: 65629 },
 			'style.*.css': { size: 1065 },
 			'style.*.css.map': { size: 2250 },
-		}
-	},
-	'full': {
-		...fullBuildCommons,
-		'bundle.*.js': { size: 19300 },
-		'bundle.*.js.map': { size: 105590 },
-		'route-home.chunk.*.js': { size: 1000 },
-		'route-home.chunk.*.js.map': { size: 4981 },
-		'route-profile.chunk.*.js': { size: 1650 },
-		'route-profile.chunk.*.js.map': { size: 8609 },
-		'index.html': { size: 850 },
-		'style.*.css': { size: 1065 },
-		'style.*.css.map': { size: 2345 },
-		'ssr-build': {
-			'ssr-bundle.js': { size: 41715 },
-			'ssr-bundle.js.map': { size: 66661 },
-			'style.*.css': { size: 1065 },
-			'style.*.css.map': { size: 2345 },
 		}
 	}
 };
