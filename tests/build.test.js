@@ -6,9 +6,9 @@ import { snapshot, isMatch } from './lib/utils';
 import { fromSubject } from './lib/output';
 import images from './images/build';
 
-const ours = ['default', 'full'];
 // TODO
 // const ours = ['empty', 'full', 'simple', 'root'];
+const ours = ['default', 'full'];
 
 async function getBody(dir, file) {
 	file = join(dir, `build/${file}`);
