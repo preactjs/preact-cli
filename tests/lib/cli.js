@@ -1,9 +1,8 @@
+import { resolve } from 'path';
+import { spawn } from 'child_process';
 import crossSpawn from 'cross-spawn-promise';
-import { spawn as spawnChild } from 'child_process';
-import path from 'path';
-import fs from 'fs.promised';
 import { tmpDir } from './output';
-import { waitUntil, log } from './utils';
+import { log } from './utils';
 
 const CLI = require.resolve('../../lib');
 const NOINSTALL = !!process.env.SKIP_INSTALL;
@@ -52,7 +51,7 @@ const run = async (command, args, cwd) => {
 };
 
 const spawnPreact = (args, cwd) => new Promise((resolve, reject) => {
-	let child = spawnChild('node', [cliPath(cwd), ...args.filter(Boolean)], { cwd });
+	let child = spawn('node', [cliPath(cwd), ...args.filter(Boolean)], { cwd });
 	let exitCode, killed = false;
 	let errListener = err => {
 		reject(err);
@@ -88,9 +87,4 @@ const spawnPreact = (args, cwd) => new Promise((resolve, reject) => {
 	}, 500);
 });
 
-const cliPath = cwd => NOINSTALL ? CLI : path.resolve(cwd, './node_modules/.bin/preact');
-
-const exists = (path) => waitUntil(
-	() => log(() => fs.exists(path), `Check path exists: ${path}`),
-	`${path} doesn\'t exist`
-);
+const cliPath = cwd => NOINSTALL ? CLI : resolve(cwd, './node_modules/.bin/preact');
