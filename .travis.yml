@@ -10,6 +10,10 @@ node_js:
   - 6
   - 8
 
+branches:
+  only:
+    - master
+
 cache:
   npm: true
   directories:
