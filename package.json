@@ -13,7 +13,7 @@
     "prepublish": "npm run -s build",
     "dev": "babel-node src",
     "lint": "eslint src tests",
-    "pretest": "npm run -s build && rimraf ./tests/output",
+    "pretest": "npm run -s build && rimraf tests/output",
     "test": "jest",
     "posttest": "rimraf tests/output",
     "postinstall": "node -p 'require(\"./check.js\")()'",
