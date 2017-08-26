@@ -120,13 +120,6 @@ export default (env) => {
 										sourceMap: true
 									}
 								}
-							},
-							{
-								loader: resolve(__dirname, './dependency-install-loader'),
-								options: {
-									modules: ['less', 'less-loader'],
-									save: true
-								}
 							}
 						]
 					},
@@ -141,13 +134,6 @@ export default (env) => {
 									loader: 'sass-loader',
 									options: { sourceMap: true }
 								}
-							},
-							{
-								loader: resolve(__dirname, './dependency-install-loader'),
-								options: {
-									modules: ['node-sass', 'sass-loader'],
-									save: true
-								}
 							}
 						]
 					},
@@ -161,14 +147,6 @@ export default (env) => {
 									cwd,
 									loader: 'stylus-loader',
 									options: { sourceMap: true }
-								}
-							},
-							{
-								loader: resolve(__dirname, './dependency-install-loader'),
-								options: {
-									cwd,
-									modules: ['stylus', 'stylus-loader'],
-									save: true
 								}
 							}
 						]
