@@ -5,8 +5,6 @@ import { promisify } from 'bluebird';
 import spawn from 'cross-spawn-promise';
 import { log } from './utils';
 
-const INSTALL = !process.env.SKIP_INSTALL;
-
 const copy = promisify(ncp);
 const output = resolve(__dirname, '../output');
 const subjects = resolve(__dirname, '../subjects');
@@ -19,9 +17,8 @@ export async function fromSubject(name) {
 
 	await log(() => copy(dir, dest), `Copy subject: ${name}`);
 
-	if (INSTALL) {
-		await log(() => spawn('npm', ['install'], { cwd:dest }), `Install subject dependencies`);
-	}
+	// always install deps; needs to build
+	await log(() => spawn('npm', ['install'], { cwd:dest }), `Install subject dependencies`);
 
 	return dest;
 }
