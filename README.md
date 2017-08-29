@@ -110,7 +110,7 @@ $ preact build
   --src             Entry file (index.js).                        [default: "src"]
   --dest            Directory root for output.                    [default: "build"]
   --production, -p  Create a minified production build.           [default: true]
-  --prerender       Pre-render static app content.                [default: true]
+  --no-prerender    Disable pre-render of static app content.     
   --prerenderUrls   Path to pre-render routes configuration.      [default "prerender-urls.json"]
   --template        Path to template file.
   --clean           Clear output directory before building.       [default: true]
