@@ -20,7 +20,6 @@ export default async (watch=false, env, onprogress) => {
 const devBuild = async (env, onprogress) => {
 	let config = clientConfig(env);
 	await transformConfig(env, config);
-
 	let userPort = parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
 	let port = await getPort(userPort);
 

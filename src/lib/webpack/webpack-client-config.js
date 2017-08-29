@@ -1,16 +1,7 @@
 import { resolve } from 'path';
 import { filter } from 'minimatch';
-import {
-	webpack,
-	createConfig,
-	customConfig,
-	entryPoint,
-	setOutput,
-	addPlugins,
-	performance,
-	group
-} from '@webpack-blocks/webpack2';
-import devServer from '@webpack-blocks/dev-server2';
+import webpack from 'webpack';
+import merge from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
@@ -21,104 +12,106 @@ import baseConfig, { exists, readJson, helpers } from './webpack-base-config';
 import prerender from './prerender';
 
 export default env => {
+	let { isProd } = helpers(env);
+
+	return merge(
+		baseConfig(env),
+		clientBase(env),
+		isProd ? production(env) : development(env)
+	);
+};
+
+const clientBase = env => {
 	let { isProd, src } = helpers(env);
 
-	return createConfig.vanilla([
-		baseConfig(env),
-		entryPoint({
-			'bundle': resolve(__dirname, './../entry'),
-			'polyfills': resolve(__dirname, './polyfills'),
-		}),
-		setOutput({
+	return {
+		entry: {
+			'bundle': [resolve(__dirname, './../entry')],
+			'polyfills': [resolve(__dirname, './polyfills')],
+		},
+		output: {
 			path: env.dest,
 			publicPath: '/',
 			filename: isProd ? "[name].[chunkhash:5].js" : "[name].js",
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
-		}),
+		},
+		resolveLoader: {
+			alias: {
+				'async': resolve(__dirname, './async-component-loader')
+			},
+		},
 
 		// automatic async components :)
-		customConfig({
-			module: {
-				loaders: [
-					{
-						test: /\.jsx?$/,
-						include: [
-							filter(src('routes')+'/{*.js,*/index.js}'),
-							filter(src('components')+'/{routes,async}/{*.js,*/index.js}')
-						],
-						loader: resolve(__dirname, './async-component-loader'),
-						options: {
-							name(filename) {
-								let relative = filename.replace(src('.'), '');
-								let isRoute = filename.indexOf('/routes/') >= 0;
-
-								return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
-							},
-							formatName(filename) {
-								let relative = filename.replace(src('.'), '');
-								// strip out context dir & any file/ext suffix
-								return relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
-							}
+		module: {
+			loaders: [
+				{
+					test: /\.jsx?$/,
+					include: [
+						filter(src('routes') + '/{*.js,*/index.js}'),
+						filter(src('components') + '/{routes,async}/{*.js,*/index.js}')
+					],
+					loader: resolve(__dirname, './async-component-loader'),
+					options: {
+						name(filename) {
+							let relative = filename.replace(src('.'), '');
+							let isRoute = filename.indexOf('/routes/') >= 0;
+							return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
+						},
+						formatName(filename) {
+							let relative = filename.replace(src('.'), '');
+							// strip out context dir & any file/ext suffix
+							return relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
 						}
 					}
-				]
-			}
-		}),
+				}
+			]
+		},
 
-		// monitor output size and warn if it exceeds 200kb:
-		isProd && performance(Object.assign({
-			maxAssetSize: 200 * 1000,
-			maxEntrypointSize: 200 * 1000,
-			hints: 'warning'
-		}, env.pkg.performance || {})),
 		// copy any static files
-		addPlugins([
+		plugins: [
 			new CopyWebpackPlugin([
 				...(exists(src('manifest.json')) ? [
 					{ from: 'manifest.json' }
 				] : [
-					{
-						from: resolve(__dirname, '../../resources/manifest.json'),
-						to: 'manifest.json'
-					},
-					{
-						from: resolve(__dirname, '../../resources/icon.png'),
-						to: 'assets/icon.png'
-					}
-				]),
+						{
+							from: resolve(__dirname, '../../resources/manifest.json'),
+							to: 'manifest.json'
+						},
+						{
+							from: resolve(__dirname, '../../resources/icon.png'),
+							to: 'assets/icon.png'
+						}
+					]),
 				exists(src('assets')) && {
 					from: 'assets',
 					to: 'assets'
 				}
 			].filter(Boolean)),
-			new PushManifestPlugin()
-		]),
-
-		htmlPlugin(env, src('.')),
-
-		isProd ? production(env) : development(env),
-
-		customConfig({
-			resolveLoader: {
-				alias: {
-					'async': resolve(__dirname, './async-component-loader')
-				},
-			}
-		})
-	].filter(Boolean));
+			new PushManifestPlugin(),
+			...htmlPlugin(env, src('.'))
+		],
+	};
 };
 
 const development = config => {
 	let port = process.env.PORT || config.port || 8080,
 		host = process.env.HOST || config.host || '0.0.0.0',
-		origin = `${config.https===true?'https':'http'}://${host}:${port}/`;
+		origin = `${config.https === true ? 'https' : 'http'}://${host}:${port}/`;
 
-	return group([
-		addPlugins([
-			new webpack.NamedModulesPlugin()
-		]),
+	return {
+		entry: {
+			'bundle': [
+				`webpack-dev-server/client?${origin}`,
+				`webpack/hot/dev-server?${origin}`,
+			],
+		},
 
-		devServer({
+		plugins: [
+			new webpack.NamedModulesPlugin(),
+			new webpack.HotModuleReplacementPlugin()
+		],
+
+		devServer: {
 			port,
 			host,
 			inline: true,
@@ -142,65 +135,71 @@ const development = config => {
 					resolve(config.cwd, 'node_modules')
 				]
 			}
-		}, [
-			`webpack-dev-server/client?${origin}`,
-			`webpack/hot/dev-server?${origin}`
-		])
-	]);
+		}
+	};
 };
 
-const production = config => addPlugins([
-	new webpack.optimize.UglifyJsPlugin({
-		output: {
-			comments: false
-		},
-		mangle: true,
-		sourceMap: true,
-		compress: {
-			properties: true,
-			keep_fargs: false,
-			pure_getters: true,
-			collapse_vars: true,
-			warnings: false,
-			screw_ie8: true,
-			sequences: true,
-			dead_code: true,
-			drop_debugger: true,
-			comparisons: true,
-			conditionals: true,
-			evaluate: true,
-			booleans: true,
-			loops: true,
-			unused: true,
-			hoist_funs: true,
-			if_return: true,
-			join_vars: true,
-			cascade: true,
-			drop_console: false,
-			pure_funcs: [
-				'classCallCheck',
-				'_classCallCheck',
-				'_possibleConstructorReturn',
-				'Object.freeze',
-				'invariant',
-				'warning'
+const production = config => ({
+	// monitor output size and warn if it exceeds 200kb:
+	performance: Object.assign({
+		maxAssetSize: 200 * 1000,
+		maxEntrypointSize: 200 * 1000,
+		hints: 'warning'
+	}, config.pkg.performance || {}),
+
+	plugins: [
+		new webpack.optimize.UglifyJsPlugin({
+			output: {
+				comments: false
+			},
+			mangle: true,
+			sourceMap: true,
+			compress: {
+				properties: true,
+				keep_fargs: false,
+				pure_getters: true,
+				collapse_vars: true,
+				warnings: false,
+				screw_ie8: true,
+				sequences: true,
+				dead_code: true,
+				drop_debugger: true,
+				comparisons: true,
+				conditionals: true,
+				evaluate: true,
+				booleans: true,
+				loops: true,
+				unused: true,
+				hoist_funs: true,
+				if_return: true,
+				join_vars: true,
+				cascade: true,
+				drop_console: false,
+				pure_funcs: [
+					'classCallCheck',
+					'_classCallCheck',
+					'_possibleConstructorReturn',
+					'Object.freeze',
+					'invariant',
+					'warning'
+				]
+			}
+		}),
+		new SWPrecacheWebpackPlugin({
+			filename: 'sw.js',
+			navigateFallback: 'index.html',
+			navigateFallbackWhitelist: [/^(?!\/__).*/],
+			minify: true,
+			stripPrefix: config.cwd,
+			staticFileGlobsIgnorePatterns: [
+				/polyfills(\..*)?\.js$/,
+				/\.map$/,
+				/push-manifest\.json$/,
+				/.DS_Store/
 			]
-		}
-	}),
-	new SWPrecacheWebpackPlugin({
-		filename: 'sw.js',
-		navigateFallback: 'index.html',
-		navigateFallbackWhitelist: [/^(?!\/__).*/],
-		minify: true,
-		stripPrefix: config.cwd,
-		staticFileGlobsIgnorePatterns: [
-			/polyfills(\..*)?\.js$/,
-			/\.map$/,
-			/push-manifest\.json$/,
-			/.DS_Store/
-		]
-	})
-]);
+		})
+	]
+});
 
 const htmlPlugin = (config, src) => {
 	const htmlWebpackConfig = ({ url, title }) => ({
@@ -217,7 +216,7 @@ const htmlPlugin = (config, src) => {
 		manifest: config.manifest,
 		inject: true,
 		compile: true,
-		preload: config.preload===true,
+		preload: config.preload === true,
 		title: title || config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
 		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
@@ -230,7 +229,7 @@ const htmlPlugin = (config, src) => {
 		}
 	});
 	const pages = readJson(resolve(config.cwd, config.prerenderUrls || '')) || [{ url: "/" }];
-	return addPlugins(pages
+	return pages
 		.map((page) => new HtmlWebpackPlugin(htmlWebpackConfig(page)))
 		.concat([
 			new HtmlWebpackExcludeAssetsPlugin(),
@@ -238,5 +237,5 @@ const htmlPlugin = (config, src) => {
 				// inline: 'bundle.js',
 				defaultAttribute: 'defer'
 			})
-		]));
+		]);
 };
