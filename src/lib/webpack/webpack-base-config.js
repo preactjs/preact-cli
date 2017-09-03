@@ -182,8 +182,16 @@ export default (env) => {
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
 							use: [
-								`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${isProd}`,
-								`postcss-loader`
+								{
+									loader: 'css-loader',
+									options: {
+										modules: true,
+										localIdentName: '[local]__[hash:base64:5]',
+										importLoaders: 1,
+										sourceMap: isProd
+									}
+								},
+								'postcss-loader'
 							]
 						})
 					},
@@ -196,8 +204,13 @@ export default (env) => {
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
 							use: [
-								`css-loader?sourceMap=${isProd}`,
-								`postcss-loader`
+								{
+									loader: 'css-loader',
+									options: {
+										sourceMap: isProd
+									}
+								},
+								'postcss-loader'
 							]
 						})
 					}
