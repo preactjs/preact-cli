@@ -7,15 +7,9 @@ import { green } from 'chalk';
 import { prompt } from 'inquirer';
 import asyncCommand from '../lib/async-command';
 import { install, initGit, addScripts } from './../lib/setup';
-import { isDir, hasCommand, error, trim, warn } from '../util';
+import { info, isDir, hasCommand, error, trim, warn } from '../util';
 
-const TEMPLATES = {
-	full: 'preactjs-templates/default',
-	default: 'preactjs-templates/default',
-	// simple: 'examples/simple',
-	// empty: 'examples/empty',
-	// root: 'examples/root',
-};
+const ORG = 'preactjs-templates';
 
 export default asyncCommand({
 	command: 'create <template> <dest>',
@@ -76,7 +70,11 @@ export default asyncCommand({
 			// TODO: interactive
 		}
 
-		let repo = TEMPLATES[argv.template] || argv.template;
+		let repo = argv.template;
+		if (!repo.includes('/')) {
+			repo = `${ORG}/${repo}`;
+			info(`Assuming you meant ${repo}...`);
+		}
 
 		// Attempt to fetch the `template`
 		let archive = await gittar.fetch(repo).catch(err => {
