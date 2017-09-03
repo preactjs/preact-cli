@@ -8,7 +8,7 @@ import images from './images/build';
 
 // TODO
 // const ours = ['empty', 'full', 'simple', 'root'];
-const ours = ['default', 'full'];
+const ours = ['default'];
 
 async function getBody(dir, file) {
 	file = join(dir, `build/${file}`);

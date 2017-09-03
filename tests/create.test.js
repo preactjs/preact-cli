@@ -4,7 +4,7 @@ import { expand } from './lib/utils';
 import snapshots from './images/create';
 
 // TODO: Move all `examples/` to `preactjs-templates`
-const ours = ['default', 'full'];
+const ours = ['default'];
 
 describe('preact create', () => {
 	ours.forEach(key => {
