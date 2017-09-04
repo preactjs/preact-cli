@@ -1,3 +1,8 @@
+/**
+ * Unused
+ * @date 08/22/2017
+ * --> keep stats for other templates
+ */
 
 const commons = {
 	'polyfills.*.js': { size: 4620 },
@@ -81,67 +86,5 @@ export default {
 			'style.*.css': { size: 1065 },
 			'style.*.css.map': { size: 2250 },
 		}
-	},
-	'full': {
-		...fullBuildCommons,
-		'bundle.*.js': { size: 19300 },
-		'bundle.*.js.map': { size: 105590 },
-		'route-home.chunk.*.js': { size: 1000 },
-		'route-home.chunk.*.js.map': { size: 4981 },
-		'route-profile.chunk.*.js': { size: 1650 },
-		'route-profile.chunk.*.js.map': { size: 8609 },
-		'index.html': { size: 850 },
-		'style.*.css': { size: 1065 },
-		'style.*.css.map': { size: 2345 },
-		'ssr-build': {
-			'ssr-bundle.js': { size: 41715 },
-			'ssr-bundle.js.map': { size: 66661 },
-			'style.*.css': { size: 1065 },
-			'style.*.css.map': { size: 2345 },
-		}
 	}
 };
-
-export const sassPrerendered = `
-<body>
-	<div class="background__21gOq">
-		<h1>Header on background</h1>
-		<p>Paragraph on background</p>
-	</div>
-	{{ ... }}
-</body>
-`;
-
-export const withCustomTemplate = `
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>preact-app</title>
-		<link rel="shortcut icon" href="/favicon.ico"></link>
-	</head>
-	<body>
-		<h1>Guess what</h1>
-		<h2>This is an app with custom template</h2>
-		{{ ... }}
-	</body>
-</html>
-`;
-
-export const multiplePrerenderingHome = `
-<body>
-	<div id="app">
-		<div>Home</div>
-	</div>
-	{{ ... }}
-</body>
-`;
-
-export const multiplePrerenderingRoute = `
-<body>
-	<div id="app">
-		<div>Route66</div>
-	</div>
-	{{ ... }}
-</body>
-`;

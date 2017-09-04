@@ -1,65 +1,31 @@
-import asyncCommand from '../lib/async-command';
 import fs from 'fs.promised';
-import copy from 'recursive-copy';
-import glob from 'glob';
-import mkdirp from 'mkdirp';
+import { resolve } from 'path';
 import ora from 'ora';
-import chalk from 'chalk';
-import inquirer from 'inquirer';
-import path from 'path';
-import { install, initialize, pkgScripts, initGit, trimLeft } from './../lib/setup';
+import glob from 'glob';
+import gittar from 'gittar';
+import { green } from 'chalk';
+import { prompt } from 'inquirer';
+import asyncCommand from '../lib/async-command';
+import { install, initGit, addScripts } from './../lib/setup';
+import { info, isDir, hasCommand, error, trim, warn } from '../util';
 
-const TEMPLATES = {
-	full: 'examples/full',
-	empty: 'examples/empty',
-	root: 'examples/root',
-	simple: 'examples/simple'
-};
+const ORG = 'preactjs-templates';
 
 export default asyncCommand({
-	command: 'create <name> [dest]',
+	command: 'create <template> <dest>',
 
 	desc: 'Create a new application.',
 
 	builder: {
 		name: {
-			description: 'directory and package name for the new app'
-		},
-		dest: {
-			description: 'Directory to create the app within',
-			defaultDescription: '<name>'
+			description: 'The application\'s name'
 		},
 		force: {
 			description: 'Force option to create the directory for the new app',
 			default: false
 		},
-		type: {
-			description: 'A project template to start from',
-			choices: [
-				'full',
-				'root',
-				'simple',
-				'empty'
-			],
-			default: 'full'
-		},
 		yarn: {
 			description: "Use 'yarn' instead of 'npm'",
-			type: 'boolean',
-			default: false
-		},
-		less: {
-			description: 'Pre-install LESS support',
-			type: 'boolean',
-			default: false
-		},
-		sass: {
-			description: 'Pre-install SASS/SCSS support',
-			type: 'boolean',
-			default: false
-		},
-		stylus: {
-			description: 'Pre-install STYLUS support',
 			type: 'boolean',
 			default: false
 		},
@@ -76,153 +42,125 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
-		let template = TEMPLATES[argv.type];
+		let isYarn = argv.yarn && hasCommand('yarn');
+		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
+		let target = argv.dest && resolve(cwd, argv.dest);
+		let exists = target && isDir(target);
 
-		if (!template) {
-			throw Error(`Unknown app template "${argv.type}".`);
-		}
-
-		let target = path.resolve(process.cwd(), argv.dest || argv.name);
-
-		let exists = false;
-		try {
-			exists = (await fs.stat(target)).isDirectory();
-		}
-		catch (err) {}
-
-		if (exists && argv.force) {
-			const question = {
-				type: 'confirm',
-				name: 'enableForce',
-				message: `You are using '--force'. Do you wish to continue?`,
-				default: false,
-			};
-
-			let { enableForce } = await inquirer.prompt(question);
-
-			if (enableForce) {
-				process.stdout.write('Initializing project in the current directory...\n');
-			} else {
-				process.stderr.write(chalk.red('Error: Cannot initialize in the current directory\n'));
-				process.exit(1);
+		if (target) {
+			if (exists && !argv.force) {
+				return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag', 1);
 			}
+
+			if (exists && argv.force) {
+				let { enableForce } = await prompt({
+					type: 'confirm',
+					name: 'enableForce',
+					message: `You are using '--force'. Do you wish to continue?`,
+					default: false
+				});
+
+				if (enableForce) {
+					process.stdout.write('Initializing project in the current directory...\n');
+				} else {
+					return error('Refusing to overwrite current directory!', 1);
+				}
+			}
+		} else {
+			// TODO: interactive
 		}
 
-		if (exists && !argv.force) {
-			process.stderr.write(chalk.red('Error: Cannot initialize in the current directory, please specify a different destination or use --force\n'));
-			process.exit(1);
+		let repo = argv.template;
+		if (!repo.includes('/')) {
+			repo = `${ORG}/${repo}`;
+			info(`Assuming you meant ${repo}...`);
 		}
+
+		// Attempt to fetch the `template`
+		let archive = await gittar.fetch(repo).catch(err => {
+			err = err || { message:'An error occured while fetching template.' };
+			return error(err.code === 404 ? `Could not find repostory: ${repo}` : err.message, 1);
+		});
 
 		let spinner = ora({
 			text: 'Creating project',
 			color: 'magenta'
 		}).start();
 
-		if (!exists) {
-			await Promise.promisify(mkdirp)(target);
+		// Extract files from `archive` to `target`
+		await gittar.extract(archive, target, {
+			strip: 2,
+			filter(path) {
+				// TODO: remove `/build/` ??
+				// TODO: read & respond to meta/hooks
+				return path.includes('/template/') && !path.includes('/build/');
+			}
+		});
+
+		spinner.text = 'Parsing `package.json` file';
+
+		// Validate user's `package.json` file
+		let pkgData;
+		let pkgFile = resolve(target, 'package.json');
+
+		if (pkgFile) {
+			pkgData = JSON.parse(await fs.readFile(pkgFile));
+			// Write default "scripts" if none found
+			pkgData.scripts = pkgData.scripts || (await addScripts(pkgData, target, isYarn));
+		} else {
+			warn('Could not locate `package.json` file!');
 		}
 
-		await copy(
-			path.resolve(__dirname, '../..', template),
-			target,
-			{ filter: ['**/*', '!build'] }
-		);
-
-		spinner.text = 'Initializing project';
-
-		await initialize(argv.yarn, target);
-
-		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
-
-		pkg.scripts = await pkgScripts(argv.yarn, pkg);
-
-		try {
-			await fs.stat(path.resolve(target, 'src'));
+		if (argv.name) {
+			spinner.text = 'Updating `name` within `package.json` file';
+			// Update `package.json` key
+			pkgData && (pkgData.name = argv.name);
+			// Find a `manifest.json`; use the first match, if any
+			let files = await Promise.promisify(glob)(target + '/**/manifest.json');
+			let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
+			if (manifest) {
+				spinner.text = 'Updating `name` within `manifest.json` file';
+				manifest.name = manifest.short_name = argv.name;
+				// Write changes to `manifest.json`
+				await fs.writeFile(files[0], JSON.stringify(manifest, null, 2));
+				if (argv.name.length > 12) {
+					// @see https://developer.chrome.com/extensions/manifest/name#short_name
+					process.stdout.write('\n');
+					warn('Your `short_name` should be fewer than 12 characters.');
+				}
+			}
 		}
-		catch (err) {
-			pkg.scripts.test = pkg.scripts.test.replace('src', '.');
+
+		if (pkgData) {
+			// Assume changes were made ¯\_(ツ)_/¯
+			await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 		}
-
-		pkg.eslintConfig = {
-			extends: 'eslint-config-synacor'
-		};
-
-		await fs.writeFile(path.resolve(target, 'package.json'), JSON.stringify(pkg, null, 2));
 
 		if (argv.install) {
-			spinner.text = 'Installing dev dependencies';
-
-			await install(argv.yarn, target, [
-				'preact-cli',
-				'if-env',
-				'eslint',
-				'eslint-config-synacor',
-
-				// install sass setup if --sass
-				...(argv.sass ? [
-					'node-sass',
-					'sass-loader'
-				] : []),
-
-				// install less setup if --less
-				...(argv.less ? [
-					'less',
-					'less-loader'
-				] : []),
-
-				// install stylus if --stylus
-				...(argv.stylus ? [
-					'stylus',
-					'stylus-loader'
-				] : [])
-			], 'dev');
-
 			spinner.text = 'Installing dependencies';
-
-			await install(argv.yarn, target, [
-				'preact',
-				'preact-compat',
-				'preact-router'
-			]);
+			await install(target, isYarn);
 		}
 
 		spinner.succeed('Done!\n');
-
-		if (argv.less || argv.sass || argv.stylus) {
-			let extension;
-
-			if (argv.less) extension = '.less';
-			if (argv.sass) extension = '.scss';
-			if (argv.stylus) extension = '.styl';
-
-			const cssFiles = await Promise.promisify(glob)(`${target}/**/*.css`, {
-				ignore: [
-					`${target}/build/**`,
-					`${target}/node_modules/**`
-				]
-			});
-
-			const changeExtension = fileName => fs.rename(fileName, fileName.replace(/.css$/, extension));
-
-			await Promise.all(cssFiles.map(changeExtension));
-		}
 
 		if (argv.git) {
 			await initGit(target);
 		}
 
-		return trimLeft(`
+		let pfx = isYarn ? 'yarn' : 'npm run';
+
+		return trim(`
 			To get started, cd into the new directory:
-			  \u001b[32mcd ${path.relative(process.cwd(), target)}\u001b[39m
+			  ${ green('cd ' + argv.dest) }
 
 			To start a development live-reload server:
-			  \u001b[32m${argv.yarn === true ? 'yarn start' : 'npm start'}\u001b[39m
+			  ${ green(pfx + ' start') }
 
 			To create a production build (in ./build):
-			  \u001b[32m${argv.yarn === true ? 'yarn build' : 'npm run build'}\u001b[39m
+			  ${ green(pfx + ' build') }
 
 			To start a production HTTP/2 server:
-			  \u001b[32m${argv.yarn === true ? 'yarn serve' : 'npm run serve'}\u001b[39m
+			  ${ green(pfx + ' serve') }
 		`) + '\n';
 	}
 });
