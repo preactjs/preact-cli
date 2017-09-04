@@ -91,9 +91,8 @@ export default asyncCommand({
 		await gittar.extract(archive, target, {
 			strip: 2,
 			filter(path) {
-				// TODO: remove `/build/` ??
 				// TODO: read & respond to meta/hooks
-				return path.includes('/template/') && !path.includes('/build/');
+				return path.includes('/template/');
 			}
 		});
 
