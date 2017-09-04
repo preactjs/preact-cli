@@ -15,10 +15,10 @@ branches:
     - master
 
 cache:
-  npm: true
+  yarn: true
   directories:
-    - $HOME/.npm
-    - ./node_modules
+    - $HOME/.yarn-cache
+    - node_modules
 
 before_script:
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
