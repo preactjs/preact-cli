@@ -88,13 +88,18 @@ export default asyncCommand({
 		}).start();
 
 		// Extract files from `archive` to `target`
+		// TODO: read & respond to meta/hooks
+		let hasDir = false;
 		await gittar.extract(archive, target, {
 			strip: 2,
 			filter(path) {
-				// TODO: read & respond to meta/hooks
-				return path.includes('/template/');
+				return path.includes('/template/') && (hasDir = true);
 			}
 		});
+
+		if (!hasDir) {
+			return error(`No \`template\` directory found within ${ repo }!`, 1);
+		}
 
 		spinner.text = 'Parsing `package.json` file';
 
