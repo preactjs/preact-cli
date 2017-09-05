@@ -116,9 +116,11 @@ export default asyncCommand({
 		}
 
 		if (argv.name) {
-			spinner.text = 'Updating `name` within `package.json` file';
 			// Update `package.json` key
-			pkgData && (pkgData.name = argv.name);
+			if (pkgData) {
+				spinner.text = 'Updating `name` within `package.json` file';
+				pkgData.name = argv.name.toLowerCase().replace(/\s+/g, '_');
+			}
 			// Find a `manifest.json`; use the first match, if any
 			let files = await Promise.promisify(glob)(target + '/**/manifest.json');
 			let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
