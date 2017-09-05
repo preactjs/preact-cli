@@ -79,7 +79,7 @@ export default asyncCommand({
 		// Attempt to fetch the `template`
 		let archive = await gittar.fetch(repo).catch(err => {
 			err = err || { message:'An error occured while fetching template.' };
-			return error(err.code === 404 ? `Could not find repostory: ${repo}` : err.message, 1);
+			return error(err.code === 404 ? `Could not find repository: ${repo}` : err.message, 1);
 		});
 
 		let spinner = ora({
