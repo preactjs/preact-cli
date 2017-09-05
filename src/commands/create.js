@@ -6,13 +6,13 @@ import gittar from 'gittar';
 import { green } from 'chalk';
 import { prompt } from 'inquirer';
 import asyncCommand from '../lib/async-command';
-import { install, initGit, addScripts } from './../lib/setup';
 import { info, isDir, hasCommand, error, trim, warn } from '../util';
+import { install, initGit, addScripts, isMissing } from './../lib/setup';
 
 const ORG = 'preactjs-templates';
 
 export default asyncCommand({
-	command: 'create <template> <dest>',
+	command: 'create [template] [dest]',
 
 	desc: 'Create a new application.',
 
@@ -42,32 +42,38 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
+		// Prompt if incomplete data
+		if (!argv.dest || !argv.template) {
+			warn('Insufficient command arguments! Prompting...');
+			info('Alternatively, run `preact create --help` for usage info.');
+
+			let questions = isMissing(argv);
+			let response = await prompt(questions);
+			Object.assign(argv, response);
+		}
+
 		let isYarn = argv.yarn && hasCommand('yarn');
 		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
 		let target = argv.dest && resolve(cwd, argv.dest);
 		let exists = target && isDir(target);
 
-		if (target) {
-			if (exists && !argv.force) {
-				return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag', 1);
-			}
+		if (exists && !argv.force) {
+			return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag', 1);
+		}
 
-			if (exists && argv.force) {
-				let { enableForce } = await prompt({
-					type: 'confirm',
-					name: 'enableForce',
-					message: `You are using '--force'. Do you wish to continue?`,
-					default: false
-				});
+		if (exists && argv.force) {
+			let { enableForce } = await prompt({
+				type: 'confirm',
+				name: 'enableForce',
+				message: `You are using '--force'. Do you wish to continue?`,
+				default: false
+			});
 
-				if (enableForce) {
-					process.stdout.write('Initializing project in the current directory...\n');
-				} else {
-					return error('Refusing to overwrite current directory!', 1);
-				}
+			if (enableForce) {
+				info('Initializing project in the current directory!');
+			} else {
+				return error('Refusing to overwrite current directory!', 1);
 			}
-		} else {
-			// TODO: interactive
 		}
 
 		let repo = argv.template;

@@ -61,3 +61,25 @@ export async function initGit(target) {
 		warn('Could not locate `git` binary in `$PATH`. Skipping!');
 	}
 }
+
+// Formulate Questions if `create` args are missing
+export function isMissing(argv) {
+	let out = [];
+
+	const ask = (name, message, val) => {
+		let type = val === void 0 ? 'input' : 'confirm';
+		out.push({ name, message, type, default:val });
+	};
+
+	// Required data
+	!argv.template && ask('template', 'Remote template to clone (user/repo#tag)');
+	!argv.dest && ask('dest', 'Directory to create the app');
+	// Extra data / flags
+	!argv.name && ask('name', 'The application\'s name');
+	!argv.force && ask('force', 'Enforce `dest` directory; will overwrite!', false);
+	ask('install', 'Install dependencies', true); // defaults `true`, ask anyway
+	!argv.yarn && ask('yarn', 'Install with `yarn` instead of `npm`', false);
+	!argv.git && ask('git', 'Initialize a `git` repository', false);
+
+	return out;
+}
