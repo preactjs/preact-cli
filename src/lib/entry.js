@@ -5,6 +5,7 @@ if (process.env.NODE_ENV==='development') {
 	require('preact/devtools');
 }
 else if ('serviceWorker' in navigator && location.protocol === 'https:') {
+	// eslint-disable-next-line no-undef
 	navigator.serviceWorker.register(__webpack_public_path__ + 'sw.js');
 }
 
