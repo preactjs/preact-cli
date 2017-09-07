@@ -9,6 +9,7 @@ import installHooks from './lib/output-hooks';
 import pkg from '../package.json';
 import logo from './lib/logo';
 import checkVersion from './../check';
+import updateNotifier from 'update-notifier';
 
 global.Promise = require('bluebird');
 
@@ -31,3 +32,5 @@ yargs
 	.demandCommand()
 	.strict()
 	.argv;
+
+updateNotifier({pkg}).notify({ defer: true });
