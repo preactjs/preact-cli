@@ -17,7 +17,7 @@ checkVersion();
 
 installHooks();
 
-updateNotifier({pkg}).notify({ defer: true });
+updateNotifier({pkg}).notify();
 
 yargs
 	.command(create)
