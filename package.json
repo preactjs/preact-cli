@@ -154,6 +154,7 @@
     "sw-precache-webpack-plugin": "^0.11.2",
     "tmp": "0.0.31",
     "unfetch": "^3.0.0",
+    "update-notifier": "^2.2.0",
     "url-loader": "^0.5.8",
     "webpack": "^2.3.3",
     "webpack-chunk-hash": "^0.4.0",

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import updateNotifier from 'update-notifier';
 import yargs from 'yargs';
 import create from './commands/create';
 import build from './commands/build';
@@ -16,6 +17,8 @@ checkVersion();
 
 installHooks();
 
+updateNotifier({pkg}).notify();
+
 yargs
 	.command(create)
 	.command(build)
@@ -31,3 +34,4 @@ yargs
 	.demandCommand()
 	.strict()
 	.argv;
+
