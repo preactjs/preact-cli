@@ -8,8 +8,11 @@ else if ('serviceWorker' in navigator && location.protocol === 'https:') {
 	navigator.serviceWorker.register('/sw.js');
 }
 
+function getApp() {
+	let x = require('preact-cli-entrypoint');
+	return h(x && x.default || x);
+}
 
-const interopDefault = m => m && m.default ? m.default : m;
 
 let app = interopDefault(require('preact-cli-entrypoint'));
 
