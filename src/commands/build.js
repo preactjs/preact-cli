@@ -1,6 +1,6 @@
-import { resolve } from 'path';
-import promisify from 'es6-promisify';
 import rimraf from 'rimraf';
+import { resolve } from 'path';
+import { isDir, error } from '../util';
 import asyncCommand from '../lib/async-command';
 import runWebpack, { showStats, writeJsonStats } from '../lib/webpack/run-webpack';
 
@@ -27,6 +27,10 @@ export default asyncCommand({
 			description: 'Pre-render static app content.',
 			default: true
 		},
+		prerenderUrls: {
+			description: 'Path to pre-render routes configuration.',
+			default: 'prerender-urls.json'
+		},
 		clean: {
 			description: 'Clear output directory before building.',
 			default: true
@@ -45,9 +49,16 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
+		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
+		let modules = resolve(cwd, 'node_modules');
+
+		if (!isDir(modules)) {
+			return error('No `node_modules` found! Please run `npm install` before continuing.', 1);
+		}
+
 		if (argv.clean) {
-			let dest = resolve(argv.cwd || process.cwd(), argv.dest || 'build');
-			await promisify(rimraf)(dest);
+			let dest = resolve(cwd, argv.dest || 'build');
+			await Promise.promisify(rimraf)(dest);
 		}
 
 		let stats = await runWebpack(false, argv);

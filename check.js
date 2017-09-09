@@ -11,7 +11,7 @@ module.exports = function () {
 
 	const errorMessage = colors.yellow(`
 
-		⚠️ preact-cli requires at least node@${minimum}!
+		⚠️  preact-cli requires at least node@${minimum}!
 		You have node@${version}
 
 	`);

@@ -1,5 +1,5 @@
 {
-  "name": "preact-sass",
+  "name": "preact-prerender",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
@@ -11,8 +11,6 @@
     "eslint": "^4.1.1",
     "eslint-config-synacor": "^1.0.1",
     "if-env": "^1.0.0",
-    "preact-cli": "file:../../../",
-    "node-sass": "latest",
-    "sass-loader": "latest"
+    "preact-cli": "file:../../../"
   }
 }

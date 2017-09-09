@@ -13,6 +13,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
+import WebpackChunkHash from 'webpack-chunk-hash';
 import requireRelative from 'require-relative';
 import createBabelConfig from '../babel-config';
 
@@ -23,7 +24,7 @@ export function exists(file) {
 	return false;
 }
 
-function readJson(file) {
+export function readJson(file) {
 	if (file in readJson.cache) return readJson.cache[file];
 	let ret;
 	try { ret = JSON.parse(readFileSync(file)); }
@@ -46,6 +47,7 @@ export default (env) => {
 		env.src = '.';
 	}
 
+	env.dest = resolve(cwd, env.dest || 'build');
 	env.manifest = readJson(src('manifest.json')) || {};
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
@@ -60,7 +62,7 @@ export default (env) => {
 					'node_modules',
 					resolve(__dirname, '../../../node_modules')
 				],
-				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.css'],
+				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.styl', '.css'],
 				alias: {
 					'preact-cli-entrypoint': src('index.js'),
 					style: src('style'),
@@ -69,14 +71,18 @@ export default (env) => {
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
 					'create-react-class': 'preact-compat/lib/create-react-class',
-					'react-addons-css-transition-group': 'preact-css-transition-group'
+					'react-addons-css-transition-group': 'preact-css-transition-group',
+					'preact-cli/async-component': resolve(__dirname, '../../components/async')
 				}
 			},
 			resolveLoader: {
 				modules: [
 					resolve(__dirname, '../../../node_modules'),
 					resolve(cwd, 'node_modules')
-				]
+				],
+				alias: {
+					'proxy-loader': require.resolve('./proxy-loader')
+				}
 			}
 		}),
 
@@ -97,7 +103,7 @@ export default (env) => {
 			}
 		}),
 
-		// LESS, SASS & CSS
+		// LESS, SASS & CSS, STYLUS
 		customConfig({
 			module: {
 				loaders: [
@@ -106,15 +112,14 @@ export default (env) => {
 						test: /\.less$/,
 						use: [
 							{
-								loader: resolve(__dirname, './npm-install-loader'),
+								loader: 'proxy-loader',
 								options: {
-									modules: ['less', 'less-loader'],
-									save: true
+									cwd,
+									loader: 'less-loader',
+									options: {
+										sourceMap: true
+									}
 								}
-							},
-							{
-								loader: 'less-loader',
-								options: { sourceMap: true }
 							}
 						]
 					},
@@ -123,20 +128,31 @@ export default (env) => {
 						test: /\.s[ac]ss$/,
 						use: [
 							{
-								loader: resolve(__dirname, './npm-install-loader'),
+								loader: 'proxy-loader',
 								options: {
-									modules: ['node-sass', 'sass-loader'],
-									save: true
+									cwd,
+									loader: 'sass-loader',
+									options: { sourceMap: true }
 								}
-							},
-							{
-								loader: 'sass-loader',
-								options: { sourceMap: true }
 							}
 						]
 					},
 					{
-						test: /\.(css|less|s[ac]ss)$/,
+						enforce: 'pre',
+						test: /\.styl$/,
+						use: [
+							{
+								loader: 'proxy-loader',
+								options: {
+									cwd,
+									loader: 'stylus-loader',
+									options: { sourceMap: true }
+								}
+							}
+						]
+					},
+					{
+						test: /\.(css|less|s[ac]ss|styl)$/,
 						include: [
 							src('components'),
 							src('routes')
@@ -150,7 +166,7 @@ export default (env) => {
 						})
 					},
 					{
-						test: /\.(css|less|s[ac]ss)$/,
+						test: /\.(css|less|s[ac]ss|styl)$/,
 						exclude: [
 							src('components'),
 							src('routes')
@@ -220,7 +236,7 @@ export default (env) => {
 		// produce HTML & CSS:
 		addPlugins([
 			new ExtractTextPlugin({
-				filename: 'style.css',
+				filename: isProd ? "style.[contenthash:5].css" : "style.css",
 				disable: !isProd,
 				allChunks: true
 			})
@@ -259,6 +275,7 @@ const development = () =>	group([]);
 
 const production = () => addPlugins([
 	new webpack.HashedModuleIdsPlugin(),
+	new WebpackChunkHash(),
 	new webpack.LoaderOptionsPlugin({
 		minimize: true
 	}),
@@ -270,44 +287,6 @@ const production = () => addPlugins([
 			regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
 			value: s => `return;${ Array(s.length-7).join(' ') }(`
 		}]
-	}),
-
-	new webpack.optimize.UglifyJsPlugin({
-		output: {
-			comments: false
-		},
-		mangle: true,
-		sourceMap: true,
-		compress: {
-			properties: true,
-			keep_fargs: false,
-			pure_getters: true,
-			collapse_vars: true,
-			warnings: false,
-			screw_ie8: true,
-			sequences: true,
-			dead_code: true,
-			drop_debugger: true,
-			comparisons: true,
-			conditionals: true,
-			evaluate: true,
-			booleans: true,
-			loops: true,
-			unused: true,
-			hoist_funs: true,
-			if_return: true,
-			join_vars: true,
-			cascade: true,
-			drop_console: false,
-			pure_funcs: [
-				'classCallCheck',
-				'_classCallCheck',
-				'_possibleConstructorReturn',
-				'Object.freeze',
-				'invariant',
-				'warning'
-			]
-		}
 	}),
 ]);
 

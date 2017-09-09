@@ -1,58 +1,38 @@
-import asyncCommand from '../lib/async-command';
 import fs from 'fs.promised';
-import copy from 'recursive-copy';
-import mkdirp from 'mkdirp';
+import { resolve } from 'path';
 import ora from 'ora';
-import promisify from 'es6-promisify';
-import spawn from 'cross-spawn-promise';
-import path from 'path';
-import which from 'which';
+import glob from 'glob';
+import gittar from 'gittar';
+import { green } from 'chalk';
+import { prompt } from 'inquirer';
+import asyncCommand from '../lib/async-command';
+import { info, isDir, hasCommand, error, trim, warn } from '../util';
+import { install, initGit, addScripts, isMissing } from './../lib/setup';
 
-const TEMPLATES = {
-	default: 'examples/full',
-	full: 'examples/full',
-	empty: 'examples/empty',
-	root: 'examples/root',
-	simple: 'examples/simple'
-};
+const ORG = 'preactjs-templates';
 
 export default asyncCommand({
-	command: 'create <name> [dest]',
+	command: 'create [template] [dest]',
 
 	desc: 'Create a new application.',
 
 	builder: {
 		name: {
-			description: 'directory and package name for the new app'
+			description: 'The application\'s name'
 		},
-		dest: {
-			description: 'Directory to create the app within',
-			defaultDescription: '<name>'
-		},
-		type: {
-			description: 'A project template to start from',
-			choices: [
-				'default',
-				'root',
-				'simple',
-				'empty'
-			],
-			default: 'default'
-		},
-		less: {
-			description: 'Pre-install LESS support',
-			type: 'boolean',
+		force: {
+			description: 'Force option to create the directory for the new app',
 			default: false
 		},
-		sass: {
-			description: 'Pre-install SASS/SCSS support',
+		yarn: {
+			description: "Use 'yarn' instead of 'npm'",
 			type: 'boolean',
 			default: false
 		},
 		git: {
 			description: 'Initialize version control using git',
 			type: 'boolean',
-			default: true
+			default: false
 		},
 		install: {
 			description: 'Install dependencies',
@@ -62,149 +42,137 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
-		let template = TEMPLATES[argv.type];
+		// Prompt if incomplete data
+		if (!argv.dest || !argv.template) {
+			warn('Insufficient command arguments! Prompting...');
+			info('Alternatively, run `preact create --help` for usage info.');
 
-		if (!template) {
-			throw Error(`Unknown app template "${argv.type}".`);
+			let questions = isMissing(argv);
+			let response = await prompt(questions);
+			Object.assign(argv, response);
 		}
 
-		let target = path.resolve(process.cwd(), argv.dest || argv.name);
+		let isYarn = argv.yarn && hasCommand('yarn');
+		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
+		let target = argv.dest && resolve(cwd, argv.dest);
+		let exists = target && isDir(target);
 
-		let exists = false;
-		try {
-			exists = (await fs.stat(target)).isDirectory();
+		if (exists && !argv.force) {
+			return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag', 1);
 		}
-		catch (err) {}
 
-		if (exists) {
-			throw Error('Directory already exists.');
+		if (exists && argv.force) {
+			let { enableForce } = await prompt({
+				type: 'confirm',
+				name: 'enableForce',
+				message: `You are using '--force'. Do you wish to continue?`,
+				default: false
+			});
+
+			if (enableForce) {
+				info('Initializing project in the current directory!');
+			} else {
+				return error('Refusing to overwrite current directory!', 1);
+			}
 		}
+
+		let repo = argv.template;
+		if (!repo.includes('/')) {
+			repo = `${ORG}/${repo}`;
+			info(`Assuming you meant ${repo}...`);
+		}
+
+		// Attempt to fetch the `template`
+		let archive = await gittar.fetch(repo).catch(err => {
+			err = err || { message:'An error occured while fetching template.' };
+			return error(err.code === 404 ? `Could not find repository: ${repo}` : err.message, 1);
+		});
 
 		let spinner = ora({
 			text: 'Creating project',
 			color: 'magenta'
 		}).start();
 
-		await promisify(mkdirp)(target);
+		// Extract files from `archive` to `target`
+		// TODO: read & respond to meta/hooks
+		let hasDir = false;
+		await gittar.extract(archive, target, {
+			strip: 2,
+			filter(path) {
+				return path.includes('/template/') && (hasDir = true);
+			}
+		});
 
-		await copy(
-			path.resolve(__dirname, '../..', template),
-			target,
-			{ filter: ['**/*', '!build'] }
-		);
-
-		spinner.text = 'Initializing project';
-
-		await npm(target, ['init', '-y']);
-
-		let pkg = JSON.parse(await fs.readFile(path.resolve(target, 'package.json')));
-
-		pkg.scripts = {
-			...(pkg.scripts || {}),
-			start: 'if-env NODE_ENV=production && npm run -s serve || npm run -s dev',
-			build: 'preact build',
-			serve: 'preact build && preact serve',
-			dev: 'preact watch',
-			test: 'eslint src && preact test'
-		};
-
-		try {
-			await fs.stat(path.resolve(target, 'src'));
-		}
-		catch (err) {
-			pkg.scripts.test = pkg.scripts.test.replace('src', '.');
+		if (!hasDir) {
+			return error(`No \`template\` directory found within ${ repo }!`, 1);
 		}
 
-		pkg.eslintConfig = {
-			extends: 'eslint-config-synacor'
-		};
+		spinner.text = 'Parsing `package.json` file';
 
-		await fs.writeFile(path.resolve(target, 'package.json'), JSON.stringify(pkg, null, 2));
+		// Validate user's `package.json` file
+		let pkgData;
+		let pkgFile = resolve(target, 'package.json');
+
+		if (pkgFile) {
+			pkgData = JSON.parse(await fs.readFile(pkgFile));
+			// Write default "scripts" if none found
+			pkgData.scripts = pkgData.scripts || (await addScripts(pkgData, target, isYarn));
+		} else {
+			warn('Could not locate `package.json` file!');
+		}
+
+		if (argv.name) {
+			// Update `package.json` key
+			if (pkgData) {
+				spinner.text = 'Updating `name` within `package.json` file';
+				pkgData.name = argv.name.toLowerCase().replace(/\s+/g, '_');
+			}
+			// Find a `manifest.json`; use the first match, if any
+			let files = await Promise.promisify(glob)(target + '/**/manifest.json');
+			let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
+			if (manifest) {
+				spinner.text = 'Updating `name` within `manifest.json` file';
+				manifest.name = manifest.short_name = argv.name;
+				// Write changes to `manifest.json`
+				await fs.writeFile(files[0], JSON.stringify(manifest, null, 2));
+				if (argv.name.length > 12) {
+					// @see https://developer.chrome.com/extensions/manifest/name#short_name
+					process.stdout.write('\n');
+					warn('Your `short_name` should be fewer than 12 characters.');
+				}
+			}
+		}
+
+		if (pkgData) {
+			// Assume changes were made ¯\_(ツ)_/¯
+			await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
+		}
 
 		if (argv.install) {
-			spinner.text = 'Installing dev dependencies';
-
-			await npm(target, [
-				'install', '--save-dev',
-				'preact-cli',
-				'if-env',
-				'eslint',
-				'eslint-config-synacor',
-
-				// install sass setup if --sass
-				...(argv.sass ? [
-					'node-sass',
-					'sass-loader'
-				] : []),
-
-				// install less setup if --less
-				...(argv.less ? [
-					'less',
-					'less-loader'
-				] : [])
-			].filter(Boolean));
-
 			spinner.text = 'Installing dependencies';
-
-			await npm(target, [
-				'install', '--save',
-				'preact',
-				'preact-compat',
-				'preact-router'
-			]);
-
-			spinner.succeed('Done!\n');
+			await install(target, isYarn);
 		}
+
+		spinner.succeed('Done!\n');
 
 		if (argv.git) {
-			await initializeVersionControl(target);
+			await initGit(target);
 		}
 
-		return trimLeft(`
+		let pfx = isYarn ? 'yarn' : 'npm run';
+
+		return trim(`
 			To get started, cd into the new directory:
-			  \u001b[32mcd ${path.relative(process.cwd(), target)}\u001b[39m
+			  ${ green('cd ' + argv.dest) }
 
 			To start a development live-reload server:
-			  \u001b[32mnpm start\u001b[39m
+			  ${ green(pfx + ' start') }
 
 			To create a production build (in ./build):
-			  \u001b[32mnpm run build\u001b[39m
+			  ${ green(pfx + ' build') }
 
 			To start a production HTTP/2 server:
-			  \u001b[32mnpm run serve\u001b[39m
+			  ${ green(pfx + ' serve') }
 		`) + '\n';
 	}
 });
-
-const trimLeft = (string) => string.trim().replace(/^\t+/gm, '');
-
-const npm = (cwd, args) => spawn('npm', args, { cwd, stdio: 'ignore' });
-
-// Initializes the folder using `git init` and a proper `.gitignore` file
-// if `git` is present in the $PATH.
-async function initializeVersionControl(target) {
-	let git;
-	try {
-		git = await promisify(which)('git');
-	} catch (e) {
-		process.stderr.write('Could not find git in $PATH.\n');
-		process.stdout.write('Continuing without initializing version control...\n');
-	}
-	if (git) {
-		const gitignore = trimLeft(`
-		node_modules
-		/build
-		/*.log
-		`) + '\n';
-		const gitignorePath = path.resolve(target, '.gitignore');
-		await fs.writeFile(gitignorePath, gitignore);
-
-		const cwd = target;
-
-		await spawn('git', ['init'], { cwd });
-		await spawn('git', ['add', '-A'], { cwd });
-
-		const gitUser = 'Preact CLI<developit@users.noreply.github.com>';
-		await spawn('git', ['commit', '--author', gitUser, '-m', 'initial commit from Preact CLI'], { cwd });
-	}
-}

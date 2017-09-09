@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import updateNotifier from 'update-notifier';
 import yargs from 'yargs';
 import create from './commands/create';
 import build from './commands/build';
@@ -10,11 +11,13 @@ import pkg from '../package.json';
 import logo from './lib/logo';
 import checkVersion from './../check';
 
-global.Promise = require('promise-polyfill');
+global.Promise = require('bluebird');
 
 checkVersion();
 
 installHooks();
+
+updateNotifier({pkg}).notify();
 
 yargs
 	.command(create)
@@ -31,3 +34,4 @@ yargs
 	.demandCommand()
 	.strict()
 	.argv;
+

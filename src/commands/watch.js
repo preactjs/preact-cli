@@ -1,6 +1,7 @@
-import asyncCommand from '../lib/async-command';
 import getSslCert from '../lib/ssl-cert';
+import asyncCommand from '../lib/async-command';
 import runWebpack, { showStats } from '../lib/webpack/run-webpack';
+import { warn } from '../util';
 
 export default asyncCommand({
 	command: 'watch [src]',
@@ -20,7 +21,7 @@ export default asyncCommand({
 		host: {
 			description: 'Hostname to start a server on',
 			default: '0.0.0.0',
-			alias: 'h'
+			alias: 'H'
 		},
 		https: {
 			description: 'Use HTTPS?',
@@ -43,11 +44,11 @@ export default asyncCommand({
 	async handler(argv) {
 		argv.production = false;
 
-		if (argv.https) {
+		if (argv.https || process.env.HTTPS) {
 			let ssl = await getSslCert();
 			if (!ssl) {
 				ssl = true;
-				process.stderr.write('Using webpack-dev-server internal certificate.\n');
+				warn('Reverting to `webpack-dev-server` internal certificate.');
 			}
 			argv.https = ssl;
 		}

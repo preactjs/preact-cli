@@ -2,13 +2,11 @@ import { resolve } from 'path';
 import fs from 'fs.promised';
 import { create, build, watch } from './lib/cli';
 import startChrome, { loadPage, waitUntilExpression } from './lib/chrome';
-import { setup } from './lib/output';
 
 let chrome, launcher, server;
 
 describe('preact', () => {
 	beforeAll(async () => {
-		await setup();
 		let result = await startChrome();
 		chrome = result.protocol;
 		launcher = result.launcher;
@@ -21,9 +19,9 @@ describe('preact', () => {
 
 	it('should create development server with hot reloading.', async () => {
 		let { Runtime } = chrome;
-		let app = await create('app');
+		let app = await create('default');
 		await build(app);
-		server = await watch(app, 8083);
+		server = await watch(app, '127.0.0.1', 8083);
 		let headerComponentSourceFile = resolve(app, './src/components/header/index.js');
 
 		await loadPage(chrome, 'http://localhost:8083/');
