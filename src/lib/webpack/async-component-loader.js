@@ -15,14 +15,14 @@ module.exports.pitch = function(remainingRequest) {
 	}
 
 	return `
-		import async from 'preact-cli/async-component';
+		import Async from 'preact-cli/async-component';
 
 		function load(cb) {
-			require.ensure([], function(require) {
-				cb(require(${ loaderUtils.stringifyRequest(this, "!!" + remainingRequest) }));
-			}${name ? (', '+JSON.stringify(name)) : ''});
+			require.ensure([], function (require) {
+				cb( require(${loaderUtils.stringifyRequest(this, '!!' + remainingRequest)}) );
+			}, ${JSON.stringify(name || '')});
 		}
 
-		export default async(load);
+		export default Async(load);
 	`;
 };
