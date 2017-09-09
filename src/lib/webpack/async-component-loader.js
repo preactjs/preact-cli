@@ -18,7 +18,7 @@ module.exports.pitch = function(remainingRequest) {
 		import Async from 'preact-cli/async-component';
 
 		function load(cb) {
-			require.ensure([], function (require) {
+			require.ensure([], function () {
 				cb( require(${loaderUtils.stringifyRequest(this, '!!' + remainingRequest)}) );
 			}, ${JSON.stringify(name || '')});
 		}
