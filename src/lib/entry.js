@@ -18,19 +18,14 @@ let root = body.firstElementChild;
 
 function init(first) {
 	if (inProgress) return;
-	console.log('>> inside init', first);
 
 	let app = getApp();
 
 	if (first) {
-		console.info('~~> init fake render!');
 		render(app, body.cloneNode(true));
 	} else {
-		console.log('>>> NOT first render, update');
 		root = render(app, body, root);
-		console.log('~> new root', root);
 	}
-	console.log('~~~~~~');
 }
 
 if (module.hot) {
@@ -38,13 +33,12 @@ if (module.hot) {
 }
 
 addEventListener('async-loading', () => {
-	console.log('inside async-loading');
-	(inProgress=true);
+	inProgress = true;
 });
 
 addEventListener('async-loaded', () => {
-	console.log('inside async-loaded');
-	inProgress=false; init();
+	inProgress = false;
+	init();
 });
 
 init(true);

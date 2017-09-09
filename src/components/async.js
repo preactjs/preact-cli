@@ -10,7 +10,6 @@ export default function (load) {
 		emit('async-loading');
 		let done = child => {
 			child = child && child.default;
-			console.log('> child: ', child());
 			this.setState({ child, ready:!!child });
 		};
 		let r = load(done);
@@ -19,10 +18,7 @@ export default function (load) {
 	Async.prototype = new Component;
 	Async.prototype.constructor = Async;
 	Async.prototype.componentDidUpdate = function (_, state) {
-		if (!state.ready && this.state.ready) {
-			console.log('LOADED FOR FIRST TIME');
-			emit('async-loaded');
-		}
+		this.state.ready && !state.ready && emit('async-loaded');
 	};
 	Async.prototype.render = (props, state) => state.child && h(state.child, props);
 	return Async;
