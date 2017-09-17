@@ -8,6 +8,7 @@ import getPort from 'get-port';
 import clientConfig from './webpack-client-config';
 import serverConfig from './webpack-server-config';
 import transformConfig from './transform-config';
+import { error, warn } from '../../util';
 
 export default function (watch=false, env, onprogress) {
 	let fn = watch ? devBuild : prodBuild;
@@ -103,18 +104,14 @@ const runCompiler = compiler => new Promise((resolve, reject) => {
 });
 
 export function showStats(stats) {
-	let info = stats.toJson("errors-only");
+	let info = stats.toJson('errors-only');
 
 	if (stats.hasErrors()) {
-		info.errors.map(stripBabelLoaderPrefix).forEach( message => {
-			process.stderr.write(chalk.red(message)+'\n');
-		});
+		info.errors.map(stripBabelLoaderPrefix).forEach(msg => error(msg));
 	}
 
 	if (stats.hasWarnings()) {
-		info.warnings.map(stripBabelLoaderPrefix).forEach( message => {
-			process.stderr.write(chalk.yellow(message)+'\n');
-		});
+		info.warnings.map(stripBabelLoaderPrefix).forEach(msg => warn(msg));
 	}
 
 	return stats;
