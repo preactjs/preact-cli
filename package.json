@@ -107,6 +107,7 @@
     "babel-register": "^6.24.1",
     "bluebird": "^3.5.0",
     "chalk": "^2.1.0",
+    "console-clear": "^1.0.0",
     "copy-webpack-plugin": "^4.0.1",
     "cross-spawn-promise": "^0.10.1",
     "css-modules-require-hook": "^4.0.6",

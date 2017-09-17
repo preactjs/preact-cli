@@ -4,6 +4,7 @@ import ip from 'ip';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
+import clearConsole from 'console-clear';
 import getPort from 'get-port';
 import clientConfig from './webpack-client-config';
 import serverConfig from './webpack-server-config';
@@ -49,6 +50,7 @@ const devBuild = async (env, onprogress) => {
 			let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
 
 			clearConsole();
+
 			if (stats.hasErrors()) {
 				process.stdout.write(chalk.red('\Build failed!\n\n'));
 			} else {
@@ -139,11 +141,6 @@ export function writeJsonStats(stats) {
 		});
 }
 
-const clearConsole = () => {
-	process.stdout.write(
-		process.platform === 'win32' ? '\x1Bc' : '\x1B[2J\x1B[3J\x1B[H'
-	);
-};
 
 const stripBabelLoaderFromModuleNames = m => {
 	const keysToNormalize = ['identifier', 'name', 'module', 'moduleName', 'moduleIdentifier'];
