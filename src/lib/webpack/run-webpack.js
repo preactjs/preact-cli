@@ -9,13 +9,11 @@ import clientConfig from './webpack-client-config';
 import serverConfig from './webpack-server-config';
 import transformConfig from './transform-config';
 
-export default async (watch=false, env, onprogress) => {
-	if (watch) {
-		return await devBuild(env, onprogress);
-	}
+export default function (watch=false, env, onprogress) {
+	let fn = watch ? devBuild : prodBuild;
+	return fn(env, onprogress); // AsyncFunctioon
+}
 
-	return await prodBuild(env);
-};
 
 const devBuild = async (env, onprogress) => {
 	let config = clientConfig(env);
