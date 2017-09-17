@@ -94,10 +94,6 @@
     "uuid": "^3.0.1"
   },
   "dependencies": {
-    "@webpack-blocks/css-modules": "^0.4.0",
-    "@webpack-blocks/dev-server2": "^0.4.0",
-    "@webpack-blocks/postcss": "^0.4.3",
-    "@webpack-blocks/webpack2": "^0.4.0",
     "autoprefixer": "^7.1.0",
     "babel-loader": "^7.0.0",
     "babel-plugin-jsx-pragmatic": "^1.0.2",
@@ -116,7 +112,7 @@
     "css-modules-require-hook": "^4.0.6",
     "devcert-san": "^0.3.3",
     "ejs-loader": "^0.3.0",
-    "extract-text-webpack-plugin": "^2.1.2",
+    "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.1",
     "fs.promised": "^3.0.0",
     "get-port": "^3.1.0",
