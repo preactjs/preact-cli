@@ -156,9 +156,9 @@
     "unfetch": "^3.0.0",
     "update-notifier": "^2.2.0",
     "url-loader": "^0.5.8",
-    "webpack": "^2.3.3",
+    "webpack": "^3.6.0",
     "webpack-chunk-hash": "^0.4.0",
-    "webpack-dev-server": "^2.6.1",
+    "webpack-dev-server": "^2.8.2",
     "webpack-plugin-replace": "^1.1.1",
     "which": "^1.2.14",
     "yargs": "^8.0.1"
