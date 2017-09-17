@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { existsSync } from 'fs';
 import { filter } from 'minimatch';
 import {
 	webpack,
@@ -17,7 +18,7 @@ import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
 import PushManifestPlugin from './push-manifest';
-import baseConfig, { exists, readJson } from './webpack-base-config';
+import baseConfig, { readJson } from './webpack-base-config';
 import prerender from './prerender';
 
 export default env => {
@@ -74,7 +75,7 @@ export default env => {
 		// copy any static files
 		addPlugins([
 			new CopyWebpackPlugin([
-				...(exists(source('manifest.json')) ? [
+				...(existsSync(source('manifest.json')) ? [
 					{ from: 'manifest.json' }
 				] : [
 					{
@@ -86,7 +87,7 @@ export default env => {
 						to: 'assets/icon.png'
 					}
 				]),
-				exists(source('assets')) && {
+				existsSync(source('assets')) && {
 					from: 'assets',
 					to: 'assets'
 				}
@@ -217,7 +218,7 @@ const htmlPlugin = (config) => {
 			removeStyleLinkTypeAttributes: true,
 			removeComments: true
 		},
-		favicon: exists(resolve(src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../../resources/favicon.ico'),
+		favicon: existsSync(resolve(src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../../resources/favicon.ico'),
 		manifest: config.manifest,
 		inject: true,
 		compile: true,

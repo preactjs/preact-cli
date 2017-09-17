@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { readFileSync, statSync } from 'fs';
+import { readFileSync } from 'fs';
 import {
 	webpack,
 	group,
@@ -16,13 +16,6 @@ import ReplacePlugin from 'webpack-plugin-replace';
 import WebpackChunkHash from 'webpack-chunk-hash';
 import requireRelative from 'require-relative';
 import createBabelConfig from '../babel-config';
-
-export function exists(file) {
-	try {
-		if (statSync(file)) return true;
-	} catch (e) {}
-	return false;
-}
 
 export function readJson(file) {
 	if (file in readJson.cache) return readJson.cache[file];
