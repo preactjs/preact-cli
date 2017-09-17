@@ -111,9 +111,9 @@ export default env => {
 const development = config => {
 	const { cwd, src, https } = config;
 
-	let port = process.env.PORT || config.port || 8080,
-		host = process.env.HOST || config.host || '0.0.0.0',
-		origin = `${config.https===true?'https':'http'}://${host}:${port}/`;
+	let port = process.env.PORT || config.port || 8080;
+	let host = process.env.HOST || config.host || '0.0.0.0';
+	let origin = `${https?'https':'http'}://${host}:${port}/`;
 
 	return group([
 		addPlugins([
@@ -123,12 +123,12 @@ const development = config => {
 		devServer({
 			port,
 			host,
+			https,
 			inline: true,
 			hot: true,
-			https: config.https,
 			compress: true,
 			publicPath: '/',
-			contentBase: src
+			contentBase: src,
 			// setup(app) {
 			// 	app.use(middleware);
 			// },
