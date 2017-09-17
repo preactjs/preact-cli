@@ -7,14 +7,15 @@ import {
 import { resolve } from 'path';
 import baseConfig from './webpack-base-config';
 
-export default (env) => {
+export default env => {
+	let entry = env.source('index.js');
 	return createConfig.vanilla([
 		baseConfig(env),
-		entryPoint(resolve(env.cwd, env.src || 'src', 'index.js')),
+		entryPoint(entry),
 		setOutput({
-			path: resolve(env.dest, 'ssr-build'),
 			publicPath: '/',
 			filename: 'ssr-bundle.js',
+			path: resolve(env.dest, 'ssr-build'),
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
 			libraryTarget: 'commonjs2'
 		}),

@@ -9,15 +9,27 @@ import DevServer from 'webpack-dev-server';
 import clientConfig from './webpack-client-config';
 import serverConfig from './webpack-server-config';
 import transformConfig from './transform-config';
-import { error, warn } from '../../util';
+import { error, isDir, warn } from '../../util';
 
 export default function (watch=false, env, onprogress) {
+	env.isProd = env.production; // shorthand
+	env.cwd = resolve(env.cwd || process.cwd());
+
+	// env.src='src' via `build` default
+	let src = resolve(env.cwd, env.src);
+	env.src = isDir(src) ? src : env.cwd;
+
+	// attach sourcing helper
+	env.source = dir => resolve(env.src, dir);
+
+	// determine build-type to run
 	let fn = watch ? devBuild : prodBuild;
 	return fn(env, onprogress); // AsyncFunctioon
 }
 
 async function devBuild(env, onprogress) {
 	let config = clientConfig(env);
+
 	await transformConfig(env, config);
 
 	let userPort = parseInt(process.env.PORT || config.devServer.port, 10) || 8080;

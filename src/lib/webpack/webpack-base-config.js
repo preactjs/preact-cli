@@ -40,22 +40,18 @@ function resolveDep(dep, cwd) {
 	return dep;
 }
 
-export default (env) => {
-	let { isProd, cwd, src } = helpers(env);
-	// only use src/ if it exists:
-	if (!exists(src('.'))) {
-		env.src = '.';
-	}
+export default env => {
+	const { cwd, isProd, src, source } = env;
 
 	env.dest = resolve(cwd, env.dest || 'build');
-	env.manifest = readJson(src('manifest.json')) || {};
-	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
+	env.manifest = readJson( source('manifest.json') ) || {};
+	env.pkg = readJson( resolve(cwd, 'package.json') ) || {};
 
-	let babelrc = readJson(resolve(cwd, '.babelrc')) || {};
+	let babelrc = readJson( resolve(cwd, '.babelrc') ) || {};
 	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
 	return group([
-		setContext(src('.')),
+		setContext(src),
 		customConfig({
 			resolve: {
 				modules: [
@@ -64,9 +60,9 @@ export default (env) => {
 				],
 				extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.styl', '.css'],
 				alias: {
-					'preact-cli-entrypoint': src('index.js'),
-					style: src('style'),
-					preact$: resolveDep(isProd ? 'preact/dist/preact.min.js' : 'preact', env.cwd),
+					'preact-cli-entrypoint': source('index.js'),
+					style: source('style'),
+					preact$: resolveDep(isProd ? 'preact/dist/preact.min.js' : 'preact', cwd),
 					// preact-compat aliases for supporting React dependencies:
 					react: 'preact-compat',
 					'react-dom': 'preact-compat',
@@ -154,8 +150,8 @@ export default (env) => {
 					{
 						test: /\.(css|less|s[ac]ss|styl)$/,
 						include: [
-							src('components'),
-							src('routes')
+							source('components'),
+							source('routes')
 						],
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
@@ -168,8 +164,8 @@ export default (env) => {
 					{
 						test: /\.(css|less|s[ac]ss|styl)$/,
 						exclude: [
-							src('components'),
-							src('routes')
+							source('components'),
+							source('routes')
 						],
 						loader: ExtractTextPlugin.extract({
 							fallback: 'style-loader',
@@ -206,10 +202,10 @@ export default (env) => {
 		addPlugins([
 			new webpack.LoaderOptionsPlugin({
 				options: {
+					context: src,
 					postcss: () => [
 						autoprefixer({ browsers })
-					],
-					context: resolve(cwd, env.src || 'src')
+					]
 				}
 			}),
 		]),
@@ -289,11 +285,3 @@ const production = () => addPlugins([
 		}]
 	}),
 ]);
-
-export function helpers(env) {
-	return {
-		isProd:	env && env.production,
-		cwd: env.cwd = resolve(env.cwd || process.cwd()),
-		src: dir => resolve(env.cwd, env.src || 'src', dir)
-	};
-}

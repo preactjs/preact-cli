@@ -17,11 +17,11 @@ import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
 import PushManifestPlugin from './push-manifest';
-import baseConfig, { exists, readJson, helpers } from './webpack-base-config';
+import baseConfig, { exists, readJson } from './webpack-base-config';
 import prerender from './prerender';
 
 export default env => {
-	let { isProd, src } = helpers(env);
+	const { isProd, source, src } = env;
 
 	return createConfig.vanilla([
 		baseConfig(env),
@@ -43,19 +43,19 @@ export default env => {
 					{
 						test: /\.jsx?$/,
 						include: [
-							filter(src('routes')+'/{*.js,*/index.js}'),
-							filter(src('components')+'/{routes,async}/{*.js,*/index.js}')
+							filter(source('routes')+'/{*.js,*/index.js}'),
+							filter(source('components')+'/{routes,async}/{*.js,*/index.js}')
 						],
 						loader: resolve(__dirname, './async-component-loader'),
 						options: {
 							name(filename) {
-								let relative = filename.replace(src('.'), '');
+								let relative = filename.replace(source('.'), '');
 								let isRoute = filename.indexOf('/routes/') >= 0;
 
 								return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
 							},
 							formatName(filename) {
-								let relative = filename.replace(src('.'), '');
+								let relative = filename.replace(source('.'), '');
 								// strip out context dir & any file/ext suffix
 								return relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
 							}
@@ -74,7 +74,7 @@ export default env => {
 		// copy any static files
 		addPlugins([
 			new CopyWebpackPlugin([
-				...(exists(src('manifest.json')) ? [
+				...(exists(source('manifest.json')) ? [
 					{ from: 'manifest.json' }
 				] : [
 					{
@@ -86,7 +86,7 @@ export default env => {
 						to: 'assets/icon.png'
 					}
 				]),
-				exists(src('assets')) && {
+				exists(source('assets')) && {
 					from: 'assets',
 					to: 'assets'
 				}
@@ -94,7 +94,7 @@ export default env => {
 			new PushManifestPlugin()
 		]),
 
-		htmlPlugin(env, src('.')),
+		htmlPlugin(env),
 
 		isProd ? production(env) : development(env),
 
@@ -109,6 +109,8 @@ export default env => {
 };
 
 const development = config => {
+	const { cwd, src, https } = config;
+
 	let port = process.env.PORT || config.port || 8080,
 		host = process.env.HOST || config.host || '0.0.0.0',
 		origin = `${config.https===true?'https':'http'}://${host}:${port}/`;
@@ -126,7 +128,7 @@ const development = config => {
 			https: config.https,
 			compress: true,
 			publicPath: '/',
-			contentBase: resolve(config.cwd, config.src || './src'),
+			contentBase: src
 			// setup(app) {
 			// 	app.use(middleware);
 			// },
@@ -138,8 +140,8 @@ const development = config => {
 			stats: 'minimal',
 			watchOptions: {
 				ignored: [
-					resolve(config.cwd, 'build'),
-					resolve(config.cwd, 'node_modules')
+					resolve(cwd, 'build'),
+					resolve(cwd, 'node_modules')
 				]
 			}
 		}, [
@@ -202,9 +204,11 @@ const production = config => addPlugins([
 	})
 ]);
 
-const htmlPlugin = (config, src) => {
+const htmlPlugin = (config) => {
+	const { cwd, dest, isProd, src } = config;
+
 	const htmlWebpackConfig = ({ url, title }) => ({
-		filename: resolve(config.dest, url.substring(1), 'index.html'),
+		filename: resolve(dest, url.substring(1), 'index.html'),
 		template: `!!ejs-loader!${config.template || resolve(__dirname, '../../resources/template.html')}`,
 		minify: config.production && {
 			collapseWhitespace: true,
@@ -213,7 +217,7 @@ const htmlPlugin = (config, src) => {
 			removeStyleLinkTypeAttributes: true,
 			removeComments: true
 		},
-		favicon: exists(resolve(config.src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../../resources/favicon.ico'),
+		favicon: exists(resolve(src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../../resources/favicon.ico'),
 		manifest: config.manifest,
 		inject: true,
 		compile: true,
@@ -222,16 +226,12 @@ const htmlPlugin = (config, src) => {
 		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 		config,
 		ssr(params) {
-			return config.prerender ? prerender({
-				dest: config.dest,
-				src,
-				cwd: config.cwd
-			}, { ...params, url }) : '';
+			return config.prerender ? prerender({ cwd, dest, src }, { ...params, url }) : '';
 		}
 	});
 	const pages = readJson(resolve(config.cwd, config.prerenderUrls || '')) || [{ url: "/" }];
 	return addPlugins(pages
-		.map((page) => new HtmlWebpackPlugin(htmlWebpackConfig(page)))
+		.map(page => new HtmlWebpackPlugin(htmlWebpackConfig(page)))
 		.concat([
 			new HtmlWebpackExcludeAssetsPlugin(),
 			new ScriptExtHtmlWebpackPlugin({
