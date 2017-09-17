@@ -1,11 +1,11 @@
-import path from 'path';
-import fs from 'fs.promised';
 import ip from 'ip';
+import { resolve } from 'path';
+import { writeFile } from 'fs.promised';
 import webpack from 'webpack';
-import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
-import clearConsole from 'console-clear';
 import getPort from 'get-port';
+import clearConsole from 'console-clear';
+import DevServer from 'webpack-dev-server';
 import clientConfig from './webpack-client-config';
 import serverConfig from './webpack-server-config';
 import transformConfig from './transform-config';
@@ -16,8 +16,7 @@ export default function (watch=false, env, onprogress) {
 	return fn(env, onprogress); // AsyncFunctioon
 }
 
-
-const devBuild = async (env, onprogress) => {
+async function devBuild(env, onprogress) {
 	let config = clientConfig(env);
 	await transformConfig(env, config);
 
@@ -25,14 +24,13 @@ const devBuild = async (env, onprogress) => {
 	let port = await getPort(userPort);
 
 	let compiler = webpack(config);
-	return await new Promise((resolve, reject) => {
-
+	return await new Promise((_, rej) => {
 		compiler.plugin('emit', (compilation, callback) => {
 			var missingDeps = compilation.missingDependencies;
-			var nodeModulesPath = path.resolve(__dirname, '../../../node_modules');
+			var nodeModulesPath = resolve(__dirname, '../../../node_modules');
 
+			// ...tell webpack to watch node_modules recursively until they appear.
 			if (missingDeps.some(file => file.indexOf(nodeModulesPath) !== -1)) {
-				// ...tell webpack to watch node_modules recursively until they appear.
 				compilation.contextDependencies.push(nodeModulesPath);
 			}
 
@@ -42,8 +40,8 @@ const devBuild = async (env, onprogress) => {
 		compiler.plugin('done', stats => {
 			let devServer = config.devServer;
 			let protocol = (process.env.HTTPS || devServer.https) ? 'https' : 'http';
-			let host = process.env.HOST || devServer.host || 'localhost';
 
+			let host = process.env.HOST || devServer.host || 'localhost';
 			if (host === '0.0.0.0') host = 'localhost';
 
 			let serverAddr = `${protocol}://${host}:${chalk.bold(port)}`;
@@ -66,18 +64,18 @@ const devBuild = async (env, onprogress) => {
 
 			if (onprogress) onprogress(stats);
 		});
-		compiler.plugin('failed', reject);
 
-		let server = new WebpackDevServer(compiler, config.devServer);
-		server.listen(port);
+		compiler.plugin('failed', rej);
+
+		new DevServer(compiler, config.devServer).listen(port);
 	});
-};
+}
 
-const prodBuild = async (env) => {
+async function prodBuild(env) {
 	let config = clientConfig(env);
 
 	await transformConfig(env, config);
-	let serverCompiler, clientCompiler = webpack(config);
+	let serverCompiler, clientCompiler=webpack(config);
 
 	if (env.prerender) {
 		let ssrConfig = serverConfig(env);
@@ -89,19 +87,19 @@ const prodBuild = async (env) => {
 	let stats = await runCompiler(clientCompiler);
 
 	// Timeout for plugins that work on `after-emit` event of webpack
-	await new Promise(r => setTimeout(()=>	r(), 20));
+	await new Promise(r => setTimeout(r, 20));
 
 	return stats;
-};
+}
 
-const runCompiler = compiler => new Promise((resolve, reject) => {
+const runCompiler = compiler => new Promise((res, rej) => {
 	compiler.run((err, stats) => {
 		if (err || stats.hasErrors()) {
 			showStats(stats);
-			reject(chalk.red('Build failed!'));
+			rej(chalk.red('Build failed!'));
 		}
 
-		resolve(stats);
+		res(stats);
 	});
 });
 
@@ -120,31 +118,27 @@ export function showStats(stats) {
 }
 
 export function writeJsonStats(stats) {
-	let outputPath = path.resolve(process.cwd(), 'stats.json');
-	let jsonStats = stats.toJson({
-		json: true,
-		chunkModules: true,
-		source: false,
-	});
+	let outputPath = resolve(process.cwd(), 'stats.json');
+	let jsonStats = stats.toJson({ json:true, chunkModules:true, source:false });
 
 	jsonStats = (jsonStats.children && jsonStats.children[0]) || jsonStats;
 
 	jsonStats.modules.forEach(stripBabelLoaderFromModuleNames);
 	jsonStats.chunks.forEach(c => c.modules.forEach(stripBabelLoaderFromModuleNames));
 
-	return fs.writeFile(outputPath, JSON.stringify(jsonStats))
-		.then(() => {
-			process.stdout.write('\nWebpack output stats generated.\n\n');
-			process.stdout.write('You can upload your stats.json to:\n');
-			process.stdout.write('- https://chrisbateman.github.io/webpack-visualizer/\n');
-			process.stdout.write('- https://webpack.github.io/analyse/\n');
-		});
+	return writeFile(outputPath, JSON.stringify(jsonStats)).then(() => {
+		process.stdout.write('\nWebpack output stats generated.\n\n');
+		process.stdout.write('You can upload your stats.json to:\n');
+		process.stdout.write('- https://chrisbateman.github.io/webpack-visualizer/\n');
+		process.stdout.write('- https://webpack.github.io/analyse/\n');
+	});
 }
 
+const keysToNormalize = ['identifier', 'name', 'module', 'moduleName', 'moduleIdentifier'];
 
-const stripBabelLoaderFromModuleNames = m => {
-	const keysToNormalize = ['identifier', 'name', 'module', 'moduleName', 'moduleIdentifier'];
+const stripBabelLoaderPrefix = log => log.replace(/@?\s*(\.\/~\/babel-loader\/lib\?{[\s\S]*?}!)/g, '');
 
+function stripBabelLoaderFromModuleNames(m) {
 	keysToNormalize.forEach(key => {
 		if (key in m) {
 			m[key] = stripBabelLoaderPrefix(m[key]);
@@ -156,6 +150,4 @@ const stripBabelLoaderFromModuleNames = m => {
 	}
 
 	return m;
-};
-
-const stripBabelLoaderPrefix = log => log.replace(/@?\s*(\.\/~\/babel-loader\/lib\?{[\s\S]*?}!)/g, '');
+}

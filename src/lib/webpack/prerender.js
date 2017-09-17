@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import fs from 'fs';
+import { readFileSync } from 'fs';
 import stackTrace from 'stack-trace';
 import { SourceMapConsumer } from 'source-map';
 import chalk from 'chalk';
@@ -44,7 +44,7 @@ const handlePrerenderError = (err, env, stack, entry) => {
 	let sourceMapContent, position, sourcePath, sourceLines, sourceCodeHighlight;
 
 	try {
-		sourceMapContent = JSON.parse(fs.readFileSync(`${entry}.map`));
+		sourceMapContent = JSON.parse(readFileSync(`${entry}.map`));
 	} catch (err) {
 		process.stderr.write(chalk.red(`Unable to read sourcemap: ${entry}.map\n`));
 	}
@@ -61,10 +61,10 @@ const handlePrerenderError = (err, env, stack, entry) => {
 		sourcePath = resolve(env.src, position.source);
 		sourceLines;
 		try {
-			sourceLines = fs.readFileSync(sourcePath, 'utf-8').split('\n');
+			sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
 		} catch (err) {
 			try {
-				sourceLines = fs.readFileSync(require.resolve(position.source), 'utf-8').split('\n');
+				sourceLines = readFileSync(require.resolve(position.source), 'utf-8').split('\n');
 			} catch (err) {
 				process.stderr.write(chalk.red(`Unable to read file: ${sourcePath}\n`));
 			}
