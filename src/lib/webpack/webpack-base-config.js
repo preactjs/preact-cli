@@ -251,11 +251,7 @@ export default env => {
 				clear: true
 			}),
 
-			new webpack.optimize.CommonsChunkPlugin({
-				async: false,
-				children: true,
-				minChunks: 3
-			})
+			new webpack.optimize.CommonsChunkPlugin({ async:false, children:true, minChunks:3 })
 		])
 	].filter(Boolean));
 };
@@ -264,10 +260,8 @@ const development = () =>	group([]);
 
 const production = () => addPlugins([
 	new webpack.HashedModuleIdsPlugin(),
+	new webpack.LoaderOptionsPlugin({ minimize:true }),
 	new WebpackChunkHash(),
-	new webpack.LoaderOptionsPlugin({
-		minimize: true
-	}),
 
 	// strip out babel-helper invariant checks
 	new ReplacePlugin({
@@ -276,5 +270,5 @@ const production = () => addPlugins([
 			regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
 			value: s => `return;${ Array(s.length-7).join(' ') }(`
 		}]
-	}),
+	})
 ]);
