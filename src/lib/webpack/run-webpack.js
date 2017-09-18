@@ -136,7 +136,7 @@ export function writeJsonStats(stats) {
 	jsonStats = (jsonStats.children && jsonStats.children[0]) || jsonStats;
 
 	jsonStats.modules.forEach(stripBabelLoaderFromModuleNames);
-	jsonStats.chunks.forEach(c => c.modules.forEach(stripBabelLoaderFromModuleNames));
+	jsonStats.chunks.forEach(c => c.forEachModule(stripBabelLoaderFromModuleNames));
 
 	return writeFile(outputPath, JSON.stringify(jsonStats)).then(() => {
 		process.stdout.write('\nWebpack output stats generated.\n\n');
