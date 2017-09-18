@@ -3,22 +3,11 @@ import { resolve } from 'path';
 import { existsSync } from 'fs';
 import merge from 'webpack-merge';
 import { filter } from 'minimatch';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
-import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
-import baseConfig, { readJson } from './webpack-base-config';
+import RenderHTMLPlugin from './render-html-plugin';
 import PushManifestPlugin from './push-manifest';
-import prerender from './prerender';
-
-export default function (env) {
-	return merge(
-		baseConfig(env),
-		clientConfig(env),
-		(env.isProd ? isProd : isDev)(env)
-	);
-}
+import baseConfig from './webpack-base-config';
 
 function clientConfig(env) {
 	const { isProd, source, src } = env;
@@ -70,7 +59,7 @@ function clientConfig(env) {
 		},
 
 		plugins: [
-			...htmlPlugin(env),
+			...RenderHTMLPlugin(env),
 			new PushManifestPlugin(),
 			new CopyWebpackPlugin([
 				...(
@@ -190,41 +179,12 @@ function isDev(config) {
 			}
 		}
 	};
-};
+}
 
-const htmlPlugin = (config) => {
-	const { cwd, dest, isProd, src } = config;
-
-	const htmlWebpackConfig = ({ url, title }) => ({
-		filename: resolve(dest, url.substring(1), 'index.html'),
-		template: `!!ejs-loader!${config.template || resolve(__dirname, '../../resources/template.html')}`,
-		minify: config.production && {
-			collapseWhitespace: true,
-			removeScriptTypeAttributes: true,
-			removeRedundantAttributes: true,
-			removeStyleLinkTypeAttributes: true,
-			removeComments: true
-		},
-		favicon: existsSync(resolve(src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../../resources/favicon.ico'),
-		manifest: config.manifest,
-		inject: true,
-		compile: true,
-		preload: config.preload===true,
-		title: title || config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
-		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
-		config,
-		ssr(params) {
-			return config.prerender ? prerender({ cwd, dest, src }, { ...params, url }) : '';
-		}
-	});
-	const pages = readJson(resolve(config.cwd, config.prerenderUrls || '')) || [{ url: "/" }];
-	return addPlugins(pages
-		.map(page => new HtmlWebpackPlugin(htmlWebpackConfig(page)))
-		.concat([
-			new HtmlWebpackExcludeAssetsPlugin(),
-			new ScriptExtHtmlWebpackPlugin({
-				// inline: 'bundle.js',
-				defaultAttribute: 'defer'
-			})
-		]));
-};
+export default function (env) {
+	return merge(
+		baseConfig(env),
+		clientConfig(env),
+		(env.isProd ? isProd : isDev)(env)
+	);
+}

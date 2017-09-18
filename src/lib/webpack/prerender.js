@@ -1,17 +1,17 @@
+import chalk from 'chalk';
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
 import stackTrace from 'stack-trace';
 import { SourceMapConsumer } from 'source-map';
-import chalk from 'chalk';
 
 export default function prerender(env, params) {
 	params = params || {};
 
-	let entry = resolve(env.dest, './ssr-build/ssr-bundle.js'),
-		url = params.url || '/';
+	let entry = resolve(env.dest, './ssr-build/ssr-bundle.js');
+	let url = params.url || '/';
 
-	global.location = { href:url, pathname:url };
 	global.history = {};
+	global.location = { href:url, pathname:url };
 
 	try {
 		let m = require(entry),
