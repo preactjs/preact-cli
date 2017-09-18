@@ -20,7 +20,7 @@ function serverConfig(env) {
 				async: resolve(__dirname, './dummy-loader')
 			}
 		}
-	}
+	};
 }
 
 export default function (env) {

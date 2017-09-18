@@ -12,7 +12,7 @@ export default function (config) {
 	const htmlWebpackConfig = ({ url, title }) => ({
 		filename: resolve(dest, url.substring(1), 'index.html'),
 		template: `!!ejs-loader!${config.template || resolve(__dirname, '../../resources/template.html')}`,
-		minify: config.production && {
+		minify: isProd && {
 			collapseWhitespace: true,
 			removeScriptTypeAttributes: true,
 			removeRedundantAttributes: true,
@@ -41,4 +41,4 @@ export default function (config) {
 			defaultAttribute: 'defer'
 		})
 	]);
-};
+}

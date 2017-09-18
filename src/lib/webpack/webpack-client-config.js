@@ -43,7 +43,7 @@ function clientConfig(env) {
 					loader: resolve(__dirname, './async-component-loader'),
 					options: {
 						name(filename) {
-							let relative = filename.replace(source('.'), '');
+							let relative = filename.replace(src, '');
 							let isRoute = filename.indexOf('/routes/') >= 0;
 
 							return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
@@ -77,7 +77,7 @@ function clientConfig(env) {
 				existsSync(source('assets')) && { from:'assets', to:'assets' }
 			].filter(Boolean))
 		]
-	}
+	};
 }
 
 function isProd(config) {
@@ -88,7 +88,7 @@ function isProd(config) {
 			hints: 'warning',
 			maxAssetSize: limit,
 			maxEntrypointSize: limit,
-			...env.pkg.performance
+			...config.pkg.performance
 		},
 
 		plugins: [
@@ -141,7 +141,7 @@ function isProd(config) {
 				]
 			})
 		]
-	}
+	};
 }
 
 function isDev(config) {
