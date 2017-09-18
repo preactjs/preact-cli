@@ -156,6 +156,7 @@
     "webpack": "^3.6.0",
     "webpack-chunk-hash": "^0.4.0",
     "webpack-dev-server": "^2.8.2",
+    "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.1.1",
     "which": "^1.2.14",
     "yargs": "^8.0.1"

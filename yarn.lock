@@ -6992,6 +6992,12 @@ webpack-dev-server@^2.8.2:
     webpack-dev-middleware "^1.11.0"
     yargs "^6.6.0"
 
+webpack-merge@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/webpack-merge/-/webpack-merge-4.1.0.tgz#6ad72223b3e0b837e531e4597c199f909361511e"
+  dependencies:
+    lodash "^4.17.4"
+
 webpack-plugin-replace@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/webpack-plugin-replace/-/webpack-plugin-replace-1.1.1.tgz#9816647fefc98a7d1700f93f2b4b6f481cf20161"
