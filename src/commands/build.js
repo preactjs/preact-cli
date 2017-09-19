@@ -31,6 +31,10 @@ export default asyncCommand({
 			description: 'Path to pre-render routes configuration.',
 			default: 'prerender-urls.json'
 		},
+		'service-worker': {
+			description: 'Add a service worker to the application.',
+			default: true
+		},
 		clean: {
 			description: 'Clear output directory before building.',
 			default: true
