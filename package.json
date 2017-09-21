@@ -129,7 +129,6 @@
     "loader-utils": "^1.1.0",
     "log-symbols": "^2.0.0",
     "minimatch": "^3.0.3",
-    "offline-plugin": "^4.6.2",
     "ora": "^1.2.0",
     "persist-path": "^1.0.1",
     "postcss-loader": "^2.0.6",
