@@ -226,11 +226,8 @@ const SERVERS = {
 
 
 /** Create a temporary file. See https://npm.im/tmp */
-const tmpFile = opts => new Promise( (resolve, reject) => {
-	tmp.file(opts, (err, path) => {
-		if (err) reject(err);
-		else resolve(path);
-	});
+const tmpFile = opts => new Promise((res, rej) => {
+	tmp.file(opts, (err, path) => err ? rej(err) : res(path));
 });
 
 
