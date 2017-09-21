@@ -130,10 +130,20 @@ export default function (env) {
 					loader: ExtractTextPlugin.extract({
 						fallback: 'style-loader',
 						use: [
-							`css-loader?modules&localIdentName=[local]__[hash:base64:5]&importLoaders=1&sourceMap=${isProd}`,
+							{
+								loader: 'css-loader',
+								options: {
+									modules: true,
+									localIdentName: '[local]__[hash:base64:5]',
+									importLoaders: 1,
+									sourceMap: isProd
+								}
+							},
 							{
 								loader: 'postcss-loader',
-								options: { plugins:[autoprefixer({ browsers })] }
+								options: {
+									plugins: [autoprefixer({ browsers })]
+								}
 							}
 						]
 					})
@@ -149,11 +159,15 @@ export default function (env) {
 						use: [
 							{
 								loader: 'css-loader',
-								options: { sourceMap:isProd }
+								options: {
+									sourceMap: isProd
+								}
 							},
 							{
 								loader: 'postcss-loader',
-								options: { plugins:[autoprefixer({ browsers })] }
+								options: {
+									plugins: [autoprefixer({ browsers })]
+								}
 							}
 						]
 					})
