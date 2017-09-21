@@ -1,4 +1,4 @@
-export const homePageHTML = `
+exports.home = `
 <body>
 	<div id="app">
 		<header class="header__3QGkI">
@@ -18,7 +18,7 @@ export const homePageHTML = `
 </body>
 `;
 
-export const profilePageHtml = `
+exports.profile = `
 <body>
 	<div id="app">
 		<header class="header__3QGkI">

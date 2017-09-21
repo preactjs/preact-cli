@@ -6,6 +6,7 @@ import { execFile } from 'child_process';
 import getSslCert from '../lib/ssl-cert';
 import persistencePath from 'persist-path';
 import simplehttp2server from 'simplehttp2server';
+import { isDir } from '../util';
 
 export default asyncCommand({
 	command: 'serve [dir]',
@@ -175,8 +176,7 @@ const SERVERS = {
 		if (ssl) {
 			await fs.writeFile(path.resolve(options.cwd, 'key.pem'), ssl.key);
 			await fs.writeFile(path.resolve(options.cwd, 'cert.pem'), ssl.cert);
-		}
-		else {
+		} else {
 			options.cwd = persistencePath('preact-cli');
 			process.stderr.write(`Falling back to shared directory + simplehttp2server.\n(dir: ${options.cwd})\n`);
 		}
@@ -201,15 +201,10 @@ const SERVERS = {
 		let dir = process.cwd(),
 			outfile;
 		if (options.dest && options.dest!=='-') {
-			let isDir = false;
-			try {
-				isDir = (await fs.stat(options.dest)).isDirectory();
-			} catch (e) {}
-			if (isDir) {
+			if (isDir(options.dest)) {
 				dir = options.dest;
 				outfile = 'firebase.json';
-			}
-			else {
+			} else {
 				dir = path.dirname(options.dest);
 				outfile = path.basename(options.dest);
 			}
@@ -223,8 +218,7 @@ const SERVERS = {
 		if (outfile) {
 			await fs.writeFile(path.resolve(dir, outfile), config);
 			return `Configuration written to ${outfile}.`;
-		}
-		else {
+		} else {
 			return config;
 		}
 	}
@@ -232,11 +226,8 @@ const SERVERS = {
 
 
 /** Create a temporary file. See https://npm.im/tmp */
-const tmpFile = opts => new Promise( (resolve, reject) => {
-	tmp.file(opts, (err, path) => {
-		if (err) reject(err);
-		else resolve(path);
-	});
+const tmpFile = opts => new Promise((res, rej) => {
+	tmp.file(opts, (err, path) => err ? rej(err) : res(path));
 });
 
 

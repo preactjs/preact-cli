@@ -10,15 +10,20 @@ node_js:
   - 6
   - 8
 
+branches:
+  only:
+    - master
+
 cache:
-  npm: true
+  yarn: true
   directories:
-    - $HOME/.npm
-    - ./node_modules
+    - $HOME/.yarn-cache
+    - node_modules
 
 before_script:
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
-- if [ "$TRAVIS_BRANCH" = "master" ]; then export WITH_INSTALL=true; export WITH_LOG=true; fi
+# - if [ "$TRAVIS_BRANCH" = "master" ]; then export SKIP_INSTALL=true; export WITH_LOG=true; fi
+- if [ "$TRAVIS_BRANCH" = "master" ]; then export WITH_LOG=true; fi
 
 script:
 - npm run lint

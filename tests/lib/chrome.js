@@ -1,6 +1,6 @@
 import { Launcher } from 'chrome-launcher';
 import chrome from 'chrome-remote-interface';
-import { withLog, waitUntil } from './utils';
+import { log, waitUntil } from './utils';
 
 export default async () => {
 	let launcher = new Launcher({
@@ -14,9 +14,9 @@ export default async () => {
 	});
 	launcher.pollInterval = 1000;
 
-	await withLog(() => launcher.launch(), 'Launching Chrome');
+	await log(() => launcher.launch(), 'Launching Chrome');
 
-	let protocol = await withLog(() => setup(launcher.port), 'Connecting to Chrome');
+	let protocol = await log(() => setup(launcher.port), 'Connecting to Chrome');
 
 	return { launcher, protocol };
 };
@@ -29,7 +29,7 @@ export const getElementHtml = async (Runtime, selector) => {
 
 export const waitUntilExpression = async (Runtime, expression, retryCount = 10, retryInterval = 500) => {
 	let evaluate = async () => {
-		let { result } = await withLog(
+		let { result } = await log(
 			() => Runtime.evaluate({ expression }),
 			`Waiting for ${expression} - tries left: ${retryCount}`
 		);
@@ -49,7 +49,7 @@ export const waitUntilExpression = async (Runtime, expression, retryCount = 10, 
 };
 
 export const loadPage = async (chrome, url) => {
-	let result = await withLog(
+	let result = await log(
 		() => waitUntil(() => navigateToPage(chrome, url, 5000), `${url} could not be loaded!`),
 		`Navigating to ${url}`
 	);

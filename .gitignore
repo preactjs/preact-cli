@@ -8,5 +8,4 @@ key.pem
 cert.pem
 lighthouse.*/
 tmp-*.json
-yarn.lock
 package-lock.json

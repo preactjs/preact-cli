@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
+import updateNotifier from 'update-notifier';
 import yargs from 'yargs';
 import create from './commands/create';
 import build from './commands/build';
 import watch from './commands/watch';
 import serve from './commands/serve';
-import init from './commands/init';
 import installHooks from './lib/output-hooks';
 import pkg from '../package.json';
 import logo from './lib/logo';
@@ -17,8 +17,9 @@ checkVersion();
 
 installHooks();
 
+updateNotifier({pkg}).notify();
+
 yargs
-	.command(init)
 	.command(create)
 	.command(build)
 	.command(watch)
@@ -33,3 +34,4 @@ yargs
 	.demandCommand()
 	.strict()
 	.argv;
+
