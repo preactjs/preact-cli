@@ -66,6 +66,7 @@ export default asyncCommand({
 		}
 
 		let stats = await runWebpack(false, argv);
+
 		showStats(stats);
 
 		if (argv.json) {
