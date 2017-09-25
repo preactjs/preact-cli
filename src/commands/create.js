@@ -100,15 +100,16 @@ export default asyncCommand({
 			strip: 2,
 			filter(path, obj) {
 				if (path.includes('/template/')) {
-					obj.on('end', _ => obj.type==='File' && keeps.push(obj.absolute));
+					obj.on('end', () => obj.type==='File' && keeps.push(obj.absolute));
 					return true;
 				}
 			}
 		});
 
 		if (keeps.length) {
-			// TODO: concat author-driven patterns
+			// eslint-disable-next-line
 			let dict = new Map();
+			// TODO: concat author-driven patterns
 			['name'].forEach(str => {
 				// if value is defined
 				if (argv[str] !== void 0) {
