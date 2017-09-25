@@ -95,23 +95,42 @@ export default asyncCommand({
 
 		// Extract files from `archive` to `target`
 		// TODO: read & respond to meta/hooks
-		let hasDir = false;
+		let keeps=[];
 		await gittar.extract(archive, target, {
 			strip: 2,
-			filter(path) {
-				return path.includes('/template/') && (hasDir = true);
+			filter(path, obj) {
+				if (path.includes('/template/')) {
+					obj.on('end', _ => obj.type==='File' && keeps.push(obj.absolute));
+					return true;
+				}
 			}
 		});
 
-		if (!hasDir) {
+		if (keeps.length) {
+			// TODO: concat author-driven patterns
+			let dict = new Map();
+			['name'].forEach(str => {
+				// if value is defined
+				if (argv[str] !== void 0) {
+					dict.set(new RegExp(`{{\\s?${str}\\s}}`, 'g'), argv[str]);
+				}
+			});
+			// Update each file's contents
+			for (let entry of keeps) {
+				let buf = await fs.readFile(entry, 'utf8');
+				dict.forEach((v, k) => {
+					buf = buf.replace(k, v);
+				});
+				await fs.writeFile(entry, buf);
+			}
+		} else {
 			return error(`No \`template\` directory found within ${ repo }!`, 1);
 		}
 
 		spinner.text = 'Parsing `package.json` file';
 
 		// Validate user's `package.json` file
-		let pkgData;
-		let pkgFile = resolve(target, 'package.json');
+		let pkgData, pkgFile=resolve(target, 'package.json');
 
 		if (pkgFile) {
 			pkgData = JSON.parse(await fs.readFile(pkgFile));
