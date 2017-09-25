@@ -130,6 +130,14 @@ $ preact serve
   --port, -p  Port to start a server on.                                      [string]  [default: PORT || 8080]
 ```
 
+#### preact list
+
+Lists all the official preactjs-cli repositories
+
+```sh
+$ preact list
+```
+
 ### Deploying
 
 ```sh
