@@ -49,7 +49,7 @@ Current available templates include:
 
 - [default] - Default template with all features.
 
-- [material] - material-ui template using preact-material-components
+- [material] - material template using preact-material-components
 
 - [simple] - The simplest possible preact setup in a single file
 
