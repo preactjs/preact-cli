@@ -17,6 +17,10 @@ export default asyncCommand({
 	desc: 'Create a new application.',
 
 	builder: {
+		cwd: {
+			description: 'A directory to use instead of $PWD.',
+			default: '.'
+		},
 		name: {
 			description: 'The application\'s name'
 		},

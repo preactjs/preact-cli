@@ -14,6 +14,10 @@ export default asyncCommand({
 	desc: 'Start an HTTP2 static fileserver.',
 
 	builder: {
+		cwd: {
+			description: 'A directory to use instead of $PWD.',
+			default: '.'
+		},
 		dir: {
 			description: 'Directory root to serve static files from.',
 			default: 'build'

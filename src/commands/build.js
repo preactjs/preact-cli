@@ -10,6 +10,10 @@ export default asyncCommand({
 	desc: 'Create a production build in build/',
 
 	builder: {
+		cwd: {
+			description: 'A directory to use instead of $PWD.',
+			default: '.'
+		},
 		src: {
 			description: 'Entry file (index.js)',
 			default: 'src'
