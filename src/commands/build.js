@@ -10,6 +10,10 @@ export default asyncCommand({
 	desc: 'Create a production build in build/',
 
 	builder: {
+		cwd: {
+			description: 'A directory to use instead of $PWD.',
+			default: '.'
+		},
 		src: {
 			description: 'Entry file (index.js)',
 			default: 'src'
@@ -53,7 +57,7 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
-		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
+		let cwd = resolve(argv.cwd);
 		let modules = resolve(cwd, 'node_modules');
 
 		if (!isDir(modules)) {

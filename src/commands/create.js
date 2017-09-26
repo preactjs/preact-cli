@@ -17,6 +17,10 @@ export default asyncCommand({
 	desc: 'Create a new application.',
 
 	builder: {
+		cwd: {
+			description: 'A directory to use instead of $PWD.',
+			default: '.'
+		},
 		name: {
 			description: 'The application\'s name'
 		},
@@ -52,8 +56,8 @@ export default asyncCommand({
 			Object.assign(argv, response);
 		}
 
+		let cwd = resolve(argv.cwd);
 		let isYarn = argv.yarn && hasCommand('yarn');
-		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
 		let target = argv.dest && resolve(cwd, argv.dest);
 		let exists = target && isDir(target);
 
