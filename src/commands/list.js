@@ -19,7 +19,6 @@ export default asyncCommand({
 			info('Available official templates: \n');
 
 			repos.map((repo => {
-				// process.stdout.write(`  ${yellow('★')}  ${bold(magenta(repo.name))} - ${repo.description} \n`);
 				process.stdout.write(`  ⭐️  ${bold(magenta(repo.name))} - ${repo.description} \n`);
 			}));
 
