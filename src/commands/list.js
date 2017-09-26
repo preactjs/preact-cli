@@ -12,15 +12,14 @@ export default asyncCommand({
 
 	async handler() {
 		try {
-			let repos = await fetch(REPOS_URL);
-			repos = await repos.json();
+			let repos = await fetch(REPOS_URL).then(r => r.json());
 
 			process.stdout.write('\n');
 			info('Available official templates: \n');
 
-			repos.map((repo => {
+			repos.map(repo => {
 				process.stdout.write(`  ⭐️  ${bold(magenta(repo.name))} - ${repo.description} \n`);
-			}));
+			});
 
 			process.stdout.write('\n');
 		} catch (err) {
