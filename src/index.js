@@ -26,10 +26,6 @@ yargs
 	.command(watch)
 	.command(serve)
 	.command(list)
-	// .option('cwd', {
-	// 	description: 'A directory to use instead of $PWD.',
-	// 	defaultDescription: '.'
-	// })
 	.usage(logo(`\n\npreact-cli ${pkg.version}`) + `\nFor help with a specific command, enter:\n  preact help [command]`)
 	.help()
 	.alias('h', 'help')
