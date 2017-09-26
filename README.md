@@ -20,7 +20,7 @@
 
 ### Installation
 
-**Important**: [Node.js](https://nodejs.org/en/) required version (> 6.x)
+> **Important**: [Node.js](https://nodejs.org/en/) > V6.x is a minimum requirement.
 
 ```sh
 $ npm install -g preact-cli
