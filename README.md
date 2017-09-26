@@ -87,6 +87,7 @@ $ preact build
   --dest            Directory root for output.                   [string]   [default: "build"]
   --prerenderUrls   Path to pre-render routes configuration.     [string]   [default: "prerender-urls.json"]
   --template        Path to template file.                       [string]   [default: none]
+  --service-worker  Add a service worker to application.         [boolean]  [default: true]
   --production, -p  Create a minified production build.          [boolean]  [default: true]
   --no-prerender    Disable pre-render of static app content.    [boolean]  [default: false]
   --clean           Clear output directory before building.      [boolean]  [default: true]
