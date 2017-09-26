@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { yellow, blue } from 'chalk';
+import fetch from 'isomorphic-unfetch';
+import { bold, magenta } from 'chalk';
 import { error, info } from '../util';
 import asyncCommand from '../lib/async-command';
 
@@ -12,13 +12,15 @@ export default asyncCommand({
 
 	async handler() {
 		try {
-			let repos = await axios.get(REPOS_URL);
+			let repos = await fetch(REPOS_URL);
+			repos = await repos.json();
 
 			process.stdout.write('\n');
 			info('Available official templates: \n');
 
-			repos.data.map((repo => {
-				process.stdout.write(`  ${yellow('★')}  ${blue(repo.name)} - ${repo.description} \n`);
+			repos.map((repo => {
+				// process.stdout.write(`  ${yellow('★')}  ${bold(magenta(repo.name))} - ${repo.description} \n`);
+				process.stdout.write(`  ⭐️  ${bold(magenta(repo.name))} - ${repo.description} \n`);
 			}));
 
 			process.stdout.write('\n');
