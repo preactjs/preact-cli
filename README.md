@@ -53,9 +53,7 @@ Current available templates include:
 
 - [simple] - The simplest possible preact setup in a single file
 
-> 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template:
-<br />
-> `preact create <username>/<repository> <project-name>`
+> 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `preact create <username>/<repository> <project-name>`
 
 ### CLI Options
 
