@@ -20,7 +20,7 @@
 
 ### Installation
 
-Prerequisites: [Node.js](https://nodejs.org/en/) required version (> 6.x)
+**Important**: [Node.js](https://nodejs.org/en/) required version (> 6.x)
 
 ```sh
 $ npm install -g preact-cli
@@ -110,7 +110,7 @@ $ preact watch
 
 Note:
 
-1. You can run dev server using`HTTPS` then you can use the following `HTTPS=true preact watch`
+1. You can run dev server using `HTTPS` then you can use the following `HTTPS=true preact watch`
 2. You can run the dev server on a different port using `PORT=8091 preact watch`
 
 #### preact serve
