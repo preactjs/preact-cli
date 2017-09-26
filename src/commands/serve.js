@@ -56,7 +56,7 @@ export default asyncCommand({
  *	@param {number|string} [options.port]	Port to start the http server on
  */
 async function serve(options) {
-	let dir = path.resolve(options.cwd || process.cwd(), options.dir || '.');
+	let dir = path.resolve(options.cwd, options.dir || '.');
 
 	// Allow overriding default hosting config via `--config firebase.json`:
 	let configFile = options.config ? options.config : path.resolve(__dirname, '../resources/static-app.json');

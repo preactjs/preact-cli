@@ -53,7 +53,7 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
-		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
+		let cwd = resolve(argv.cwd);
 		let modules = resolve(cwd, 'node_modules');
 
 		if (!isDir(modules)) {
