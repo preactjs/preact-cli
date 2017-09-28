@@ -1,8 +1,6 @@
 import path from 'path';
 import fs from 'fs.promised';
-import {
-	webpack,
-} from '@webpack-blocks/webpack2';
+import webpack from 'webpack';
 
 export default async function (env, config, ssr = false) {
 	let transformerPath = path.resolve(env.cwd, env.config || './preact.config.js');

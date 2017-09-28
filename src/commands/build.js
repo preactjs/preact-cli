@@ -10,6 +10,10 @@ export default asyncCommand({
 	desc: 'Create a production build in build/',
 
 	builder: {
+		cwd: {
+			description: 'A directory to use instead of $PWD.',
+			default: '.'
+		},
 		src: {
 			description: 'Entry file (index.js)',
 			default: 'src'
@@ -31,6 +35,10 @@ export default asyncCommand({
 			description: 'Path to pre-render routes configuration.',
 			default: 'prerender-urls.json'
 		},
+		'service-worker': {
+			description: 'Add a service worker to the application.',
+			default: true
+		},
 		clean: {
 			description: 'Clear output directory before building.',
 			default: true
@@ -49,7 +57,7 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
-		let cwd = argv.cwd ? resolve(argv.cwd) : process.cwd();
+		let cwd = resolve(argv.cwd);
 		let modules = resolve(cwd, 'node_modules');
 
 		if (!isDir(modules)) {
@@ -62,6 +70,7 @@ export default asyncCommand({
 		}
 
 		let stats = await runWebpack(false, argv);
+
 		showStats(stats);
 
 		if (argv.json) {

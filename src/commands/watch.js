@@ -9,6 +9,10 @@ export default asyncCommand({
 	desc: 'Start a development live-reload server.',
 
 	builder: {
+		cwd: {
+			description: 'A directory to use instead of $PWD.',
+			default: '.'
+		},
 		src: {
 			description: 'Entry file (index.js)',
 			default: 'src'

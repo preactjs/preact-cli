@@ -4,7 +4,7 @@ if (process.env.NODE_ENV==='development') {
 	// enable preact devtools
 	require('preact/devtools');
 }
-else if ('serviceWorker' in navigator && location.protocol === 'https:') {
+else if (process.env.ADD_SW && 'serviceWorker' in navigator && location.protocol === 'https:') {
 	// eslint-disable-next-line no-undef
 	navigator.serviceWorker.register(__webpack_public_path__ + 'sw.js');
 }

@@ -104,7 +104,8 @@ $ preact build
   --src             Entry file (index.js).                        [default: "src"]
   --dest            Directory root for output.                    [default: "build"]
   --production, -p  Create a minified production build.           [default: true]
-  --no-prerender    Disable pre-render of static app content.     
+  --no-prerender    Disable pre-render of static app content.
+  --service-worker  Add a service worker to application.          [default: true]
   --prerenderUrls   Path to pre-render routes configuration.      [default "prerender-urls.json"]
   --template        Path to template file.
   --clean           Clear output directory before building.       [default: true]
@@ -133,16 +134,16 @@ $ preact serve
 
 ### Templates
 
-### Full: 
+### Full:
 
 - Preact Router Included
 - Dynamic routes
 
 <a href="https://build-gqqxvrjtbx.now.sh/" target="_blank">Demo</a>
 
-### Simple: 
+### Simple:
 
-- Github API 
+- Github API
 <a href="https://build-xsepqcgvue.now.sh/" target="_blank">Demo</a>
 
 ### Empty
