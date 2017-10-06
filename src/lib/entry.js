@@ -3,7 +3,8 @@ import { h, render } from 'preact';
 if (process.env.NODE_ENV==='development') {
 	// enable preact devtools
 	require('preact/devtools');
-} else if ('serviceWorker' in navigator && location.protocol === 'https:') {
+}
+else if (process.env.ADD_SW && 'serviceWorker' in navigator && location.protocol === 'https:') {
 	navigator.serviceWorker.register('/sw.js');
 }
 
