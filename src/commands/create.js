@@ -1,5 +1,5 @@
-import fs from 'fs.promised';
 import { resolve } from 'path';
+import fs from 'fs.promised';
 import ora from 'ora';
 import glob from 'glob';
 import gittar from 'gittar';
@@ -10,6 +10,8 @@ import { info, isDir, hasCommand, error, trim, warn } from '../util';
 import { install, initGit, addScripts, isMissing } from './../lib/setup';
 
 const ORG = 'preactjs-templates';
+const RGX = /\.(woff2?|ttf|eot|jpe?g|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
+const isMedia = str => RGX.test(str);
 
 export default asyncCommand({
 	command: 'create [template] [dest]',
@@ -104,7 +106,11 @@ export default asyncCommand({
 			strip: 2,
 			filter(path, obj) {
 				if (path.includes('/template/')) {
-					obj.on('end', () => obj.type==='File' && keeps.push(obj.absolute));
+					obj.on('end', () => {
+						if (obj.type === 'File' && !isMedia(obj.path)) {
+							keeps.push(obj.absolute);
+						}
+					});
 					return true;
 				}
 			}
