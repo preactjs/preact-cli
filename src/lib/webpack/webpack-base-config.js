@@ -88,7 +88,10 @@ export default function (env) {
 							options: {
 								cwd,
 								loader: 'less-loader',
-								options: { sourceMap:true }
+								options: {
+									sourceMap: true,
+									paths: [resolve(cwd, 'node_modules')]
+								}
 							}
 						}
 					]
@@ -102,7 +105,10 @@ export default function (env) {
 							options: {
 								cwd,
 								loader: 'sass-loader',
-								options: { sourceMap:true }
+								options: {
+									sourceMap: true,
+									paths: [resolve(cwd, 'node_modules')]
+								}
 							}
 						}
 					]
