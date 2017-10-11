@@ -34,7 +34,7 @@ export async function initGit(target) {
 
 		let gitUser, gitEmail;
 		const defaultGitUser = 'Preact CLI';
-		const defaultGitEmail = 'developit@users.noreply.github.com';
+		const defaultGitEmail = 'preact-cli@users.noreply.github.com';
 
 		try {
 			gitEmail = (await spawn('git', ['config', 'user.email'])).toString();
