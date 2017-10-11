@@ -1,72 +1,64 @@
 import { Launcher } from 'chrome-launcher';
 import chrome from 'chrome-remote-interface';
+import { log, waitUntil } from './utils';
 
 export default async () => {
 	let launcher = new Launcher({
-		port: 9222,
-		autoSelectChrome: true,
-		additionalFlags: [
+		chromeFlags: [
 			'--window-size=1024,768',
 			'--disable-gpu',
-			'--headless'
+			'--headless',
+			'--enable-logging',
+			'--no-sandbox'
 		]
 	});
 	launcher.pollInterval = 1000;
-	await launcher.launch();
-	let protocol = await setup();
+
+	await log(() => launcher.launch(), 'Launching Chrome');
+
+	let protocol = await log(() => setup(launcher.port), 'Connecting to Chrome');
+
 	return { launcher, protocol };
 };
 
-export const delay = time => new Promise(r => setTimeout(() => r(), time));
 
 export const getElementHtml = async (Runtime, selector) => {
 	let { result } = await Runtime.evaluate({ expression: `document.querySelector("${selector}").outerHTML` });
 	return result.value;
 };
 
-export const waitUntil = async (Runtime, expression, retryCount = 10, retryInterval = 500) => {
-	if (retryCount < 0) {
-		throw new Error(`Wait until: '${expression}' timed out.`);
-	}
+export const waitUntilExpression = async (Runtime, expression, retryCount = 10, retryInterval = 500) => {
+	let evaluate = async () => {
+		let { result } = await log(
+			() => Runtime.evaluate({ expression }),
+			`Waiting for ${expression} - tries left: ${retryCount}`
+		);
 
-	let { result } = await Runtime.evaluate({ expression });
-	if (result && result.subtype === 'promise') {
-		let message = await Runtime.awaitPromise({
-			promiseObjectId: result.objectId,
-			returnByValue: true
-		});
-		result = message.result;
-	}
+		if (result && result.subtype === 'promise') {
+			let message = await Runtime.awaitPromise({
+				promiseObjectId: result.objectId,
+				returnByValue: true
+			});
+			result = message.result;
+		}
 
-	if (!result || !result.value) {
-		await delay(retryInterval);
-		await waitUntil(Runtime, expression, retryCount - 1, retryInterval);
-	}
+		return result && result.value;
+	};
+
+	await waitUntil(evaluate, `Waiting for ${expression} timed out!`, retryCount, retryInterval);
 };
 
-export const loadPage = async (chrome, url, retryCount = 10, retryInterval = 5000) => {
-	let result = await openPage(chrome, url, retryCount, retryInterval);
+export const loadPage = async (chrome, url) => {
+	let result = await log(
+		() => waitUntil(() => navigateToPage(chrome, url, 5000), `${url} could not be loaded!`),
+		`Navigating to ${url}`
+	);
 	await chrome.Page.loadEventFired();
 	return result;
 };
 
-const openPage = async (chrome, url, retryCount, retryInterval) => {
-	if (retryCount < 0) {
-		throw new Error('Page could not be loaded!');
-	}
-
-	let result;
-	try {
-		result = await navigateToPage(chrome, url, retryInterval);
-	} catch (e) {
-		result = await openPage(chrome, url, retryCount - 1, retryInterval);
-	}
-
-	return result;
-};
-
-const setup = () => new Promise((resolve, reject) => {
-	chrome(protocol => {
+const setup = port => new Promise((resolve, reject) => {
+	chrome({ port }, protocol => {
 		const { Page, Runtime, Network, DOM, ServiceWorker } = protocol;
 
 		Promise.all([

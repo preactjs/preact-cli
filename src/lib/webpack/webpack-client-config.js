@@ -1,132 +1,170 @@
+import webpack from 'webpack';
 import { resolve } from 'path';
+import { existsSync } from 'fs';
+import merge from 'webpack-merge';
 import { filter } from 'minimatch';
-import {
-	webpack,
-	createConfig,
-	customConfig,
-	entryPoint,
-	setOutput,
-	addPlugins,
-	performance,
-	group
-} from '@webpack-blocks/webpack2';
-import devServer from '@webpack-blocks/dev-server2';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
-import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
+import RenderHTMLPlugin from './render-html-plugin';
 import PushManifestPlugin from './push-manifest';
-import baseConfig, { exists, helpers } from './webpack-base-config';
-import prerender from './prerender';
+import baseConfig from './webpack-base-config';
 
-export default env => {
-	let { isProd, cwd, src } = helpers(env);
-	let outputDir = resolve(cwd, env.dest || 'build');
-	return createConfig.vanilla([
-		baseConfig(env),
-		entryPoint({
-			'bundle': resolve(__dirname, './../entry'),
-			'polyfills': resolve(__dirname, './polyfills'),
-		}),
-		setOutput({
-			path: outputDir,
+function clientConfig(env) {
+	const { isProd, source, src } = env;
+
+	return {
+		entry: {
+			bundle: resolve(__dirname, './../entry'),
+			polyfills: resolve(__dirname, './polyfills')
+		},
+
+		output: {
+			path: env.dest,
 			publicPath: '/',
-			filename: '[name].js',
-			chunkFilename: '[name].chunk.[chunkhash:5].js',
-		}),
+			filename: isProd ? '[name].[chunkhash:5].js' : '[name].js',
+			chunkFilename: '[name].chunk.[chunkhash:5].js'
+		},
+
+		resolveLoader: {
+			alias: {
+				async: resolve(__dirname, './async-component-loader')
+			}
+		},
 
 		// automatic async components :)
-		customConfig({
-			module: {
-				loaders: [
-					{
-						test: /\.jsx?$/,
-						include: [
-							filter(src('routes')+'/{*.js,*/index.js}'),
-							filter(src('components')+'/{routes,async}/{*.js,*/index.js}')
-						],
-						loader: resolve(__dirname, './async-component-loader'),
-						options: {
-							name(filename) {
-								let relative = filename.replace(src('.'), '');
-								let isRoute = filename.indexOf('/routes/') >= 0;
+		module: {
+			loaders: [
+				{
+					test: /\.jsx?$/,
+					include: [
+						filter(source('routes')+'/{*.js,*/index.js}'),
+						filter(source('components')+'/{routes,async}/{*.js,*/index.js}')
+					],
+					loader: resolve(__dirname, './async-component-loader'),
+					options: {
+						name(filename) {
+							let relative = filename.replace(src, '');
+							let isRoute = filename.indexOf('/routes/') >= 0;
 
-								return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
-							},
-							formatName(filename) {
-								let relative = filename.replace(src('.'), '');
-								// strip out context dir & any file/ext suffix
-								return relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
-							}
+							return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
+						},
+						formatName(filename) {
+							let relative = filename.replace(source('.'), '');
+							// strip out context dir & any file/ext suffix
+							return relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
 						}
 					}
-				]
-			}
-		}),
+				}
+			]
+		},
 
-		// monitor output size and warn if it exceeds 200kb:
-		isProd && performance(Object.assign({
-			maxAssetSize: 200 * 1000,
-			maxEntrypointSize: 200 * 1000,
-			hints: 'warning'
-		}, env.pkg.performance || {})),
-		// copy any static files
-		addPlugins([
+		plugins: [
+			...RenderHTMLPlugin(env),
+			new PushManifestPlugin(),
 			new CopyWebpackPlugin([
-				...(exists(src('manifest.json')) ? [
-					{ from: 'manifest.json' }
-				] : [
-					{
+				...(
+					existsSync(source('manifest.json'))
+					? [{ from:'manifest.json' }]
+					: [{
 						from: resolve(__dirname, '../../resources/manifest.json'),
 						to: 'manifest.json'
-					},
-					{
+					}, {
 						from: resolve(__dirname, '../../resources/icon.png'),
 						to: 'assets/icon.png'
-					}
-				]),
-				exists(src('assets')) && {
-					from: 'assets',
-					to: 'assets'
+					}]
+				),
+				// copy any static files
+				existsSync(source('assets')) && { from:'assets', to:'assets' }
+			].filter(Boolean))
+		]
+	};
+}
+
+function isProd(config) {
+	let limit = 200 * 1000; // 200kb
+
+	return {
+		performance: {
+			hints: 'warning',
+			maxAssetSize: limit,
+			maxEntrypointSize: limit,
+			...config.pkg.performance
+		},
+
+		plugins: [
+			new webpack.optimize.UglifyJsPlugin({
+				output: { comments:false },
+				mangle: true,
+				sourceMap: true,
+				compress: {
+					properties: true,
+					keep_fargs: false,
+					pure_getters: true,
+					collapse_vars: true,
+					warnings: false,
+					screw_ie8: true,
+					sequences: true,
+					dead_code: true,
+					drop_debugger: true,
+					comparisons: true,
+					conditionals: true,
+					evaluate: true,
+					booleans: true,
+					loops: true,
+					unused: true,
+					hoist_funs: true,
+					if_return: true,
+					join_vars: true,
+					cascade: true,
+					drop_console: false,
+					pure_funcs: [
+						'classCallCheck',
+						'_classCallCheck',
+						'_possibleConstructorReturn',
+						'Object.freeze',
+						'invariant',
+						'warning'
+					]
 				}
-			].filter(Boolean)),
-			new PushManifestPlugin()
-		]),
+			}),
+			new SWPrecacheWebpackPlugin({
+				filename: 'sw.js',
+				navigateFallback: 'index.html',
+				navigateFallbackWhitelist: [/^(?!\/__).*/],
+				minify: true,
+				stripPrefix: config.cwd,
+				staticFileGlobsIgnorePatterns: [
+					/polyfills(\..*)?\.js$/,
+					/\.map$/,
+					/push-manifest\.json$/,
+					/.DS_Store/
+				]
+			}),
+			new webpack.DefinePlugin({
+				'process.env.ADD_SW': config.serviceWorker
+			}),
+		]
+	};
+}
 
-		htmlPlugin(env, outputDir),
+function isDev(config) {
+	const { cwd, src } = config;
 
-		isProd ? production(env) : development(env),
+	return {
+		plugins: [
+			new webpack.NamedModulesPlugin(),
+			new webpack.HotModuleReplacementPlugin()
+		],
 
-		customConfig({
-			resolveLoader: {
-				alias: {
-					'async': resolve(__dirname, './async-component-loader')
-				},
-			}
-		})
-	].filter(Boolean));
-};
-
-const development = config => {
-	let port = process.env.PORT || config.port || 8080,
-		host = process.env.HOST || config.host || '0.0.0.0',
-		origin = `${config.https===true?'https':'http'}://${host}:${port}/`;
-
-	return group([
-		addPlugins([
-			new webpack.NamedModulesPlugin()
-		]),
-
-		devServer({
-			port,
-			host,
+		devServer: {
 			inline: true,
 			hot: true,
-			https: config.https===true,
 			compress: true,
 			publicPath: '/',
-			contentBase: resolve(config.cwd, config.src || './src'),
+			contentBase: src,
+			https: config.https,
+			port: process.env.PORT || config.port || 8080,
+			host: process.env.HOST || config.host || '0.0.0.0',
 			// setup(app) {
 			// 	app.use(middleware);
 			// },
@@ -138,58 +176,18 @@ const development = config => {
 			stats: 'minimal',
 			watchOptions: {
 				ignored: [
-					resolve(config.cwd, 'build'),
-					resolve(config.cwd, 'node_modules')
+					resolve(cwd, 'build'),
+					resolve(cwd, 'node_modules')
 				]
 			}
-		}, [
-			`webpack-dev-server/client?${origin}`,
-			`webpack/hot/dev-server?${origin}`
-		])
-	]);
-};
-
-const production = config => addPlugins([
-	new SWPrecacheWebpackPlugin({
-		filename: 'sw.js',
-		navigateFallback: 'index.html',
-		navigateFallbackWhitelist: [/^(?!\/__).*/],
-		minify: true,
-		stripPrefix: config.cwd,
-		staticFileGlobsIgnorePatterns: [
-			/polyfills(\..*)?\.js$/,
-			/\.map$/,
-			/push-manifest\.json$/
-		]
-	})
-]);
-
-const htmlPlugin = (config, outputDir) => addPlugins([
-	new HtmlWebpackPlugin({
-		filename: 'index.html',
-		template: `!!ejs-loader!${config.template || resolve(__dirname, '../../resources/template.html')}`,
-		minify: config.production && {
-			collapseWhitespace: true,
-			removeScriptTypeAttributes: true,
-			removeRedundantAttributes: true,
-			removeStyleLinkTypeAttributes: true,
-			removeComments: true
-		},
-		favicon: exists(resolve(config.src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../../resources/favicon.ico'),
-		manifest: config.manifest,
-		inject: true,
-		compile: true,
-		preload: config.preload===true,
-		title: config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
-		excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
-		config,
-		ssr(params) {
-			return config.prerender ? prerender(outputDir, params) : '';
 		}
-	}),
-	new HtmlWebpackExcludeAssetsPlugin(),
-	new ScriptExtHtmlWebpackPlugin({
-		// inline: 'bundle.js',
-		defaultAttribute: 'defer'
-	})
-]);
+	};
+}
+
+export default function (env) {
+	return merge(
+		baseConfig(env),
+		clientConfig(env),
+		(env.isProd ? isProd : isDev)(env)
+	);
+}

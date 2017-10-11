@@ -1,61 +1,70 @@
-import test from './async-test';
-import { resolve } from 'path';
-import fs from 'fs.promised';
-import htmlLooksLike from 'html-looks-like';
+import { join } from 'path';
+import { readFile } from 'fs.promised';
+import looksLike from 'html-looks-like';
 import { create, build } from './lib/cli';
-import lsr from './lib/lsr';
-import { setup, clean, fromSubject } from './lib/output';
-import expectedOutputs, { sassPrerendered, withCustomTemplate } from './build.snapshot';
-import filesMatchSnapshot from './lib/filesMatchSnapshot';
+import { snapshot, isMatch } from './lib/utils';
+import { fromSubject } from './lib/output';
+import images from './images/build';
 
-const options = { timeout: 45 * 1000 };
+// TODO
+// const ours = ['empty', 'full', 'simple', 'root'];
+const ours = ['default'];
 
-test('preact build - before', async () => {
-	await setup();
-});
+async function getBody(dir, file) {
+	file = join(dir, `build/${file}`);
+	let html = await readFile(file, 'utf-8');
+	return html.match(/<body>.*<\/body>/)[0];
+}
 
-['empty', 'simple', 'root', 'default'].forEach(template =>
-	test(`preact build - should produce output. Veryfing ${template}`, options, async t => {
-		let app = await create('app', template);
-		await build(app);
+describe('preact build', () => {
+	ours.forEach(key =>
+		it(`builds the '${key}' output`, async () => {
+			let dir = await create(key);
 
-		let output = await lsr(resolve(app, 'build'));
+			await build(dir);
+			dir = join(dir, 'build');
 
-		filesMatchSnapshot(t, output, expectedOutputs[template]);
-	})
-);
+			let output = await snapshot(dir);
 
-test(`preact build - should prerender using webpack.`, options, async t => {
-	let app = await fromSubject('sass');
-	await build(app);
+			isMatch(output, images[key]);
+		})
+	);
 
-	let output = await fs.readFile(resolve(app, './build/index.html'), 'utf-8');
-	let html = output.match(/<body>.*<\/body>/)[0];
-	htmlLooksLike(html, sassPrerendered);
-	t.pass();
-});
+	it('should prerender using webpack', async () => {
+		let dir = await fromSubject('sass');
+		await build(dir);
 
-test(`preact build - should use custom .babelrc.`, options, async t => {
-	// app with custom .babelrc enabling async functions
-	let app = await fromSubject('custom-babelrc');
+		let body = await getBody(dir, 'index.html');
+		looksLike(body, images.sass);
+	});
 
-	// UglifyJS throws error when generator is encountered
-	await build(app);
+	it('should use custom `.babelrc`', async () => {
+		// app with custom .babelrc enabling async functions
+		let app = await fromSubject('custom-babelrc');
 
-	t.pass();
-});
+		// UglifyJS throws error when generator is encountered
+		expect(async () => await build(app)).not;
+	});
 
-test(`preact build - should use custom preact.config.js.`, options, async t => {
-	// app with custom template set via preact.config.js
-	let app = await fromSubject('custom-webpack');
+	it('should prerender the routes provided with `prerender-urls.json`', async () => {
+		let dir = await fromSubject('multiple-prerendering');
+		await build(dir);
 
-	await build(app);
+		let body1 = await getBody(dir, 'index.html');
+		looksLike(body1, images.prerender.home);
 
-	let html = await fs.readFile(resolve(app, './build/index.html'), 'utf-8');
-	htmlLooksLike(html, withCustomTemplate);
-	t.pass();
-});
+		let body2 = await getBody(dir, 'route66/index.html');
+		looksLike(body2, images.prerender.route);
+	});
 
-test('preact build - after', async () => {
-	await clean();
+	it('should use custom `preact.config.js`', async () => {
+		// app with custom template set via preact.config.js
+		let dir = await fromSubject('custom-webpack');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.webpack);
+	});
 });

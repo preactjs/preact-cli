@@ -1,34 +1,21 @@
-import test from './async-test';
-import { resolve } from 'path';
+import { relative } from 'path';
 import { create } from './lib/cli';
-import lsr from './lib/lsr';
-import { setup, clean } from './lib/output';
+import { expand } from './lib/utils';
+import snapshots from './images/create';
 
-const listTemplate = async dir => await lsr(resolve(__dirname, '../examples', dir), ['.gitkeep', 'package.json']);
-const listOutput = async dir => await lsr(dir, ['.gitkeep', 'package.json']);
+// TODO: Move all `examples/` to `preactjs-templates`
+const ours = ['default'];
 
-test('preact create - before', async () => {
-	await setup();
-});
+describe('preact create', () => {
+	ours.forEach(key => {
+		it(`scaffolds the '${key}' official template`, async () => {
+			let dir = await create(key);
 
-test('preact create - should create project using full template by default.', async t => {
-	let fullExample = await listTemplate('full');
-	let app = await create('app');
-	let generated = await listOutput(app);
+			let output = await expand(dir).then(arr => {
+				return arr.map(x => relative(dir, x));
+			});
 
-	t.isEquivalent(generated, fullExample);
-});
-
-['root', 'simple', 'empty'].forEach(template =>
-	test(`preact create - should create project using provided template. Verifying ${template}`, async t => {
-		let example = await listTemplate(template);
-		let app = await create('app', template);
-		let generated = await listOutput(app);
-
-		t.isEquivalent(generated, example);
-	})
-);
-
-test('preact build - after', async () => {
-	await clean();
+			expect(output).toEqual(snapshots[key]);
+		});
+	});
 });

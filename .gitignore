@@ -8,3 +8,4 @@ key.pem
 cert.pem
 lighthouse.*/
 tmp-*.json
+package-lock.json

@@ -1,23 +1,24 @@
-import { resolve } from 'path';
-import rimraf from 'rimraf';
-import promisify from 'es6-promisify';
-import mkdirp from 'mkdirp';
-import uuid from 'uuid/v4';
 import ncp from 'ncp';
+import uuid from 'uuid/v4';
+import { resolve } from 'path';
+import { promisify } from 'bluebird';
+import spawn from 'cross-spawn-promise';
+import { log } from './utils';
 
-const rm = promisify(rimraf);
-const cp = promisify(ncp);
+const copy = promisify(ncp);
+const output = resolve(__dirname, '../output');
+const subjects = resolve(__dirname, '../subjects');
 
-export const outputPath = resolve(__dirname, '../output');
-const subjectsPath = resolve(__dirname, '../subjects');
+export const tmpDir = () => resolve(output, uuid());
 
-export const setup = () => mkdirp(outputPath);
-export const clean = () => rm(outputPath);
+export async function fromSubject(name) {
+	let dest = tmpDir();
+	let dir = resolve(subjects, name);
 
-export const createWorkDir = () => resolve(outputPath, uuid());
+	await log(() => copy(dir, dest), `Copy subject: ${name}`);
 
-export const fromSubject = async (subjectName) => {
-	let workDir = createWorkDir();
-	await cp(resolve(subjectsPath, subjectName), workDir);
-	return workDir;
-};
+	// always install deps; needs to build
+	await log(() => spawn('npm', ['install'], { cwd:dest }), `Install subject dependencies`);
+
+	return dest;
+}

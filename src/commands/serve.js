@@ -6,6 +6,7 @@ import { execFile } from 'child_process';
 import getSslCert from '../lib/ssl-cert';
 import persistencePath from 'persist-path';
 import simplehttp2server from 'simplehttp2server';
+import { isDir } from '../util';
 
 export default asyncCommand({
 	command: 'serve [dir]',
@@ -13,6 +14,10 @@ export default asyncCommand({
 	desc: 'Start an HTTP2 static fileserver.',
 
 	builder: {
+		cwd: {
+			description: 'A directory to use instead of $PWD.',
+			default: '.'
+		},
 		dir: {
 			description: 'Directory root to serve static files from.',
 			default: 'build'
@@ -51,7 +56,7 @@ export default asyncCommand({
  *	@param {number|string} [options.port]	Port to start the http server on
  */
 async function serve(options) {
-	let dir = path.resolve(options.cwd || process.cwd(), options.dir || '.');
+	let dir = path.resolve(options.cwd, options.dir || '.');
 
 	// Allow overriding default hosting config via `--config firebase.json`:
 	let configFile = options.config ? options.config : path.resolve(__dirname, '../resources/static-app.json');
@@ -75,6 +80,7 @@ async function serve(options) {
 	await fs.writeFile(configFile, JSON.stringify(config));
 
 	await serveHttp2({
+		options,
 		config: configFile,
 		configObj: config,
 		server: options.server,
@@ -174,8 +180,7 @@ const SERVERS = {
 		if (ssl) {
 			await fs.writeFile(path.resolve(options.cwd, 'key.pem'), ssl.key);
 			await fs.writeFile(path.resolve(options.cwd, 'cert.pem'), ssl.cert);
-		}
-		else {
+		} else {
 			options.cwd = persistencePath('preact-cli');
 			process.stderr.write(`Falling back to shared directory + simplehttp2server.\n(dir: ${options.cwd})\n`);
 		}
@@ -196,33 +201,28 @@ const SERVERS = {
 		];
 	},
 	/** Writes the firebase/superstatic/simplehttp2server configuration to stdout or a file. */
-	async config(options) {
+	async config({ configObj, options }) {
 		let dir = process.cwd(),
 			outfile;
 		if (options.dest && options.dest!=='-') {
-			let isDir = false;
-			try {
-				isDir = (await fs.stat()).isDirectory();
-			} catch (e) {}
-			if (isDir) {
+			if (isDir(options.dest)) {
 				dir = options.dest;
 				outfile = 'firebase.json';
-			}
-			else {
+			} else {
 				dir = path.dirname(options.dest);
 				outfile = path.basename(options.dest);
 			}
 		}
 
 		let config = JSON.stringify({
-			...options.configObj,
-			public: path.relative(dir, options.configObj.public)
+			...configObj,
+			public: path.relative(dir, configObj.public)
 		}, null, 2);
 
 		if (outfile) {
 			await fs.writeFile(path.resolve(dir, outfile), config);
-		}
-		else {
+			return `Configuration written to ${outfile}.`;
+		} else {
 			return config;
 		}
 	}
@@ -230,11 +230,8 @@ const SERVERS = {
 
 
 /** Create a temporary file. See https://npm.im/tmp */
-const tmpFile = opts => new Promise( (resolve, reject) => {
-	tmp.file(opts, (err, path) => {
-		if (err) reject(err);
-		else resolve(path);
-	});
+const tmpFile = opts => new Promise((res, rej) => {
+	tmp.file(opts, (err, path) => err ? rej(err) : res(path));
 });
 
 

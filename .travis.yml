@@ -7,16 +7,24 @@ addons:
 
 language: node_js
 node_js:
-  - "6"
-  - "7"
-  - "8"
+  - 6
+  - 8
+
+branches:
+  only:
+    - master
+
 cache:
-  npm: true
+  yarn: true
+  directories:
+    - $HOME/.yarn-cache
+    - node_modules
 
 before_script:
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
-- google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+# - if [ "$TRAVIS_BRANCH" = "master" ]; then export SKIP_INSTALL=true; export WITH_LOG=true; fi
+- if [ "$TRAVIS_BRANCH" = "master" ]; then export WITH_LOG=true; fi
 
 script:
 - npm run lint
-- npm run test
+- npm run test -- --verbose

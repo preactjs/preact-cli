@@ -4,12 +4,13 @@ if (process.env.NODE_ENV==='development') {
 	// enable preact devtools
 	require('preact/devtools');
 }
-else if ('serviceWorker' in navigator && location.protocol === 'https:') {
-	navigator.serviceWorker.register('/sw.js');
+else if (process.env.ADD_SW && 'serviceWorker' in navigator && location.protocol === 'https:') {
+	// eslint-disable-next-line no-undef
+	navigator.serviceWorker.register(__webpack_public_path__ + 'sw.js');
 }
 
 
-const interopDefault = m => m && m.default || m;
+const interopDefault = m => m && m.default ? m.default : m;
 
 let app = interopDefault(require('preact-cli-entrypoint'));
 

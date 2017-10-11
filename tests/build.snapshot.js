@@ -1,18 +1,28 @@
+/**
+ * Unused
+ * @date 08/22/2017
+ * --> keep stats for other templates
+ */
+
+const commons = {
+	'polyfills.*.js': { size: 4620 },
+	'polyfills.*.js.map': { size: 31760 },
+	'favicon.ico': { size: 15086 },
+};
 
 const smallBuildCommons = {
+	...commons,
 	assets: {
 		'favicon.ico': { size: 15086 },
 		'icon.png': { size: 51484 }
 	},
-	'polyfills.js': { size: 4620 },
-	'polyfills.js.map': { size: 31760 },
-	'favicon.ico': { size: 15086 },
 	'sw.js': { size: 3330 },
 	'manifest.json': { size: 298 },
-	'push-manifest.json': { size: 2 },
+	'push-manifest.json': { size: 100 },
 };
 
 const fullBuildCommons = {
+	...commons,
 	assets: {
 		'favicon.ico': { size: 15086 },
 		icons: {
@@ -24,9 +34,7 @@ const fullBuildCommons = {
 			'mstile-150x150.png': { size: 9050 }
 		}
 	},
-	'polyfills.js': { size: 4620 },
-	'push-manifest.json': { size: 303 },
-	'favicon.ico': { size: 15086 },
+	'push-manifest.json': { size: 327 },
 	'manifest.json': { size: 426 },
 	'sw.js': { size: 3850 }
 };
@@ -34,96 +42,49 @@ const fullBuildCommons = {
 export default {
 	empty: {
 		...smallBuildCommons,
-		'bundle.js': { size: 9810 },
-		'bundle.js.map': { size: 44660 },
+		'bundle.*.js': { size: 9810 },
+		'bundle.*.js.map': { size: 44660 },
 		'index.html': { size: 630 },
-		'style.css': { size: 131 },
-		'style.css.map': { size: 359 },
+		'style.*.css': { size: 131 },
+		'style.*.css.map': { size: 359 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 9450 },
-			'ssr-bundle.js.map': { size: 42461 },
-			'style.css': { size: 130 },
-			'style.css.map': { size: 360 },
+			'ssr-bundle.js': { size: 16245 },
+			'ssr-bundle.js.map': { size: 31821 },
+			'style.*.css': { size: 130 },
+			'style.*.css.map': { size: 360 },
 		}
 	},
 	simple: {
 		...smallBuildCommons,
-		'bundle.js': { size: 10460 },
-		'bundle.js.map': { size: 48670 },
+		'bundle.*.js': { size: 10460 },
+		'bundle.*.js.map': { size: 48670 },
 		'index.html': { size: 640 },
-		'style.css': { size: 296},
-		'style.css.map': { size: 621 },
+		'style.*.css': { size: 296},
+		'style.*.css.map': { size: 621 },
 		'manifest.json': { size: 290 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 10100 },
-			'ssr-bundle.js.map': { size: 46466 },
-			'style.css': { size: 296 },
-			'style.css.map': { size: 621 },
+			'ssr-bundle.js': { size: 18205 },
+			'ssr-bundle.js.map': { size: 33478 },
+			'style.*.css': { size: 296 },
+			'style.*.css.map': { size: 621 },
 		}
 	},
 	root: {
 		...fullBuildCommons,
-		'bundle.js': { size: 18460 },
-		'bundle.js.map': { size: 101500 },
+		'bundle.*.js': { size: 18460 },
+		'bundle.*.js.map': { size: 101500 },
 		'route-home.chunk.*.js': { size: 1020 },
-		'route-home.chunk.*.js.map': { size: 4283 },
+		'route-home.chunk.*.js.map': { size: 4977 },
 		'route-profile.chunk.*.js': { size: 1660 },
-		'route-profile.chunk.*.js.map': { size: 7504 },
-		'polyfills.js.map': { size: 31750 },
+		'route-profile.chunk.*.js.map': { size: 8607 },
 		'index.html': { size: 870 },
-		'style.css': { size: 1065 },
-		'style.css.map': { size: 2246 },
+		'style.*.css': { size: 1065 },
+		'style.*.css.map': { size: 2246 },
 		'ssr-build': {
-			'ssr-bundle.js': { size: 18960 },
-			'ssr-bundle.js.map': { size: 91773 },
-			'style.css': { size: 1065 },
-			'style.css.map': { size: 2250 },
-		}
-	},
-	'default': {
-		...fullBuildCommons,
-		'bundle.js': { size: 19300 },
-		'bundle.js.map': { size: 105590 },
-		'route-home.chunk.*.js': { size: 1000 },
-		'route-home.chunk.*.js.map': { size: 4285 },
-		'route-profile.chunk.*.js': { size: 1650 },
-		'route-profile.chunk.*.js.map': { size: 7507 },
-		'polyfills.js.map': { size: 31800 },
-		'index.html': { size: 850 },
-		'style.css': { size: 1065 },
-		'style.css.map': { size: 2345 },
-		'ssr-build': {
-			'ssr-bundle.js': { size: 19820 },
-			'ssr-bundle.js.map': { size: 95581 },
-			'style.css': { size: 1065 },
-			'style.css.map': { size: 2345 },
+			'ssr-bundle.js': { size: 39459 },
+			'ssr-bundle.js.map': { size: 65629 },
+			'style.*.css': { size: 1065 },
+			'style.*.css.map': { size: 2250 },
 		}
 	}
 };
-
-export const sassPrerendered = `
-<body>
-	<div class="background__21gOq">
-		<h1>Header on background</h1>
-		<p>Paragraph on background</p>
-	</div>
-	<script src="/bundle.js" defer="defer"></script>
-	{{ ... }}
-</body>
-`;
-
-export const withCustomTemplate = `
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Preact App</title>
-		<link rel="shortcut icon" href="/favicon.ico"></link>
-	</head>
-	<body>
-		<h1>Guess what</h1>
-		<h2>This is an app with custom template</h2>
-		<script src="/bundle.js" defer="defer"></script>
-	</body>
-</html>
-`;
