@@ -256,7 +256,7 @@ preact watch --template src/template.html
 [default]: https://github.com/preactjs-templates/default
 [sw-precache]: https://github.com/GoogleChrome/sw-precache
 [preact-router]: https://github.com/developit/preact-router
-[material]: https://github.com/prateekbh/preact-material-components
+[material]: https://github.com/preactjs-templates/material
 [Plugins wiki]: https://github.com/developit/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
 [preactjs-templates/default]: https://github.com/preactjs-templates/default
