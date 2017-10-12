@@ -39,6 +39,10 @@ export default asyncCommand({
 			description: 'Port to start a server on.',
 			defaultDescription: 'PORT || 8080',
 			alias: 'p'
+		},
+		cors: {
+			description: 'Set allowed origins',
+			defaultDescription: 'https://localhost:${PORT}'
 		}
 	},
 
@@ -79,12 +83,15 @@ async function serve(options) {
 	configFile = await tmpFile({ postfix: '.json' });
 	await fs.writeFile(configFile, JSON.stringify(config));
 
+	let port = options.port || process.env.PORT || 8080;
+
 	await serveHttp2({
 		options,
 		config: configFile,
 		configObj: config,
 		server: options.server,
-		port: options.port || process.env.PORT || 8080,
+		cors: options.cors || `https://localhost:${port}`,
+		port,
 		dir,
 		cwd: path.resolve(__dirname, '../resources')
 	});
@@ -184,11 +191,12 @@ const SERVERS = {
 			options.cwd = persistencePath('preact-cli');
 			process.stderr.write(`Falling back to shared directory + simplehttp2server.\n(dir: ${options.cwd})\n`);
 		}
+
 		return [
 			simplehttp2server,
-			'-cors', '*',
+			'-cors', options.cors,
 			'-config', options.config,
-			'-listen', `:${options.port || 8080}`
+			'-listen', `:${options.port}`
 		];
 	},
 	superstatic(options) {
@@ -196,7 +204,7 @@ const SERVERS = {
 			'superstatic',
 			path.relative(options.cwd, options.dir),
 			'--gzip',
-			'-p', options.port || 8080,
+			'-p', options.port,
 			'-c', JSON.stringify({ ...options.configObj, public: undefined })
 		];
 	},
