@@ -1,15 +1,17 @@
-import fs from 'fs.promised';
-import { resolve } from 'path';
 import ora from 'ora';
 import glob from 'glob';
 import gittar from 'gittar';
+import fs from 'fs.promised';
 import { green } from 'chalk';
+import { resolve } from 'path';
 import { prompt } from 'inquirer';
 import asyncCommand from '../lib/async-command';
 import { info, isDir, hasCommand, error, trim, warn } from '../util';
 import { install, initGit, addScripts, isMissing } from './../lib/setup';
 
 const ORG = 'preactjs-templates';
+const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
+const isMedia = str => RGX.test(str);
 
 export default asyncCommand({
 	command: 'create [template] [dest]',
@@ -104,7 +106,11 @@ export default asyncCommand({
 			strip: 2,
 			filter(path, obj) {
 				if (path.includes('/template/')) {
-					obj.on('end', () => obj.type==='File' && keeps.push(obj.absolute));
+					obj.on('end', () => {
+						if (obj.type === 'File' && !isMedia(obj.path)) {
+							keeps.push(obj.absolute);
+						}
+					});
 					return true;
 				}
 			}
@@ -121,12 +127,13 @@ export default asyncCommand({
 				}
 			});
 			// Update each file's contents
-			for (let entry of keeps) {
-				let buf = await fs.readFile(entry, 'utf8');
+			let buf, entry, enc='utf8';
+			for (entry of keeps) {
+				buf = await fs.readFile(entry, enc);
 				dict.forEach((v, k) => {
 					buf = buf.replace(k, v);
 				});
-				await fs.writeFile(entry, buf);
+				await fs.writeFile(entry, buf, enc);
 			}
 		} else {
 			return error(`No \`template\` directory found within ${ repo }!`, 1);
