@@ -119,11 +119,11 @@ export function showStats(stats) {
 	let info = stats.toJson('errors-only');
 
 	if (stats.hasErrors()) {
-		info.errors.map(stripBabelLoaderPrefix).forEach(msg => error(msg));
+		info.errors.map(stripLoaderPrefix).forEach(msg => error(msg));
 	}
 
 	if (stats.hasWarnings()) {
-		info.warnings.map(stripBabelLoaderPrefix).forEach(msg => warn(msg));
+		info.warnings.map(stripLoaderPrefix).forEach(msg => warn(msg));
 	}
 
 	return stats;
@@ -133,10 +133,15 @@ export function writeJsonStats(stats) {
 	let outputPath = resolve(process.cwd(), 'stats.json');
 	let jsonStats = stats.toJson({ json:true, chunkModules:true, source:false });
 
-	jsonStats = (jsonStats.children && jsonStats.children[0]) || jsonStats;
+	function strip(stats) {
+		stats.modules.forEach(stripLoaderFromModuleNames);
+		stats.chunks.forEach(c => {
+			(c.mapModules!=null ? c.mapModules(Object) : c.modules.slice()).forEach(stripLoaderFromModuleNames);
+		});
+		if (stats.children) stats.children.forEach(strip);
+	}
 
-	jsonStats.modules.forEach(stripBabelLoaderFromModuleNames);
-	jsonStats.chunks.forEach(c => c.forEachModule(stripBabelLoaderFromModuleNames));
+	strip(jsonStats);
 
 	return writeFile(outputPath, JSON.stringify(jsonStats)).then(() => {
 		process.stdout.write('\nWebpack output stats generated.\n\n');
@@ -146,19 +151,33 @@ export function writeJsonStats(stats) {
 	});
 }
 
-const keysToNormalize = ['identifier', 'name', 'module', 'moduleName', 'moduleIdentifier'];
+const keysToNormalize = [
+	'issuer',
+	'issuerName',
+	'identifier',
+	'name',
+	'module',
+	'moduleName',
+	'moduleIdentifier'
+];
 
-const stripBabelLoaderPrefix = log => log.replace(/@?\s*(\.\/~\/babel-loader\/lib\?{[\s\S]*?}!)/g, '');
+/** Removes all loaders from any resource identifiers found in a string */
+function stripLoaderPrefix(str) {
+	if (typeof str==='string') {
+		return str.replace(/(^|\b|@)(\.\/~|\.{0,2}\/[^\s]+\/node_modules)\/\w+-loader(\/[^?!]+)?(\?\?[\w_.-]+|\?({[\s\S]*?})?)?!/g, '');
+	}
+	return str;
+}
 
-function stripBabelLoaderFromModuleNames(m) {
-	keysToNormalize.forEach(key => {
-		if (key in m) {
-			m[key] = stripBabelLoaderPrefix(m[key]);
+function stripLoaderFromModuleNames(m) {
+	for (let key in m) {
+		if (m.hasOwnProperty(key) && m[key]!=null && ~keysToNormalize.indexOf(key)) {
+			m[key] = stripLoaderPrefix(m[key]);
 		}
-	});
+	}
 
 	if (m.reasons) {
-		m.reasons.forEach(stripBabelLoaderFromModuleNames);
+		m.reasons.forEach(stripLoaderFromModuleNames);
 	}
 
 	return m;
