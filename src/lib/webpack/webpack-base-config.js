@@ -142,7 +142,7 @@ export default function (env) {
 							{
 								loader: 'postcss-loader',
 								options: {
-									sourceMap: isProd,
+									sourceMap: true,
 									plugins: [autoprefixer({ browsers })]
 								}
 							}
@@ -167,7 +167,7 @@ export default function (env) {
 							{
 								loader: 'postcss-loader',
 								options: {
-									sourceMap: isProd,
+									sourceMap: true,
 									plugins: [autoprefixer({ browsers })]
 								}
 							}
