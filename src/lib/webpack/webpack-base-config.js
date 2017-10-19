@@ -122,7 +122,10 @@ export default function (env) {
 							options: {
 								cwd,
 								loader: 'stylus-loader',
-								options: { sourceMap:true }
+								options: {
+									sourceMap: true,
+									paths: [resolve(cwd, 'node_modules')]
+								}
 							}
 						}
 					]
