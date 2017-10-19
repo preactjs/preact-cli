@@ -107,7 +107,7 @@ export default function (env) {
 								loader: 'sass-loader',
 								options: {
 									sourceMap: true,
-									paths: [resolve(cwd, 'node_modules')]
+									includePaths: [resolve(cwd, 'node_modules')]
 								}
 							}
 						}
