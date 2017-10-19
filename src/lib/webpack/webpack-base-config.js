@@ -36,6 +36,8 @@ export default function (env) {
 	let babelrc = readJson( resolve(cwd, '.babelrc') ) || {};
 	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
+	let nodeModules = resolve(cwd, 'node_modules');
+
 	return {
 		context: src,
 
@@ -61,7 +63,7 @@ export default function (env) {
 		resolveLoader: {
 			modules: [
 				resolve(__dirname, '../../../node_modules'),
-				resolve(cwd, 'node_modules')
+				nodeModules
 			],
 			alias: {
 				'proxy-loader': require.resolve('./proxy-loader')
@@ -90,7 +92,7 @@ export default function (env) {
 								loader: 'less-loader',
 								options: {
 									sourceMap: true,
-									paths: [resolve(cwd, 'node_modules')]
+									paths: [nodeModules]
 								}
 							}
 						}
@@ -107,7 +109,7 @@ export default function (env) {
 								loader: 'sass-loader',
 								options: {
 									sourceMap: true,
-									includePaths: [resolve(cwd, 'node_modules')]
+									includePaths: [nodeModules]
 								}
 							}
 						}
@@ -124,7 +126,7 @@ export default function (env) {
 								loader: 'stylus-loader',
 								options: {
 									sourceMap: true,
-									paths: [resolve(cwd, 'node_modules')]
+									paths: [nodeModules]
 								}
 							}
 						}
