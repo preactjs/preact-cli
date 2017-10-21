@@ -3,8 +3,8 @@ import glob from 'glob';
 import gittar from 'gittar';
 import fs from 'fs.promised';
 import { green } from 'chalk';
-import { resolve } from 'path';
 import { prompt } from 'inquirer';
+import { resolve, dirname } from 'path';
 import asyncCommand from '../lib/async-command';
 import { info, isDir, hasCommand, error, trim, warn } from '../util';
 import { install, initGit, addScripts, isMissing } from './../lib/setup';
@@ -59,9 +59,10 @@ export default asyncCommand({
 		}
 
 		let cwd = resolve(argv.cwd);
+		argv.dest = argv.dest || dirname(cwd);
 		let isYarn = argv.yarn && hasCommand('yarn');
-		let target = argv.dest && resolve(cwd, argv.dest);
-		let exists = target && isDir(target);
+		let target = resolve(cwd, argv.dest);
+		let exists = isDir(target);
 
 		if (exists && !argv.force) {
 			return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag', 1);
@@ -152,25 +153,26 @@ export default asyncCommand({
 			warn('Could not locate `package.json` file!');
 		}
 
-		if (argv.name) {
-			// Update `package.json` key
-			if (pkgData) {
-				spinner.text = 'Updating `name` within `package.json` file';
-				pkgData.name = argv.name.toLowerCase().replace(/\s+/g, '_');
-			}
-			// Find a `manifest.json`; use the first match, if any
-			let files = await Promise.promisify(glob)(target + '/**/manifest.json');
-			let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
-			if (manifest) {
-				spinner.text = 'Updating `name` within `manifest.json` file';
-				manifest.name = manifest.short_name = argv.name;
-				// Write changes to `manifest.json`
-				await fs.writeFile(files[0], JSON.stringify(manifest, null, 2));
-				if (argv.name.length > 12) {
-					// @see https://developer.chrome.com/extensions/manifest/name#short_name
-					process.stdout.write('\n');
-					warn('Your `short_name` should be fewer than 12 characters.');
-				}
+		// Use `--name` value or `dest` dir's name
+		argv.name = argv.name || argv.dest;
+
+		// Update `package.json` key
+		if (pkgData) {
+			spinner.text = 'Updating `name` within `package.json` file';
+			pkgData.name = argv.name.toLowerCase().replace(/\s+/g, '_');
+		}
+		// Find a `manifest.json`; use the first match, if any
+		let files = await Promise.promisify(glob)(target + '/**/manifest.json');
+		let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
+		if (manifest) {
+			spinner.text = 'Updating `name` within `manifest.json` file';
+			manifest.name = manifest.short_name = argv.name;
+			// Write changes to `manifest.json`
+			await fs.writeFile(files[0], JSON.stringify(manifest, null, 2));
+			if (argv.name.length > 12) {
+				// @see https://developer.chrome.com/extensions/manifest/name#short_name
+				process.stdout.write('\n');
+				warn('Your `short_name` should be fewer than 12 characters.');
 			}
 		}
 
