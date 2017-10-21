@@ -10,14 +10,19 @@ import PushManifestPlugin from './push-manifest';
 import baseConfig from './webpack-base-config';
 
 function clientConfig(env) {
-	const { isProd, source, src } = env;
+	const { isProd, source, src /*, port? */ } = env;
+
+	let entry = {
+		bundle: resolve(__dirname, './../entry'),
+		polyfills: resolve(__dirname, './polyfills')
+	};
+
+	if (!isProd) {
+		entry['hmr'] = `webpack-dev-server/client?http://localhost:${process.env.PORT || env.port || 8080}`;
+	}
 
 	return {
-		entry: {
-			bundle: resolve(__dirname, './../entry'),
-			polyfills: resolve(__dirname, './polyfills')
-		},
-
+		entry: entry,
 		output: {
 			path: env.dest,
 			publicPath: '/',
@@ -158,7 +163,7 @@ function isDev(config) {
 
 		devServer: {
 			inline: true,
-			hot: true,
+			/* setting hot:true will fuck up the HMR -- so DON'T! */
 			compress: true,
 			publicPath: '/',
 			contentBase: src,
