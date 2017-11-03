@@ -18,7 +18,11 @@ function clientConfig(env) {
 	};
 
 	if (!isProd) {
-		entry['hmr'] = `webpack-dev-server/client?http://localhost:${process.env.PORT || env.port || 8080}`;
+		entry.bundle = [
+			entry.bundle,
+			'webpack-dev-server/client',
+			'webpack/hot/dev-server'
+		];
 	}
 
 	return {
@@ -163,7 +167,7 @@ function isDev(config) {
 
 		devServer: {
 			inline: true,
-			/* setting hot:true will fuck up the HMR -- so DON'T! */
+			hot:true,
 			compress: true,
 			publicPath: '/',
 			contentBase: src,
