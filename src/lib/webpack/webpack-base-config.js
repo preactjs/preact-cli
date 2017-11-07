@@ -153,6 +153,7 @@ export default function (env) {
 							{
 								loader: 'postcss-loader',
 								options: {
+									ident: 'postcss',
 									sourceMap: true,
 									plugins: [autoprefixer({ browsers })]
 								}
@@ -178,6 +179,7 @@ export default function (env) {
 							{
 								loader: 'postcss-loader',
 								options: {
+									ident: 'postcss',
 									sourceMap: true,
 									plugins: [autoprefixer({ browsers })]
 								}

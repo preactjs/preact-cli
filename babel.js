@@ -19,18 +19,20 @@ var babelConfigs = require("./lib/lib/babel-config").default;
 module.exports = function preactCli(ctx, userOptions = {}) {
 
 	// set default configs based on user environment
-  var presetOptions = {
-    env: isProd ? "production" : "development",
-    modules: isTest ? "commonjs" : false,
-    browsers: defaultBrowserList
-  };
+	var presetOptions = {
+		env: isProd ? "production" : "development",
+		modules: isTest ? "commonjs" : false,
+		browsers: defaultBrowserList
+	};
 
 	// user specified options always the strongest
-	Object.keys(presetOptions).forEach(function(key) {
-    presetOptions[key] = userOptions[key] || presetOptions[key];
+	Object.keys(presetOptions).forEach(function (key) {
+		presetOptions[key] = userOptions[key] || presetOptions[key];
 	});
 
 	// yay! return the configs
-	return babelConfigs({ env: { production: presetOptions.env === "production" }},
-	{ modules: presetOptions.modules, browsers: presetOptions.browsers });
+	return babelConfigs(
+		{ env: { production: presetOptions.env === "production" } },
+		{ modules: presetOptions.modules, browsers: presetOptions.browsers }
+	);
 };
