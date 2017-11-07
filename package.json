@@ -31,7 +31,8 @@
   "files": [
     "lib",
     "examples",
-    "check.js"
+    "check.js",
+    "babel.js"
   ],
   "keywords": [
     "preact",
