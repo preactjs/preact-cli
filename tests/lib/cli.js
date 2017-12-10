@@ -10,9 +10,9 @@ const cliPath = cwd => NOINSTALL ? CLI : resolve(cwd, 'node_modules/.bin/preact'
 
 export async function create(template, name) {
 	let dest = tmpDir();
-	let args = [CLI, 'create', template, dest];
+	let args = [CLI, 'create', template, dest, '--name'];
 
-	name && args.push(`--name ${name}`);
+	args.push(name || `test-${template}`);
 	NOINSTALL && args.push('--no-install');
 
 	await run('node', args);
