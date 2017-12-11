@@ -136,7 +136,7 @@ export function writeJsonStats(stats) {
 	function strip(stats) {
 		stats.modules.forEach(stripLoaderFromModuleNames);
 		stats.chunks.forEach(c => {
-			(c.mapModules!=null ? c.mapModules(Object) : c.modules.slice()).forEach(stripLoaderFromModuleNames);
+			(c.mapModules!=null ? c.mapModules(Object) : c.getModules()).forEach(stripLoaderFromModuleNames);
 		});
 		if (stats.children) stats.children.forEach(strip);
 	}
