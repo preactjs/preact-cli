@@ -36,6 +36,8 @@ export default function (env) {
 	let babelrc = readJson( resolve(cwd, '.babelrc') ) || {};
 	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
+	let nodeModules = resolve(cwd, 'node_modules');
+
 	return {
 		context: src,
 
@@ -61,7 +63,7 @@ export default function (env) {
 		resolveLoader: {
 			modules: [
 				resolve(__dirname, '../../../node_modules'),
-				resolve(cwd, 'node_modules')
+				nodeModules
 			],
 			alias: {
 				'proxy-loader': require.resolve('./proxy-loader')
@@ -88,7 +90,10 @@ export default function (env) {
 							options: {
 								cwd,
 								loader: 'less-loader',
-								options: { sourceMap:true }
+								options: {
+									sourceMap: true,
+									paths: [nodeModules]
+								}
 							}
 						}
 					]
@@ -102,7 +107,10 @@ export default function (env) {
 							options: {
 								cwd,
 								loader: 'sass-loader',
-								options: { sourceMap:true }
+								options: {
+									sourceMap: true,
+									includePaths: [nodeModules]
+								}
 							}
 						}
 					]
@@ -116,7 +124,10 @@ export default function (env) {
 							options: {
 								cwd,
 								loader: 'stylus-loader',
-								options: { sourceMap:true }
+								options: {
+									sourceMap: true,
+									paths: [nodeModules]
+								}
 							}
 						}
 					]
@@ -142,6 +153,7 @@ export default function (env) {
 							{
 								loader: 'postcss-loader',
 								options: {
+									ident: 'postcss',
 									sourceMap: true,
 									plugins: [autoprefixer({ browsers })]
 								}
@@ -167,6 +179,7 @@ export default function (env) {
 							{
 								loader: 'postcss-loader',
 								options: {
+									ident: 'postcss',
 									sourceMap: true,
 									plugins: [autoprefixer({ browsers })]
 								}

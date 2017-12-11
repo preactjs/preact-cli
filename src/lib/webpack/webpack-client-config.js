@@ -10,14 +10,23 @@ import PushManifestPlugin from './push-manifest';
 import baseConfig from './webpack-base-config';
 
 function clientConfig(env) {
-	const { isProd, source, src } = env;
+	const { isProd, source, src /*, port? */ } = env;
+
+	let entry = {
+		bundle: resolve(__dirname, './../entry'),
+		polyfills: resolve(__dirname, './polyfills')
+	};
+
+	if (!isProd) {
+		entry.bundle = [
+			entry.bundle,
+			'webpack-dev-server/client',
+			'webpack/hot/dev-server'
+		];
+	}
 
 	return {
-		entry: {
-			bundle: resolve(__dirname, './../entry'),
-			polyfills: resolve(__dirname, './polyfills')
-		},
-
+		entry: entry,
 		output: {
 			path: env.dest,
 			publicPath: '/',
@@ -158,7 +167,7 @@ function isDev(config) {
 
 		devServer: {
 			inline: true,
-			hot: true,
+			hot:true,
 			compress: true,
 			publicPath: '/',
 			contentBase: src,
