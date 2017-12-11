@@ -222,13 +222,13 @@ const SERVERS = {
 			}
 		}
 
-		let config = await readJson(path.resolve(dir, outfile))
+		let config = await readJson(path.resolve(dir, outfile));
 		config = Object.assign({}, config, {
 			hosting: {
 				...configObj,
 				public: path.relative(dir, configObj.public),
 			}
-		})
+		});
 		config = JSON.stringify(config, null, 2);
 
 		if (outfile) {
