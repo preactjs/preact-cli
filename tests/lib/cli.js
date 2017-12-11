@@ -6,12 +6,13 @@ import { log } from './utils';
 
 const CLI = require.resolve('../../lib');
 const NOINSTALL = !!process.env.SKIP_INSTALL;
+const cliPath = cwd => NOINSTALL ? CLI : resolve(cwd, 'node_modules/.bin/preact');
 
 export async function create(template, name) {
 	let dest = tmpDir();
-	let args = [CLI, 'create', template, dest];
+	let args = [CLI, 'create', template, dest, '--name'];
 
-	name && args.push(`--name ${name}`);
+	args.push(name || `test-${template}`);
 	NOINSTALL && args.push('--no-install');
 
 	await run('node', args);
@@ -34,11 +35,11 @@ export const watch = (appDir, host, port) => log(
 	'preact watch'
 );
 
-const preact = async (args, cwd) => {
+async function preact(args, cwd) {
 	await run('node', [cliPath(cwd), ...args], cwd);
-};
+}
 
-const run = async (command, args, cwd) => {
+async function run(command, args, cwd) {
 	try {
 		await crossSpawn(command, args.filter(Boolean), { cwd });
 	} catch (err) {
@@ -48,43 +49,43 @@ const run = async (command, args, cwd) => {
 
 		throw err.toString();
 	}
-};
+}
 
-const spawnPreact = (args, cwd) => new Promise((resolve, reject) => {
-	let child = spawn('node', [cliPath(cwd), ...args.filter(Boolean)], { cwd });
-	let exitCode, killed = false;
-	let errListener = err => {
-		reject(err);
-	};
+function spawnPreact(args, cwd) {
+	return new Promise((resolve, reject) => {
+		let child = spawn('node', [cliPath(cwd), ...args.filter(Boolean)], { cwd });
+		let exitCode, killed = false;
+		let errListener = err => {
+			reject(err);
+		};
 
-	child.on('error', errListener);
-	child.on('exit', code => {
-		killed = true;
-		exitCode = code;
+		child.on('error', errListener);
+		child.on('exit', code => {
+			killed = true;
+			exitCode = code;
+		});
+
+		let origKill = child.kill.bind(child);
+		child.kill = () => new Promise((resolve) => {
+			child.stdout.unpipe(process.stdout);
+			child.stderr.unpipe(process.stderr);
+			if (killed) {
+				resolve(exitCode);
+			} else {
+				child.on('exit', (code) => {
+					resolve(code);
+				});
+			}
+
+			origKill();
+		});
+
+		child.stdout.pipe(process.stdout);
+		child.stderr.pipe(process.stderr);
+
+		setTimeout(() => {
+			child.removeListener('error', errListener);
+			resolve(child);
+		}, 500);
 	});
-
-	let origKill = child.kill.bind(child);
-	child.kill = () => new Promise((resolve) => {
-		child.stdout.unpipe(process.stdout);
-		child.stderr.unpipe(process.stderr);
-		if (killed) {
-			resolve(exitCode);
-		} else {
-			child.on('exit', (code) => {
-				resolve(code);
-			});
-		}
-
-		origKill();
-	});
-
-	child.stdout.pipe(process.stdout);
-	child.stderr.pipe(process.stderr);
-
-	setTimeout(() => {
-		child.removeListener('error', errListener);
-		resolve(child);
-	}, 500);
-});
-
-const cliPath = cwd => NOINSTALL ? CLI : resolve(cwd, './node_modules/.bin/preact');
+}
