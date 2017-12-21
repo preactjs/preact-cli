@@ -14,7 +14,7 @@
     "dev": "babel-node src",
     "lint": "eslint src tests",
     "pretest": "npm run -s build && rimraf tests/output",
-    "test": "jest",
+    "test": "jest tests/build.test.js",
     "posttest": "rimraf tests/output",
     "postinstall": "node -p 'require(\"./check.js\")()'",
     "test:build": "babel-node src build --cwd examples/root",
@@ -93,6 +93,8 @@
     "jest": "^20.0.4",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
+    "node-sass": "^4.7.2",
+    "sass-loader": "^6.0.6",
     "uuid": "^3.0.1"
   },
   "dependencies": {
