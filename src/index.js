@@ -1,35 +1,70 @@
 #!/usr/bin/env node
 
-import updateNotifier from 'update-notifier';
-import yargs from 'yargs';
-import create from './commands/create';
-import build from './commands/build';
-import watch from './commands/watch';
-import serve from './commands/serve';
-import list from './commands/list';
-import installHooks from './lib/output-hooks';
-import pkg from '../package.json';
-import logo from './lib/logo';
-import checkVersion from './../check';
-
+import sade from 'sade';
 global.Promise = require('bluebird');
+import notifier from 'update-notifier';
+import * as cmd from './commands';
+import version from '../check';
+import pkg from '../package';
 
-checkVersion();
 
-installHooks();
+version();
 
-updateNotifier({pkg}).notify();
+// installHooks();
 
-yargs
-	.command(create)
-	.command(build)
-	.command(watch)
-	.command(serve)
-	.command(list)
-	.usage(logo(`\n\npreact-cli ${pkg.version}`) + `\nFor help with a specific command, enter:\n  preact help [command]`)
-	.help()
-	.alias('h', 'help')
-	.demandCommand()
-	.strict()
-	.argv;
+notifier({ pkg }).notify();
 
+let prog = sade('preact').version(pkg.version);
+
+prog
+	.command('build [src]')
+	.describe('Create a production build')
+	.option('--src', 'Specify source directory', 'src')
+	.option('--dest', 'Specify output directory', 'build')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--json', 'Generate build stats for bundle analysis')
+	.option('--template', 'Path to custom HTML template')
+	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
+	.action(cmd.build);
+
+prog
+	.command('create <template> <dest>')
+	.describe('Create a new application')
+	.option('--name', 'The application name')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--force', 'Force destination output; will override!')
+	.option('--install', 'Install dependencies', true)
+	.option('--yarn', 'Use `yarn` instead of `npm`')
+	.option('--git', 'Initialize git repository')
+	.action(cmd.build);
+
+prog.command('list')
+	.describe('List official templates')
+	.action(cmd.list);
+
+prog
+	.command('serve [dir]')
+	.describe('Run a HTTP2 static fileserver')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--dir', 'Path to root directory; used for static files', 'build')
+	.option('--server', 'Type of server to run; use "config" for Firebase', 'simplehttp2server')
+	.option('--dest', 'Path custom Firebase config should be written', 'firebase.json')
+	.option('--cors', 'Specify allowable origins', 'localhost')
+	.option('-p, --port', 'Set PORT for server', 8080)
+	.action(cmd.serve);
+
+prog
+	.command('watch [src]')
+	.describe('Start a live-reload server for development')
+	.option('--src', 'Specify source directory', 'src')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--json', 'Generate build stats for bundle analysis')
+	.option('--prerender', 'Pre-render static content on first run')
+	.option('--template', 'Path to custom HTML template')
+	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
+	.option('-H, --host', 'Set server hostname', '0.0.0.0')
+	.option('-p, --port', 'Set server port', 8080)
+	.option('--https', 'Run server with HTTPS')
+	.action(cmd.watch);
+
+prog.parse(process.argv);

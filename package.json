@@ -143,6 +143,7 @@
     "raw-loader": "^0.5.1",
     "require-relative": "^0.8.7",
     "rimraf": "^2.6.1",
+    "sade": "^1.1.1",
     "script-ext-html-webpack-plugin": "^1.8.0",
     "simplehttp2server": "^2.0.0",
     "source-map": "^0.5.6",
@@ -158,7 +159,6 @@
     "webpack-dev-server": "^2.9.0",
     "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.1.1",
-    "which": "^1.2.14",
-    "yargs": "^8.0.1"
+    "which": "^1.2.14"
   }
 }
