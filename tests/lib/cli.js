@@ -16,10 +16,10 @@ export async function create(template, name) {
 	return dest;
 }
 
-export const build = appDir => log(
-	() => preact(['build'], appDir),
-	'preact build'
-);
+export function build(cwd) {
+	let src='src', clean=0;
+	return cmd.build({ cwd, src, _:[], clean });
+}
 
 export const serve = (appDir, port) => log(
 	() => spawnPreact(['serve', port ? `-p=${port}` : undefined], appDir),

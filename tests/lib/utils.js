@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import path from 'path';
-import { stat } from 'fs.promised';
+import { relative, resolve } from 'path';
 import { promisify } from 'bluebird';
+import { stat } from 'fs.promised';
 import minimatch from 'minimatch';
 import glob from 'glob';
 
@@ -14,7 +14,7 @@ const globby = promisify(glob);
 const ignores = x => !/node_modules|package-lock|yarn.lock/i.test(x);
 
 export function expand(dir, opts) {
-	dir = path.resolve(dir);
+	dir = resolve(dir);
 	opts = Object.assign({ dot:true, nodir:true }, opts);
 	return globby(`${dir}/**`, opts).then(arr => arr.filter(ignores));
 }
@@ -26,7 +26,7 @@ export async function bytes(str) {
 export async function snapshot(dir) {
 	let str, tmp, out={};
 	for (str of await expand(dir)) {
-		tmp = path.relative(dir, str);
+		tmp = relative(dir, str);
 		out[tmp] = await bytes(str);
 	}
 	return out;
