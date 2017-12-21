@@ -1,6 +1,5 @@
 import { resolve } from 'path';
 import { spawn } from 'child_process';
-import crossSpawn from 'cross-spawn-promise';
 import * as cmd from '../../lib/commands';
 import { tmpDir } from './output';
 import { log } from './utils';
@@ -31,28 +30,12 @@ export const watch = (appDir, host, port) => log(
 	'preact watch'
 );
 
-async function preact(args, cwd) {
-	await run('node', [cliPath(cwd), ...args], cwd);
-}
-
-async function run(command, args, cwd) {
-	try {
-		await crossSpawn(command, args.filter(Boolean), { cwd });
-	} catch (err) {
-		if (err.stderr) {
-			console.error(err.stderr.toString()); //eslint-disable-line no-console
-		}
-
-		throw err.toString();
-	}
-}
-
 function spawnPreact(args, cwd) {
-	return new Promise((resolve, reject) => {
+	return new Promise((res, rej) => {
 		let child = spawn('node', [cliPath(cwd), ...args.filter(Boolean)], { cwd });
 		let exitCode, killed = false;
 		let errListener = err => {
-			reject(err);
+			rej(err);
 		};
 
 		child.on('error', errListener);
@@ -62,14 +45,14 @@ function spawnPreact(args, cwd) {
 		});
 
 		let origKill = child.kill.bind(child);
-		child.kill = () => new Promise((resolve) => {
+		child.kill = () => new Promise((res) => {
 			child.stdout.unpipe(process.stdout);
 			child.stderr.unpipe(process.stderr);
 			if (killed) {
-				resolve(exitCode);
+				res(exitCode);
 			} else {
 				child.on('exit', (code) => {
-					resolve(code);
+					res(code);
 				});
 			}
 
