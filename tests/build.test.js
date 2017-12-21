@@ -1,4 +1,3 @@
-import mkdir from 'mkdirp';
 import { join } from 'path';
 import { readFile } from 'fs.promised';
 import looksLike from 'html-looks-like';
@@ -21,9 +20,6 @@ describe('preact build', () => {
 	ours.forEach(key =>
 		it(`builds the '${key}' output`, async () => {
 			let dir = await create(key);
-
-			// create empty dir, avoids exit()
-			mkdir.sync(join(dir, 'node_modules'));
 
 			await build(dir);
 			dir = join(dir, 'build');

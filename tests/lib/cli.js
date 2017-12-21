@@ -1,4 +1,5 @@
-import { resolve } from 'path';
+import mkdirp from 'mkdirp';
+import { join, resolve } from 'path';
 import { spawn } from 'child_process';
 import * as cmd from '../../lib/commands';
 import { tmpDir } from './output';
@@ -16,6 +17,7 @@ export async function create(template, name) {
 }
 
 export function build(cwd) {
+	mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
 	let src='src', dest='build', config='preact.config.js', json='prerender-urls.json';
 	return cmd.build({ _:[], src, dest, cwd, config, prerenderUrls:json });
 }
