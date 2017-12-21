@@ -15,14 +15,16 @@ export default (env, options={}) => {
 					'transform-regenerator',
 					'transform-es2015-typeof-symbol'
 				]
-			}],
-			require.resolve('babel-preset-stage-1')
+			}]
 		],
 		plugins: [
 			require.resolve('babel-plugin-transform-object-assign'),
+			require.resolve('babel-plugin-transform-class-properties'),
+			require.resolve('babel-plugin-transform-export-extensions'),
+			require.resolve('babel-plugin-transform-object-rest-spread'),
 			require.resolve('babel-plugin-transform-decorators-legacy'),
 			require.resolve('babel-plugin-transform-react-constant-elements'),
-			isProd ? require.resolve('babel-plugin-transform-react-remove-prop-types') : null,
+			isProd && require.resolve('babel-plugin-transform-react-remove-prop-types'),
 			[require.resolve('babel-plugin-transform-react-jsx'), { pragma: 'h' }],
 			[require.resolve('babel-plugin-jsx-pragmatic'), {
 				module: 'preact',
