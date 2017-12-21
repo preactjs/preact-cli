@@ -6,6 +6,9 @@ import runWebpack, { showStats, writeJsonStats } from '../lib/webpack/run-webpac
 
 export default async function (argv) {
 	argv.src = argv._.pop() || argv.src;
+	// add `default:true`s, `--no-*` disables
+	argv.prerender = (argv.prerender === void 0);
+	argv.production = (argv.production === void 0);
 
 	let cwd = resolve(argv.cwd);
 	let modules = resolve(cwd, 'node_modules');
@@ -14,7 +17,7 @@ export default async function (argv) {
 		return error('No `node_modules` found! Please run `npm install` before continuing.', 1);
 	}
 
-	if (argv.clean) {
+	if (argv.clean === void 0) {
 		let dest = resolve(cwd, argv.dest);
 		await Promise.promisify(rimraf)(dest);
 	}
