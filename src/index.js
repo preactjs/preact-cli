@@ -1,12 +1,10 @@
 #!/usr/bin/env node
-
 import sade from 'sade';
 global.Promise = require('bluebird');
 import notifier from 'update-notifier';
 import * as cmd from './commands';
 import version from '../check';
 import pkg from '../package';
-
 
 version();
 

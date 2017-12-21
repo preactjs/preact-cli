@@ -85,17 +85,16 @@ async function devBuild(env, onprogress) {
 
 async function prodBuild(env) {
 	let config = clientConfig(env);
-
 	await transformConfig(env, config);
-	let serverCompiler, clientCompiler=webpack(config);
 
 	if (env.prerender) {
 		let ssrConfig = serverConfig(env);
 		await transformConfig(env, ssrConfig, true);
-		serverCompiler = webpack(ssrConfig);
+		let serverCompiler = webpack(ssrConfig);
 		await runCompiler(serverCompiler);
 	}
 
+	let clientCompiler = webpack(config);
 	let stats = await runCompiler(clientCompiler);
 
 	// Timeout for plugins that work on `after-emit` event of webpack
@@ -104,16 +103,18 @@ async function prodBuild(env) {
 	return stats;
 }
 
-const runCompiler = compiler => new Promise((res, rej) => {
-	compiler.run((err, stats) => {
-		if (err || stats.hasErrors()) {
-			showStats(stats);
-			rej(red('Build failed!'));
-		}
+function runCompiler(compiler) {
+	return new Promise((res, rej) => {
+		compiler.run((err, stats) => {
+			if (err || stats.hasErrors()) {
+				showStats(stats);
+				rej(red('Build failed!'));
+			}
 
-		res(stats);
+			res(stats);
+		});
 	});
-});
+}
 
 export function showStats(stats) {
 	let info = stats.toJson('errors-only');

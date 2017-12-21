@@ -6,6 +6,8 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { readJson } from './webpack-base-config';
 import prerender from './prerender';
 
+const template = resolve(__dirname, '../../resources/template.html');
+
 export default function (config) {
 	const { cwd, dest, isProd, src } = config;
 
@@ -13,7 +15,7 @@ export default function (config) {
 		let { url, title } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
-			template: `!!ejs-loader!${config.template || resolve(__dirname, '../../resources/template.html')}`,
+			template: `!!ejs-loader!${config.template || template}`,
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
@@ -22,10 +24,10 @@ export default function (config) {
 				removeComments: true
 			},
 			favicon: existsSync(resolve(src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../../resources/favicon.ico'),
-			manifest: config.manifest,
 			inject: true,
 			compile: true,
-			preload: config.preload===true,
+			preload: config.preload,
+			manifest: config.manifest,
 			title: title || config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
 			excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 			config,

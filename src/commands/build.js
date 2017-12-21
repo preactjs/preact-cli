@@ -19,7 +19,7 @@ export default async function (argv) {
 
 	if (argv.clean === void 0) {
 		let dest = resolve(cwd, argv.dest);
-		await Promise.promisify(rimraf)(dest);
+		await promisify(rimraf)(dest);
 	}
 
 	let stats = await runWebpack(false, argv);

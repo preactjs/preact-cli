@@ -1,9 +1,9 @@
-import getDevelopmentCertificate from 'devcert-san';
+import fs from 'fs.promised';
+import { resolve } from 'path';
+import { execFile } from 'child_process';
 import persistencePath from 'persist-path';
 import simplehttp2server from 'simplehttp2server';
-import fs from 'fs.promised';
-import path from 'path';
-import { execFile } from 'child_process';
+import getDevelopmentCertificate from 'devcert-san';
 
 export default async function getSslCert() {
 	process.stdout.write('Setting up SSL certificate (may require sudo)...\n');
@@ -38,10 +38,10 @@ const spawnServerForCert = () => new Promise( (resolve, reject) => {
 				clearTimeout(timer);
 				child.kill();
 				resolve({
-					key: await fs.readFile(path.resolve(cwd, 'key.pem'), 'utf-8'),
-					cert: await fs.readFile(path.resolve(cwd, 'cert.pem'), 'utf-8'),
-					keyPath: path.resolve(cwd, 'key.pem'),
-					certPath: path.resolve(cwd, 'cert.pem')
+					key: await fs.readFile(resolve(cwd, 'key.pem'), 'utf-8'),
+					cert: await fs.readFile(resolve(cwd, 'cert.pem'), 'utf-8'),
+					keyPath: resolve(cwd, 'key.pem'),
+					certPath: resolve(cwd, 'cert.pem')
 				});
 			}
 		}
