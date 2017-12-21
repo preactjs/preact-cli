@@ -58,12 +58,12 @@ prog
 	.option('--src', 'Specify source directory', 'src')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
 	.option('--json', 'Generate build stats for bundle analysis')
+	.option('--https', 'Run server with HTTPS protocol')
 	.option('--prerender', 'Pre-render static content on first run')
 	.option('--template', 'Path to custom HTML template')
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port', 8080)
-	.option('--https', 'Run server with HTTPS')
 	.action(cmd.watch);
 
 prog.parse(process.argv);
