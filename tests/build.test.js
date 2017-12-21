@@ -34,7 +34,7 @@ describe('preact build', () => {
 		})
 	);
 
-	it('should prerender using webpack', async () => {
+	it('should use SASS styles', async () => {
 		let dir = await subject('sass');
 		await build(dir);
 
