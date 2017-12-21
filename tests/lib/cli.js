@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import { spawn } from 'child_process';
 import crossSpawn from 'cross-spawn-promise';
+import * as cmd from '../../lib/commands';
 import { tmpDir } from './output';
 import { log } from './utils';
 
@@ -10,13 +11,8 @@ const cliPath = cwd => NOINSTALL ? CLI : resolve(cwd, 'node_modules/.bin/preact'
 
 export async function create(template, name) {
 	let dest = tmpDir();
-	let args = [CLI, 'create', template, dest, '--name'];
-
-	args.push(name || `test-${template}`);
-	NOINSTALL && args.push('--no-install');
-
-	await run('node', args);
-
+	name = name || `test-${template}`;
+	await cmd.create(template, dest, { name, cwd:'.' });
 	return dest;
 }
 

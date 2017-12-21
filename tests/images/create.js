@@ -20,5 +20,3 @@ exports.default = [
 	'src/routes/profile/style.css',
 	'src/style/index.css'
 ];
-
-exports.full = exports.default;
