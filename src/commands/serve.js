@@ -1,69 +1,25 @@
-import asyncCommand from '../lib/async-command';
+import tmp from 'tmp';
 import path from 'path';
 import fs from 'fs.promised';
-import tmp from 'tmp';
 import { execFile } from 'child_process';
-import getSslCert from '../lib/ssl-cert';
 import persistencePath from 'persist-path';
 import simplehttp2server from 'simplehttp2server';
+import getCert from '../lib/ssl-cert';
 import { isDir } from '../util';
 
-export default asyncCommand({
-	command: 'serve [dir]',
-
-	desc: 'Start an HTTP2 static fileserver.',
-
-	builder: {
-		cwd: {
-			description: 'A directory to use instead of $PWD.',
-			default: '.'
-		},
-		dir: {
-			description: 'Directory root to serve static files from.',
-			default: 'build'
-		},
-		server: {
-			description: 'Which server to run, or "config" to produce a firebase config.',
-			choices: [
-				'simplehttp2server',
-				'superstatic',
-				'config'
-			],
-			default: 'simplehttp2server'
-		},
-		dest: {
-			description: 'Directory or filename where firebase.json should be written\n  (used for --server config)',
-			defaultDescription: '-'
-		},
-		port: {
-			description: 'Port to start a server on.',
-			defaultDescription: 'PORT || 8080',
-			alias: 'p'
-		},
-		cors: {
-			description: 'Set allowed origins',
-			defaultDescription: 'https://localhost:${PORT}'
-		}
-	},
-
-	async handler(argv) {
-		await serve(argv);
-	}
-});
-
-
 /** Spawn an HTTP2 server.
- *	@param {object} options
- *	@param {string} [options.config]		Filename of a Firebase Hosting configuration, relative to cwd
- *	@param {string} [options.cwd]			Directory to host intead of `process.cwd()`
- *	@param {string} [options.dir='.']		Static asset directory, relative to `options.cwd`
- *	@param {number|string} [options.port]	Port to start the http server on
+ *	@param {object} argv
+ *	@param {string} [argv.config]		Filename of a Firebase Hosting configuration, relative to cwd
+ *	@param {string} [argv.cwd]			Directory to host intead of `process.cwd()`
+ *	@param {string} [argv.dir='.']		Static asset directory, relative to `argv.cwd`
+ *	@param {number|string} [argv.port]	Port to start the http server on
  */
-async function serve(options) {
-	let dir = path.resolve(options.cwd, options.dir || '.');
+export default async function serve(argv) {
+	argv.dir = argv._.pop() || argv.dir;
+	let dir = path.resolve(argv.cwd, argv.dir);
 
 	// Allow overriding default hosting config via `--config firebase.json`:
-	let configFile = options.config ? options.config : path.resolve(__dirname, '../resources/static-app.json');
+	let configFile = argv.config || path.resolve(__dirname, '../resources/static-app.json');
 	let config = await readJson(configFile);
 
 	// Simplehttp2server can only load certs from its CWD, so we spawn it in lib/resources where the certs are located.
@@ -83,14 +39,14 @@ async function serve(options) {
 	configFile = await tmpFile({ postfix: '.json' });
 	await fs.writeFile(configFile, JSON.stringify(config));
 
-	let port = options.port || process.env.PORT || 8080;
+	let port = argv.port || process.env.PORT;
 
 	await serveHttp2({
-		options,
+		options: argv,
 		config: configFile,
 		configObj: config,
-		server: options.server,
-		cors: options.cors || `https://localhost:${port}`,
+		server: argv.server,
+		cors: argv.cors || `https://localhost:${port}`,
 		port,
 		dir,
 		cwd: path.resolve(__dirname, '../resources')
@@ -183,7 +139,7 @@ const serveHttp2 = options => Promise.resolve(options)
 
 const SERVERS = {
 	async simplehttp2server(options) {
-		let ssl = await getSslCert();
+		let ssl = await getCert();
 		if (ssl) {
 			await fs.writeFile(path.resolve(options.cwd, 'key.pem'), ssl.key);
 			await fs.writeFile(path.resolve(options.cwd, 'cert.pem'), ssl.cert);
