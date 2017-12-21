@@ -1,5 +1,5 @@
 import getCert from '../lib/ssl-cert';
-// import runWebpack, { showStats } from '../lib/webpack/run-webpack';
+import runWebpack, { showStats } from '../lib/webpack/run-webpack';
 import { warn } from '../util';
 
 export default async function (argv) {
@@ -15,6 +15,6 @@ export default async function (argv) {
 		argv.https = ssl;
 	}
 
-	// let stats = await runWebpack(true, argv, showStats);
-	// showStats(stats);
+	let stats = await runWebpack(true, argv, showStats);
+	showStats(stats);
 }

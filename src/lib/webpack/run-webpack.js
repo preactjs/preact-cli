@@ -1,11 +1,10 @@
 import ip from 'ip';
-import { resolve } from 'path';
-import { writeFile } from 'fs.promised';
 import webpack from 'webpack';
-import chalk from 'chalk';
 import getPort from 'get-port';
-import clearConsole from 'console-clear';
-import DevServer from 'webpack-dev-server';
+import { resolve } from 'path';
+import clear from 'console-clear';
+import { writeFile } from 'fs.promised';
+import { bold, red, green } from 'chalk';
 import clientConfig from './webpack-client-config';
 import serverConfig from './webpack-server-config';
 import transformConfig from './transform-config';
@@ -56,29 +55,30 @@ async function devBuild(env, onprogress) {
 			let host = process.env.HOST || devServer.host || 'localhost';
 			if (host === '0.0.0.0') host = 'localhost';
 
-			let serverAddr = `${protocol}://${host}:${chalk.bold(port)}`;
-			let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
+			let serverAddr = `${protocol}://${host}:${bold(port)}`;
+			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
 
-			clearConsole();
+			clear();
 
 			if (stats.hasErrors()) {
-				process.stdout.write(chalk.red('\Build failed!\n\n'));
+				process.stdout.write(red('\Build failed!\n\n'));
 			} else {
-				process.stdout.write(chalk.green('Compiled successfully!\n\n'));
+				process.stdout.write(green('Compiled successfully!\n\n'));
 
 				if (userPort !== port) {
-					process.stdout.write(`Port ${chalk.bold(userPort)} is in use, using ${chalk.bold(port)} instead\n\n`);
+					process.stdout.write(`Port ${bold(userPort)} is in use, using ${bold(port)} instead\n\n`);
 				}
 				process.stdout.write('You can view the application in browser.\n\n');
-				process.stdout.write(`${chalk.bold('Local:')}            ${serverAddr}\n`);
-				process.stdout.write(`${chalk.bold('On Your Network:')}  ${localIpAddr}\n`);
+				process.stdout.write(`${bold('Local:')}            ${serverAddr}\n`);
+				process.stdout.write(`${bold('On Your Network:')}  ${localIpAddr}\n`);
 			}
 
-			if (onprogress) onprogress(stats);
+			onprogress && onprogress(stats);
 		});
 
 		compiler.plugin('failed', rej);
 
+		let DevServer = require('webpack-dev-server');
 		new DevServer(compiler, config.devServer).listen(port);
 	});
 }
@@ -108,7 +108,7 @@ const runCompiler = compiler => new Promise((res, rej) => {
 	compiler.run((err, stats) => {
 		if (err || stats.hasErrors()) {
 			showStats(stats);
-			rej(chalk.red('Build failed!'));
+			rej(red('Build failed!'));
 		}
 
 		res(stats);

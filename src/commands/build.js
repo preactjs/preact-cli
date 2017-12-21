@@ -2,7 +2,7 @@ import rimraf from 'rimraf';
 import { resolve } from 'path';
 import { promisify } from 'bluebird';
 import { isDir, error } from '../util';
-// import runWebpack, { showStats, writeJsonStats } from '../lib/webpack/run-webpack';
+import runWebpack, { showStats, writeJsonStats } from '../lib/webpack/run-webpack';
 
 export default async function (argv) {
 	argv.src = argv._.pop() || argv.src;
@@ -19,11 +19,11 @@ export default async function (argv) {
 		await Promise.promisify(rimraf)(dest);
 	}
 
-	// let stats = await runWebpack(false, argv);
+	let stats = await runWebpack(false, argv);
 
-	// showStats(stats);
+	showStats(stats);
 
-	// if (argv.json) {
-	// 	await writeJsonStats(stats);
-	// }
+	if (argv.json) {
+		await writeJsonStats(stats);
+	}
 }
