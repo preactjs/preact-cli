@@ -10,10 +10,10 @@ export default class App extends Component {
 		this.currentUrl = e.url;
 	};
 
-	render() {
+	render(props) {
 		return (
 			<div id="app">
-				<Router onChange={this.handleRoute}>
+				<Router url={props.url} onChange={this.handleRoute}>
 					<Home path="/" />
 					<Route66 path="/route66" />
 				</Router>
