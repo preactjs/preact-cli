@@ -17,8 +17,8 @@ export async function create(template, name) {
 }
 
 export function build(cwd) {
-	let src='src', clean=0;
-	return cmd.build({ cwd, src, _:[], clean });
+	let src='src', dest='build', config='preact.config.js', json='prerender-urls.json';
+	return cmd.build({ _:[], src, dest, cwd, config, prerenderUrls:json });
 }
 
 export const serve = (appDir, port) => log(

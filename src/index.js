@@ -22,6 +22,7 @@ prog
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--template', 'Path to custom HTML template')
+	.option('--prerenderUrls', 'Path to pre-rendered routes config', 'prerender-urls.json')
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.action(cmd.build);
 
