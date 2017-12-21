@@ -15,8 +15,7 @@ export default (env, options={}) => {
 					'transform-regenerator',
 					'transform-es2015-typeof-symbol'
 				]
-			}],
-			require.resolve('babel-preset-stage-1')
+			}]
 		],
 		plugins: [
 			require.resolve('babel-plugin-transform-object-assign'),
