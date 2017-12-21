@@ -23,21 +23,21 @@ export default async function getSslCert() {
 }
 
 
-const spawnServerForCert = () => new Promise( (resolve, reject) => {
+const spawnServerForCert = () => new Promise((res, rej) => {
 	let cwd = persistencePath('preact-cli');
 	let child = execFile(simplehttp2server, ['-listen', ':40210'], {
 		cwd,
 		encoding: 'utf8'
 	}, (err, stdout, stderr) => {
-		if (err) return reject(err);
+		if (err) return rej(err);
 		let timer = setTimeout( () => {
-			reject('Error: certificate generation timed out.');
+			rej('Error: certificate generation timed out.');
 		}, 5000);
 		async function check(chunk) {
 			if (/listening/gi.match(chunk)) {
 				clearTimeout(timer);
 				child.kill();
-				resolve({
+				res({
 					key: await fs.readFile(resolve(cwd, 'key.pem'), 'utf-8'),
 					cert: await fs.readFile(resolve(cwd, 'cert.pem'), 'utf-8'),
 					keyPath: resolve(cwd, 'key.pem'),

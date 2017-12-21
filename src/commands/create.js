@@ -3,11 +3,11 @@ import glob from 'glob';
 import gittar from 'gittar';
 import fs from 'fs.promised';
 import { green } from 'chalk';
+import { resolve } from 'path';
 import { prompt } from 'inquirer';
 import { promisify } from 'bluebird';
-import { resolve, dirname } from 'path';
 import { info, isDir, hasCommand, error, trim, warn } from '../util';
-import { install, initGit, addScripts, isMissing } from '../lib/setup';
+import { install, initGit, addScripts } from '../lib/setup';
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
