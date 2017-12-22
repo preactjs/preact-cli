@@ -9,7 +9,12 @@
       "exclude": [
         "transform-regenerator"
       ]
-    }],
-    "stage-1"
+    }]
+  ],
+  "plugins": [
+    "syntax-dynamic-import",
+    "transform-class-properties",
+    "transform-export-extensions",
+    "transform-object-rest-spread"
   ]
 }
