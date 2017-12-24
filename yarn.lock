@@ -6572,9 +6572,9 @@ rx-lite@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/rx-lite/-/rx-lite-3.1.2.tgz#19ce502ca572665f3b647b10939f97fd1615f102"
 
-sade@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/sade/-/sade-1.1.1.tgz#aa4085249107805a46e9a032acda27d145bc8645"
+sade@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/sade/-/sade-1.2.0.tgz#6712d874a2a305ebe6c741541328e47f8a0d87ef"
   dependencies:
     mri "^1.1.0"
     pad-right "^0.2.2"
