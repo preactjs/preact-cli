@@ -35,7 +35,7 @@ prog
 	.option('--install', 'Install dependencies', true)
 	.option('--yarn', 'Use `yarn` instead of `npm`')
 	.option('--git', 'Initialize git repository')
-	.action(cmd.build);
+	.action(cmd.create);
 
 prog.command('list')
 	.describe('List official templates')
