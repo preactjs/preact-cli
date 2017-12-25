@@ -2,8 +2,8 @@ import getCert from '../lib/ssl-cert';
 import runWebpack, { showStats } from '../lib/webpack/run-webpack';
 import { warn } from '../util';
 
-export default async function (argv) {
-	argv.src = argv._.pop() || argv.src;
+export default async function (src, argv) {
+	argv.src = src || argv.src;
 	argv.production = false;
 
 	if (argv.https || process.env.HTTPS) {

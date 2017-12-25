@@ -4,8 +4,8 @@ import { promisify } from 'bluebird';
 import { isDir, error } from '../util';
 import runWebpack, { showStats, writeJsonStats } from '../lib/webpack/run-webpack';
 
-export default async function (argv) {
-	argv.src = argv._.pop() || argv.src;
+export default async function (src, argv) {
+	argv.src = src || argv.src;
 	// add `default:true`s, `--no-*` disables
 	argv.prerender = (argv.prerender === void 0);
 	argv.production = (argv.production === void 0);

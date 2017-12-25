@@ -14,9 +14,8 @@ import { isDir } from '../util';
  *	@param {string} [argv.dir='.']		Static asset directory, relative to `argv.cwd`
  *	@param {number|string} [argv.port]	Port to start the http server on
  */
-export default async function serve(argv) {
-	argv.dir = argv._.pop() || argv.dir;
-	let dir = path.resolve(argv.cwd, argv.dir);
+export default async function serve(dir, argv) {
+	dir = path.resolve(argv.cwd, dir || argv.dir);
 
 	// Allow overriding default hosting config via `--config firebase.json`:
 	let configFile = argv.config || path.resolve(__dirname, '../resources/static-app.json');
