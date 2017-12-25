@@ -7,7 +7,7 @@ import { resolve } from 'path';
 import { prompt } from 'inquirer';
 import { promisify } from 'bluebird';
 import { info, isDir, hasCommand, error, trim, warn } from '../util';
-import { install, initGit, addScripts } from '../lib/setup';
+import { addScripts, install, initGit, isMissing } from '../lib/setup';
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
@@ -16,16 +16,16 @@ const isMedia = str => RGX.test(str);
 export default async function (repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
-		return console.log('> Insufficient!');
-	}
-	// if (!argv.dest || !argv.template) {
-	// 	warn('Insufficient command arguments! Prompting...');
-	// 	info('Alternatively, run `preact create --help` for usage info.');
+		warn('Insufficient arguments! Prompting...');
+		info('Alternatively, run `preact create --help` for usage info.');
 
-	// 	let questions = isMissing(argv);
-	// 	let response = await prompt(questions);
-	// 	Object.assign(argv, response);
-	// }
+		let questions = isMissing(argv);
+		let response = await prompt(questions);
+
+		Object.assign(argv, response);
+		repo = repo || response.template;
+		dest = dest || response.dest;
+	}
 
 	let cwd = resolve(argv.cwd);
 	let target = resolve(cwd, dest);
