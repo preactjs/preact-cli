@@ -22,15 +22,15 @@ export async function create(template, name) {
 export function build(cwd) {
 	mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
 	let opts = Object.assign({ cwd }, argv);
-	return cmd.build(opts);
+	return cmd.build(argv.src, opts);
 }
 
 export function serve(cwd, port) {
 	let opts = Object.assign({ cwd, port }, argv);
-	return cmd.watch(opts);
+	return cmd.watch(argv.dest, opts);
 }
 
 export function watch(cwd, host, port) {
 	let opts = Object.assign({ cwd, host, port, https:false }, argv);
-	return cmd.watch(opts);
+	return cmd.watch(argv.src, opts);
 }
