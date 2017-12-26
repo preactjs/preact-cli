@@ -37,7 +37,7 @@ export default function (config) {
 		});
 	};
 
-	const pages = readJson(resolve(cwd, config.prerenderUrls)) || [{ url: '/' }];
+	const pages = readJson(resolve(cwd, config.prerenderUrls || '')) || [{ url: '/' }];
 
 	return pages.map(htmlWebpackConfig).map(conf => new HtmlWebpackPlugin(conf)).concat([
 		new HtmlWebpackExcludeAssetsPlugin(),
