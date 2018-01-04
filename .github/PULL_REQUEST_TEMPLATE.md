@@ -4,10 +4,7 @@
 
 <!-- E.g. a bugfix, feature, refactoring, build related change, etc… -->
 
-**If relevant, did you add tests for your changes?**
-
-
-**If relevant, link to documentation update:**
+**Did you add tests for your changes?**
 
 
 **Summary**
@@ -21,4 +18,4 @@
 
 **Other information**
 
-<!-- Node version, npm version, CLI version, operating system -->
+<!-- Node version, npm version, CLI version, operating system, browser -->
