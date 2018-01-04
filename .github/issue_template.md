@@ -14,6 +14,8 @@
 **If this is a feature request, what is motivation or use case for changing the behaviour?**
 
 **Please mention other relevant information.**
-- node version
+- Node version
 - npm version
 - Operating system
+- CLI version
+- Browser
