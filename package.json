@@ -16,7 +16,7 @@
     "pretest": "npm run -s build && rimraf tests/output",
     "test": "jest",
     "posttest": "rimraf tests/output",
-    "postinstall": "node -p 'require(\"./check.js\")()'",
+    "postinstall": "node -p 'require(\"./scripts/check.js\")()'",
     "test:build": "babel-node src build --cwd examples/root",
     "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
     "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
@@ -31,8 +31,7 @@
   "files": [
     "lib",
     "examples",
-    "check.js",
-    "babel.js"
+    "scripts"
   ],
   "keywords": [
     "preact",
