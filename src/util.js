@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { statSync, existsSync } from 'fs';
 import logSymbols from 'log-symbols';
 import which from 'which';
+import { normalize } from 'path';
 
 export function isDir(str) {
 	return existsSync(str) && statSync(str).isDirectory();
@@ -28,4 +29,8 @@ export function warn(text, code) {
 export function error(text, code) {
 	process.stderr.write(logSymbols.error + chalk.red(' ERROR ') + text + '\n');
 	code && process.exit(code);
+}
+
+export function normalizePath(path) {
+	return normalize(path).replace(/\\/g, '/');
 }
