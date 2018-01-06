@@ -1,5 +1,5 @@
 const colors = require('chalk');
-const pkg = require('../package.json');
+const pkg = require('./package.json');
 
 const version = parseFloat( process.version.substr(1) );
 const minimum = parseFloat( pkg.engines.node.match(/\d+/g).join('.') );
