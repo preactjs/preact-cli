@@ -18,6 +18,7 @@ export default (env, options={}) => {
 			}]
 		],
 		plugins: [
+			require.resolve('babel-plugin-syntax-dynamic-import'),
 			require.resolve('babel-plugin-transform-object-assign'),
 			require.resolve('babel-plugin-transform-class-properties'),
 			require.resolve('babel-plugin-transform-export-extensions'),
