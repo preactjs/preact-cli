@@ -157,7 +157,6 @@
     "update-notifier": "^2.3.0",
     "url-loader": "^0.5.8",
     "webpack": "^3.7.0",
-    "webpack-chunk-hash": "^0.4.0",
     "webpack-dev-server": "^2.9.0",
     "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.1.1",

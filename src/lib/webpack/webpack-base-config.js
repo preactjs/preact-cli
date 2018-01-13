@@ -5,7 +5,6 @@ import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
-import WebpackChunkHash from 'webpack-chunk-hash';
 import requireRelative from 'require-relative';
 import createBabelConfig from '../babel-config';
 
@@ -228,7 +227,6 @@ export default function (env) {
 			new webpack.HashedModuleIdsPlugin(),
 			new webpack.LoaderOptionsPlugin({ minimize:true }),
 			new webpack.optimize.ModuleConcatenationPlugin(),
-			new WebpackChunkHash(),
 
 			// strip out babel-helper invariant checks
 			new ReplacePlugin({
