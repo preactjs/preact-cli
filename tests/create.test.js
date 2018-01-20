@@ -18,4 +18,12 @@ describe('preact create', () => {
 			expect(output).toEqual(snapshots[key]);
 		});
 	});
+
+	it.only('should validate project name as a valid npm package name', async () => {
+		const INVALID_NAME = '*()@!#!$-invalid-name';
+		let dir = await create('default', INVALID_NAME);
+		expect(dir);
+	});
 });
+
+

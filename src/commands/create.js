@@ -5,6 +5,7 @@ import fs from 'fs.promised';
 import { green } from 'chalk';
 import { prompt } from 'inquirer';
 import { resolve, dirname } from 'path';
+import validateNpmPackageName from 'validate-npm-package-name';
 import asyncCommand from '../lib/async-command';
 import { info, isDir, hasCommand, error, trim, warn } from '../util';
 import { install, initGit, addScripts, isMissing } from './../lib/setup';
@@ -89,6 +90,16 @@ export default asyncCommand({
 			info(`Assuming you meant ${repo}...`);
 		}
 
+		// Use `--name` value or `dest` dir's name
+		argv.name = argv.name || argv.dest;
+
+		const npmPackageNameErrors = validateNpmPackageName(argv.name).errors;
+
+		if (npmPackageNameErrors) {
+			const npmPackageNameMsg = npmPackageNameErrors.join(', ');
+			return error(`${argv.name} is not a valid package name. ${npmPackageNameMsg}`, 1);
+		}
+
 		// Attempt to fetch the `template`
 		let archive = await gittar.fetch(repo).catch(err => {
 			err = err || { message:'An error occured while fetching template.' };
@@ -152,9 +163,6 @@ export default asyncCommand({
 		} else {
 			warn('Could not locate `package.json` file!');
 		}
-
-		// Use `--name` value or `dest` dir's name
-		argv.name = argv.name || argv.dest;
 
 		// Update `package.json` key
 		if (pkgData) {
