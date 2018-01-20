@@ -19,10 +19,14 @@ describe('preact create', () => {
 		});
 	});
 
-	it.only('should validate project name as a valid npm package name', async () => {
+	it('should fail given an invalid name', async () => {
 		const INVALID_NAME = '*()@!#!$-invalid-name';
-		let dir = await create('default', INVALID_NAME);
-		expect(dir);
+
+		try {
+			await create('default', INVALID_NAME);
+		} catch (e) {
+			expect(e);
+		}
 	});
 });
 
