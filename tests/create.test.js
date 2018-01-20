@@ -29,5 +29,3 @@ describe('preact create', () => {
 		}
 	});
 });
-
-
