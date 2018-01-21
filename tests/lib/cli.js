@@ -27,7 +27,7 @@ exports.build = function (cwd) {
 
 exports.serve = function (cwd, port) {
 	let opts = Object.assign({ cwd, port }, argv);
-	return cmd.watch(argv.dest, opts);
+	return cmd.serve(argv.dest, opts);
 }
 
 exports.watch = function (cwd, host, port) {
