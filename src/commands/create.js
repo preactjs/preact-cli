@@ -4,15 +4,17 @@ import gittar from 'gittar';
 import fs from 'fs.promised';
 import { green } from 'chalk';
 import { prompt } from 'inquirer';
+import logSymbols from 'log-symbols';
 import { resolve, dirname } from 'path';
-import validateNpmPackageName from 'validate-npm-package-name';
-import asyncCommand from '../lib/async-command';
+import isValidName from 'validate-npm-package-name';
 import { info, isDir, hasCommand, error, trim, warn } from '../util';
 import { install, initGit, addScripts, isMissing } from './../lib/setup';
+import asyncCommand from '../lib/async-command';
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
+const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
 export default asyncCommand({
 	command: 'create [template] [dest]',
@@ -93,11 +95,10 @@ export default asyncCommand({
 		// Use `--name` value or `dest` dir's name
 		argv.name = argv.name || argv.dest;
 
-		const npmPackageNameErrors = validateNpmPackageName(argv.name).errors;
-
-		if (npmPackageNameErrors) {
-			const npmPackageNameMsg = npmPackageNameErrors.join(', ');
-			return error(`${argv.name} is not a valid package name. ${npmPackageNameMsg}`, 1);
+		let { errors } = isValidName(argv.name);
+		if (errors) {
+			errors.unshift(`Invalid package name: ${argv.name}`);
+			return error(errors.map(capitalize).join('\n  ~ '), 1);
 		}
 
 		// Attempt to fetch the `template`
