@@ -4,7 +4,6 @@ import gittar from 'gittar';
 import fs from 'fs.promised';
 import { green } from 'chalk';
 import { prompt } from 'inquirer';
-import logSymbols from 'log-symbols';
 import { resolve, dirname } from 'path';
 import isValidName from 'validate-npm-package-name';
 import { info, isDir, hasCommand, error, trim, warn } from '../util';
