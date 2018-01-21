@@ -1,14 +1,16 @@
-import looksLike from 'html-looks-like';
-import { create, build, serve } from './lib/cli';
-import startChrome, { loadPage,  waitUntilExpression, getElementHtml } from './lib/chrome';
-import { waitUntil } from './lib/utils';
-import images from './images/serve';
+const looksLike = require('html-looks-like');
+const { create, build, serve } = require('./lib/cli');
+const { waitUntil } = require('./lib/utils');
+const startChrome = require('./lib/chrome');
+const images = require('./images/serve');
 
+const { loadPage, waitUntilExpression, getElementHtml } = startChrome;
 let chrome, launcher, server;
 
 describe('preact serve', () => {
 	beforeAll(async () => {
 		let result = await startChrome();
+		console.log('. CHROME IS STARTED');
 		chrome = result.protocol;
 		launcher = result.launcher;
 	});
@@ -92,7 +94,7 @@ const unregisterSW = async url => {
 	await ServiceWorker.unregister({ scopeURL: url });
 };
 
-export const pageIsInteractive = chrome => waitUntil(
+const pageIsInteractive = chrome => waitUntil(
 	async () => {
 		let { DOM, DOMDebugger } = chrome;
 		let { root: document} = await DOM.getDocument();

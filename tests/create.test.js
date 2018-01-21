@@ -1,7 +1,7 @@
-import { relative } from 'path';
-import { create } from './lib/cli';
-import { expand } from './lib/utils';
-import snapshots from './images/create';
+const { relative } = require('path');
+const { create } = require('./lib/cli');
+const { expand } = require('./lib/utils');
+const snapshots = require('./images/create');
 
 // TODO: Move all `examples/` to `preactjs-templates`
 const ours = ['default'];

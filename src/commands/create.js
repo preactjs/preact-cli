@@ -1,19 +1,19 @@
-import ora from 'ora';
-import glob from 'glob';
-import gittar from 'gittar';
-import fs from 'fs.promised';
-import { green } from 'chalk';
-import { resolve } from 'path';
-import { prompt } from 'inquirer';
-import { promisify } from 'bluebird';
-import { info, isDir, hasCommand, error, trim, warn } from '../util';
-import { addScripts, install, initGit, isMissing } from '../lib/setup';
+const ora = require('ora');
+const glob = require('glob');
+const gittar = require('gittar');
+const fs = require('fs.promised');
+const { green } = require('chalk');
+const { resolve } = require('path');
+const { prompt } = require('inquirer');
+const { promisify } = require('bluebird');
+const { info, isDir, hasCommand, error, trim, warn } = require('../util');
+const { addScripts, install, initGit, isMissing } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
 
-export default async function (repo, dest, argv) {
+module.exports = async function (repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
 		warn('Insufficient arguments! Prompting...');

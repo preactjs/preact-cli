@@ -1,13 +1,13 @@
-import webpack from 'webpack';
-import { resolve } from 'path';
-import { existsSync } from 'fs';
-import merge from 'webpack-merge';
-import { filter } from 'minimatch';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
-import RenderHTMLPlugin from './render-html-plugin';
-import PushManifestPlugin from './push-manifest';
-import baseConfig from './webpack-base-config';
+const webpack = require('webpack');
+const { resolve } = require('path');
+const { existsSync } = require('fs');
+const merge = require('webpack-merge');
+const { filter } = require('minimatch');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+const RenderHTMLPlugin = require('./render-html-plugin');
+const PushManifestPlugin = require('./push-manifest');
+const baseConfig = require('./webpack-base-config');
 
 function clientConfig(env) {
 	const { isProd, source, src /*, port? */ } = env;
@@ -93,12 +93,11 @@ function isProd(config) {
 	let limit = 200 * 1000; // 200kb
 
 	return {
-		performance: {
+		performance: Object.assign({
 			hints: 'warning',
 			maxAssetSize: limit,
 			maxEntrypointSize: limit,
-			...config.pkg.performance
-		},
+		}, config.pkg.performance),
 
 		plugins: [
 			new webpack.optimize.UglifyJsPlugin({
@@ -193,7 +192,7 @@ function isDev(config) {
 	};
 }
 
-export default function (env) {
+module.exports = function (env) {
 	return merge(
 		baseConfig(env),
 		clientConfig(env),

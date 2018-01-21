@@ -1,13 +1,15 @@
-import { resolve } from 'path';
-import fs from 'fs.promised';
-import { create, build, watch } from './lib/cli';
-import startChrome, { loadPage, waitUntilExpression } from './lib/chrome';
+const fs = require('fs.promised');
+const { resolve } = require('path');
+const { create, build, watch } = require('./lib/cli');
+const startChrome = require('./lib/chrome');
 
+const { loadPage, waitUntilExpression } = startChrome;
 let chrome, launcher, server;
 
 describe('preact', () => {
 	beforeAll(async () => {
 		let result = await startChrome();
+		console.log('> CHROME STARTED');
 		chrome = result.protocol;
 		launcher = result.launcher;
 	});

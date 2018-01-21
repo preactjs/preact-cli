@@ -1,8 +1,8 @@
-import { Launcher } from 'chrome-launcher';
-import chrome from 'chrome-remote-interface';
-import { log, waitUntil } from './utils';
+const { Launcher } = require('chrome-launcher');
+const chrome = require('chrome-remote-interface');
+const { log, waitUntil } = require('./utils');
 
-export default async () => {
+module.exports = async function () {
 	let launcher = new Launcher({
 		chromeFlags: [
 			'--window-size=1024,768',
@@ -22,12 +22,12 @@ export default async () => {
 };
 
 
-export const getElementHtml = async (Runtime, selector) => {
+module.exports.getElementHtml = async function (Runtime, selector) {
 	let { result } = await Runtime.evaluate({ expression: `document.querySelector("${selector}").outerHTML` });
 	return result.value;
 };
 
-export const waitUntilExpression = async (Runtime, expression, retryCount = 10, retryInterval = 500) => {
+module.exports.waitUntilExpression = async function (Runtime, expression, retryCount = 10, retryInterval = 500) {
 	let evaluate = async () => {
 		let { result } = await log(
 			() => Runtime.evaluate({ expression }),
@@ -48,7 +48,7 @@ export const waitUntilExpression = async (Runtime, expression, retryCount = 10, 
 	await waitUntil(evaluate, `Waiting for ${expression} timed out!`, retryCount, retryInterval);
 };
 
-export const loadPage = async (chrome, url) => {
+module.exports.loadPage = async function (chrome, url) {
 	let result = await log(
 		() => waitUntil(() => navigateToPage(chrome, url, 5000), `${url} could not be loaded!`),
 		`Navigating to ${url}`

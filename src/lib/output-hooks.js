@@ -5,12 +5,6 @@ const HOOKS = [
 	}
 ];
 
-export default () => {
-	let out = wrap(process.stdout, invokeHooks),
-		err = wrap(process.stderr, invokeHooks);
-	return () => { out(); err(); };
-};
-
 function wrap(stream, handler) {
 	let write = stream.write;
 	stream.write = text => write.call(stream, handler(text));
@@ -26,3 +20,9 @@ function invokeHooks(text) {
 	}
 	return text;
 }
+
+module.exports = function () {
+	let out = wrap(process.stdout, invokeHooks),
+		err = wrap(process.stderr, invokeHooks);
+	return () => { out(); err(); };
+};

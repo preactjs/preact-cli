@@ -1,30 +1,15 @@
-import ip from 'ip';
-import webpack from 'webpack';
-import getPort from 'get-port';
-import { resolve } from 'path';
-import clear from 'console-clear';
-import { writeFile } from 'fs.promised';
-import { bold, red, green } from 'chalk';
-import clientConfig from './webpack-client-config';
-import serverConfig from './webpack-server-config';
-import transformConfig from './transform-config';
-import { error, isDir, warn } from '../../util';
-
-export default function (watch=false, env, onprogress) {
-	env.isProd = env.production; // shorthand
-	env.cwd = resolve(env.cwd || process.cwd());
-
-	// env.src='src' via `build` default
-	let src = resolve(env.cwd, env.src);
-	env.src = isDir(src) ? src : env.cwd;
-
-	// attach sourcing helper
-	env.source = dir => resolve(env.src, dir);
-
-	// determine build-type to run
-	let fn = watch ? devBuild : prodBuild;
-	return fn(env, onprogress); // AsyncFunctioon
-}
+const ip = require('ip');
+const webpack = require('webpack');
+const getPort = require('get-port');
+const { resolve } = require('path');
+const clear = require('console-clear');
+const { writeFile } = require('fs.promised');
+const { bold, red, green } = require('chalk');
+const DevServer = require('webpack-dev-server');
+const clientConfig = require('./webpack-client-config');
+const serverConfig = require('./webpack-server-config');
+const transformConfig = require('./transform-config');
+const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env, onprogress) {
 	let config = clientConfig(env);
@@ -58,7 +43,7 @@ async function devBuild(env, onprogress) {
 			let serverAddr = `${protocol}://${host}:${bold(port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
 
-			clear();
+			// clear();
 
 			if (stats.hasErrors()) {
 				process.stdout.write(red('\Build failed!\n\n'));
@@ -78,8 +63,10 @@ async function devBuild(env, onprogress) {
 
 		compiler.plugin('failed', rej);
 
-		let DevServer = require('webpack-dev-server');
-		new DevServer(compiler, config.devServer).listen(port);
+		let c = Object.assign({}, config.devServer, {
+			stats: { colors:true }
+		});
+		new DevServer(compiler, c).listen(port);
 	});
 }
 
@@ -116,7 +103,7 @@ function runCompiler(compiler) {
 	});
 }
 
-export function showStats(stats) {
+function showStats(stats) {
 	let info = stats.toJson('errors-only');
 
 	if (stats.hasErrors()) {
@@ -130,7 +117,7 @@ export function showStats(stats) {
 	return stats;
 }
 
-export function writeJsonStats(stats) {
+function writeJsonStats(stats) {
 	let outputPath = resolve(process.cwd(), 'stats.json');
 	let jsonStats = stats.toJson({ json:true, chunkModules:true, source:false });
 
@@ -183,3 +170,25 @@ function stripLoaderFromModuleNames(m) {
 
 	return m;
 }
+
+
+module.exports = function (watch=false, env, onprogress) {
+	env.isProd = env.production; // shorthand
+	env.cwd = resolve(env.cwd || process.cwd());
+
+	// env.src='src' via `build` default
+	let src = resolve(env.cwd, env.src);
+	env.src = isDir(src) ? src : env.cwd;
+	console.log('> src', src);
+	console.log('> env.src', env.src);
+
+	// attach sourcing helper
+	env.source = dir => resolve(env.src, dir);
+
+	// determine build-type to run
+	let fn = watch ? devBuild : prodBuild;
+	// console.log('> I AM HERE YO', fn)
+	return fn(env, onprogress); // AsyncFunctioon
+};
+module.exports.writeJsonStats = writeJsonStats;
+module.exports.showStats = showStats;

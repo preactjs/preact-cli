@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import sade from 'sade';
+const sade = require('sade');
 global.Promise = require('bluebird');
-import notifier from 'update-notifier';
-import * as cmd from './commands';
-import version from '../check';
-import pkg from '../package';
+const notifier = require('update-notifier');
+const commands = require('./commands');
+const version = require('../check');
+const pkg = require('../package');
 
 version();
 
@@ -24,7 +24,7 @@ prog
 	.option('--template', 'Path to custom HTML template')
 	.option('--prerenderUrls', 'Path to pre-rendered routes config', 'prerender-urls.json')
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
-	.action(cmd.build);
+	.action(commands.build);
 
 prog
 	.command('create [template] [dest]')
@@ -35,11 +35,11 @@ prog
 	.option('--install', 'Install dependencies', true)
 	.option('--yarn', 'Use `yarn` instead of `npm`')
 	.option('--git', 'Initialize git repository')
-	.action(cmd.create);
+	.action(commands.create);
 
 prog.command('list')
 	.describe('List official templates')
-	.action(cmd.list);
+	.action(commands.list);
 
 prog
 	.command('serve [dir]')
@@ -50,7 +50,7 @@ prog
 	.option('--dest', 'Path custom Firebase config should be written', 'firebase.json')
 	.option('--cors', 'Specify allowable origins', 'localhost')
 	.option('-p, --port', 'Set PORT for server', 8080)
-	.action(cmd.serve);
+	.action(commands.serve);
 
 prog
 	.command('watch [src]')
@@ -64,6 +64,6 @@ prog
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port', 8080)
-	.action(cmd.watch);
+	.action(commands.watch);
 
 prog.parse(process.argv);

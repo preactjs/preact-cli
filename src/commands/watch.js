@@ -1,8 +1,9 @@
-import getCert from '../lib/ssl-cert';
-import runWebpack, { showStats } from '../lib/webpack/run-webpack';
-import { warn } from '../util';
+const getCert = require('../lib/ssl-cert');
+const runWebpack = require('../lib/webpack/run-webpack');
+const { warn } = require('../util');
+const { showStats } = runWebpack;
 
-export default async function (src, argv) {
+module.exports = async function (src, argv) {
 	argv.src = src || argv.src;
 	argv.production = false;
 

@@ -1,10 +1,10 @@
-import { resolve } from 'path';
-import webpack from 'webpack';
-import fs from 'fs.promised';
+const { resolve } = require('path');
+const webpack = require('webpack');
+const fs = require('fs.promised');
 
 const FILE = 'preact.config.js';
 
-export default async function (env, config, ssr=false) {
+module.exports = async function (env, config, ssr=false) {
 	let myConfig = resolve(env.cwd, env.config);
 
 	try {

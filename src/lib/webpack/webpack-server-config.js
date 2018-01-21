@@ -1,6 +1,6 @@
-import { resolve } from 'path';
-import merge from 'webpack-merge';
-import baseConfig from './webpack-base-config';
+const { resolve } = require('path');
+const merge = require('webpack-merge');
+const baseConfig = require('./webpack-base-config');
 
 function serverConfig(env) {
 	return {
@@ -23,7 +23,7 @@ function serverConfig(env) {
 	};
 }
 
-export default function (env) {
+module.exports = function (env) {
 	return merge(
 		baseConfig(env),
 		serverConfig(env)

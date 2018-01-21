@@ -1,10 +1,10 @@
-import { join } from 'path';
-import { readFile } from 'fs.promised';
-import looksLike from 'html-looks-like';
-import { create, build } from './lib/cli';
-import { snapshot, isMatch } from './lib/utils';
-import { subject } from './lib/output';
-import images from './images/build';
+const { join } = require('path');
+const { readFile } = require('fs.promised');
+const looksLike = require('html-looks-like');
+const { create, build } = require('./lib/cli');
+const { snapshot, isMatch } = require('./lib/utils');
+const { subject } = require('./lib/output');
+const images = require('./images/build');
 
 // TODO
 // const ours = ['empty', 'full', 'simple', 'root'];

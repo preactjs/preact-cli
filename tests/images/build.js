@@ -4,8 +4,7 @@ const common = {
 	'favicon.ico': 15086
 };
 
-exports.default = exports.full = {
-	...common,
+exports.default = exports.full = Object.assign({}, common, {
 	'assets/favicon.ico': 15086,
 	'assets/icons/android-chrome-192x192.png': 14058,
 	'assets/icons/android-chrome-512x512.png': 51484,
@@ -29,7 +28,7 @@ exports.default = exports.full = {
 	'ssr-build/ssr-bundle.js.map': 66661,
 	'ssr-build/style.*.css': 1065,
 	'ssr-build/style.*.css.map': 2345
-};
+});
 
 exports.sass = `
 <body>

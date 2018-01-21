@@ -1,11 +1,11 @@
-import tmp from 'tmp';
-import path from 'path';
-import fs from 'fs.promised';
-import { execFile } from 'child_process';
-import persistencePath from 'persist-path';
-import simplehttp2server from 'simplehttp2server';
-import getCert from '../lib/ssl-cert';
-import { isDir } from '../util';
+const tmp = require('tmp');
+const path = require('path');
+const fs = require('fs.promised');
+const { execFile } = require('child_process');
+const persistencePath = require('persist-path');
+const simplehttp2server = require('simplehttp2server');
+const getCert = require('../lib/ssl-cert');
+const { isDir } = require('../util');
 
 /** Spawn an HTTP2 server.
  *	@param {object} argv
@@ -14,7 +14,7 @@ import { isDir } from '../util';
  *	@param {string} [argv.dir='.']		Static asset directory, relative to `argv.cwd`
  *	@param {number|string} [argv.port]	Port to start the http server on
  */
-export default async function serve(dir, argv) {
+module.exports = async function (dir, argv) {
 	dir = path.resolve(argv.cwd, dir || argv.dir);
 
 	// Allow overriding default hosting config via `--config firebase.json`:
@@ -61,15 +61,13 @@ function createHeadersFromPushManifest(pushManifest) {
 
 	for (let source in pushManifest) {
 		if (pushManifest.hasOwnProperty(source)) {
-			let section = pushManifest[source],
-				links = [];
+			let file, obj, links=[], section=pushManifest[source];
 
-			for (let file in section) {
+			for (file in section) {
 				if (section.hasOwnProperty(file)) {
-					links.push({
-						url: '/' + file.replace(/^\//g,''),
-						...section[file]
-					});
+					links.push(
+						Object.assign({ url:`/${file.replace(/^\//g,'')}` }, section[file])
+					);
 				}
 			}
 
@@ -104,37 +102,40 @@ function createHeadersFromPushManifest(pushManifest) {
  *	@param {number|string} [options.port=8080]	Port to run the server on.
  *	@param {string} [options.cwd=process.cwd()]	Directory from which to serve static files.
  */
-const serveHttp2 = options => Promise.resolve(options)
-	.then(SERVERS[options.server || 'simplehttp2server'])
-	.then( args => new Promise( (resolve, reject) => {
-		if (typeof args==='string') {
-			process.stdout.write(args + '\n');
-			return resolve();
-		}
+function serveHttp2(options) {
+	return Promise.resolve(options)
+		.then(SERVERS[options.server || 'simplehttp2server'])
+		.then(args => {
+			return new Promise((resolve, reject) => {
+				if (typeof args==='string') {
+					process.stdout.write(args + '\n');
+					return resolve();
+				}
 
-		let child = execFile(args[0], args.slice(1), {
-			cwd: options.cwd,
-			encoding: 'utf8'
-		}, (err, stdout, stderr) => {
-			if (err) process.stderr.write('\n  server error> '+err+'\n'+stderr);
-			else process.stdout.write('\n  server spawned> '+stdout);
+				let child = execFile(args[0], args.slice(1), {
+					cwd: options.cwd,
+					encoding: 'utf8'
+				}, (err, stdout, stderr) => {
+					if (err) process.stderr.write('\n  server error> '+err+'\n'+stderr);
+					else process.stdout.write('\n  server spawned> '+stdout);
 
-			if (err) return reject(err + '\n' + stderr);
-			else resolve();
-		});
+					if (err) return reject(err + '\n' + stderr);
+					else resolve();
+				});
 
-		function proxy(type) {
-			child[type].on('data', data => {
-				data = data.replace(/^(\s*\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2})?\s*/gm, '');
-				if (data.match(/\bRequest for\b/gim)) return;
-				process[type].write(`  \u001b[32m${data}\u001b[39m`);
+				function proxy(type) {
+					child[type].on('data', data => {
+						data = data.replace(/^(\s*\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2})?\s*/gm, '');
+						if (data.match(/\bRequest for\b/gim)) return;
+						process[type].write(`  \u001b[32m${data}\u001b[39m`);
+					});
+				}
+				proxy('stdout');
+				proxy('stderr');
+				process.stdin.pipe(child.stdin);
 			});
-		}
-		proxy('stdout');
-		proxy('stderr');
-		process.stdin.pipe(child.stdin);
-	}));
-
+		});
+}
 
 const SERVERS = {
 	async simplehttp2server(options) {
@@ -155,12 +156,13 @@ const SERVERS = {
 		];
 	},
 	superstatic(options) {
+		let conf = Object.assign(options.configObj, { public:undefined });
 		return [
 			'superstatic',
 			path.relative(options.cwd, options.dir),
 			'--gzip',
 			'-p', options.port,
-			'-c', JSON.stringify({ ...options.configObj, public: undefined })
+			'-c', JSON.stringify(conf)
 		];
 	},
 	/** Writes the firebase/superstatic/simplehttp2server configuration to stdout or a file. */
@@ -177,10 +179,11 @@ const SERVERS = {
 			}
 		}
 
-		let config = JSON.stringify({
-			...configObj,
-			public: path.relative(dir, configObj.public)
-		}, null, 2);
+		let config = JSON.stringify(
+			Object.assign(configObj, {
+				public: path.relative(dir, configObj.public)
+			})
+		);
 
 		if (outfile) {
 			await fs.writeFile(path.resolve(dir, outfile), config);
@@ -193,15 +196,16 @@ const SERVERS = {
 
 
 /** Create a temporary file. See https://npm.im/tmp */
-const tmpFile = opts => new Promise((res, rej) => {
-	tmp.file(opts, (err, path) => err ? rej(err) : res(path));
-});
+function tmpFile(opts) {
+	return new Promise((res, rej) => {
+		tmp.file(opts, (err, path) => err ? rej(err) : res(path));
+	});
+}
 
 
 /** Safely read a JSON file. Failures simply return `undefined`. */
 async function readJson(filename) {
 	try {
 		return JSON.parse(await fs.readFile(filename, 'utf8'));
-	}
-	catch (e) { }
+	} catch (e) {}
 }

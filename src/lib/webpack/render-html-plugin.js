@@ -1,14 +1,14 @@
-import { resolve } from 'path';
-import { existsSync } from 'fs';
-import HtmlWebpackExcludeAssetsPlugin from 'html-webpack-exclude-assets-plugin';
-import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { readJson } from './webpack-base-config';
-import prerender from './prerender';
+const { resolve } = require('path');
+const { existsSync } = require('fs');
+const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { readJson } = require('./webpack-base-config');
+const prerender = require('./prerender');
 
 const template = resolve(__dirname, '../../resources/template.html');
 
-export default function (config) {
+module.exports = function (config) {
 	const { cwd, dest, isProd, src } = config;
 
 	const htmlWebpackConfig = values => {
@@ -32,7 +32,8 @@ export default function (config) {
 			excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 			config,
 			ssr(params) {
-				return config.prerender ? prerender({ cwd, dest, src }, { ...params, url }) : '';
+				Object.assign(params, { url });
+				return config.prerender ? prerender({ cwd, dest, src }, params) : '';
 			}
 		});
 	};

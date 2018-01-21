@@ -4,7 +4,7 @@ const { error, info } = require('../util');
 
 const REPOS_URL = 'https://api.github.com/users/preactjs-templates/repos';
 
-export default async function () {
+module.exports = async function () {
 	try {
 		let repos = await fetch(REPOS_URL).then(r => r.json());
 

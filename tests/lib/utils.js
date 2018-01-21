@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import { relative, resolve } from 'path';
-import { promisify } from 'bluebird';
-import { stat } from 'fs.promised';
-import minimatch from 'minimatch';
-import glob from 'glob';
+const { relative, resolve } = require('path');
+const { promisify } = require('bluebird');
+const { stat } = require('fs.promised');
+const minimatch = require('minimatch');
+const glob = require('glob');
 
 const PER = 0.05; // % diff
 const LOG = !!process.env.WITH_LOG;
@@ -13,17 +13,17 @@ const globby = promisify(glob);
 // `node-glob` ignore pattern buggy?
 const ignores = x => !/node_modules|package-lock|yarn.lock/i.test(x);
 
-export function expand(dir, opts) {
+function expand(dir, opts) {
 	dir = resolve(dir);
 	opts = Object.assign({ dot:true, nodir:true }, opts);
 	return globby(`${dir}/**`, opts).then(arr => arr.filter(ignores));
 }
 
-export async function bytes(str) {
+async function bytes(str) {
 	return (await stat(str)).size;
 }
 
-export async function snapshot(dir) {
+async function snapshot(dir) {
 	let str, tmp, out={};
 	for (str of await expand(dir)) {
 		tmp = relative(dir, str);
@@ -35,7 +35,7 @@ export async function snapshot(dir) {
 const hasKey = (key, arr) => arr.find(k => minimatch(key, k)) || false;
 const isWithin = (val, tar) => (val == tar) || (val > (1-PER)*tar) && (val < (1+PER)*tar);
 
-export function isMatch(src, tar) {
+function isMatch(src, tar) {
 	let k, tmp;
 	let keys=Object.keys(tar);
 	for (k in src) {
@@ -46,7 +46,7 @@ export function isMatch(src, tar) {
 	return keys.length === Object.keys(src).length;
 }
 
-export async function log(fn, msg) {
+async function log(fn, msg) {
 	logger('info', `${msg} - started...`);
 	try {
 		let result = await fn();
@@ -58,11 +58,11 @@ export async function log(fn, msg) {
 	}
 }
 
-export function delay(ms) {
+function delay(ms) {
 	return new Promise(r => setTimeout(r, ms));
 }
 
-export async function waitUntil(action, errorMessage, retryCount = 10, retryInterval = 100) {
+async function waitUntil(action, errorMessage, retryCount = 10, retryInterval = 100) {
 	if (retryCount < 0) {
 		throw new Error(errorMessage);
 	}
@@ -74,3 +74,5 @@ export async function waitUntil(action, errorMessage, retryCount = 10, retryInte
 	await delay(retryInterval);
 	await waitUntil(action, errorMessage, retryCount - 1, retryInterval);
 }
+
+module.exports = { expand, bytes, snapshot, isMatch, log, delay, waitUntil };

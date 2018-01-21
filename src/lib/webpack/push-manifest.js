@@ -31,13 +31,12 @@ module.exports = class PushManifestPlugin {
 
 			routes.forEach(filename => {
 				let path = filename.replace(/route-/, '/').replace(/\.chunk(\.\w+)?\.js$/, '').replace(/\/home/, '/');
-				manifest[path] = {
-					...defaults,
+				manifest[path] = Object.assign({}, defaults, {
 					[filename]: {
-						type: "script",
+						type: 'script',
 						weight: 0.9
 					}
-				};
+				});
 			});
 
 			let output = JSON.stringify(manifest);

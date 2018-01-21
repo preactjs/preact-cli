@@ -16,7 +16,7 @@ const color = (color, text) => `\u001b[${color}m\u001b[2m${text}\u001b[22m\u001b
 
 const PURPLE = 35;
 
-export default (text, useColor=true) => {
+module.exports = function (text, useColor=true) {
 	let logo = LOGO;
 
 	if (text) {

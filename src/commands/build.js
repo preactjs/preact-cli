@@ -1,10 +1,11 @@
-import rimraf from 'rimraf';
-import { resolve } from 'path';
-import { promisify } from 'bluebird';
-import { isDir, error } from '../util';
-import runWebpack, { showStats, writeJsonStats } from '../lib/webpack/run-webpack';
+const rimraf = require('rimraf');
+const { resolve } = require('path');
+const { promisify } = require('bluebird');
+const { isDir, error } = require('../util');
+const runWebpack = require('../lib/webpack/run-webpack');
+const { showStats, writeJsonStats } = runWebpack;
 
-export default async function (src, argv) {
+module.exports = async function (src, argv) {
 	argv.src = src || argv.src;
 	// add `default:true`s, `--no-*` disables
 	argv.prerender = (argv.prerender === void 0);
@@ -22,6 +23,7 @@ export default async function (src, argv) {
 		await promisify(rimraf)(dest);
 	}
 
+	console.log('> i made it here');
 	let stats = await runWebpack(false, argv);
 
 	showStats(stats);

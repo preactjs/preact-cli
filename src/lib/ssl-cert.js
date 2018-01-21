@@ -1,11 +1,40 @@
-import fs from 'fs.promised';
-import { resolve } from 'path';
-import { execFile } from 'child_process';
-import persistencePath from 'persist-path';
-import simplehttp2server from 'simplehttp2server';
-import getDevelopmentCertificate from 'devcert-san';
+const fs = require('fs.promised');
+const { resolve } = require('path');
+const { execFile } = require('child_process');
+const persistencePath = require('persist-path');
+const simplehttp2server = require('simplehttp2server');
+const getDevelopmentCertificate = require('devcert-san');
 
-export default async function getSslCert() {
+function spawnServerForCert() {
+	return new Promise((res, rej) => {
+		let cwd = persistencePath('preact-cli');
+		let child = execFile(simplehttp2server, ['-listen', ':40210'], {
+			cwd,
+			encoding: 'utf8'
+		}, (err, stdout, stderr) => {
+			if (err) return rej(err);
+			let timer = setTimeout( () => {
+				rej('Error: certificate generation timed out.');
+			}, 5000);
+			async function check(chunk) {
+				if (/listening/gi.match(chunk)) {
+					clearTimeout(timer);
+					child.kill();
+					res({
+						key: await fs.readFile(resolve(cwd, 'key.pem'), 'utf-8'),
+						cert: await fs.readFile(resolve(cwd, 'cert.pem'), 'utf-8'),
+						keyPath: resolve(cwd, 'key.pem'),
+						certPath: resolve(cwd, 'cert.pem')
+					});
+				}
+			}
+			stdout.on('data', check);
+			stderr.on('data', check);
+		});
+	});
+}
+
+module.exports = async function () {
 	process.stdout.write('Setting up SSL certificate (may require sudo)...\n');
 	try {
 		return await getDevelopmentCertificate('preact-cli', {
@@ -21,31 +50,3 @@ export default async function getSslCert() {
 	}
 	return false;
 }
-
-
-const spawnServerForCert = () => new Promise((res, rej) => {
-	let cwd = persistencePath('preact-cli');
-	let child = execFile(simplehttp2server, ['-listen', ':40210'], {
-		cwd,
-		encoding: 'utf8'
-	}, (err, stdout, stderr) => {
-		if (err) return rej(err);
-		let timer = setTimeout( () => {
-			rej('Error: certificate generation timed out.');
-		}, 5000);
-		async function check(chunk) {
-			if (/listening/gi.match(chunk)) {
-				clearTimeout(timer);
-				child.kill();
-				res({
-					key: await fs.readFile(resolve(cwd, 'key.pem'), 'utf-8'),
-					cert: await fs.readFile(resolve(cwd, 'cert.pem'), 'utf-8'),
-					keyPath: resolve(cwd, 'key.pem'),
-					certPath: resolve(cwd, 'cert.pem')
-				});
-			}
-		}
-		stdout.on('data', check);
-		stderr.on('data', check);
-	});
-});

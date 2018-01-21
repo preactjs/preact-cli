@@ -1,12 +1,12 @@
-import spawn from 'cross-spawn-promise';
-import { hasCommand, warn } from '../util';
+const spawn = require('cross-spawn-promise');
+const { hasCommand, warn } = require('../util');
 
-export function install(cwd, isYarn) {
+exports.install =  function (cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
 	return spawn(cmd, ['install'], { cwd, stdio:'ignore' });
 }
 
-export async function addScripts(obj, cwd, isYarn) {
+exports.addScripts =  async function (obj, cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
 	let args = isYarn ? ['add', '--dev'] : ['install', '--save-dev'];
 
@@ -23,7 +23,7 @@ export async function addScripts(obj, cwd, isYarn) {
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
-export async function initGit(target) {
+exports.initGit =  async function (target) {
 	let git = hasCommand('git');
 
 	if (git) {
@@ -63,7 +63,7 @@ export async function initGit(target) {
 }
 
 // Formulate Questions if `create` args are missing
-export function isMissing(argv) {
+exports.isMissing = function (argv) {
 	let out = [];
 
 	const ask = (name, message, val) => {
