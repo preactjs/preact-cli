@@ -8,29 +8,18 @@
     "preact": "./lib/index.js"
   },
   "scripts": {
-    "prebuild": "rimraf lib",
-    "build": "babel src -d lib -D",
-    "prepublish": "npm run -s build",
     "dev": "babel-node src",
     "lint": "eslint src tests",
-    "pretest": "npm run -s build && rimraf tests/output",
+    "pretest": "rimraf tests/output",
     "test": "jest",
     "posttest": "rimraf tests/output",
-    "postinstall": "node -p 'require(\"./check.js\")()'",
-    "test:build": "babel-node src build --cwd examples/root",
-    "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
-    "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
-    "test:simple": "babel-node src build --cwd examples/simple && babel-node src serve --port 3000 --cwd examples/simple",
-    "test:empty": "babel-node src build --cwd examples/empty && babel-node src serve --port 3000 --cwd examples/empty",
-    "test:watch": "babel-node src watch --cwd examples/root --port 3000",
-    "test:deploy": "npm run test:build && cp examples/root/build/index.html examples/root/build/200.html && surge -d cli-demo.preactjs.com examples/root/build"
+    "postinstall": "node -p 'require(\"./check.js\")()'"
   },
   "engines": {
     "node": ">=6"
   },
   "files": [
     "lib",
-    "examples",
     "check.js",
     "babel.js"
   ],
