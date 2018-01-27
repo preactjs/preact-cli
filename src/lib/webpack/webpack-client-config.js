@@ -56,8 +56,8 @@ function clientConfig(env) {
 					options: {
 						name(filename) {
 							filename = normalizePath(filename);
-							if (!filename.includes('/routes/')) return false;
 							let relative = filename.replace(normalizePath(src), '');
+							if (!relative.includes('/routes/')) return false;
 							return 'route-' + cleanFilename(relative);
 						},
 						formatName(filename) {
