@@ -222,10 +222,14 @@ const SERVERS = {
 			}
 		}
 
-		let config = JSON.stringify({
-			...configObj,
-			public: path.relative(dir, configObj.public)
-		}, null, 2);
+		let config = await readJson(path.resolve(dir, outfile));
+		config = Object.assign({}, config, {
+			hosting: {
+				...configObj,
+				public: path.relative(dir, configObj.public),
+			}
+		});
+		config = JSON.stringify(config, null, 2);
 
 		if (outfile) {
 			await fs.writeFile(path.resolve(dir, outfile), config);
