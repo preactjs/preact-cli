@@ -11,6 +11,6 @@ export default function(load) {
 	}
 	Async.prototype = new Component;
 	Async.prototype.constructor = Async;
-	Async.prototype.render = (props, state) => h(state.child, props);
+	Async.prototype.render = (props, state) => state.child ? h(state.child, props) : null;
 	return Async;
 }
