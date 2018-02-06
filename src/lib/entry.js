@@ -9,20 +9,38 @@ else if (process.env.ADD_SW && 'serviceWorker' in navigator && location.protocol
 	navigator.serviceWorker.register(__webpack_public_path__ + 'sw.js');
 }
 
-
-const interopDefault = m => m && m.default ? m.default : m;
-
-let app = interopDefault(require('preact-cli-entrypoint'));
-
-if (typeof app==='function') {
-	let root = document.body.firstElementChild;
-
-	let init = () => {
-		let app = interopDefault(require('preact-cli-entrypoint'));
-		root = render(h(app), document.body, root);
-	};
-
-	if (module.hot) module.hot.accept('preact-cli-entrypoint', init);
-
-	init();
+function getApp() {
+	let x = require('preact-cli-entrypoint');
+	return h(x && x.default || x);
 }
+
+let inProgress = false;
+let body = document.body;
+let root = body.firstElementChild;
+
+function init(first) {
+	if (inProgress) return;
+
+	let app = getApp();
+
+	if (first) {
+		render(app, body.cloneNode(true));
+	} else {
+		root = render(app, body, root);
+	}
+}
+
+if (module.hot) {
+	module.hot.accept('preact-cli-entrypoint', init);
+}
+
+addEventListener('async-loading', () => {
+	inProgress = true;
+});
+
+addEventListener('async-loaded', () => {
+	inProgress = false;
+	init();
+});
+
+init(true);
