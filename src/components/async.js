@@ -10,17 +10,17 @@ export default function(req) {
 			req(m => {
 				this.setState({ child: m.default || m });
 			});
-		}
+		};
 
 		this.shouldComponentUpdate = (_, nxt) => {
 			nxt = nxt.child === void 0;
 			if (nxt && old === void 0) {
-				old = (0, _preact.h)(b.nodeName, { dangerouslySetInnerHTML: { __html: b.innerHTML } });
+				old = h(b.nodeName, { dangerouslySetInnerHTML: { __html: b.innerHTML } });
 			} else {
 				old = ''; // dump it
 			}
 			return !nxt;
-		}
+		};
 
 		this.render = (p, s) => s.child ? h(s.child, p) : old;
 	}
