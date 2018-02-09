@@ -111,7 +111,7 @@ const runCompiler = compiler => new Promise((res, rej) => {
 		}
 
 		if (err || (stats && stats.hasErrors())) {
-			rej(chalk.red('Build failed!'));
+			rej(chalk.red('Build failed! ' + err));
 		}
 
 		res(stats);
