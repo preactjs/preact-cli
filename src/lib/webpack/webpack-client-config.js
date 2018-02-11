@@ -150,7 +150,7 @@ function isProd(config) {
 					/\.map$/,
 					/push-manifest\.json$/,
 					/.DS_Store/,
-					/^\.git/
+					/\.git/
 				]
 			}),
 			new webpack.DefinePlugin({
