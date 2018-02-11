@@ -149,7 +149,8 @@ function isProd(config) {
 					/polyfills(\..*)?\.js$/,
 					/\.map$/,
 					/push-manifest\.json$/,
-					/.DS_Store/
+					/.DS_Store/,
+					/\.git/
 				]
 			}),
 			new webpack.DefinePlugin({
