@@ -185,7 +185,7 @@ function isDev(config) {
 			historyApiFallback: true,
 			quiet: true,
 			clientLogLevel: 'none',
-			overlay: false,
+			overlay: true,
 			stats: 'minimal',
 			watchOptions: {
 				ignored: [
