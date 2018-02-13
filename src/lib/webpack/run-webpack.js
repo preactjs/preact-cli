@@ -106,9 +106,12 @@ async function prodBuild(env) {
 
 const runCompiler = compiler => new Promise((res, rej) => {
 	compiler.run((err, stats) => {
-		if (err || stats.hasErrors()) {
+		if (stats && stats.hasErrors()) {
 			showStats(stats);
-			rej(chalk.red('Build failed!'));
+		}
+
+		if (err || (stats && stats.hasErrors())) {
+			rej(chalk.red('Build failed! ' + err));
 		}
 
 		res(stats);
