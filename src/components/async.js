@@ -14,7 +14,7 @@ export default function(req) {
 
 		this.shouldComponentUpdate = (_, nxt) => {
 			nxt = nxt.child === void 0;
-			if (nxt && old === void 0) {
+			if (nxt && old === void 0 && !!b) {
 				old = h(b.nodeName, { dangerouslySetInnerHTML: { __html: b.innerHTML } });
 			} else {
 				old = ''; // dump it
