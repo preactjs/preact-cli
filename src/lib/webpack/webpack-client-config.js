@@ -95,7 +95,7 @@ function clientConfig(env) {
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
 
-	return {
+	const prodConfig = {
 		performance: {
 			hints: 'warning',
 			maxAssetSize: limit,
@@ -139,6 +139,14 @@ function isProd(config) {
 					]
 				}
 			}),
+			new webpack.DefinePlugin({
+				'process.env.ADD_SW': config.serviceWorker
+			}),
+		]
+	};
+
+	if (config.serviceWorker) {
+		prodConfig.plugins.push(
 			new SWPrecacheWebpackPlugin({
 				filename: 'sw.js',
 				navigateFallback: 'index.html',
@@ -149,15 +157,13 @@ function isProd(config) {
 					/polyfills(\..*)?\.js$/,
 					/\.map$/,
 					/push-manifest\.json$/,
-					/.DS_Store/,
-					/\.git/
+					/.DS_Store/
 				]
 			}),
-			new webpack.DefinePlugin({
-				'process.env.ADD_SW': config.serviceWorker
-			}),
-		]
-	};
+		);
+	}
+
+	return prodConfig;
 }
 
 function isDev(config) {
