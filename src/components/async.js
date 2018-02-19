@@ -1,16 +1,29 @@
 import { h, Component } from 'preact';
 
-export default function(load) {
+export default function(req) {
 	function Async() {
 		Component.call(this);
-		let done = child => {
-			this.setState({ child: child && child.default || child });
+
+		let b, old;
+		this.componentWillMount = () => {
+			b = this.base = this.nextBase || this.__b; // short circuits 1st render
+			req(m => {
+				this.setState({ child: m.default || m });
+			});
 		};
-		let r = load(done);
-		if (r && r.then) r.then(done);
+
+		this.shouldComponentUpdate = (_, nxt) => {
+			nxt = nxt.child === void 0;
+			if (nxt && old === void 0) {
+				old = h(b.nodeName, { dangerouslySetInnerHTML: { __html: b.innerHTML } });
+			} else {
+				old = ''; // dump it
+			}
+			return !nxt;
+		};
+
+		this.render = (p, s) => s.child ? h(s.child, p) : old;
 	}
-	Async.prototype = new Component;
-	Async.prototype.constructor = Async;
-	Async.prototype.render = (props, state) => state.child ? h(state.child, props) : null;
+	(Async.prototype = new Component).constructor = Async;
 	return Async;
 }
