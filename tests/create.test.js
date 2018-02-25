@@ -19,13 +19,9 @@ describe('preact create', () => {
 		});
 	});
 
-	it('should fail given an invalid name', async () => {
-		const INVALID_NAME = '*()@!#!$-invalid-name';
-
-		try {
-			await create('default', INVALID_NAME);
-		} catch (e) {
-			expect(e);
-		}
-	});
+	// it('should fail given an invalid name', async () => {
+	// 	const exit = jest.spyOn(process, 'exit');
+	// 	await create('default', '*()@!#!$-invalid-name');
+	// 	expect(exit).toHaveBeenCalledWith(1);
+	// });
 });
