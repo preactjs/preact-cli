@@ -72,11 +72,7 @@ function createHeadersFromPushManifest(pushManifest) {
 
 			links = links.sort( (a, b) => {
 				let diff = b.weight - a.weight;
-				if (!diff) {
-					if (b.url.match(/bundle\.js$/)) return 1;
-					return b.url.match(/\.js$/) ? 1 : 0;
-				}
-				return diff;
+				return diff || Number(/(bundle)?\.js$/.test(b.url));
 			});
 
 			headers.push({
