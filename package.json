@@ -83,8 +83,7 @@
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
     "node-sass": "^4.7.2",
-    "sass-loader": "^6.0.6",
-    "uuid": "^3.0.1"
+    "sass-loader": "^6.0.6"
   },
   "dependencies": {
     "autoprefixer": "^7.1.0",

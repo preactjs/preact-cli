@@ -1,5 +1,4 @@
 const copy = require('ncp');
-const uuid = require('uuid/v4');
 const { resolve } = require('path');
 const { promisify } = require('bluebird');
 
@@ -7,7 +6,8 @@ const output = resolve(__dirname, '../output');
 const subjects = resolve(__dirname, '../subjects');
 
 function tmpDir() {
-	return resolve(output, uuid());
+	let str = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 12);
+	return resolve(output, str);
 }
 
 async function subject(name) {
