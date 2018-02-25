@@ -1,9 +1,11 @@
 const spawn = require('cross-spawn-promise');
 const { hasCommand, warn } = require('../util');
 
+const stdio = 'ignore';
+
 exports.install =  function (cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
-	return spawn(cmd, ['install'], { cwd, stdio:'ignore' });
+	return spawn(cmd, ['install'], { cwd, stdio });
 }
 
 exports.addScripts =  async function (obj, cwd, isYarn) {
@@ -11,7 +13,7 @@ exports.addScripts =  async function (obj, cwd, isYarn) {
 	let args = isYarn ? ['add', '--dev'] : ['install', '--save-dev'];
 
 	// Install `if-env`
-	await spawn(cmd, [...args, 'if-env'], { cwd, stdio:'ignore '});
+	await spawn(cmd, [...args, 'if-env'], { cwd, stdio });
 
 	return {
 		build: 'preact build',

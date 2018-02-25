@@ -52,7 +52,7 @@ module.exports = async function (repo, dest, argv) {
 			return error('Refusing to overwrite current directory!', 1);
 		}
 	}
-  
+
   // Use `--name` value or `dest` dir's name
   argv.name = argv.name || argv.dest;
 

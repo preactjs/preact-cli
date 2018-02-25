@@ -5,7 +5,6 @@ const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
-const WebpackChunkHash = require('webpack-chunk-hash');
 const createBabelConfig = require('../babel-config');
 
 function readJson(file) {
