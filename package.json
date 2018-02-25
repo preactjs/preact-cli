@@ -11,7 +11,7 @@
     "dev": "babel-node src",
     "lint": "eslint src tests",
     "pretest": "rimraf tests/output",
-    "test": "jest {create,build}",
+    "test": "jest tests/{create,build}.test.js",
     "posttest": "rimraf tests/output",
     "postinstall": "node -p 'require(\"./check.js\")()'"
   },
