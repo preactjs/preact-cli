@@ -19,4 +19,4 @@ module.exports = async function () {
 	} catch (err) {
 		error(err, 1);
 	}
-}
+};

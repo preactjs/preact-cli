@@ -31,4 +31,4 @@ module.exports = async function (src, argv) {
 	if (argv.json) {
 		await writeJsonStats(stats);
 	}
-}
+};

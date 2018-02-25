@@ -6,7 +6,7 @@ const stdio = 'ignore';
 exports.install =  function (cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
 	return spawn(cmd, ['install'], { cwd, stdio });
-}
+};
 
 exports.addScripts =  async function (obj, cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
@@ -21,7 +21,7 @@ exports.addScripts =  async function (obj, cwd, isYarn) {
 		start: `if-env NODE_ENV=production && ${cmd} run -s serve || ${cmd} run -s watch`,
 		watch: 'preact watch'
 	};
-}
+};
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
@@ -62,7 +62,7 @@ exports.initGit =  async function (target) {
 	} else {
 		warn('Could not locate `git` binary in `$PATH`. Skipping!');
 	}
-}
+};
 
 // Formulate Questions if `create` args are missing
 exports.isMissing = function (argv) {
@@ -84,4 +84,4 @@ exports.isMissing = function (argv) {
 	!argv.git && ask('git', 'Initialize a `git` repository', false);
 
 	return out;
-}
+};

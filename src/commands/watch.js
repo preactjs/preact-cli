@@ -18,4 +18,4 @@ module.exports = async function (src, argv) {
 
 	let stats = await runWebpack(true, argv, showStats);
 	showStats(stats);
-}
+};

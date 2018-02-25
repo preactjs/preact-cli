@@ -2,7 +2,7 @@ const ip = require('ip');
 const webpack = require('webpack');
 const getPort = require('get-port');
 const { resolve } = require('path');
-const clear = require('console-clear');
+// const clear = require('console-clear');
 const { writeFile } = require('fs.promised');
 const { bold, red, green } = require('chalk');
 const DevServer = require('webpack-dev-server');
@@ -93,13 +93,13 @@ async function prodBuild(env) {
 function runCompiler(compiler) {
 	return new Promise((res, rej) => {
 		compiler.run((err, stats) => {
-      if (stats && stats.hasErrors()) {
-			  showStats(stats);
-   		}
+			if (stats && stats.hasErrors()) {
+				showStats(stats);
+			}
 
-		  if (err || (stats && stats.hasErrors())) {
-			  rej(chalk.red('Build failed! ' + err));
-  		}
+			if (err || (stats && stats.hasErrors())) {
+				rej(red('Build failed! ' + err));
+			}
 
 			res(stats);
 		});

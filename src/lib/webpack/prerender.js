@@ -35,7 +35,7 @@ module.exports = function (env, params) {
 
 		handlePrerenderError(err, env, stack, entry);
 	}
-}
+};
 
 function handlePrerenderError(err, env, stack, entry) {
 	let errorMessage = err.toString();
@@ -105,4 +105,4 @@ function handlePrerenderError(err, env, stack, entry) {
 	process.stderr.write(`Alternatively use 'preact build --no-prerender' to disable prerendering.\n\n`);
 	process.stderr.write('See https://github.com/developit/preact-cli#pre-rendering for further information.');
 	process.exit(1);
-};
+}

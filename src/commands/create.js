@@ -182,4 +182,4 @@ module.exports = async function (repo, dest, argv) {
 		To start a production HTTP/2 server:
 			${ green(pfx + ' serve') }
 	`) + '\n';
-}
+};

@@ -34,4 +34,4 @@ module.exports = function (env, options={}) {
 			}]
 		].filter(Boolean)
 	};
-}
+};

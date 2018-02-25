@@ -25,7 +25,7 @@ module.exports = async function (env, config, ssr=false) {
 	} catch (err) {
 		throw new Error(`Error at ${myConfig}: \n` + err);
 	}
-}
+};
 
 /**
  * WebpackConfigHelpers

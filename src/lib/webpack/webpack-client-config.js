@@ -209,4 +209,4 @@ module.exports = function (env) {
 		clientConfig(env),
 		(env.isProd ? isProd : isDev)(env)
 	);
-}
+};

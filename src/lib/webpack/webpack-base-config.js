@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const { resolve } = require('path');
 const { readFileSync } = require('fs');
 const autoprefixer = require('autoprefixer');
+const requireRelative = require('require-relative');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
@@ -245,6 +246,6 @@ module.exports = function (env) {
 			setImmediate: false
 		}
 	};
-}
+};
 
 module.exports.readJson = readJson;

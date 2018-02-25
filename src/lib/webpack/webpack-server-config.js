@@ -28,4 +28,4 @@ module.exports = function (env) {
 		baseConfig(env),
 		serverConfig(env)
 	);
-}
+};

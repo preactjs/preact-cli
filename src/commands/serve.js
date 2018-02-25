@@ -50,8 +50,7 @@ module.exports = async function (dir, argv) {
 		dir,
 		cwd: path.resolve(__dirname, '../resources')
 	});
-}
-
+};
 
 /** Produces an Array of Link rel=preload headers from a push manifest.
  *	Headers are in Firebase Hosting format.
@@ -61,7 +60,7 @@ function createHeadersFromPushManifest(pushManifest) {
 
 	for (let source in pushManifest) {
 		if (pushManifest.hasOwnProperty(source)) {
-			let file, obj, links=[], section=pushManifest[source];
+			let file, links=[], section=pushManifest[source];
 
 			for (file in section) {
 				if (section.hasOwnProperty(file)) {
@@ -181,11 +180,11 @@ const SERVERS = {
 
     let config = await readJson(path.resolve(dir, outfile));
     let hosting = Object.assign({}, configObj, { public:path.relative(dir, configObj.public) });
-    
+
     config = JSON.stringify(
       Object.assign({}, config, { hosting })
     );
-    
+
 		if (outfile) {
 			await fs.writeFile(path.resolve(dir, outfile), config);
 			return `Configuration written to ${outfile}.`;
