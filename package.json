@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "2.1.0",
+  "version": "2.2.1",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "developit/preact-cli",
   "main": "lib/index.js",
@@ -21,7 +21,7 @@
   "files": [
     "lib",
     "check.js",
-    "babel.js"
+    "babel"
   ],
   "keywords": [
     "preact",
@@ -148,8 +148,8 @@
     "unfetch": "^3.0.0",
     "update-notifier": "^2.3.0",
     "url-loader": "^0.5.8",
+    "validate-npm-package-name": "^3.0.0",
     "webpack": "^3.7.0",
-    "webpack-chunk-hash": "^0.4.0",
     "webpack-dev-server": "^2.9.0",
     "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.1.1",

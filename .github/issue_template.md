@@ -3,17 +3,19 @@
 
 **Do you want to request a *feature* or report a *bug*?**
 
-**What is the current behavior?**
+**What is the current behaviour?**
 
-**If the current behavior is a bug, please provide the steps to reproduce.**
+**If the current behaviour is a bug, please provide the steps to reproduce.**
 
 <!-- A great way to do this is to provide your configuration via a GitHub gist. -->
 
-**What is the expected behavior?**
+**What is the expected behaviour?**
 
-**If this is a feature request, what is motivation or use case for changing the behavior?**
+**If this is a feature request, what is motivation or use case for changing the behaviour?**
 
 **Please mention other relevant information.**
-- node version
+- Node version
 - npm version
 - Operating system
+- CLI version
+- Browser

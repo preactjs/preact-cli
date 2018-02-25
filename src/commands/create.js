@@ -6,12 +6,14 @@ const { green } = require('chalk');
 const { resolve } = require('path');
 const { prompt } = require('inquirer');
 const { promisify } = require('bluebird');
+const isValidName = require('validate-npm-package-name');
 const { info, isDir, hasCommand, error, trim, warn } = require('../util');
 const { addScripts, install, initGit, isMissing } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
+const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
 module.exports = async function (repo, dest, argv) {
 	// Prompt if incomplete data
@@ -50,6 +52,15 @@ module.exports = async function (repo, dest, argv) {
 			return error('Refusing to overwrite current directory!', 1);
 		}
 	}
+  
+  // Use `--name` value or `dest` dir's name
+  argv.name = argv.name || argv.dest;
+
+  let { errors } = isValidName(argv.name);
+  if (errors) {
+    errors.unshift(`Invalid package name: ${argv.name}`);
+    return error(errors.map(capitalize).join('\n  ~ '), 1);
+  }
 
 	if (!repo.includes('/')) {
 		repo = `${ORG}/${repo}`;
@@ -119,9 +130,6 @@ module.exports = async function (repo, dest, argv) {
 	} else {
 		warn('Could not locate `package.json` file!');
 	}
-
-	// Use `--name` value or `dest` dir's name
-	argv.name = argv.name || argv.dest;
 
 	// Update `package.json` key
 	if (pkgData) {

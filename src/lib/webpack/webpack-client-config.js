@@ -8,6 +8,9 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const RenderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
+const { normalizePath } = require('../../util');
+
+const cleanFilename = name => name.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
 
 function clientConfig(env) {
 	const { isProd, source, src /*, port? */ } = env;
@@ -52,15 +55,15 @@ function clientConfig(env) {
 					loader: resolve(__dirname, './async-component-loader'),
 					options: {
 						name(filename) {
-							let relative = filename.replace(src, '');
-							let isRoute = filename.indexOf('/routes/') >= 0;
-
-							return isRoute ? 'route-' + relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '') : false;
+							filename = normalizePath(filename);
+							let relative = filename.replace(normalizePath(src), '');
+							if (!relative.includes('/routes/')) return false;
+							return 'route-' + cleanFilename(relative);
 						},
 						formatName(filename) {
-							let relative = filename.replace(source('.'), '');
-							// strip out context dir & any file/ext suffix
-							return relative.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
+							filename = normalizePath(filename);
+							let relative = filename.replace(normalizePath(source('.')), '');
+							return cleanFilename(relative);
 						}
 					}
 				}
@@ -92,7 +95,7 @@ function clientConfig(env) {
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
 
-	return {
+	const prodConfig = {
 		performance: Object.assign({
 			hints: 'warning',
 			maxAssetSize: limit,
@@ -135,6 +138,14 @@ function isProd(config) {
 					]
 				}
 			}),
+			new webpack.DefinePlugin({
+				'process.env.ADD_SW': config.serviceWorker
+			}),
+		]
+	};
+
+	if (config.serviceWorker) {
+		prodConfig.plugins.push(
 			new SWPrecacheWebpackPlugin({
 				filename: 'sw.js',
 				navigateFallback: 'index.html',
@@ -145,14 +156,14 @@ function isProd(config) {
 					/polyfills(\..*)?\.js$/,
 					/\.map$/,
 					/push-manifest\.json$/,
-					/.DS_Store/
+					/.DS_Store/,
+					/\.git/
 				]
 			}),
-			new webpack.DefinePlugin({
-				'process.env.ADD_SW': config.serviceWorker
-			}),
-		]
-	};
+		);
+	}
+
+	return prodConfig;
 }
 
 function isDev(config) {

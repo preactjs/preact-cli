@@ -1,4 +1,5 @@
 const chalk = require('chalk');
+cosnt { normalize } = require('path');
 const { statSync, existsSync } = require('fs');
 const logSymbols = require('log-symbols');
 const which = require('which');
@@ -28,4 +29,8 @@ exports.warn = function (text, code) {
 exports.error = function (text, code) {
 	process.stderr.write(logSymbols.error + chalk.red(' ERROR ') + text + '\n');
 	code && process.exit(code);
+}
+
+export function normalizePath(path) {
+	return normalize(path).replace(/\\/g, '/');
 }

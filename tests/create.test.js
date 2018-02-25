@@ -18,4 +18,14 @@ describe('preact create', () => {
 			expect(output).toEqual(snapshots[key]);
 		});
 	});
+
+	it('should fail given an invalid name', async () => {
+		const INVALID_NAME = '*()@!#!$-invalid-name';
+
+		try {
+			await create('default', INVALID_NAME);
+		} catch (e) {
+			expect(e);
+		}
+	});
 });

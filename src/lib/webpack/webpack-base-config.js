@@ -6,7 +6,6 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
 const WebpackChunkHash = require('webpack-chunk-hash');
-const requireRelative = require('require-relative');
 const createBabelConfig = require('../babel-config');
 
 function readJson(file) {
@@ -225,7 +224,6 @@ module.exports = function (env) {
 			new webpack.HashedModuleIdsPlugin(),
 			new webpack.LoaderOptionsPlugin({ minimize:true }),
 			new webpack.optimize.ModuleConcatenationPlugin(),
-			new WebpackChunkHash(),
 
 			// strip out babel-helper invariant checks
 			new ReplacePlugin({

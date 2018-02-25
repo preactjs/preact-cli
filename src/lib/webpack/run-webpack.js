@@ -93,10 +93,13 @@ async function prodBuild(env) {
 function runCompiler(compiler) {
 	return new Promise((res, rej) => {
 		compiler.run((err, stats) => {
-			if (err || stats.hasErrors()) {
-				showStats(stats);
-				rej(red('Build failed!'));
-			}
+      if (stats && stats.hasErrors()) {
+			  showStats(stats);
+   		}
+
+		  if (err || (stats && stats.hasErrors())) {
+			  rej(chalk.red('Build failed! ' + err));
+  		}
 
 			res(stats);
 		});
@@ -124,7 +127,7 @@ function writeJsonStats(stats) {
 	function strip(stats) {
 		stats.modules.forEach(stripLoaderFromModuleNames);
 		stats.chunks.forEach(c => {
-			(c.mapModules!=null ? c.mapModules(Object) : c.getModules()).forEach(stripLoaderFromModuleNames);
+			(c.modules || (c.mapModules!=null ? c.mapModules(Object) : c.getModules())).forEach(stripLoaderFromModuleNames);
 		});
 		if (stats.children) stats.children.forEach(strip);
 	}
