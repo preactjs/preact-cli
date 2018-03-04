@@ -2,7 +2,7 @@ const ip = require('ip');
 const webpack = require('webpack');
 const getPort = require('get-port');
 const { resolve } = require('path');
-// const clear = require('console-clear');
+const clear = require('console-clear');
 const { writeFile } = require('fs.promised');
 const { bold, red, green } = require('chalk');
 const DevServer = require('webpack-dev-server');
@@ -43,7 +43,7 @@ async function devBuild(env) {
 			let serverAddr = `${protocol}://${host}:${bold(port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
 
-			// clear();
+			clear();
 
 			if (stats.hasErrors()) {
 				process.stdout.write(red('\Build failed!\n\n'));
