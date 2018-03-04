@@ -3,6 +3,7 @@ const { relative, resolve } = require('path');
 const { promisify } = require('bluebird');
 const { stat } = require('fs.promised');
 const minimatch = require('minimatch');
+const pRetry = require('p-retry');
 const glob = require('glob');
 
 const PER = 0.05; // % diff
@@ -58,21 +59,11 @@ async function log(fn, msg) {
 	}
 }
 
-function delay(ms) {
-	return new Promise(r => setTimeout(r, ms));
-}
-
-async function waitUntil(action, errorMessage, retryCount = 10, retryInterval = 100) {
-	if (retryCount < 0) {
+function waitUntil(action, errorMessage) {
+	return pRetry(action, { retries:10, minTimeout:250 }).catch(err => {
+		console.log('> waitUntil error', err);
 		throw new Error(errorMessage);
-	}
-
-	try {
-		if (await action()) return;
-	} catch (e) { }
-
-	await delay(retryInterval);
-	await waitUntil(action, errorMessage, retryCount - 1, retryInterval);
+	})
 }
 
-module.exports = { expand, bytes, snapshot, isMatch, log, delay, waitUntil };
+module.exports = { expand, bytes, snapshot, isMatch, log, waitUntil };

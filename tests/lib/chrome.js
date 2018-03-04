@@ -27,11 +27,11 @@ module.exports.getElementHtml = async function (Runtime, selector) {
 	return result.value;
 };
 
-module.exports.waitUntilExpression = async function (Runtime, expression, retryCount = 10, retryInterval = 500) {
+module.exports.waitUntilExpression = async function (Runtime, expression) {
 	let evaluate = async () => {
 		let { result } = await log(
 			() => Runtime.evaluate({ expression }),
-			`Waiting for ${expression} - tries left: ${retryCount}`
+			`Waiting for ${expression}`
 		);
 
 		if (result && result.subtype === 'promise') {
@@ -45,7 +45,7 @@ module.exports.waitUntilExpression = async function (Runtime, expression, retryC
 		return result && result.value;
 	};
 
-	await waitUntil(evaluate, `Waiting for ${expression} timed out!`, retryCount, retryInterval);
+	await waitUntil(evaluate, `Waiting for ${expression} timed out!`);
 };
 
 module.exports.loadPage = async function (chrome, url) {

@@ -89,23 +89,22 @@ describe('preact serve', () => {
 	});
 });
 
-const unregisterSW = async url => {
-	let { ServiceWorker } = chrome;
-	await ServiceWorker.unregister({ scopeURL: url });
-};
+async function unregisterSW(url) {
+	await chrome.ServiceWorker.unregister({ scopeURL:url });
+}
 
-const pageIsInteractive = chrome => waitUntil(
-	async () => {
-		let { DOM, DOMDebugger } = chrome;
-		let { root: document} = await DOM.getDocument();
-		let a = await DOM.querySelector({ selector: 'a', nodeId: document.nodeId });
-		let { object } = await DOM.resolveNode({ nodeId: a.nodeId });
-		let { listeners } = await DOMDebugger.getEventListeners({ objectId: object.objectId });
+function pageIsInteractive(chrome) {
+	return waitUntil(
+		async () => {
+			let { DOM, DOMDebugger } = chrome;
+			let { root: document} = await DOM.getDocument();
+			let a = await DOM.querySelector({ selector: 'a', nodeId: document.nodeId });
+			let { object } = await DOM.resolveNode({ nodeId: a.nodeId });
+			let { listeners } = await DOMDebugger.getEventListeners({ objectId: object.objectId });
 
-		return listeners.some(l => l.type === 'click');
-	},
-	'Waiting for page interactivity timeout out.',
-	20,
-	100
-);
+			return listeners.some(l => l.type === 'click');
+		},
+		'Waiting for page interactivity timed out.'
+	);
+}
 
