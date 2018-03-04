@@ -23,7 +23,7 @@ describe('preact', () => {
 		let app = await create('default');
 		server = await watch(app, 8083);
 
-		await loadPage(chrome, 'http://localhost:8083/');
+		await loadPage(chrome, 'http://127.0.0.1:8083/');
 
 		let header = resolve(app, './src/components/header/index.js');
 		let original = await fs.readFile(header, 'utf8');
