@@ -1,7 +1,6 @@
 const getCert = require('../lib/ssl-cert');
 const runWebpack = require('../lib/webpack/run-webpack');
 const { warn } = require('../util');
-const { showStats } = runWebpack;
 
 module.exports = async function (src, argv) {
 	argv.src = src || argv.src;
@@ -16,6 +15,5 @@ module.exports = async function (src, argv) {
 		argv.https = ssl;
 	}
 
-	let stats = await runWebpack(true, argv, showStats);
-	showStats(stats);
+	return runWebpack(argv, true);
 };

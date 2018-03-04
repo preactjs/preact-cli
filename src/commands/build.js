@@ -3,7 +3,6 @@ const { resolve } = require('path');
 const { promisify } = require('bluebird');
 const { isDir, error } = require('../util');
 const runWebpack = require('../lib/webpack/run-webpack');
-const { showStats, writeJsonStats } = runWebpack;
 
 module.exports = async function (src, argv) {
 	argv.src = src || argv.src;
@@ -23,12 +22,9 @@ module.exports = async function (src, argv) {
 		await promisify(rimraf)(dest);
 	}
 
-	console.log('> i made it here');
-	let stats = await runWebpack(false, argv);
-
-	showStats(stats);
+	let stats = await runWebpack(argv, false);
 
 	if (argv.json) {
-		await writeJsonStats(stats);
+		await runWebpack.writeJsonStats(stats);
 	}
 };

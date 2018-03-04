@@ -11,7 +11,7 @@ const serverConfig = require('./webpack-server-config');
 const transformConfig = require('./transform-config');
 const { error, isDir, warn } = require('../../util');
 
-async function devBuild(env, onprogress) {
+async function devBuild(env) {
 	let config = clientConfig(env);
 
 	await transformConfig(env, config);
@@ -20,7 +20,7 @@ async function devBuild(env, onprogress) {
 	let port = await getPort(userPort);
 
 	let compiler = webpack(config);
-	return await new Promise((_, rej) => {
+	return new Promise((res, rej) => {
 		compiler.plugin('emit', (compilation, callback) => {
 			var missingDeps = compilation.missingDependencies;
 			var nodeModulesPath = resolve(__dirname, '../../../node_modules');
@@ -58,7 +58,7 @@ async function devBuild(env, onprogress) {
 				process.stdout.write(`${bold('On Your Network:')}  ${localIpAddr}\n`);
 			}
 
-			onprogress && onprogress(stats);
+			showStats(stats);
 		});
 
 		compiler.plugin('failed', rej);
@@ -66,7 +66,10 @@ async function devBuild(env, onprogress) {
 		let c = Object.assign({}, config.devServer, {
 			stats: { colors:true }
 		});
-		new DevServer(compiler, c).listen(port);
+
+		let server = new DevServer(compiler, c);
+		server.listen(port);
+		res(server);
 	});
 }
 
@@ -87,7 +90,7 @@ async function prodBuild(env) {
 	// Timeout for plugins that work on `after-emit` event of webpack
 	await new Promise(r => setTimeout(r, 20));
 
-	return stats;
+	return showStats(stats);
 }
 
 function runCompiler(compiler) {
@@ -175,7 +178,7 @@ function stripLoaderFromModuleNames(m) {
 }
 
 
-module.exports = function (watch=false, env, onprogress) {
+module.exports = function (env, watch=false) {
 	env.isProd = env.production; // shorthand
 	env.cwd = resolve(env.cwd || process.cwd());
 
@@ -189,9 +192,7 @@ module.exports = function (watch=false, env, onprogress) {
 	env.source = dir => resolve(env.src, dir);
 
 	// determine build-type to run
-	let fn = watch ? devBuild : prodBuild;
-	// console.log('> I AM HERE YO', fn)
-	return fn(env, onprogress); // AsyncFunctioon
+	return (watch ? devBuild : prodBuild)(env);
 };
+
 module.exports.writeJsonStats = writeJsonStats;
-module.exports.showStats = showStats;
