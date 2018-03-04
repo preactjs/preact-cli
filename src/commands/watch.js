@@ -1,4 +1,3 @@
-const getCert = require('../lib/ssl-cert');
 const runWebpack = require('../lib/webpack/run-webpack');
 const { warn } = require('../util');
 
@@ -7,12 +6,12 @@ module.exports = async function (src, argv) {
 	argv.production = false;
 
 	if (argv.https || process.env.HTTPS) {
-		let ssl = await getCert();
-		if (!ssl) {
-			ssl = true;
+		let { key, cert, cacert } = argv;
+		if (key && cert && cacert) {
+			argv.https = { key, cert, ca:cacert };
+		} else {
 			warn('Reverting to `webpack-dev-server` internal certificate.');
 		}
-		argv.https = ssl;
 	}
 
 	return runWebpack(argv, true);
