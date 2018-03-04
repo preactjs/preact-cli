@@ -1,7 +1,7 @@
 const fs = require('fs.promised');
 const { resolve } = require('path');
-const { create, build, watch } = require('./lib/cli');
 const startChrome = require('./lib/chrome');
+const { create, watch } = require('./lib/cli');
 
 const { loadPage, waitUntilExpression } = startChrome;
 let chrome, launcher, server;
@@ -9,9 +9,8 @@ let chrome, launcher, server;
 describe('preact', () => {
 	beforeAll(async () => {
 		let result = await startChrome();
-		console.log('> CHROME STARTED');
-		chrome = result.protocol;
 		launcher = result.launcher;
+		chrome = result.protocol;
 	});
 
 	afterAll(async () => {
@@ -22,22 +21,20 @@ describe('preact', () => {
 	it('should create development server with hot reloading.', async () => {
 		let { Runtime } = chrome;
 		let app = await create('default');
-		await build(app);
-		server = await watch(app, '127.0.0.1', 8083);
-		let headerComponentSourceFile = resolve(app, './src/components/header/index.js');
+		server = await watch(app, 8083);
 
 		await loadPage(chrome, 'http://localhost:8083/');
-		let headerComponentSourceCode = await fs.readFile(headerComponentSourceFile, 'utf8');
-		let newSourceCode = headerComponentSourceCode.replace('<h1>Preact App</h1>', '<h1>Test App</h1>');
-		await fs.writeFile(headerComponentSourceFile, newSourceCode);
+
+		let header = resolve(app, './src/components/header/index.js');
+		let original = await fs.readFile(header, 'utf8');
+		let update = original.replace('<h1>Preact App</h1>', '<h1>Test App</h1>');
+		await fs.writeFile(header, update);
 
 		await waitUntilExpression(
 			Runtime,
 			`document.querySelector('header > h1').innerText === 'Test App'`,
 		);
-	});
 
-	afterEach(async () => {
-		await server.kill();
+		server.close();
 	});
 });

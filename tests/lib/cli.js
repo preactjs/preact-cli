@@ -29,7 +29,7 @@ exports.serve = function (cwd, port) {
 	return cmd.serve(argv.dest, opts);
 };
 
-exports.watch = function (cwd, host, port) {
+exports.watch = function (cwd, port, host='127.0.0.1') {
 	let opts = Object.assign({ cwd, host, port, https:false }, argv);
 	return cmd.watch(argv.src, opts);
 };
