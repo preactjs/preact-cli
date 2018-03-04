@@ -63,7 +63,7 @@ function waitUntil(action, errorMessage) {
 	return pRetry(action, { retries:10, minTimeout:250 }).catch(err => {
 		console.log('> waitUntil error', err);
 		throw new Error(errorMessage);
-	})
+	});
 }
 
 module.exports = { expand, bytes, snapshot, isMatch, log, waitUntil };
