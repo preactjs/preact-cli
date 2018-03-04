@@ -42,17 +42,6 @@ prog.command('list')
 	.action(commands.list);
 
 prog
-	.command('serve [dir]')
-	.describe('Run a HTTP2 static fileserver')
-	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--dir', 'Path to root directory; used for static files', 'build')
-	.option('--server', 'Type of server to run; use "config" for Firebase', 'simplehttp2server')
-	.option('--dest', 'Path custom Firebase config should be written', 'firebase.json')
-	.option('--cors', 'Specify allowable origins', 'localhost')
-	.option('-p, --port', 'Set PORT for server', 8080)
-	.action(commands.serve);
-
-prog
 	.command('watch [src]')
 	.describe('Start a live-reload server for development')
 	.option('--src', 'Specify source directory', 'src')

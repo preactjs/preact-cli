@@ -21,12 +21,6 @@ module.exports = async function () {
 	return { launcher, protocol };
 };
 
-
-module.exports.getElementHtml = async function (Runtime, selector) {
-	let { result } = await Runtime.evaluate({ expression: `document.querySelector("${selector}").outerHTML` });
-	return result.value;
-};
-
 module.exports.waitUntilExpression = async function (Runtime, expression) {
 	let evaluate = async () => {
 		let { result } = await log(
