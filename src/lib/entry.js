@@ -9,10 +9,7 @@ else if (process.env.ADD_SW && 'serviceWorker' in navigator && location.protocol
 	navigator.serviceWorker.register(__webpack_public_path__ + 'sw.js');
 }
 
-
 const interopDefault = m => m && m.default ? m.default : m;
-const FOO = require('preact-cli-entrypoint');
-console.log('> I AM FOO', FOO);
 let app = interopDefault(require('preact-cli-entrypoint'));
 
 if (typeof app==='function') {
