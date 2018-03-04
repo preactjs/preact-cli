@@ -5,6 +5,7 @@ const fs = require('fs.promised');
 const FILE = 'preact.config.js';
 
 module.exports = async function (env, config, ssr=false) {
+	env.config = env.config || FILE;
 	let myConfig = resolve(env.cwd, env.config);
 
 	try {
