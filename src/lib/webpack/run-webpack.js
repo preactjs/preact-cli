@@ -185,8 +185,6 @@ module.exports = function (env, watch=false) {
 	// env.src='src' via `build` default
 	let src = resolve(env.cwd, env.src);
 	env.src = isDir(src) ? src : env.cwd;
-	console.log('> src', src);
-	console.log('> env.src', env.src);
 
 	// attach sourcing helper
 	env.source = dir => resolve(env.src, dir);
