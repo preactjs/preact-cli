@@ -7,7 +7,7 @@ module.exports = async function (src, argv) {
 
 	if (argv.https || process.env.HTTPS) {
 		let { key, cert, cacert } = argv;
-		if (key && cert && cacert) {
+		if (key && cert) {
 			argv.https = { key, cert, ca:cacert };
 		} else {
 			warn('Reverting to `webpack-dev-server` internal certificate.');
