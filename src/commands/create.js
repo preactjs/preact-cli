@@ -88,7 +88,7 @@ export default asyncCommand({
 		let repo = argv.template;
 		if (!repo.includes('/')) {
 			repo = `${ORG}/${repo}`;
-			info(`Assuming you meant ${repo}...`);
+			info(`Fetching ${argv.template} template from ${repo}...`);
 		}
 
 		// Use `--name` value or `dest` dir's name
