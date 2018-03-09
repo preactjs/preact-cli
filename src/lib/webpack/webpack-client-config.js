@@ -139,12 +139,12 @@ function isProd(config) {
 				}
 			}),
 			new webpack.DefinePlugin({
-				'process.env.ADD_SW': config.serviceWorker
+				'process.env.ADD_SW': config.sw
 			}),
 		]
 	};
 
-	if (config.serviceWorker) {
+	if (config.sw) {
 		prodConfig.plugins.push(
 			new SWPrecacheWebpackPlugin({
 				filename: 'sw.js',
