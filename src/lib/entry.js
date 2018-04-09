@@ -2,7 +2,7 @@ import { h, render } from 'preact';
 
 if (process.env.NODE_ENV==='development') {
 	// enable preact devtools
-	require('preact/devtools');
+	require('preact/debug');
 }
 else if (process.env.ADD_SW && 'serviceWorker' in navigator && location.protocol === 'https:') {
 	// eslint-disable-next-line no-undef

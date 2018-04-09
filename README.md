@@ -53,6 +53,8 @@ Current available templates include:
 
 - [simple] - The simplest possible preact setup in a single file
 
+- [widget] - Template for a widget to be embedded in another website.
+
 > 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `preact create <username>/<repository> <project-name>`
 
 ### CLI Options
@@ -257,6 +259,7 @@ preact watch --template src/template.html
 [sw-precache]: https://github.com/GoogleChrome/sw-precache
 [preact-router]: https://github.com/developit/preact-router
 [material]: https://github.com/preactjs-templates/material
+[widget]: https://github.com/preactjs-templates/widget
 [Plugins wiki]: https://github.com/developit/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
 [preactjs-templates/default]: https://github.com/preactjs-templates/default
