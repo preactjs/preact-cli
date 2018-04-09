@@ -2,6 +2,7 @@
 /lib
 /examples/*/build
 /tests/output
+.idea
 .DS_Store
 npm-debug.log
 key.pem
