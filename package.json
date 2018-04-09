@@ -3,34 +3,23 @@
   "version": "2.2.1",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "developit/preact-cli",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "bin": {
-    "preact": "./lib/index.js"
+    "preact": "./src/index.js"
   },
   "scripts": {
-    "prebuild": "rimraf lib",
-    "build": "babel src -d lib -D",
-    "prepublish": "npm run -s build",
     "dev": "babel-node src",
     "lint": "eslint src tests",
-    "pretest": "npm run -s build && rimraf tests/output",
+    "pretest": "rimraf tests/output",
     "test": "jest",
     "posttest": "rimraf tests/output",
-    "postinstall": "node -p 'require(\"./check.js\")()'",
-    "test:build": "babel-node src build --cwd examples/root",
-    "test:serve": "npm run -s test:build && babel-node src serve --port 3000 --cwd examples/root",
-    "test:serve:config": "npm run -s test:build && babel-node src serve --server config --cwd examples/root",
-    "test:simple": "babel-node src build --cwd examples/simple && babel-node src serve --port 3000 --cwd examples/simple",
-    "test:empty": "babel-node src build --cwd examples/empty && babel-node src serve --port 3000 --cwd examples/empty",
-    "test:watch": "babel-node src watch --cwd examples/root --port 3000",
-    "test:deploy": "npm run test:build && cp examples/root/build/index.html examples/root/build/200.html && surge -d cli-demo.preactjs.com examples/root/build"
+    "postinstall": "node -p 'require(\"./check.js\")()'"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "files": [
-    "lib",
-    "examples",
+    "src",
     "check.js",
     "babel"
   ],
@@ -93,7 +82,9 @@
     "jest": "^20.0.4",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
-    "uuid": "^3.0.1"
+    "node-sass": "^4.7.2",
+    "p-retry": "^1.0.0",
+    "sass-loader": "^6.0.6"
   },
   "dependencies": {
     "autoprefixer": "^7.1.0",
@@ -117,7 +108,6 @@
     "cross-spawn-promise": "^0.10.1",
     "css-loader": "^0.28.7",
     "css-modules-require-hook": "^4.0.6",
-    "devcert-san": "^0.3.3",
     "ejs-loader": "^0.3.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.1",
@@ -135,7 +125,6 @@
     "log-symbols": "^2.1.0",
     "minimatch": "^3.0.3",
     "ora": "^1.2.0",
-    "persist-path": "^1.0.1",
     "postcss-loader": "^2.0.6",
     "preact": "^8.1.0",
     "preact-compat": "^3.14.3",
@@ -146,13 +135,12 @@
     "raw-loader": "^0.5.1",
     "require-relative": "^0.8.7",
     "rimraf": "^2.6.1",
+    "sade": "^1.2.0",
     "script-ext-html-webpack-plugin": "^1.8.0",
-    "simplehttp2server": "^2.0.0",
     "source-map": "^0.5.6",
     "stack-trace": "0.0.10",
     "style-loader": "^0.18.2",
     "sw-precache-webpack-plugin": "^0.11.2",
-    "tmp": "0.0.31",
     "unfetch": "^3.0.0",
     "update-notifier": "^2.3.0",
     "url-loader": "^0.5.8",
@@ -161,7 +149,6 @@
     "webpack-dev-server": "^2.9.0",
     "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.1.1",
-    "which": "^1.2.14",
-    "yargs": "^8.0.1"
+    "which": "^1.2.14"
   }
 }

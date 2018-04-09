@@ -1,33 +1,17 @@
-import ip from 'ip';
-import { resolve } from 'path';
-import { writeFile } from 'fs.promised';
-import webpack from 'webpack';
-import chalk from 'chalk';
-import getPort from 'get-port';
-import clearConsole from 'console-clear';
-import DevServer from 'webpack-dev-server';
-import clientConfig from './webpack-client-config';
-import serverConfig from './webpack-server-config';
-import transformConfig from './transform-config';
-import { error, isDir, warn } from '../../util';
+const ip = require('ip');
+const webpack = require('webpack');
+const getPort = require('get-port');
+const { resolve } = require('path');
+const clear = require('console-clear');
+const { writeFile } = require('fs.promised');
+const { bold, red, green } = require('chalk');
+const DevServer = require('webpack-dev-server');
+const clientConfig = require('./webpack-client-config');
+const serverConfig = require('./webpack-server-config');
+const transformConfig = require('./transform-config');
+const { error, isDir, warn } = require('../../util');
 
-export default function (watch=false, env, onprogress) {
-	env.isProd = env.production; // shorthand
-	env.cwd = resolve(env.cwd || process.cwd());
-
-	// env.src='src' via `build` default
-	let src = resolve(env.cwd, env.src);
-	env.src = isDir(src) ? src : env.cwd;
-
-	// attach sourcing helper
-	env.source = dir => resolve(env.src, dir);
-
-	// determine build-type to run
-	let fn = watch ? devBuild : prodBuild;
-	return fn(env, onprogress); // AsyncFunctioon
-}
-
-async function devBuild(env, onprogress) {
+async function devBuild(env) {
 	let config = clientConfig(env);
 
 	await transformConfig(env, config);
@@ -36,7 +20,7 @@ async function devBuild(env, onprogress) {
 	let port = await getPort(userPort);
 
 	let compiler = webpack(config);
-	return await new Promise((_, rej) => {
+	return new Promise((res, rej) => {
 		compiler.plugin('emit', (compilation, callback) => {
 			var missingDeps = compilation.missingDependencies;
 			var nodeModulesPath = resolve(__dirname, '../../../node_modules');
@@ -56,69 +40,76 @@ async function devBuild(env, onprogress) {
 			let host = process.env.HOST || devServer.host || 'localhost';
 			if (host === '0.0.0.0') host = 'localhost';
 
-			let serverAddr = `${protocol}://${host}:${chalk.bold(port)}`;
-			let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}`;
+			let serverAddr = `${protocol}://${host}:${bold(port)}`;
+			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
 
-			clearConsole();
+			clear();
 
 			if (stats.hasErrors()) {
-				process.stdout.write(chalk.red('\Build failed!\n\n'));
+				process.stdout.write(red('\Build failed!\n\n'));
 			} else {
-				process.stdout.write(chalk.green('Compiled successfully!\n\n'));
+				process.stdout.write(green('Compiled successfully!\n\n'));
 
 				if (userPort !== port) {
-					process.stdout.write(`Port ${chalk.bold(userPort)} is in use, using ${chalk.bold(port)} instead\n\n`);
+					process.stdout.write(`Port ${bold(userPort)} is in use, using ${bold(port)} instead\n\n`);
 				}
 				process.stdout.write('You can view the application in browser.\n\n');
-				process.stdout.write(`${chalk.bold('Local:')}            ${serverAddr}\n`);
-				process.stdout.write(`${chalk.bold('On Your Network:')}  ${localIpAddr}\n`);
+				process.stdout.write(`${bold('Local:')}            ${serverAddr}\n`);
+				process.stdout.write(`${bold('On Your Network:')}  ${localIpAddr}\n`);
 			}
 
-			if (onprogress) onprogress(stats);
+			showStats(stats);
 		});
 
 		compiler.plugin('failed', rej);
 
-		new DevServer(compiler, config.devServer).listen(port);
+		let c = Object.assign({}, config.devServer, {
+			stats: { colors:true }
+		});
+
+		let server = new DevServer(compiler, c);
+		server.listen(port);
+		res(server);
 	});
 }
 
 async function prodBuild(env) {
 	let config = clientConfig(env);
-
 	await transformConfig(env, config);
-	let serverCompiler, clientCompiler=webpack(config);
 
 	if (env.prerender) {
 		let ssrConfig = serverConfig(env);
 		await transformConfig(env, ssrConfig, true);
-		serverCompiler = webpack(ssrConfig);
+		let serverCompiler = webpack(ssrConfig);
 		await runCompiler(serverCompiler);
 	}
 
+	let clientCompiler = webpack(config);
 	let stats = await runCompiler(clientCompiler);
 
 	// Timeout for plugins that work on `after-emit` event of webpack
 	await new Promise(r => setTimeout(r, 20));
 
-	return stats;
+	return showStats(stats);
 }
 
-const runCompiler = compiler => new Promise((res, rej) => {
-	compiler.run((err, stats) => {
-		if (stats && stats.hasErrors()) {
-			showStats(stats);
-		}
+function runCompiler(compiler) {
+	return new Promise((res, rej) => {
+		compiler.run((err, stats) => {
+			if (stats && stats.hasErrors()) {
+				showStats(stats);
+			}
 
-		if (err || (stats && stats.hasErrors())) {
-			rej(chalk.red('Build failed! ' + err));
-		}
+			if (err || (stats && stats.hasErrors())) {
+				rej(red('Build failed! ' + err));
+			}
 
-		res(stats);
+			res(stats);
+		});
 	});
-});
+}
 
-export function showStats(stats) {
+function showStats(stats) {
 	let info = stats.toJson('errors-only');
 
 	if (stats.hasErrors()) {
@@ -132,7 +123,7 @@ export function showStats(stats) {
 	return stats;
 }
 
-export function writeJsonStats(stats) {
+function writeJsonStats(stats) {
 	let outputPath = resolve(process.cwd(), 'stats.json');
 	let jsonStats = stats.toJson({ json:true, chunkModules:true, source:false });
 
@@ -185,3 +176,21 @@ function stripLoaderFromModuleNames(m) {
 
 	return m;
 }
+
+
+module.exports = function (env, watch=false) {
+	env.isProd = env.production; // shorthand
+	env.cwd = resolve(env.cwd || process.cwd());
+
+	// env.src='src' via `build` default
+	let src = resolve(env.cwd, env.src);
+	env.src = isDir(src) ? src : env.cwd;
+
+	// attach sourcing helper
+	env.source = dir => resolve(env.src, dir);
+
+	// determine build-type to run
+	return (watch ? devBuild : prodBuild)(env);
+};
+
+module.exports.writeJsonStats = writeJsonStats;

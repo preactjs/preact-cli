@@ -1,10 +1,10 @@
-import chalk from 'chalk';
-import { resolve } from 'path';
-import { readFileSync } from 'fs';
-import stackTrace from 'stack-trace';
-import { SourceMapConsumer } from 'source-map';
+const chalk = require('chalk');
+const { resolve } = require('path');
+const { readFileSync } = require('fs');
+const stackTrace = require('stack-trace');
+const { SourceMapConsumer } = require('source-map');
 
-export default function prerender(env, params) {
+module.exports = function (env, params) {
 	params = params || {};
 
 	let entry = resolve(env.dest, './ssr-build/ssr-bundle.js');
@@ -35,9 +35,9 @@ export default function prerender(env, params) {
 
 		handlePrerenderError(err, env, stack, entry);
 	}
-}
+};
 
-const handlePrerenderError = (err, env, stack, entry) => {
+function handlePrerenderError(err, env, stack, entry) {
 	let errorMessage = err.toString();
 	let isReferenceError =  errorMessage.startsWith('ReferenceError');
 	let methodName = stack.getMethodName();
@@ -91,8 +91,7 @@ const handlePrerenderError = (err, env, stack, entry) => {
 		process.stderr.write('Source code:\n\n');
 		process.stderr.write(sourceCodeHighlight);
 		process.stderr.write('\n');
-	}
-	else {
+	} else {
 		process.stderr.write(stack.toString()+'\n');
 	}
 	process.stderr.write(`This ${isReferenceError ? 'is most likely' : 'could be'} caused by using DOM or Web APIs.\n`);
@@ -106,4 +105,4 @@ const handlePrerenderError = (err, env, stack, entry) => {
 	process.stderr.write(`Alternatively use 'preact build --no-prerender' to disable prerendering.\n\n`);
 	process.stderr.write('See https://github.com/developit/preact-cli#pre-rendering for further information.');
 	process.exit(1);
-};
+}

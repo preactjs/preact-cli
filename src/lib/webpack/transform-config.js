@@ -1,30 +1,32 @@
-import path from 'path';
-import fs from 'fs.promised';
-import webpack from 'webpack';
+const { resolve } = require('path');
+const webpack = require('webpack');
+const fs = require('fs.promised');
 
-export default async function (env, config, ssr = false) {
-	let transformerPath = path.resolve(env.cwd, env.config || './preact.config.js');
+const FILE = 'preact.config.js';
+
+module.exports = async function (env, config, ssr=false) {
+	env.config = env.config || FILE;
+	let myConfig = resolve(env.cwd, env.config);
 
 	try {
-		await fs.stat(transformerPath);
+		await fs.stat(myConfig);
 	} catch (e) {
-		if (env.config) {
-			throw new Error(`preact-cli config could not be loaded!\nFile ${env.config} not found.`);
-		}
-		return;
+		if (env.config === FILE) return;
+		throw new Error(`preact-cli config could not be loaded!\nFile ${env.config} not found.`);
 	}
 
 	require('babel-register')({
 		presets: [require.resolve('babel-preset-env')]
 	});
-	const m = require(transformerPath);
+	const m = require(myConfig);
 	const transformer = m && m.default || m;
 	try {
-		await transformer(config, Object.assign({}, env, { ssr }), new WebpackConfigHelpers(env.cwd));
+		let helpers = new WebpackConfigHelpers(env.cwd);
+		await transformer(config, Object.assign({}, env, { ssr }), helpers);
 	} catch (err) {
-		throw new Error(`Error at ${transformerPath}: \n` + err);
+		throw new Error(`Error at ${myConfig}: \n` + err);
 	}
-}
+};
 
 /**
  * WebpackConfigHelpers
@@ -98,7 +100,7 @@ class WebpackConfigHelpers {
 	 * @memberof WebpackConfigHelpers
 	 */
 	getRulesByMatchingFile(config, file) {
-		let filePath = path.resolve(this._cwd, file);
+		let filePath = resolve(this._cwd, file);
 		return this.getRules(config)
 			.filter(w => w.rule.test && w.rule.test.exec(filePath));
 	}
@@ -171,7 +173,7 @@ class WebpackConfigHelpers {
 			isPath = true;
 		} catch (e) {}
 
-		let templatePath = isPath ? `!!ejs-loader!${path.resolve(this._cwd, template)}` : template;
+		let templatePath = isPath ? `!!ejs-loader!${resolve(this._cwd, template)}` : template;
 		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(config, 'HtmlWebpackPlugin')[0];
 		htmlWebpackPlugin.options.template = templatePath;
 	}

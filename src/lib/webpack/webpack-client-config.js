@@ -1,14 +1,14 @@
-import webpack from 'webpack';
-import { resolve } from 'path';
-import { existsSync } from 'fs';
-import merge from 'webpack-merge';
-import { filter } from 'minimatch';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import SWPrecacheWebpackPlugin from 'sw-precache-webpack-plugin';
-import RenderHTMLPlugin from './render-html-plugin';
-import PushManifestPlugin from './push-manifest';
-import baseConfig from './webpack-base-config';
-import { normalizePath } from '../../util';
+const webpack = require('webpack');
+const { resolve } = require('path');
+const { existsSync } = require('fs');
+const merge = require('webpack-merge');
+const { filter } = require('minimatch');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+const RenderHTMLPlugin = require('./render-html-plugin');
+const PushManifestPlugin = require('./push-manifest');
+const baseConfig = require('./webpack-base-config');
+const { normalizePath } = require('../../util');
 
 const cleanFilename = name => name.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
 
@@ -96,12 +96,11 @@ function isProd(config) {
 	let limit = 200 * 1000; // 200kb
 
 	const prodConfig = {
-		performance: {
+		performance: Object.assign({
 			hints: 'warning',
 			maxAssetSize: limit,
 			maxEntrypointSize: limit,
-			...config.pkg.performance
-		},
+		}, config.pkg.performance),
 
 		plugins: [
 			new webpack.optimize.UglifyJsPlugin({
@@ -140,12 +139,12 @@ function isProd(config) {
 				}
 			}),
 			new webpack.DefinePlugin({
-				'process.env.ADD_SW': config.serviceWorker
+				'process.env.ADD_SW': config.sw
 			}),
 		]
 	};
 
-	if (config.serviceWorker) {
+	if (config.sw) {
 		prodConfig.plugins.push(
 			new SWPrecacheWebpackPlugin({
 				filename: 'sw.js',
@@ -204,10 +203,10 @@ function isDev(config) {
 	};
 }
 
-export default function (env) {
+module.exports = function (env) {
 	return merge(
 		baseConfig(env),
 		clientConfig(env),
 		(env.isProd ? isProd : isDev)(env)
 	);
-}
+};

@@ -1,24 +1,20 @@
-import ncp from 'ncp';
-import uuid from 'uuid/v4';
-import { resolve } from 'path';
-import { promisify } from 'bluebird';
-import spawn from 'cross-spawn-promise';
-import { log } from './utils';
+const copy = require('ncp');
+const { resolve } = require('path');
+const { promisify } = require('bluebird');
 
-const copy = promisify(ncp);
 const output = resolve(__dirname, '../output');
 const subjects = resolve(__dirname, '../subjects');
 
-export const tmpDir = () => resolve(output, uuid());
+function tmpDir() {
+	let str = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 12);
+	return resolve(output, str);
+}
 
-export async function fromSubject(name) {
+async function subject(name) {
+	let src = resolve(subjects, name);
 	let dest = tmpDir();
-	let dir = resolve(subjects, name);
-
-	await log(() => copy(dir, dest), `Copy subject: ${name}`);
-
-	// always install deps; needs to build
-	await log(() => spawn('npm', ['install'], { cwd:dest }), `Install subject dependencies`);
-
+	await promisify(copy)(src, dest);
 	return dest;
 }
+
+module.exports = { tmpDir, subject };

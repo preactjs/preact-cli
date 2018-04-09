@@ -24,5 +24,3 @@ exports.default = [
 	'src/tests/__mocks__/fileMocks.js',
 	'src/tests/header.test.js'
 ];
-
-exports.full = exports.default;

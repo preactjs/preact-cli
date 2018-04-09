@@ -1,35 +1,63 @@
 #!/usr/bin/env node
-
-import updateNotifier from 'update-notifier';
-import yargs from 'yargs';
-import create from './commands/create';
-import build from './commands/build';
-import watch from './commands/watch';
-import serve from './commands/serve';
-import list from './commands/list';
-import installHooks from './lib/output-hooks';
-import pkg from '../package.json';
-import logo from './lib/logo';
-import checkVersion from './../check';
-
+const sade = require('sade');
 global.Promise = require('bluebird');
+const notifier = require('update-notifier');
+const commands = require('./commands');
+const version = require('../check');
+const pkg = require('../package');
 
-checkVersion();
+version();
 
-installHooks();
+// installHooks();
 
-updateNotifier({pkg}).notify();
+notifier({ pkg }).notify();
 
-yargs
-	.command(create)
-	.command(build)
-	.command(watch)
-	.command(serve)
-	.command(list)
-	.usage(logo(`\n\npreact-cli ${pkg.version}`) + `\nFor help with a specific command, enter:\n  preact help [command]`)
-	.help()
-	.alias('h', 'help')
-	.demandCommand()
-	.strict()
-	.argv;
+let prog = sade('preact').version(pkg.version);
 
+prog
+	.command('build [src]')
+	.describe('Create a production build')
+	.option('--src', 'Specify source directory', 'src')
+	.option('--dest', 'Specify output directory', 'build')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--sw', 'Generate and attach a Service Worker', true)
+	.option('--json', 'Generate build stats for bundle analysis')
+	.option('--template', 'Path to custom HTML template')
+	.option('--prerenderUrls', 'Path to pre-rendered routes config', 'prerender-urls.json')
+	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
+	.action(commands.build);
+
+prog
+	.command('create [template] [dest]')
+	.describe('Create a new application')
+	.option('--name', 'The application name')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--force', 'Force destination output; will override!')
+	.option('--install', 'Install dependencies', true)
+	.option('--yarn', 'Use `yarn` instead of `npm`')
+	.option('--git', 'Initialize git repository')
+	.action(commands.create);
+
+prog.command('list')
+	.describe('List official templates')
+	.action(commands.list);
+
+prog
+	.command('watch [src]')
+	.describe('Start a live-reload server for development')
+	.option('--src', 'Specify source directory', 'src')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--sw', 'Generate and attach a Service Worker', false)
+	.option('--json', 'Generate build stats for bundle analysis')
+	.option('--https', 'Run server with HTTPS protocol')
+	.option('--key', 'Path to PEM key for custom SSL certificate')
+	.option('--cert', 'Path to custom SSL certificate')
+	.option('--cacert', 'Path to optional CA certificate override')
+	.option('--prerender', 'Pre-render static content on first run')
+	.option('--template', 'Path to custom HTML template')
+	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
+	.option('-H, --host', 'Set server hostname', '0.0.0.0')
+	.option('-p, --port', 'Set server port', 8080)
+	.action(commands.watch);
+
+prog.parse(process.argv);

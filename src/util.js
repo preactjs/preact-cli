@@ -1,36 +1,36 @@
-import chalk from 'chalk';
-import { statSync, existsSync } from 'fs';
-import logSymbols from 'log-symbols';
-import which from 'which';
-import { normalize } from 'path';
+const chalk = require('chalk');
+const { normalize } = require('path');
+const { statSync, existsSync } = require('fs');
+const logSymbols = require('log-symbols');
+const which = require('which');
 
-export function isDir(str) {
+exports.isDir = function (str) {
 	return existsSync(str) && statSync(str).isDirectory();
-}
+};
 
-export function hasCommand(str) {
+exports.hasCommand = function (str) {
 	return !!which.sync(str, { nothrow:true });
-}
+};
 
-export function trim(str) {
+exports.trim = function (str) {
 	return str.trim().replace(/^\t+/gm, '');
-}
+};
 
-export function info(text, code) {
+exports.info = function (text, code) {
 	process.stderr.write(logSymbols.info + chalk.blue(' INFO ') + text + '\n');
 	code && process.exit(code);
-}
+};
 
-export function warn(text, code) {
+exports.warn = function (text, code) {
 	process.stdout.write(logSymbols.warning + chalk.yellow(' WARN ') + text + '\n');
 	code && process.exit(code);
-}
+};
 
-export function error(text, code) {
+exports.error = function (text, code) {
 	process.stderr.write(logSymbols.error + chalk.red(' ERROR ') + text + '\n');
 	code && process.exit(code);
-}
+};
 
-export function normalizePath(path) {
-	return normalize(path).replace(/\\/g, '/');
-}
+exports.normalizePath = function (str) {
+	return normalize(str).replace(/\\/g, '/');
+};

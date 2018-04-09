@@ -1,21 +1,18 @@
-import webpack from 'webpack';
-import { resolve } from 'path';
-import { readFileSync } from 'fs';
-import autoprefixer from 'autoprefixer';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import ReplacePlugin from 'webpack-plugin-replace';
-import requireRelative from 'require-relative';
-import createBabelConfig from '../babel-config';
+const webpack = require('webpack');
+const { resolve } = require('path');
+const { readFileSync } = require('fs');
+const autoprefixer = require('autoprefixer');
+const requireRelative = require('require-relative');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const ReplacePlugin = require('webpack-plugin-replace');
+const createBabelConfig = require('../babel-config');
 
-export function readJson(file) {
-	if (file in readJson.cache) return readJson.cache[file];
-	let ret;
-	try { ret = JSON.parse(readFileSync(file)); }
-	catch (e) { }
-	return readJson.cache[file] = ret;
+function readJson(file) {
+	try {
+		return JSON.parse(readFileSync(file));
+	} catch (e) {}
 }
-readJson.cache = {};
 
 // attempt to resolve a dependency, giving $CWD/node_modules priority:
 function resolveDep(dep, cwd) {
@@ -24,7 +21,7 @@ function resolveDep(dep, cwd) {
 	return dep;
 }
 
-export default function (env) {
+module.exports = function (env) {
 	const { cwd, isProd, src, source } = env;
 
 	// Apply base-level `env` values
@@ -32,7 +29,7 @@ export default function (env) {
 	env.manifest = readJson( source('manifest.json') ) || {};
 	env.pkg = readJson( resolve(cwd, 'package.json') ) || {};
 
-	let babelrc = readJson( resolve(cwd, '.babelrc') ) || {};
+	let babelrc = readJson( resolve(cwd, 'old') ) || {};
 	let browsers = env.pkg.browserslist || ['> 1%', 'last 2 versions', 'IE >= 9'];
 
 	let nodeModules = resolve(cwd, 'node_modules');
@@ -249,4 +246,6 @@ export default function (env) {
 			setImmediate: false
 		}
 	};
-}
+};
+
+module.exports.readJson = readJson;

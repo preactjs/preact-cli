@@ -1,17 +1,19 @@
-import spawn from 'cross-spawn-promise';
-import { hasCommand, warn } from '../util';
+const spawn = require('cross-spawn-promise');
+const { hasCommand, warn } = require('../util');
 
-export function install(cwd, isYarn) {
+const stdio = 'ignore';
+
+exports.install =  function (cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
-	return spawn(cmd, ['install'], { cwd, stdio:'ignore' });
-}
+	return spawn(cmd, ['install'], { cwd, stdio });
+};
 
-export async function addScripts(obj, cwd, isYarn) {
+exports.addScripts =  async function (obj, cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
 	let args = isYarn ? ['add', '--dev'] : ['install', '--save-dev'];
 
 	// Install `if-env`
-	await spawn(cmd, [...args, 'if-env'], { cwd, stdio:'ignore '});
+	await spawn(cmd, [...args, 'if-env'], { cwd, stdio });
 
 	return {
 		build: 'preact build',
@@ -19,11 +21,11 @@ export async function addScripts(obj, cwd, isYarn) {
 		start: `if-env NODE_ENV=production && ${cmd} run -s serve || ${cmd} run -s watch`,
 		watch: 'preact watch'
 	};
-}
+};
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
-export async function initGit(target) {
+exports.initGit =  async function (target) {
 	let git = hasCommand('git');
 
 	if (git) {
@@ -60,10 +62,10 @@ export async function initGit(target) {
 	} else {
 		warn('Could not locate `git` binary in `$PATH`. Skipping!');
 	}
-}
+};
 
 // Formulate Questions if `create` args are missing
-export function isMissing(argv) {
+exports.isMissing = function (argv) {
 	let out = [];
 
 	const ask = (name, message, val) => {
@@ -82,4 +84,4 @@ export function isMissing(argv) {
 	!argv.git && ask('git', 'Initialize a `git` repository', false);
 
 	return out;
-}
+};

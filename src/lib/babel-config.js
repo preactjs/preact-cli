@@ -1,4 +1,4 @@
-export default (env, options={}) => {
+module.exports = function (env, options={}) {
 	const isProd = env && env.production;
 
 	return {
