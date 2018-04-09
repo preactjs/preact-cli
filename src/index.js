@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const sade = require('sade');
-const chalk = require('chalk');
 global.Promise = require('bluebird');
 const notifier = require('update-notifier');
 const { error } = require('./util');
@@ -16,6 +15,7 @@ if (ver.substring(1).localeCompare(min.match(/\d+/g).join('.'), 'en', { numeric:
 const commands = require('./commands');
 
 // installHooks();
+notifier({ pkg }).notify();
 
 let prog = sade('preact').version(pkg.version);
 
