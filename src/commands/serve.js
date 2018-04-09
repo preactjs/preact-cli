@@ -33,7 +33,8 @@ export default asyncCommand({
 		},
 		dest: {
 			description: 'Directory or filename where firebase.json should be written\n  (used for --server config)',
-			defaultDescription: '-'
+			defaultDescription: '-',
+			default: 'firebase.json'
 		},
 		port: {
 			description: 'Port to start a server on.',
