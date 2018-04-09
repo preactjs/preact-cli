@@ -12,15 +12,13 @@
     "lint": "eslint src tests",
     "pretest": "rimraf tests/output",
     "test": "jest",
-    "posttest": "rimraf tests/output",
-    "postinstall": "node -p 'require(\"./check.js\")()'"
+    "posttest": "rimraf tests/output"
   },
   "engines": {
     "node": ">=8"
   },
   "files": [
     "src",
-    "check.js",
     "babel"
   ],
   "keywords": [

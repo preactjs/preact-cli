@@ -1,16 +1,21 @@
 #!/usr/bin/env node
 const sade = require('sade');
+const chalk = require('chalk');
 global.Promise = require('bluebird');
 const notifier = require('update-notifier');
-const commands = require('./commands');
-const version = require('../check');
+const { error } = require('./util');
 const pkg = require('../package');
 
-version();
+const ver = process.version;
+const min = pkg.engines.node;
+if (ver.substring(1).localeCompare(min.match(/\d+/g).join('.'), 'en', { numeric:true }) === -1) {
+	return error(`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!`, 1);
+}
+
+// Safe to load async-based funcs
+const commands = require('./commands');
 
 // installHooks();
-
-notifier({ pkg }).notify();
 
 let prog = sade('preact').version(pkg.version);
 
