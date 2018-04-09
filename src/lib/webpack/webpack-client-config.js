@@ -154,6 +154,7 @@ function isProd(config) {
 				minify: true,
 				stripPrefix: config.cwd,
 				staticFileGlobsIgnorePatterns: [
+					/index\.html$/,
 					/polyfills(\..*)?\.js$/,
 					/\.map$/,
 					/push-manifest\.json$/,
