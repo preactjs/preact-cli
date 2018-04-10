@@ -1,6 +1,6 @@
 const mkdirp = require('mkdirp');
 const { join } = require('path');
-const cmd = require('../../src/commands');
+const cmd = require('../../lib/commands');
 const { tmpDir } = require('./output');
 
 const argv = {
