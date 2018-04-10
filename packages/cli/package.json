@@ -32,8 +32,6 @@
   "homepage": "https://github.com/developit/preact-cli",
   "devDependencies": {
     "babel-plugin-transform-runtime": "^6.23.0",
-    "chrome-launcher": "^0.1.1",
-    "chrome-remote-interface": "^0.23.2",
     "html-looks-like": "^1.0.2",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
