@@ -12,6 +12,9 @@
     "test": "jest",
     "posttest": "rimraf tests/output"
   },
+  "jest": {
+    "setupTestFrameworkScriptFile": "<rootDir>/tests/setup.js"
+  },
   "engines": {
     "node": ">=8"
   },

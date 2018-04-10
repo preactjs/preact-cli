@@ -4,9 +4,6 @@
     "pretest": "lerna bootstrap",
     "test": "eslint packages --ignore-pattern 'node_modules' && lerna run test"
   },
-  "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/tests/setup.js"
-  },
   "devDependencies": {
     "babel-eslint": "^8.2.2",
     "chrome-launcher": "^0.1.1",

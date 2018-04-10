@@ -25,7 +25,6 @@ cache:
 
 before_script:
 - export WITH_LOG=true
-- export LISTENING_TO_UNHANDLED_REJECTION=true
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
 
 script:
