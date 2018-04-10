@@ -19,7 +19,7 @@ export default asyncCommand({
 		},
 		port: {
 			description: 'Port to start a server on',
-			default: '8080',
+			default: '1234',
 			alias: 'p'
 		},
 		host: {
