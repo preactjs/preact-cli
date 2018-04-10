@@ -29,5 +29,4 @@ before_script:
 - if [ "$TRAVIS_BRANCH" = "master" ]; then export WITH_LOG=true; fi
 
 script:
-- npm run lint
 - npm run test -- --verbose
