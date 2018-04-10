@@ -8,7 +8,6 @@
     "preact": "lib/index.js"
   },
   "scripts": {
-    "lint": "eslint src tests",
     "pretest": "rimraf tests/output",
     "test": "jest",
     "posttest": "rimraf tests/output"
@@ -27,53 +26,14 @@
     "project",
     "generator"
   ],
-  "eslintConfig": {
-    "extends": "eslint:recommended",
-    "parser": "babel-eslint",
-    "globals": {
-      "Promise": 1
-    },
-    "plugins": [
-      "react"
-    ],
-    "settings": {
-      "react": {
-        "pragma": "h"
-      }
-    },
-    "env": {
-      "node": true,
-      "browser": true
-    },
-    "rules": {
-      "no-console": 1,
-      "no-empty": 0,
-      "semi": 2,
-      "keyword-spacing": 2,
-      "react/no-string-refs": 2,
-      "react/no-find-dom-node": 2,
-      "react/no-is-mounted": 2,
-      "react/jsx-no-comment-textnodes": 2,
-      "react/jsx-curly-spacing": 2,
-      "react/jsx-no-undef": 2,
-      "react/jsx-uses-react": 2,
-      "react/jsx-uses-vars": 2
-    }
-  },
-  "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/tests/setup.js"
-  },
   "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
   "license": "MIT",
   "bugs": "https://github.com/developit/preact-cli/issues",
   "homepage": "https://github.com/developit/preact-cli",
   "devDependencies": {
-    "babel-eslint": "^7.2.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "chrome-launcher": "^0.1.1",
     "chrome-remote-interface": "^0.23.2",
-    "eslint": "^3.19.0",
-    "eslint-plugin-react": "^7.0.1",
     "html-looks-like": "^1.0.2",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
