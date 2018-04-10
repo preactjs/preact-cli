@@ -24,9 +24,9 @@ cache:
     - node_modules
 
 before_script:
+- export WITH_LOG=true
+- export LISTENING_TO_UNHANDLED_REJECTION=true
 - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
-# - if [ "$TRAVIS_BRANCH" = "master" ]; then export SKIP_INSTALL=true; export WITH_LOG=true; fi
-- if [ "$TRAVIS_BRANCH" = "master" ]; then export WITH_LOG=true; fi
 
 script:
 - npm run test -- --verbose
