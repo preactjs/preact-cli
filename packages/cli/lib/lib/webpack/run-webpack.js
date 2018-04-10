@@ -46,7 +46,7 @@ async function devBuild(env) {
 			clear();
 
 			if (stats.hasErrors()) {
-				process.stdout.write(red('\Build failed!\n\n'));
+				process.stdout.write(red('Build failed!\n\n'));
 			} else {
 				process.stdout.write(green('Compiled successfully!\n\n'));
 
