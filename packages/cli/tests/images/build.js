@@ -32,7 +32,7 @@ exports.default = exports.full = Object.assign({}, common, {
 
 exports.sass = `
 <body>
-	<div class="background__21gOq">
+	<div class="background__16qjh">
 		<h1>Header on background</h1>
 		<p>Paragraph on background</p>
 	</div>
