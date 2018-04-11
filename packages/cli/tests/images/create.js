@@ -1,3 +1,5 @@
+const path = require('path');
+
 exports.default = [
 	'.gitignore',
 	'package.json',
@@ -23,4 +25,5 @@ exports.default = [
 	'src/tests/__mocks__/browserMocks.js',
 	'src/tests/__mocks__/fileMocks.js',
 	'src/tests/header.test.js'
-];
+].map(s => s.replace(/\//g, path.sep));
+
