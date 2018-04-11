@@ -35,6 +35,11 @@ export default asyncCommand({
 			description: 'Directory or filename where firebase.json should be written\n  (used for --server config)',
 			defaultDescription: '-'
 		},
+		host: {
+			description: 'Hostname to start a server on.',
+			defaultDescription: 'HOST || localhost',
+			alias: 'H'
+		},
 		port: {
 			description: 'Port to start a server on.',
 			defaultDescription: 'PORT || 8080',
@@ -57,6 +62,7 @@ export default asyncCommand({
  *	@param {string} [options.config]		Filename of a Firebase Hosting configuration, relative to cwd
  *	@param {string} [options.cwd]			Directory to host intead of `process.cwd()`
  *	@param {string} [options.dir='.']		Static asset directory, relative to `options.cwd`
+ *	@param {string} [options.host]	Host to start the http server on
  *	@param {number|string} [options.port]	Port to start the http server on
  */
 async function serve(options) {
@@ -83,6 +89,7 @@ async function serve(options) {
 	configFile = await tmpFile({ postfix: '.json' });
 	await fs.writeFile(configFile, JSON.stringify(config));
 
+	let host = options.host || process.env.HOST || 'localhost';
 	let port = options.port || process.env.PORT || 8080;
 
 	await serveHttp2({
@@ -90,7 +97,8 @@ async function serve(options) {
 		config: configFile,
 		configObj: config,
 		server: options.server,
-		cors: options.cors || `https://localhost:${port}`,
+		cors: options.cors || `https://${host}:${port}`,
+		host,
 		port,
 		dir,
 		cwd: path.resolve(__dirname, '../resources')
@@ -146,6 +154,7 @@ function createHeadersFromPushManifest(pushManifest) {
 /** Start an HTTP2 static fileserver with push support.
  *	@param {object} options
  *	@param {string} [options.config]			Server configuration file in Firebase Hosting format.
+ *	@param {string} [options.host]	Host to run the server on.
  *	@param {number|string} [options.port=8080]	Port to run the server on.
  *	@param {string} [options.cwd=process.cwd()]	Directory from which to serve static files.
  */
@@ -196,7 +205,7 @@ const SERVERS = {
 			simplehttp2server,
 			'-cors', options.cors,
 			'-config', options.config,
-			'-listen', `:${options.port}`
+			'-listen', `${options.host}:${options.port}`
 		];
 	},
 	superstatic(options) {
@@ -204,6 +213,7 @@ const SERVERS = {
 			'superstatic',
 			path.relative(options.cwd, options.dir),
 			'--gzip',
+			'--host', options.host,
 			'-p', options.port,
 			'-c', JSON.stringify({ ...options.configObj, public: undefined })
 		];
