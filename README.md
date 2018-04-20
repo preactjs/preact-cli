@@ -129,6 +129,7 @@ $ preact serve
   --dest      Directory or filename where firebase.json should be written
               (used for --server config)                                      [string]  [default: -]
   --port, -p  Port to start a server on.                                      [string]  [default: PORT || 8080]
+  --host,     Hostname to start a server on                                   [string]  [default: "localhost"]
 ```
 
 #### preact list
