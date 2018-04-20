@@ -210,7 +210,7 @@ const SERVERS = {
 			path.relative(options.cwd, options.dir),
 			'--gzip',
 			'-p', options.port,
-			'--host', options.host
+			'--host', options.host,
 			'-c', JSON.stringify({ ...options.configObj, public: undefined })
 		];
 	},
