@@ -54,7 +54,7 @@ module.exports = async function (repo, dest, argv) {
 	}
 
   // Use `--name` value or `dest` dir's name
-  argv.name = argv.name || argv.dest;
+  argv.name = argv.name || dest;
 
   let { errors } = isValidName(argv.name);
   if (errors) {
