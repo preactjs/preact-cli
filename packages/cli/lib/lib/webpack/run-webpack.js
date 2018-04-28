@@ -22,11 +22,11 @@ async function devBuild(env) {
 	let compiler = webpack(config);
 	return new Promise((res, rej) => {
 		compiler.plugin('emit', (compilation, callback) => {
-			var missingDeps = compilation.missingDependencies;
-			var nodeModulesPath = resolve(__dirname, '../../../node_modules');
+			let missingDeps = compilation.missingDependencies;
+			let nodeModulesPath = resolve(__dirname, '../../../node_modules');
 
 			// ...tell webpack to watch node_modules recursively until they appear.
-			if (missingDeps.some(file => file.indexOf(nodeModulesPath) !== -1)) {
+			if (Array.from(missingDeps).some(file => file.indexOf(nodeModulesPath) !== -1)) {
 				compilation.contextDependencies.push(nodeModulesPath);
 			}
 

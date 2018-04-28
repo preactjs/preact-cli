@@ -3,7 +3,7 @@ const { resolve } = require('path');
 const { readFileSync } = require('fs');
 const autoprefixer = require('autoprefixer');
 const requireRelative = require('require-relative');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
 const createBabelConfig = require('../babel-config');
@@ -67,7 +67,7 @@ module.exports = function (env) {
 		},
 
 		module: {
-			loaders: [
+			rules: [
 				{ // ES2015
 					enforce: 'pre',
 					test: /\.jsx?$/,
@@ -134,28 +134,26 @@ module.exports = function (env) {
 						source('components'),
 						source('routes')
 					],
-					loader: ExtractTextPlugin.extract({
-						fallback: 'style-loader',
-						use: [
-							{
-								loader: 'css-loader',
-								options: {
-									modules: true,
-									localIdentName: '[local]__[hash:base64:5]',
-									importLoaders: 1,
-									sourceMap: isProd
-								}
-							},
-							{
-								loader: 'postcss-loader',
-								options: {
-									ident: 'postcss',
-									sourceMap: true,
-									plugins: [autoprefixer({ browsers })]
-								}
+					use: [
+						isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+						{
+							loader: 'css-loader',
+							options: {
+								modules: true,
+								localIdentName: '[local]__[hash:base64:5]',
+								importLoaders: 1,
+								sourceMap: isProd
 							}
-						]
-					})
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								ident: 'postcss',
+								sourceMap: true,
+								plugins: [autoprefixer({ browsers })]
+							}
+						}
+					]
 				},
 				{ // External / `node_module` styles
 					test: /\.(css|less|s[ac]ss|styl)$/,
@@ -163,25 +161,23 @@ module.exports = function (env) {
 						source('components'),
 						source('routes')
 					],
-					loader: ExtractTextPlugin.extract({
-						fallback: 'style-loader',
-						use: [
-							{
-								loader: 'css-loader',
-								options: {
-									sourceMap: isProd
-								}
-							},
-							{
-								loader: 'postcss-loader',
-								options: {
-									ident: 'postcss',
-									sourceMap: true,
-									plugins: [autoprefixer({ browsers })]
-								}
+					use: [
+						isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+						{
+							loader: 'css-loader',
+							options: {
+								sourceMap: isProd
 							}
-						]
-					})
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								ident: 'postcss',
+								sourceMap: true,
+								plugins: [autoprefixer({ browsers })]
+							}
+						}
+					],
 				},
 				{ // Arbitrary file loaders
 					test: /\.json$/,
@@ -200,19 +196,13 @@ module.exports = function (env) {
 
 		plugins: [
 			new webpack.NoEmitOnErrorsPlugin(),
-			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
+			new webpack.ProvidePlugin({
+				h: ['preact', 'h'],
 			}),
 			// Extract CSS
-			new ExtractTextPlugin({
-				filename: isProd ? 'style.[contenthash:5].css' : 'style.css',
-				disable: !isProd,
-				allChunks: true
-			}),
-			new webpack.optimize.CommonsChunkPlugin({
-				children: true,
-				async: false,
-				minChunks: 3
+			new MiniCssExtractPlugin({
+				filename: isProd ? "[name].[contenthash:5].css" : "[name].css",
+				chunkFilename: isProd ? "[id].[contenthash:5].css" : "[id].css"
 			}),
 			new ProgressBarPlugin({
 				format: '\u001b[90m\u001b[44mBuild\u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
@@ -234,6 +224,14 @@ module.exports = function (env) {
 				}]
 			})
 		] : []),
+		
+		optimization: {
+			splitChunks: {
+				minChunks: 3,
+			},
+		},
+		
+		mode: isProd ? 'production' : 'development',
 
 		devtool: isProd ? 'source-map' : 'cheap-module-eval-source-map',
 
