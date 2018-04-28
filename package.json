@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "pretest": "lerna bootstrap",
-    "test": "eslint packages --ignore-pattern 'node_modules' && lerna run test"
+    "test": "eslint packages && lerna run test"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",

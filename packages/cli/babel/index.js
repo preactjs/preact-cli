@@ -10,7 +10,7 @@ var isTest = (process.env.BABEL_ENV || process.env.NODE_ENV) === "test";
 var defaultBrowserList = ["> 1%", "last 2 versions", "IE >= 9"];
 
 // preact-cli babel configs
-var babelConfigs = require("../src/lib/babel-config");
+var babelConfigs = require("../lib/lib/babel-config");
 
 /**
  * preset as a function means allow users to override some options
