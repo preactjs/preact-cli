@@ -7,7 +7,7 @@ var isProd = (process.env.BABEL_ENV || process.env.NODE_ENV) === "production";
 var isTest = (process.env.BABEL_ENV || process.env.NODE_ENV) === "test";
 
 // default supported browser.
-var defaultBrowserList = ["> 1%", "last 2 versions", "IE >= 9"];
+var defaultBrowserList = ["> 0.25%", "IE >= 9"];
 
 // preact-cli babel configs
 var babelConfigs = require("../lib/lib/babel-config");
