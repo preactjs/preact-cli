@@ -7,7 +7,7 @@ module.exports = class PushManifestPlugin {
 				if (!/\.map$/.test(filename)) {
 					if (/route-/.test(filename)) {
 						routes.push(filename);
-					} else if (/^style(.+)\.css$/.test(filename)) {
+					} else if (/^bundle(.+)\.css$/.test(filename)) {
 						mainCss = filename;
 					} else if (/^bundle(.+)\.js$/.test(filename)) {
 						mainJs = filename;
