@@ -33,9 +33,10 @@ module.exports = class PushManifestPlugin {
 
 			let path, css, obj;
 			scripts.forEach((filename, idx) => {
+				css = styles[idx];
 				obj = Object.assign({}, defaults);
 				obj[filename] = { type:'script', weight:0.9 };
-				if (css=styles[idx]) obj[css] = { type:'style', weight:0.9 };
+				if (css) obj[css] = { type:'style', weight:0.9 };
 				path = filename.replace(/route-/, '/').replace(/\.chunk(\.\w+)?\.js$/, '').replace(/\/home/, '/');
 				manifest[path] = obj;
 			});
