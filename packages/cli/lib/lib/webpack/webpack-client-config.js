@@ -5,6 +5,8 @@ const merge = require('webpack-merge');
 const { filter } = require('minimatch');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const RenderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
@@ -45,7 +47,7 @@ function clientConfig(env) {
 
 		// automatic async components :)
 		module: {
-			loaders: [
+			rules: [
 				{
 					test: /\.jsx?$/,
 					include: [
@@ -103,45 +105,56 @@ function isProd(config) {
 		}, config.pkg.performance),
 
 		plugins: [
-			new webpack.optimize.UglifyJsPlugin({
-				output: { comments:false },
-				mangle: true,
-				sourceMap: true,
-				compress: {
-					properties: true,
-					keep_fargs: false,
-					pure_getters: true,
-					collapse_vars: true,
-					warnings: false,
-					screw_ie8: true,
-					sequences: true,
-					dead_code: true,
-					drop_debugger: true,
-					comparisons: true,
-					conditionals: true,
-					evaluate: true,
-					booleans: true,
-					loops: true,
-					unused: true,
-					hoist_funs: true,
-					if_return: true,
-					join_vars: true,
-					cascade: true,
-					drop_console: false,
-					pure_funcs: [
-						'classCallCheck',
-						'_classCallCheck',
-						'_possibleConstructorReturn',
-						'Object.freeze',
-						'invariant',
-						'warning'
-					]
-				}
-			}),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw
 			}),
-		]
+		],
+		
+		optimization: {
+			minimizer: [
+				new UglifyJsPlugin({
+					cache: true,
+					parallel: true,
+					uglifyOptions: {
+						sourceMap: true,
+						output: { comments:false },
+						mangle: true,
+						compress: {
+							properties: true,
+							keep_fargs: false,
+							pure_getters: true,
+							collapse_vars: true,
+							warnings: false,
+							// screw_ie8: true,
+							sequences: true,
+							dead_code: true,
+							drop_debugger: true,
+							comparisons: true,
+							conditionals: true,
+							evaluate: true,
+							booleans: true,
+							loops: true,
+							unused: true,
+							hoist_funs: true,
+							if_return: true,
+							join_vars: true,
+							// cascade: true,
+							drop_console: false,
+							pure_funcs: [
+								'classCallCheck',
+								'_classCallCheck',
+								'_possibleConstructorReturn',
+								'Object.freeze',
+								'invariant',
+								'warning'
+							]
+						},
+					},
+					sourceMap: true,
+				}),
+				new OptimizeCssAssetsPlugin({}),
+			],
+		},
 	};
 
 	if (config.sw) {
@@ -177,7 +190,7 @@ function isDev(config) {
 
 		devServer: {
 			inline: true,
-			hot:true,
+			hot: true,
 			compress: true,
 			publicPath: '/',
 			contentBase: src,

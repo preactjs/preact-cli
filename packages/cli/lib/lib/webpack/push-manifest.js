@@ -1,13 +1,15 @@
 module.exports = class PushManifestPlugin {
 	apply(compiler) {
 		compiler.plugin('emit', function(compilation, callback) {
-			let routes = [], mainJs, mainCss;
+			let mainJs, mainCss, scripts=[], styles=[];
 
 			for (let filename in compilation.assets) {
 				if (!/\.map$/.test(filename)) {
 					if (/route-/.test(filename)) {
-						routes.push(filename);
-					} else if (/^style(.+)\.css$/.test(filename)) {
+						scripts.push(filename);
+					} else if (/chunk\.(.+)\.css$/.test(filename)) {
+						styles.push(filename);
+					} else if (/^bundle(.+)\.css$/.test(filename)) {
 						mainCss = filename;
 					} else if (/^bundle(.+)\.js$/.test(filename)) {
 						mainJs = filename;
@@ -29,14 +31,14 @@ module.exports = class PushManifestPlugin {
 				'/': defaults
 			};
 
-			routes.forEach(filename => {
-				let path = filename.replace(/route-/, '/').replace(/\.chunk(\.\w+)?\.js$/, '').replace(/\/home/, '/');
-				manifest[path] = Object.assign({}, defaults, {
-					[filename]: {
-						type: 'script',
-						weight: 0.9
-					}
-				});
+			let path, css, obj;
+			scripts.forEach((filename, idx) => {
+				css = styles[idx];
+				obj = Object.assign({}, defaults);
+				obj[filename] = { type:'script', weight:0.9 };
+				if (css) obj[css] = { type:'style', weight:0.9 };
+				path = filename.replace(/route-/, '/').replace(/\.chunk(\.\w+)?\.js$/, '').replace(/\/home/, '/');
+				manifest[path] = obj;
 			});
 
 			let output = JSON.stringify(manifest);

@@ -16,7 +16,9 @@ module.exports = async function (env, config, ssr=false) {
 	}
 
 	require('babel-register')({
-		presets: [require.resolve('babel-preset-env')]
+		presets: [[require.resolve('babel-preset-env'), {
+			"targets": { "node": "current" }
+		}]]
 	});
 	const m = require(myConfig);
 	const transformer = m && m.default || m;
