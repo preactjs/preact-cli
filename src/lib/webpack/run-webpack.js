@@ -62,7 +62,7 @@ async function devBuild(env, onprogress) {
 			clearConsole();
 
 			if (stats.hasErrors()) {
-				process.stdout.write(chalk.red('\Build failed!\n\n'));
+				process.stdout.write(chalk.red('\'Build failed!\n\n'));
 			} else {
 				process.stdout.write(chalk.green('Compiled successfully!\n\n'));
 
