@@ -47,6 +47,13 @@
     "globals": {
       "Promise": 1
     },
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "modules": true
+      }
+    },
     "plugins": [
       "react"
     ],
@@ -57,7 +64,8 @@
     },
     "env": {
       "node": true,
-      "browser": true
+      "browser": true,
+      "es6": true
     },
     "rules": {
       "no-console": 1,
@@ -87,6 +95,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "chrome-launcher": "^0.1.1",
     "chrome-remote-interface": "^0.23.2",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^7.0.1",
     "html-looks-like": "^1.0.2",
@@ -163,5 +172,10 @@
     "webpack-plugin-replace": "^1.1.1",
     "which": "^1.2.14",
     "yargs": "^8.0.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
