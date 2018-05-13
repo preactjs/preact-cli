@@ -7,6 +7,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const RenderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
@@ -109,7 +110,7 @@ function isProd(config) {
 				'process.env.ADD_SW': config.sw
 			}),
 		],
-		
+
 		optimization: {
 			minimizer: [
 				new UglifyJsPlugin({
@@ -173,6 +174,12 @@ function isProd(config) {
 					/\.git/
 				]
 			}),
+		);
+	}
+
+	if (config.analyze) {
+		prodConfig.plugins.push(
+			new BundleAnalyzerPlugin()
 		);
 	}
 
