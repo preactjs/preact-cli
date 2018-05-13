@@ -28,6 +28,7 @@ prog
 	.option('--sw', 'Generate and attach a Service Worker', true)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--template', 'Path to custom HTML template')
+	.option('--analyze', 'Launch interactive Analyzer to inspect production bundle(s)')
 	.option('--prerenderUrls', 'Path to pre-rendered routes config', 'prerender-urls.json')
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.action(commands.build);
