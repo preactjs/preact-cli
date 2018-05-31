@@ -11,6 +11,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const RenderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
+const BabelEsmPlugin = require('babel-esm-plugin');
 const { normalizePath } = require('../../util');
 
 const cleanFilename = name => name.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
@@ -75,7 +76,11 @@ function clientConfig(env) {
 
 		plugins: [
 			...RenderHTMLPlugin(env),
-			new PushManifestPlugin(),
+      new PushManifestPlugin(),
+      new BabelEsmPlugin({
+        filename: '[name].esm.js',
+        chunkFilename: '[name].esm.js'
+      }),
 			new CopyWebpackPlugin([
 				...(
 					existsSync(source('manifest.json'))
