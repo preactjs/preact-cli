@@ -11,8 +11,5 @@
     "jest": "^22.4.3",
     "lerna": "^2.11.0",
     "puppeteer": "^1.3.0"
-  },
-  "dependencies": {
-    "babel-esm-plugin": "0.0.8"
   }
 }

@@ -77,10 +77,6 @@ function clientConfig(env) {
 		plugins: [
 			...RenderHTMLPlugin(env),
       new PushManifestPlugin(),
-      new BabelEsmPlugin({
-        filename: '[name].esm.js',
-        chunkFilename: '[name].esm.js'
-      }),
 			new CopyWebpackPlugin([
 				...(
 					existsSync(source('manifest.json'))
@@ -113,7 +109,11 @@ function isProd(config) {
 		plugins: [
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw
-			}),
+      }),
+      new BabelEsmPlugin({
+        filename: '[name].[chunkhash:5].esm.js',
+        chunkFilename: '[name].chunk.[chunkhash:5].esm.js'
+      }),
 		],
 
 		optimization: {
