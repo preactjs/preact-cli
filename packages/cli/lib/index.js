@@ -23,14 +23,15 @@ prog
 	.command('build [src]')
 	.describe('Create a production build')
 	.option('--src', 'Specify source directory', 'src')
-	.option('--dest', 'Specify output directory', 'build')
+  .option('--dest', 'Specify output directory', 'build')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--sw', 'Generate and attach a Service Worker', true)
+  .option('--sw', 'Generate and attach a Service Worker', true)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--template', 'Path to custom HTML template')
 	.option('--analyze', 'Launch interactive Analyzer to inspect production bundle(s)')
 	.option('--prerenderUrls', 'Path to pre-rendered routes config', 'prerender-urls.json')
-	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
+  .option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
+  .option('--esm', '[HIGHLY EXPERIMENTAL] Builds ES-2015 bundles for your code.', 'esm')
 	.action(commands.build);
 
 prog
