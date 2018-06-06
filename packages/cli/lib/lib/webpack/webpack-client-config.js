@@ -109,11 +109,7 @@ function isProd(config) {
 		plugins: [
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw
-      }),
-      new BabelEsmPlugin({
-        filename: '[name].[chunkhash:5].esm.js',
-        chunkFilename: '[name].chunk.[chunkhash:5].esm.js'
-      }),
+      })
 		],
 
 		optimization: {
@@ -180,7 +176,16 @@ function isProd(config) {
 				]
 			}),
 		);
-	}
+  }
+
+  if (config.esm) {
+    prodConfig.plugins.push(
+      new BabelEsmPlugin({
+        filename: '[name].[chunkhash:5].esm.js',
+        chunkFilename: '[name].chunk.[chunkhash:5].esm.js'
+      }),
+    );
+  }
 
 	if (config.analyze) {
 		prodConfig.plugins.push(
