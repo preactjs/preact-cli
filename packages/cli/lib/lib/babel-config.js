@@ -4,7 +4,7 @@ module.exports = function (env, options={}) {
 	return {
 		babelrc: false,
 		presets: [
-			[require.resolve('babel-preset-env'), {
+			[require.resolve('@babel/preset-env'), {
 				loose: true,
 				uglify: true,
 				modules: options.modules || false,
