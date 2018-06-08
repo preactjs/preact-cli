@@ -76,7 +76,7 @@ function clientConfig(env) {
 
 		plugins: [
 			...RenderHTMLPlugin(env),
-      new PushManifestPlugin(),
+			new PushManifestPlugin(),
 			new CopyWebpackPlugin([
 				...(
 					existsSync(source('manifest.json'))
@@ -108,8 +108,9 @@ function isProd(config) {
 
 		plugins: [
 			new webpack.DefinePlugin({
-				'process.env.ADD_SW': config.sw
-      })
+				'process.env.ADD_SW': config.sw,
+				'process.env.ESM': config.esm
+			})
 		],
 
 		optimization: {
@@ -176,16 +177,16 @@ function isProd(config) {
 				]
 			}),
 		);
-  }
+	}
 
-  if (config.esm) {
-    prodConfig.plugins.push(
-      new BabelEsmPlugin({
-        filename: '[name].[chunkhash:5].esm.js',
-        chunkFilename: '[name].chunk.[chunkhash:5].esm.js'
-      }),
-    );
-  }
+	if (config.esm) {
+		prodConfig.plugins.push(
+			new BabelEsmPlugin({
+				filename: '[name].[chunkhash:5].esm.js',
+				chunkFilename: '[name].chunk.[chunkhash:5].esm.js'
+			}),
+		);
+	}
 
 	if (config.analyze) {
 		prodConfig.plugins.push(
