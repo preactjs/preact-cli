@@ -20,6 +20,7 @@ module.exports = function (env, options={}) {
 		plugins: [
 			require.resolve('@babel/plugin-syntax-dynamic-import'),
 			require.resolve('@babel/plugin-transform-object-assign'),
+			[require.resolve('@babel/plugin-proposal-decorators'), {legacy: true}],
 			require.resolve('@babel/plugin-proposal-class-properties'),
 			require.resolve('@babel/plugin-proposal-object-rest-spread'),
 			require.resolve('@babel/plugin-transform-react-constant-elements'),
