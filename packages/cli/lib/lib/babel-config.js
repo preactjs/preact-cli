@@ -6,14 +6,12 @@ module.exports = function (env, options={}) {
 		presets: [
 			[require.resolve('@babel/preset-env'), {
 				loose: true,
-				uglify: true,
 				modules: options.modules || false,
 				targets: {
 					browsers: options.browsers
 				},
 				exclude: [
 					'transform-regenerator',
-					'transform-es2015-typeof-symbol'
 				]
 			}]
 		],
