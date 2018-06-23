@@ -31,7 +31,7 @@ prog
 	.option('--analyze', 'Launch interactive Analyzer to inspect production bundle(s)')
 	.option('--prerenderUrls', 'Path to pre-rendered routes config', 'prerender-urls.json')
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
-	.option('--esm', '[HIGHLY EXPERIMENTAL] Builds ES-2015 bundles for your code.', 'esm')
+	.option('--esm', '[EXPERIMENTAL] Builds ES-2015 bundles for your code.', false)
 	.action(commands.build);
 
 prog
