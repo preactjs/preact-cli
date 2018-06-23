@@ -179,7 +179,7 @@ function isProd(config) {
 		);
 	}
 
-	if (config.esm) {
+	if ('esm' in config) {
 		prodConfig.plugins.push(
 			new BabelEsmPlugin({
 				filename: '[name].[chunkhash:5].esm.js',
