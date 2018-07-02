@@ -1,11 +1,11 @@
 {
-  "name": "preact-cli",
+  "name": "pogo-cli",
   "version": "2.2.1",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "developit/preact-cli",
   "main": "lib/index.js",
   "bin": {
-    "preact": "./lib/index.js"
+    "pogo": "./lib/index.js"
   },
   "scripts": {
     "prebuild": "rimraf lib",
