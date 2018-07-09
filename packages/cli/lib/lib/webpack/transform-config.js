@@ -15,8 +15,8 @@ module.exports = async function (env, config, ssr=false) {
 		throw new Error(`preact-cli config could not be loaded!\nFile ${env.config} not found.`);
 	}
 
-	require('babel-register')({
-		presets: [[require.resolve('babel-preset-env'), {
+	require('@babel/register')({
+		presets: [[require.resolve('@babel/preset-env'), {
 			"targets": { "node": "current" }
 		}]]
 	});

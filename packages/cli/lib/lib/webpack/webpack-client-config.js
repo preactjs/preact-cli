@@ -11,6 +11,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const RenderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
+const BabelEsmPlugin = require('babel-esm-plugin');
 const { normalizePath } = require('../../util');
 
 const cleanFilename = name => name.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
@@ -107,8 +108,9 @@ function isProd(config) {
 
 		plugins: [
 			new webpack.DefinePlugin({
-				'process.env.ADD_SW': config.sw
-			}),
+				'process.env.ADD_SW': config.sw,
+				'process.env.ESM': config.esm
+			})
 		],
 
 		optimization: {
@@ -173,6 +175,15 @@ function isProd(config) {
 					/.DS_Store/,
 					/\.git/
 				]
+			}),
+		);
+	}
+
+	if (config.esm) {
+		prodConfig.plugins.push(
+			new BabelEsmPlugin({
+				filename: '[name].[chunkhash:5].esm.js',
+				chunkFilename: '[name].chunk.[chunkhash:5].esm.js'
 			}),
 		);
 	}
