@@ -25,5 +25,6 @@ export default function(req) {
 		this.render = (p, s) => s.child ? h(s.child, p) : old;
 	}
 	(Async.prototype = new Component).constructor = Async;
+	Async.prefetch = req;
 	return Async;
 }
