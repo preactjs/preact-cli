@@ -169,6 +169,7 @@ function isProd(config) {
 				minify: true,
 				stripPrefix: config.cwd,
 				staticFileGlobsIgnorePatterns: [
+          /\.esm\.js$/,
 					/polyfills(\..*)?\.js$/,
 					/\.map$/,
 					/push-manifest\.json$/,
@@ -185,7 +186,26 @@ function isProd(config) {
 				filename: '[name].[chunkhash:5].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js'
 			}),
-		);
+    );
+    if (config.sw) {
+      prodConfig.plugins.push(
+        new SWPrecacheWebpackPlugin({
+          filename: 'sw-esm.js',
+          navigateFallback: 'index.html',
+          navigateFallbackWhitelist: [/^(?!\/__).*/],
+          minify: true,
+          stripPrefix: config.cwd,
+          staticFileGlobsIgnorePatterns: [
+            /(\.[\w]{5}\.js)/,
+            /polyfills(\..*)?\.js$/,
+            /\.map$/,
+            /push-manifest\.json$/,
+            /.DS_Store/,
+            /\.git/
+          ]
+        }),
+      );
+    }
 	}
 
 	if (config.analyze) {
