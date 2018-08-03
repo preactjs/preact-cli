@@ -109,7 +109,8 @@ function isProd(config) {
 		plugins: [
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
-				'process.env.ESM': config.esm
+        'process.env.ESM': config.esm,
+        'process.env.ES_BUILD': false,
 			})
 		],
 
@@ -184,7 +185,20 @@ function isProd(config) {
 		prodConfig.plugins.push(
 			new BabelEsmPlugin({
 				filename: '[name].[chunkhash:5].esm.js',
-				chunkFilename: '[name].chunk.[chunkhash:5].esm.js'
+        chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
+        beforeStartExecution: plugins => {
+          plugins.forEach(plugin => {
+            if (plugin.constructor.name === 'DefinePlugin' && plugin.definitions) {
+              for (const definition in plugin.definitions) {
+                if (definition === 'process.env.ES_BUILD') {
+                  plugin.definitions[definition] = true;
+                }
+              }
+            } else if (plugin.constructor.name === 'DefinePlugin' && !plugin.definitions) {
+              throw new Error('WebpackDefinePlugin found but not `process.env.ES_BUILD`.');
+            }
+          })
+        },
 			}),
     );
     if (config.sw) {
