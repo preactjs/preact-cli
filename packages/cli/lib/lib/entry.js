@@ -5,8 +5,8 @@ if (process.env.NODE_ENV==='development') {
 	require('preact/debug');
 }
 else if (process.env.ADD_SW && 'serviceWorker' in navigator) {
-  // eslint-disable-next-line no-undef
-  navigator.serviceWorker.register(__webpack_public_path__ + process.env.ES_BUILD? 'sw-esm.js' : 'sw.js');
+	// eslint-disable-next-line no-undef
+	navigator.serviceWorker.register(__webpack_public_path__ + process.env.ES_BUILD? 'sw-esm.js' : 'sw.js');
 }
 
 const interopDefault = m => m && m.default ? m.default : m;
