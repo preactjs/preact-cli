@@ -197,7 +197,7 @@ function isProd(config) {
 						} else if (plugin.constructor.name === 'DefinePlugin' && !plugin.definitions) {
 							throw new Error('WebpackDefinePlugin found but not `process.env.ES_BUILD`.');
 						}
-					})
+					});
 				},
 			}),
 		);
