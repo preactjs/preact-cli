@@ -146,7 +146,7 @@ $ preact list
 npm run build
 
 # generate configuration in Firebase Hosting format:
-npm run serve --server config
+npm run serve -- --server config
 
 # Copy your static files to a server!
 ```
