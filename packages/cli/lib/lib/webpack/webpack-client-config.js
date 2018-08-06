@@ -142,6 +142,7 @@ function isProd(config) {
 							hoist_funs: true,
 							if_return: true,
 							join_vars: true,
+							reduce_vars: false,
 							// cascade: true,
 							drop_console: false,
 							pure_funcs: [
