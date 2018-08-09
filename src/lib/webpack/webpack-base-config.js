@@ -3,7 +3,7 @@ import { resolve } from 'path';
 import { readFileSync } from 'fs';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import ProgressBarPlugin from 'progress-bar-webpack-plugin';
+import SimpleProgressPlugin from 'webpack-simple-progress-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
 import requireRelative from 'require-relative';
 import createBabelConfig from '../babel-config';
@@ -217,11 +217,10 @@ export default function (env) {
 				async: false,
 				minChunks: 3
 			}),
-			new ProgressBarPlugin({
-				format: '\u001b[90m\u001b[44mBuild\u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
-				renderThrottle: 100,
-				summary: false,
-				clear: true
+			new SimpleProgressPlugin({
+				progressOptions: {
+					clear: true
+				}
 			})
 		].concat(isProd ? [
 			new webpack.HashedModuleIdsPlugin(),

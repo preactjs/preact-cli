@@ -141,7 +141,7 @@
     "preact-compat": "^3.14.3",
     "preact-render-to-string": "^3.6.0",
     "preact-router": "^2.5.2",
-    "progress-bar-webpack-plugin": "^1.9.3",
+    "webpack-simple-progress-plugin": "^0.0.4",
     "promise-polyfill": "^6.0.2",
     "raw-loader": "^0.5.1",
     "require-relative": "^0.8.7",
