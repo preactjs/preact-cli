@@ -35,13 +35,18 @@ export default asyncCommand({
 			description: 'Directory or filename where firebase.json should be written\n  (used for --server config)',
 			defaultDescription: '-'
 		},
+		host: {
+			description: 'Host to allow connections from (superstatic only).',
+			defaultDescription: 'HOST || localhost',
+			alias: 'h'
+		},
 		port: {
 			description: 'Port to start a server on.',
 			defaultDescription: 'PORT || 8080',
 			alias: 'p'
 		},
 		cors: {
-			description: 'Set allowed origins',
+			description: 'Set allowed origins (simplehttp2server only).',
 			defaultDescription: 'https://localhost:${PORT}'
 		}
 	},
