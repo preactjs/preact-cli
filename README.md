@@ -128,7 +128,9 @@ $ preact serve
               [options: "simplehttp2server", "superstatic", "config"]         [string]  [default: "simplehttp2server"]
   --dest      Directory or filename where firebase.json should be written
               (used for --server config)                                      [string]  [default: -]
+  --host, -h  Host to allow connections from (superstatic only).              [string]  [default: HOST || "localhost"]
   --port, -p  Port to start a server on.                                      [string]  [default: PORT || 8080]
+  --cors      Set allowed origins (simplehttp2server only).                   [string]  [default: "https://localhost:${PORT}"]
 ```
 
 #### preact list
