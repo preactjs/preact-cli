@@ -204,6 +204,7 @@ const SERVERS = {
 			'superstatic',
 			path.relative(options.cwd, options.dir),
 			'--gzip',
+			'-h', options.host,
 			'-p', options.port,
 			'-c', JSON.stringify({ ...options.configObj, public: undefined })
 		];
