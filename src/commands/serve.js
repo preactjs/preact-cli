@@ -40,6 +40,11 @@ export default asyncCommand({
 			defaultDescription: 'PORT || 8080',
 			alias: 'p'
 		},
+		host: {
+			description: 'Hostname to start a server on',
+			default: 'localhost',
+			alias: 'H'
+		},
 		cors: {
 			description: 'Set allowed origins',
 			defaultDescription: 'https://localhost:${PORT}'
@@ -205,6 +210,7 @@ const SERVERS = {
 			path.relative(options.cwd, options.dir),
 			'--gzip',
 			'-p', options.port,
+			'--host', options.host,
 			'-c', JSON.stringify({ ...options.configObj, public: undefined })
 		];
 	},
