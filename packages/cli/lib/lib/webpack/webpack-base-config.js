@@ -179,10 +179,6 @@ module.exports = function (env) {
 						}
 					],
 				},
-				{ // Arbitrary file loaders
-					test: /\.json$/,
-					loader: 'json-loader'
-				},
 				{
 					test: /\.(xml|html|txt|md)$/,
 					loader: 'raw-loader'
