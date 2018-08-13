@@ -80,7 +80,6 @@
     "inquirer": "^5.2.0",
     "ip": "^1.1.5",
     "isomorphic-unfetch": "^2.0.0",
-    "json-loader": "^0.5.4",
     "loader-utils": "^1.1.0",
     "log-symbols": "^2.1.0",
     "mini-css-extract-plugin": "^0.4.0",
