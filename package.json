@@ -150,7 +150,7 @@
     "simplehttp2server": "^2.0.0",
     "source-map": "^0.5.6",
     "stack-trace": "0.0.10",
-    "style-loader": "^0.18.2",
+    "style-loader": "^0.21.0",
     "sw-precache-webpack-plugin": "^0.11.2",
     "tmp": "0.0.31",
     "unfetch": "^3.0.0",
