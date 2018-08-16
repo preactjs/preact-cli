@@ -1,33 +1,33 @@
 const common = {
-	'polyfills.*.js': 4620,
-	'polyfills.*.js.map': 31760,
-	'favicon.ico': 15086
+  'polyfills.*.js': 4620,
+  'polyfills.*.js.map': 31760,
+  'favicon.ico': 15086
 };
 
 exports.default = exports.full = Object.assign({}, common, {
-	'assets/favicon.ico': 15086,
-	'assets/icons/android-chrome-192x192.png': 14058,
-	'assets/icons/android-chrome-512x512.png': 51484,
-	'assets/icons/apple-touch-icon.png': 12746,
-	'assets/icons/favicon-16x16.png': 626,
-	'assets/icons/favicon-32x32.png': 1487,
-	'assets/icons/mstile-150x150.png': 9050,
-	'push-manifest.json': 327,
-	'manifest.json': 426,
-	'sw.js': 3850,
-	'bundle.*.js': 19300,
-	'bundle.*.js.map': 105590,
-	'route-home.chunk.*.js': 1000,
-	'route-home.chunk.*.js.map': 4981,
-	'route-profile.chunk.*.js': 1650,
-	'route-profile.chunk.*.js.map': 8609,
-	'index.html': 850,
-	'style.*.css': 1065,
-	'style.*.css.map': 2345,
-	'ssr-build/ssr-bundle.js': 41715,
-	'ssr-build/ssr-bundle.js.map': 66661,
-	'ssr-build/style.*.css': 1065,
-	'ssr-build/style.*.css.map': 2345
+  'assets/favicon.ico': 15086,
+  'assets/icons/android-chrome-192x192.png': 14058,
+  'assets/icons/android-chrome-512x512.png': 51484,
+  'assets/icons/apple-touch-icon.png': 12746,
+  'assets/icons/favicon-16x16.png': 626,
+  'assets/icons/favicon-32x32.png': 1487,
+  'assets/icons/mstile-150x150.png': 9050,
+  'push-manifest.json': 327,
+  'manifest.json': 426,
+  'sw.js': 3850,
+  'bundle.*.js': 19300,
+  'bundle.*.js.map': 105590,
+  'route-home.chunk.*.js': 1000,
+  'route-home.chunk.*.js.map': 4981,
+  'route-profile.chunk.*.js': 1650,
+  'route-profile.chunk.*.js.map': 8609,
+  'index.html': 850,
+  'style.*.css': 1065,
+  'style.*.css.map': 2345,
+  'ssr-build/ssr-bundle.js': 41715,
+  'ssr-build/ssr-bundle.js.map': 66661,
+  'ssr-build/style.*.css': 1065,
+  'ssr-build/style.*.css.map': 2345
 });
 
 exports.sass = `
@@ -41,6 +41,10 @@ exports.sass = `
 `;
 
 exports.prerender = {};
+
+exports.prerender.heads = {};
+exports.prerender.heads.home = /<head><meta charset="utf-8"><title>Home<\/title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="\/manifest\.json"><link rel="preload" href="\/bundle\.\w{5}\.css"><link rel="preload" href="\/bundle\.\w{5}\.js"><link rel="preload" href="\/route-home\.chunk\.\w{5}\.js"><link rel="shortcut icon" href="\/favicon\.ico"><link href="\/bundle\.\w{5}\.css" rel="stylesheet"><\/head>/;
+exports.prerender.heads.route66 = /<head><meta charset="utf-8"><title>Route66<\/title><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="\/manifest\.json"><link rel="preload" href="\/bundle\.\w{5}\.css"><link rel="preload" href="\/bundle\.\w{5}\.js"><link rel="preload" href="\/route-route66\.chunk\.\w{5}\.js"><link rel="shortcut icon" href="\/favicon\.ico"><link href="\/bundle\.\w{5}\.css" rel="stylesheet"><\/head>/;
 
 exports.prerender.home = `
 <body>
