@@ -9,16 +9,15 @@
 		<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath %>manifest.json">
 		<% if (htmlWebpackPlugin.options.manifest.theme_color) { %>
 			<meta name="theme-color" content="<%= htmlWebpackPlugin.options.manifest.theme_color %>">
-		<% } %>
-		<% for (var chunk of webpack.chunks) { %>
-		 <% if (chunk.names.length === 1 && chunk.names[0] === 'polyfills') continue; %>
-			<% for (var file of chunk.files) { %>
-				<% if (htmlWebpackPlugin.options.preload && file.match(/\.(js|css)$/)) { %>
-					<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>">
-				<% } else if (file.match(/manifest\.json$/)) { %>
-					<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
-				<% } %>
-			<% } %>
+    <% } %>
+    <% const createLoadManifest = require('../lib/webpack/create-load-manifest'); %>
+    <% for (const file in createLoadManifest(compilation.assets)[htmlWebpackPlugin.options.url]) { %>
+      <link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
+    <% } %>
+    <% for (const file in compilation.assets) { %>
+      <% if (file.match(/manifest\.json$/)) { %>
+        <link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
+      <% } %>
 		<% } %>
 	</head>
 	<body>
