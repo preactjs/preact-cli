@@ -39,4 +39,5 @@ module.exports = assets => {
   });
 
   return manifest;
-}
+};
+
