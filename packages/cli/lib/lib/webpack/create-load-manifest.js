@@ -24,9 +24,7 @@ module.exports = assets => {
       weight: 1
     },
   },
-  manifest = {
-    '/': defaults
-  };
+  manifest = {};
 
   let path, css, obj;
   scripts.forEach((filename, idx) => {
@@ -34,8 +32,15 @@ module.exports = assets => {
     obj = Object.assign({}, defaults);
     obj[filename] = { type:'script', weight:0.9 };
     if (css) obj[css] = { type:'style', weight:0.9 };
-    path = filename.replace(/route-/, '/').replace(/\.chunk(\.\w+)?\.js$/, '').replace(/\/home/, '/');
-    manifest[path] = obj;
+    path = filename.replace(/route-/, '/')
+      .replace(/\.chunk(\.\w+)?\.js$/, '')
+      .replace(/\.chunk(\.\w+)?\.esm\.js$/, '')
+      .replace(/\/home/, '/');
+    if (!manifest[path]) {
+      manifest[path] = obj;
+    } else {
+      manifest[path][filename] = { type:'script', weight:0.9 };
+    }
   });
 
   return manifest;
