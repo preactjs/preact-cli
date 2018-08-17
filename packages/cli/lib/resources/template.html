@@ -12,7 +12,7 @@
 		<% } %>
 		<% for (const file in htmlWebpackPlugin.options.createLoadManifest(compilation.assets)[htmlWebpackPlugin.options.url]) { %>
 			<% if (file) { %>
-				<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
+				<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>" <%= file.match(/\.esm\.js$/)?'crossorigin="anonymous"':'' %>>
 			<% } %>
 		<% } %>
 		<% for (const file in compilation.assets) { %>
