@@ -23,8 +23,8 @@ async function getHead(dir, file='index.html') {
 }
 
 function getRegExpFromMarkup(markup) {
-  const minifiedMarkup = markup.replace(/\n/g,'').replace(/\t/g,'').replace(/  /g,'');
-  return new RegExp(minifiedMarkup);
+	const minifiedMarkup = markup.replace(/\n/g,'').replace(/\t/g,'').replace(/\s{2}/g,'');
+	return new RegExp(minifiedMarkup);
 }
 
 describe('preact build', () => {
@@ -60,19 +60,19 @@ describe('preact build', () => {
 		let dir = await subject('multiple-prerendering');
 		await build(dir);
 
-    const body1 = await getIndex(dir);
+		const body1 = await getIndex(dir);
 		looksLike(body1, images.prerender.home);
 
 		const body2 = await getIndex(dir, 'route66/index.html');
-    looksLike(body2, images.prerender.route);
+		looksLike(body2, images.prerender.route);
 
-    const head1 = await getHead(dir);
-    expect(head1).toEqual(expect.stringMatching(
-      getRegExpFromMarkup(images.prerender.heads.home)));
+		const head1 = await getHead(dir);
+		expect(head1).toEqual(expect.stringMatching(
+			getRegExpFromMarkup(images.prerender.heads.home)));
 
-    const head2 = await getHead(dir, 'route66/index.html');
-    expect(head2).toEqual(expect.stringMatching(
-      getRegExpFromMarkup(images.prerender.heads.route66)));
+		const head2 = await getHead(dir, 'route66/index.html');
+		expect(head2).toEqual(expect.stringMatching(
+			getRegExpFromMarkup(images.prerender.heads.route66)));
 	});
 
 	it('should use custom `preact.config.js`', async () => {

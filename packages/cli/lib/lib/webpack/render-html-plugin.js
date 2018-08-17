@@ -29,8 +29,8 @@ module.exports = function (config) {
 			preload: config.preload,
 			manifest: config.manifest,
 			title: title || config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
-      excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
-      createLoadManifest,
+			excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
+			createLoadManifest,
 			config,
 			url,
 			ssr(params) {

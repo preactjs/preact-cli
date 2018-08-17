@@ -9,35 +9,35 @@
 		<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath %>manifest.json">
 		<% if (htmlWebpackPlugin.options.manifest.theme_color) { %>
 			<meta name="theme-color" content="<%= htmlWebpackPlugin.options.manifest.theme_color %>">
-    <% } %>
-    <% for (const file in htmlWebpackPlugin.options.createLoadManifest(compilation.assets)[htmlWebpackPlugin.options.url]) { %>
-      <% if (file) { %>
-        <link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
-      <% } %>
-    <% } %>
-    <% for (const file in compilation.assets) { %>
-      <% if (file.match(/manifest\.json$/)) { %>
-        <link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
-      <% } %>
+		<% } %>
+		<% for (const file in htmlWebpackPlugin.options.createLoadManifest(compilation.assets)[htmlWebpackPlugin.options.url]) { %>
+			<% if (file) { %>
+				<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
+			<% } %>
+		<% } %>
+		<% for (const file in compilation.assets) { %>
+			<% if (file.match(/manifest\.json$/)) { %>
+				<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
+			<% } %>
 		<% } %>
 	</head>
 	<body>
 		<%= htmlWebpackPlugin.options.ssr({
 			url: '/'
-    }) %>
-    <% if (webpack.assets.filter(entry => entry.name.match(/bundle.\w{5}.esm.js$/)).length > 0) { %>
-      <!-- Fix for safari < 11 nomodule bug. TODO: Do the following only for safari.-->
-      <script>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()},!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script>
-      <script src="<%= htmlWebpackPlugin.files.publicPath %><%= webpack.assets.filter(entry => entry.name.match(/bundle.\w{5}.esm.js$/))[0].name %>" type="module"></script>
-      <script nomodule defer src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
-      <!--
-        Fetch and Promise polyfills are not needed for browsers that support type=module
-        Please re-evaluate below line if adding more polyfills.
-      -->
-      <script nomodule>window.fetch||document.write('<script src="<%= htmlWebpackPlugin.files.chunks["polyfills"].entry %>"><\/script>')</script>
-    <% } else { %>
-      <script defer src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
-      <script>window.fetch||document.write('<script src="<%= htmlWebpackPlugin.files.chunks["polyfills"].entry %>"><\/script>')</script>
-    <% } %>
+		}) %>
+		<% if (webpack.assets.filter(entry => entry.name.match(/bundle.\w{5}.esm.js$/)).length > 0) { %>
+			<!-- Fix for safari < 11 nomodule bug. TODO: Do the following only for safari.-->
+			<script>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()},!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script>
+			<script src="<%= htmlWebpackPlugin.files.publicPath %><%= webpack.assets.filter(entry => entry.name.match(/bundle.\w{5}.esm.js$/))[0].name %>" type="module"></script>
+			<script nomodule defer src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
+			<!--
+				Fetch and Promise polyfills are not needed for browsers that support type=module
+				Please re-evaluate below line if adding more polyfills.
+			-->
+			<script nomodule>window.fetch||document.write('<script src="<%= htmlWebpackPlugin.files.chunks["polyfills"].entry %>"><\/script>')</script>
+		<% } else { %>
+			<script defer src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
+			<script>window.fetch||document.write('<script src="<%= htmlWebpackPlugin.files.chunks["polyfills"].entry %>"><\/script>')</script>
+		<% } %>
 	</body>
 </html>
