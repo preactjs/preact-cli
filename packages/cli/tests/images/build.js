@@ -54,6 +54,7 @@ exports.prerender.heads.home = `
   <link rel="preload" href="\\/bundle\\.\\w{5}\\.css">
   <link rel="preload" href="\\/bundle\\.\\w{5}\\.js">
   <link rel="preload" href="\\/route-home\\.chunk\\.\\w{5}\\.js">
+  <link rel="preload" href="\\/0\\.chunk\\.\\w{5}\\.css\">
   <link rel="shortcut icon" href="\\/favicon\\.ico">
   <link href="\\/bundle\\.\\w{5}\\.css" rel="stylesheet">
 <\\/head>
@@ -70,6 +71,7 @@ exports.prerender.heads.route66 = `
   <link rel="preload" href="\\/bundle\\.\\w{5}\\.css">
   <link rel="preload" href="\\/bundle\\.\\w{5}\\.js">
   <link rel="preload" href="\\/route-route66\\.chunk\\.\\w{5}\\.js">
+  <link rel="preload" href="\\/1\\.chunk\\.\\w{5}\\.css\">
   <link rel="shortcut icon" href="\\/favicon\\.ico">
   <link href="\\/bundle\\.\\w{5}\\.css" rel="stylesheet">
 <\\/head>
