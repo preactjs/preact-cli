@@ -22,6 +22,11 @@ async function getHead(dir, file='index.html') {
 	return html.match(/<head>.*<\/head>/)[0];
 }
 
+function getRegExpFromMarkup(markup) {
+  const minifiedMarkup = markup.replace(/\n/g,'').replace(/\t/g,'').replace(/  /g,'');
+  return new RegExp(minifiedMarkup);
+}
+
 describe('preact build', () => {
 	ours.forEach(key =>
 		it(`builds the '${key}' output`, async () => {
@@ -62,10 +67,12 @@ describe('preact build', () => {
     looksLike(body2, images.prerender.route);
 
     const head1 = await getHead(dir);
-    expect(head1).toEqual(expect.stringMatching(images.prerender.heads.home));
+    expect(head1).toEqual(expect.stringMatching(
+      getRegExpFromMarkup(images.prerender.heads.home)));
 
     const head2 = await getHead(dir, 'route66/index.html');
-    expect(head2).toEqual(expect.stringMatching(images.prerender.heads.route66));
+    expect(head2).toEqual(expect.stringMatching(
+      getRegExpFromMarkup(images.prerender.heads.route66)));
 	});
 
 	it('should use custom `preact.config.js`', async () => {

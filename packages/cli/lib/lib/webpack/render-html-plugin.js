@@ -5,7 +5,7 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { readJson } = require('./webpack-base-config');
 const prerender = require('./prerender');
-
+const createLoadManifest = require('./create-load-manifest');
 const template = resolve(__dirname, '../../resources/template.html');
 
 module.exports = function (config) {
@@ -29,7 +29,8 @@ module.exports = function (config) {
 			preload: config.preload,
 			manifest: config.manifest,
 			title: title || config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
-			excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
+      excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
+      createLoadManifest,
 			config,
 			url,
 			ssr(params) {

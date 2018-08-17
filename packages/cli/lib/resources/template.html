@@ -10,8 +10,7 @@
 		<% if (htmlWebpackPlugin.options.manifest.theme_color) { %>
 			<meta name="theme-color" content="<%= htmlWebpackPlugin.options.manifest.theme_color %>">
     <% } %>
-    <% const createLoadManifest = require('../lib/webpack/create-load-manifest'); %>
-    <% for (const file in createLoadManifest(compilation.assets)[htmlWebpackPlugin.options.url]) { %>
+    <% for (const file in htmlWebpackPlugin.options.createLoadManifest(compilation.assets)[htmlWebpackPlugin.options.url]) { %>
       <% if (file) { %>
         <link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>">
       <% } %>
