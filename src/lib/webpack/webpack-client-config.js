@@ -9,6 +9,7 @@ import RenderHTMLPlugin from './render-html-plugin';
 import PushManifestPlugin from './push-manifest';
 import baseConfig from './webpack-base-config';
 import { normalizePath } from '../../util';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 
 const cleanFilename = name => name.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
 
@@ -104,41 +105,7 @@ function isProd(config) {
 		},
 
 		plugins: [
-			new webpack.optimize.UglifyJsPlugin({
-				output: { comments:false },
-				mangle: true,
-				sourceMap: true,
-				compress: {
-					properties: true,
-					keep_fargs: false,
-					pure_getters: true,
-					collapse_vars: true,
-					warnings: false,
-					screw_ie8: true,
-					sequences: true,
-					dead_code: true,
-					drop_debugger: true,
-					comparisons: true,
-					conditionals: true,
-					evaluate: true,
-					booleans: true,
-					loops: true,
-					unused: true,
-					hoist_funs: true,
-					if_return: true,
-					join_vars: true,
-					cascade: true,
-					drop_console: false,
-					pure_funcs: [
-						'classCallCheck',
-						'_classCallCheck',
-						'_possibleConstructorReturn',
-						'Object.freeze',
-						'invariant',
-						'warning'
-					]
-				}
-			}),
+			new UglifyJsPlugin(),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.serviceWorker
 			}),
