@@ -1,15 +1,20 @@
-module.exports = assets => {
+module.exports = (assets, isESMBuild) => {
   let mainJs, mainCss, scripts=[], styles=[];
   for (let filename in assets) {
     if (!/\.map$/.test(filename)) {
-      if (/route-/.test(filename)) {
+      if (/route-/.test(filename) && !isESMBuild) {
+        scripts.push(filename);
+      } else if (/route-(.+)\.esm\.js/.test(filename) && isESMBuild) {
         scripts.push(filename);
       } else if (/chunk\.(.+)\.css$/.test(filename)) {
         styles.push(filename);
       } else if (/^bundle(.+)\.css$/.test(filename)) {
         mainCss = filename;
-      } else if (/^bundle(.+)\.js$/.test(filename)) {
+      } else if (!isESMBuild && /^bundle(.+)\.js$/.test(filename)) {
         mainJs = filename;
+      } else if (isESMBuild && /bundle\.\w{5}\.esm\.js/.test(filename)) {
+        mainJs = filename;
+        console.log('setting filename');
       }
     }
   }
