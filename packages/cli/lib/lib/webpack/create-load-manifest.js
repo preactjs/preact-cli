@@ -14,7 +14,6 @@ module.exports = (assets, isESMBuild) => {
         mainJs = filename;
       } else if (isESMBuild && /bundle\.\w{5}\.esm\.js/.test(filename)) {
         mainJs = filename;
-        console.log('setting filename');
       }
     }
   }
