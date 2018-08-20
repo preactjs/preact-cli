@@ -42,6 +42,41 @@ exports.sass = `
 
 exports.prerender = {};
 
+exports.prerender.heads = {};
+exports.prerender.heads.home = `
+<head>
+	<meta charset="utf-8">
+	<title>Home<\\/title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="manifest" href="\\/manifest\\.json">
+	<link rel="preload" href="\\/bundle\\.\\w{5}\\.css" as="style">
+	<link rel="preload" href="\\/bundle\\.\\w{5}\\.js" as="script">
+	<link rel="preload" href="\\/route-home\\.chunk\\.\\w{5}\\.js" as="script">
+	<link rel="preload" href="\\/0\\.chunk\\.\\w{5}\\.css" as="style">
+	<link rel="shortcut icon" href="\\/favicon\\.ico">
+	<link href="\\/bundle\\.\\w{5}\\.css" rel="stylesheet">
+<\\/head>
+`;
+
+exports.prerender.heads.route66 = `
+<head>
+	<meta charset="utf-8">
+	<title>Route66<\\/title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="manifest" href="\\/manifest\\.json">
+	<link rel="preload" href="\\/bundle\\.\\w{5}\\.css" as="style">
+	<link rel="preload" href="\\/bundle\\.\\w{5}\\.js" as="script">
+	<link rel="preload" href="\\/route-route66\\.chunk\\.\\w{5}\\.js" as="script">
+	<link rel="preload" href="\\/1\\.chunk\\.\\w{5}\\.css" as="style">
+	<link rel="shortcut icon" href="\\/favicon\\.ico">
+	<link href="\\/bundle\\.\\w{5}\\.css" rel="stylesheet">
+<\\/head>
+`;
+
 exports.prerender.home = `
 <body>
 	<div id="app">

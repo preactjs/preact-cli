@@ -1,9 +1,8 @@
 import { h, Component } from 'preact';
 import { Router } from 'preact-router';
-
-const Home = () => <div>Home</div>;
-
-const Route66 = () => <div>Route66</div>;
+import Home from './routes/home';
+import Route66 from './routes/route66';
+import './style.css';
 
 export default class App extends Component {
 	handleRoute = e => {

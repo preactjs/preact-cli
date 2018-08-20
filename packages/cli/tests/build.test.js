@@ -16,6 +16,17 @@ async function getIndex(dir, file='index.html') {
 	return html.match(/<body>.*<\/body>/)[0];
 }
 
+async function getHead(dir, file='index.html') {
+	file = join(dir, `build/${file}`);
+	let html = await readFile(file, 'utf-8');
+	return html.match(/<head>.*<\/head>/)[0];
+}
+
+function getRegExpFromMarkup(markup) {
+	const minifiedMarkup = markup.replace(/\n/g,'').replace(/\t/g,'').replace(/\s{2}/g,'');
+	return new RegExp(minifiedMarkup);
+}
+
 describe('preact build', () => {
 	ours.forEach(key =>
 		it(`builds the '${key}' output`, async () => {
@@ -49,11 +60,19 @@ describe('preact build', () => {
 		let dir = await subject('multiple-prerendering');
 		await build(dir);
 
-		let body1 = await getIndex(dir);
+		const body1 = await getIndex(dir);
 		looksLike(body1, images.prerender.home);
 
-		let body2 = await getIndex(dir, 'route66/index.html');
+		const body2 = await getIndex(dir, 'route66/index.html');
 		looksLike(body2, images.prerender.route);
+
+		const head1 = await getHead(dir);
+		expect(head1).toEqual(expect.stringMatching(
+			getRegExpFromMarkup(images.prerender.heads.home)));
+
+		const head2 = await getHead(dir, 'route66/index.html');
+		expect(head2).toEqual(expect.stringMatching(
+			getRegExpFromMarkup(images.prerender.heads.route66)));
 	});
 
 	it('should use custom `preact.config.js`', async () => {
