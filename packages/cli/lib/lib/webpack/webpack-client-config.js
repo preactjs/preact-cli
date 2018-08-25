@@ -109,8 +109,8 @@ function isProd(config) {
 		plugins: [
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
-				'process.env.ESM': config.esm,
 				'process.env.ES_BUILD': false,
+				'process.env.ESM': config.esm,
 			})
 		],
 
@@ -201,6 +201,7 @@ function isProd(config) {
 				},
 			}),
 		);
+
 		if (config.sw) {
 			prodConfig.plugins.push(
 				new SWPrecacheWebpackPlugin({
