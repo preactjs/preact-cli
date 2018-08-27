@@ -4,6 +4,7 @@ import { readFileSync } from 'fs';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
+import SizePlugin from 'size-plugin';
 import ReplacePlugin from 'webpack-plugin-replace';
 import requireRelative from 'require-relative';
 import createBabelConfig from '../babel-config';
@@ -222,7 +223,8 @@ export default function (env) {
 				renderThrottle: 100,
 				summary: false,
 				clear: true
-			})
+			}),
+			new SizePlugin()
 		].concat(isProd ? [
 			new webpack.HashedModuleIdsPlugin(),
 			new webpack.LoaderOptionsPlugin({ minimize:true }),
