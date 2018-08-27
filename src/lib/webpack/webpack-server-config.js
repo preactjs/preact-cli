@@ -24,6 +24,7 @@ function serverConfig(env) {
 }
 
 export default function (env) {
+	env = Object.assign({}, env, { ssr: true });
 	return merge(
 		baseConfig(env),
 		serverConfig(env)
