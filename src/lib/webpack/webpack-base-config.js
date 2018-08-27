@@ -204,7 +204,8 @@ export default function (env) {
 		plugins: [
 			new webpack.NoEmitOnErrorsPlugin(),
 			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
+				'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
+				'PRERENDER': env.ssr ? 'true' : 'false'
 			}),
 			// Extract CSS
 			new ExtractTextPlugin({
