@@ -42,7 +42,8 @@ module.exports = (assets, isESMBuild = false) => {
     obj[filename] = { type:'script', weight:0.9 };
     if (css) obj[css] = { type:'style', weight:0.9 };
     path = filename.replace(/route-/, '/')
-      .replace(/\.chunk(\.\w+)?(\.esm)?\.js$/, '')
+      .replace(/\.chunk(\.\w+)?\.js$/, '')
+      .replace(/\.chunk(\.\w+)?\.esm\.js$/, '')
       .replace(/\/home/, '/');
     manifest[path] = obj;
   });
