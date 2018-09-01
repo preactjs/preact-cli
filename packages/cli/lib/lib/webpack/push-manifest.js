@@ -1,12 +1,12 @@
 const createLoadManifest = require('./create-load-manifest');
 
 module.exports = class PushManifestPlugin {
-  constructor(env = {}) {
-    this.isESMBuild_ = env.esm;
-  }
+	constructor(env = {}) {
+		this.isESMBuild_ = env.esm;
+	}
 	apply(compiler) {
 		compiler.plugin('emit', (compilation, callback) => {
-      const manifest = createLoadManifest(compilation.assets, this.isESMBuild_);
+			const manifest = createLoadManifest(compilation.assets, this.isESMBuild_);
 
 			let output = JSON.stringify(manifest);
 			compilation.assets['push-manifest.json'] = {
