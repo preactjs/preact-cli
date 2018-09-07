@@ -90,7 +90,8 @@ function clientConfig(env) {
 					}]
 				),
 				// copy any static files
-				existsSync(source('assets')) && { from:'assets', to:'assets' }
+				existsSync(source('assets')) && { from:'assets', to:'assets' },
+				{ from: resolve(__dirname,'../../resources/preact-cli-sw.js'), to:'preact-cli-sw.js' },
 			].filter(Boolean))
 		]
 	};
@@ -166,6 +167,7 @@ function isProd(config) {
 			new SWPrecacheWebpackPlugin({
 				filename: 'sw.js',
 				navigateFallback: 'index.html',
+				importScripts: ['preact-cli-sw.js'],
 				navigateFallbackWhitelist: [/^(?!\/__).*/],
 				minify: true,
 				stripPrefix: config.cwd,
