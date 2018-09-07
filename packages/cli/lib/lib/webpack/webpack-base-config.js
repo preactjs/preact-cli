@@ -29,7 +29,7 @@ module.exports = function (env) {
 	env.manifest = readJson( source('manifest.json') ) || {};
 	env.pkg = readJson( resolve(cwd, 'package.json') ) || {};
 
-	let babelrc = readJson( resolve(cwd, 'old') ) || {};
+	let babelrc = readJson( resolve(cwd, '.babelrc') ) || {};
 	let browsers = env.pkg.browserslist || ['> 0.25%', 'IE >= 9'];
 
 	let nodeModules = resolve(cwd, 'node_modules');
