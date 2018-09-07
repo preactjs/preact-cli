@@ -6,7 +6,6 @@ const requireRelative = require('require-relative');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
-const createBabelConfig = require('../babel-config');
 
 function readJson(file) {
 	try {
@@ -29,10 +28,23 @@ module.exports = function (env) {
 	env.manifest = readJson( source('manifest.json') ) || {};
 	env.pkg = readJson( resolve(cwd, 'package.json') ) || {};
 
-	let babelrc = readJson( resolve(cwd, '.babelrc') ) || {};
-	let browsers = env.pkg.browserslist || ['> 0.25%', 'IE >= 9'];
-
 	let nodeModules = resolve(cwd, 'node_modules');
+
+	// @see https://jamie.build/last-2-versions
+	let browsers = env.pkg.browserslist || ['>0.25%', 'not ie 11', 'not op_mini all'];
+	let babelrc = readJson( resolve(cwd, '.babelrc') ) || {};
+	let babel = require('@preact/babel')(env, { browsers });
+	babel.babelrc = false; // we've already read it
+
+	// support `async` – CLI feature, not Preact-specific
+	babel.plugins.push(
+		[require.resolve('fast-async'), { spec: true }]
+	);
+	babel.presets.forEach(x => {
+		if (Array.isArray(x) && x[0].includes('@babel/preset-env')) {
+			x[1].exclude.push('transform-async-to-generator');
+		}
+	});
 
 	return {
 		context: src,
@@ -72,10 +84,7 @@ module.exports = function (env) {
 					enforce: 'pre',
 					test: /\.jsx?$/,
 					loader: 'babel-loader',
-					options: Object.assign(
-						createBabelConfig(env, { browsers }),
-						babelrc // intentionally overwrite our settings
-					)
+					options: Object.assign(babel, babelrc) // intentional override
 				},
 				{ // LESS
 					enforce: 'pre',
