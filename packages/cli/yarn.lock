@@ -624,6 +624,10 @@ acorn-dynamic-import@^3.0.0:
   dependencies:
     acorn "^5.0.0"
 
+acorn-es7-plugin@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/acorn-es7-plugin/-/acorn-es7-plugin-1.1.7.tgz#f2ee1f3228a90eead1245f9ab1922eb2e71d336b"
+
 acorn-globals@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/acorn-globals/-/acorn-globals-3.1.0.tgz#fd8270f71fbb4996b004fa880ee5d46573a731bf"
@@ -635,6 +639,10 @@ acorn-globals@^4.1.0:
   resolved "https://registry.yarnpkg.com/acorn-globals/-/acorn-globals-4.1.0.tgz#ab716025dbe17c54d3ef81d32ece2b2d99fe2538"
   dependencies:
     acorn "^5.0.0"
+
+acorn@>=2.5.2:
+  version "5.7.2"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.7.2.tgz#91fa871883485d06708800318404e72bfb26dcc5"
 
 acorn@^4.0.4:
   version "4.0.13"
@@ -947,9 +955,9 @@ babel-core@^6.0.0, babel-core@^6.26.0:
     slash "^1.0.0"
     source-map "^0.5.7"
 
-babel-esm-plugin@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/babel-esm-plugin/-/babel-esm-plugin-0.1.1.tgz#a6efd44e2637c2d5785bf334ef711d5c9e4282b3"
+babel-esm-plugin@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/babel-esm-plugin/-/babel-esm-plugin-0.2.0.tgz#da6a90e7ede84499a05559beba2f611301448c4b"
   dependencies:
     deepcopy "^1.0.0"
 
@@ -2734,6 +2742,13 @@ extsprintf@^1.2.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
 
+fast-async@^6.3.7:
+  version "6.3.7"
+  resolved "https://registry.yarnpkg.com/fast-async/-/fast-async-6.3.7.tgz#b4a406f2c59890b8b1b4c8468a36bd7f1a57e47f"
+  dependencies:
+    nodent-compiler "^3.2.4"
+    nodent-runtime ">=3.2.1"
+
 fast-deep-equal@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-1.1.0.tgz#c053477817c86b51daa853c81e059b733d023614"
@@ -3174,6 +3189,13 @@ growly@^1.3.0:
 gzip-size@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/gzip-size/-/gzip-size-4.1.0.tgz#8ae096257eabe7d69c45be2b67c448124ffb517c"
+  dependencies:
+    duplexer "^0.1.1"
+    pify "^3.0.0"
+
+gzip-size@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/gzip-size/-/gzip-size-5.0.0.tgz#a55ecd99222f4c48fd8c01c625ce3b349d0a0e80"
   dependencies:
     duplexer "^0.1.1"
     pify "^3.0.0"
@@ -5074,6 +5096,23 @@ node-sass@^4.9.0:
     stdout-stream "^1.4.0"
     "true-case-path" "^1.0.2"
 
+nodent-compiler@^3.2.4:
+  version "3.2.9"
+  resolved "https://registry.yarnpkg.com/nodent-compiler/-/nodent-compiler-3.2.9.tgz#24daa5558045f53ceaf55f0efd1f65d80c41ef95"
+  dependencies:
+    acorn ">=2.5.2"
+    acorn-es7-plugin "^1.1.7"
+    nodent-transform "^3.2.9"
+    source-map "^0.5.7"
+
+nodent-runtime@>=3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/nodent-runtime/-/nodent-runtime-3.2.1.tgz#9e2755d85e39f764288f0d4752ebcfe3e541e00e"
+
+nodent-transform@^3.2.9:
+  version "3.2.9"
+  resolved "https://registry.yarnpkg.com/nodent-transform/-/nodent-transform-3.2.9.tgz#ec11a6116b5476e60bc212371cf6b8e4c74f40b6"
+
 "nopt@2 || 3":
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-3.0.6.tgz#c6465dbf08abcd4db359317f79ac68a646b28ff9"
@@ -5887,6 +5926,10 @@ pretty-bytes@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-4.0.2.tgz#b2bf82e7350d65c6c33aa95aaa5a4f6327f61cd9"
 
+pretty-bytes@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-5.1.0.tgz#6237ecfbdc6525beaef4de722cc60a58ae0e6c6d"
+
 pretty-error@^2.0.2:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/pretty-error/-/pretty-error-2.1.1.tgz#5f4f87c8f91e5ae3f3ba87ab4cf5e03b1a17f1a3"
@@ -6687,6 +6730,18 @@ shellwords@^0.1.1:
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
+
+size-plugin@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/size-plugin/-/size-plugin-1.0.1.tgz#7a440fe74a8cbefec31de6d81f27af2f9134f30d"
+  dependencies:
+    chalk "^2.4.1"
+    escape-string-regexp "^1.0.5"
+    glob "^7.1.2"
+    gzip-size "^5.0.0"
+    minimatch "^3.0.4"
+    pretty-bytes "^5.1.0"
+    util.promisify "^1.0.0"
 
 slash@^1.0.0:
   version "1.0.0"
