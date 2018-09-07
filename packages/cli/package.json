@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
     "@babel/register": "^7.0.0",
     "@preact/babel": "*",
     "autoprefixer": "^8.4.1",
