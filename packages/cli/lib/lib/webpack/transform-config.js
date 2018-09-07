@@ -15,6 +15,13 @@ module.exports = async function (env, config, ssr=false) {
 		throw new Error(`preact-cli config could not be loaded!\nFile ${env.config} not found.`);
 	}
 
+	// allow ESM-based `preact.config.js` files
+	require('@babel/register')({
+		presets: [[require.resolve('@babel/preset-env'), {
+			"targets": { "node": "current" }
+		}]]
+	});
+
 	const m = require(myConfig);
 	const transformer = m && m.default || m;
 	try {

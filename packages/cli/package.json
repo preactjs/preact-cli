@@ -14,6 +14,10 @@
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/tests/setup.js",
+    "moduleDirectories": [
+      "node_modules",
+      "../babel/node_modules"
+    ],
     "testEnvironment": "node"
   },
   "engines": {
@@ -46,6 +50,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "@preact/babel": "*",
     "autoprefixer": "^8.4.1",
     "babel-esm-plugin": "^0.2.1",
