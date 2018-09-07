@@ -55,7 +55,6 @@
     "@babel/plugin-transform-react-constant-elements": "^7.0.0",
     "@babel/plugin-transform-react-jsx": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
-    "@babel/register": "^7.0.0",
     "autoprefixer": "^8.4.1",
     "babel-esm-plugin": "^0.2.1",
     "babel-loader": "^8.0.2",
