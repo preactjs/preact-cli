@@ -43,7 +43,7 @@ function clientConfig(env) {
 
 		resolveLoader: {
 			alias: {
-				async: resolve(__dirname, './async-component-loader')
+				async: require.resolve('@preact/async-loader')
 			}
 		},
 
@@ -56,7 +56,7 @@ function clientConfig(env) {
 						filter(source('routes')+'/{*.js,*/index.js}'),
 						filter(source('components')+'/{routes,async}/{*.js,*/index.js}')
 					],
-					loader: resolve(__dirname, './async-component-loader'),
+					loader: require.resolve('@preact/async-loader'),
 					options: {
 						name(filename) {
 							filename = normalizePath(filename);
