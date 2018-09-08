@@ -8,6 +8,7 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CrittersPlugin = require('critters-webpack-plugin');
 const RenderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
@@ -75,6 +76,7 @@ function clientConfig(env) {
 		},
 
 		plugins: [
+			new CrittersPlugin(),
 			...RenderHTMLPlugin(env),
 			new PushManifestPlugin(env),
 			new CopyWebpackPlugin([

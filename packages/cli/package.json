@@ -66,6 +66,7 @@
     "chalk": "^2.4.1",
     "console-clear": "^1.0.0",
     "copy-webpack-plugin": "^4.1.0",
+    "critters-webpack-plugin": "^1.1.0",
     "cross-spawn-promise": "^0.10.1",
     "css-loader": "^0.28.7",
     "css-modules-require-hook": "^4.0.6",
