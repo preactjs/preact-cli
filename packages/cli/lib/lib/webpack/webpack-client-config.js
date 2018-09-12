@@ -76,9 +76,9 @@ function clientConfig(env) {
 		},
 
 		plugins: [
-			new CrittersPlugin(),
 			...RenderHTMLPlugin(env),
 			new PushManifestPlugin(env),
+			new CrittersPlugin(),
 			new CopyWebpackPlugin([
 				...(
 					existsSync(source('manifest.json'))
