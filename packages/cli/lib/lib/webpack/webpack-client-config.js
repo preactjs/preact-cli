@@ -76,8 +76,9 @@ function clientConfig(env) {
 		},
 
 		plugins: [
+      // push manifest is first because RenderHTMLPlug uses its output
+      new PushManifestPlugin(env),
 			...RenderHTMLPlugin(env),
-			new PushManifestPlugin(env),
 			new CopyWebpackPlugin([
 				...(
 					existsSync(source('manifest.json'))
