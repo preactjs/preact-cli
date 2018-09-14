@@ -52,9 +52,9 @@ module.exports = (assets, isESMBuild = false, namedChunkGroups) => {
 					asset.files = asset.files || [];
 					asset.files.forEach(file => {
 						if (/\.css$/.test(file)) {
-							obj[file] = { type:'style', weight:0.9 }
+							obj[file] = { type:'style', weight:0.9 };
 						} else if (/\.js$/.test(file)) {
-							obj[file] = { type:'script', weight:0.9 }
+							obj[file] = { type:'script', weight:0.9 };
 						}
 					});
 				});
