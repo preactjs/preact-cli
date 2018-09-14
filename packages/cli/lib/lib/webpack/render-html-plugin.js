@@ -31,11 +31,11 @@ module.exports = function (config) {
 			title: title || config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
 			excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 			createLoadManifest: (assets, isESMBuild = false, namedChunkGroups) => {
-        if (assets['push-manifest.json']) {
-          return JSON.parse(assets['push-manifest.json'].source());
-        }
-        return createLoadManifest(assets, isESMBuild = false, namedChunkGroups);
-      },
+				if (assets['push-manifest.json']) {
+					return JSON.parse(assets['push-manifest.json'].source());
+				}
+				return createLoadManifest(assets, isESMBuild = false, namedChunkGroups);
+			},
 			config,
 			url,
 			ssr(params) {

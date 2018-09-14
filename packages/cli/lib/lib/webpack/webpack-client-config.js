@@ -6,7 +6,6 @@ const { filter } = require('minimatch');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const RenderHTMLPlugin = require('./render-html-plugin');
@@ -76,8 +75,7 @@ function clientConfig(env) {
 		},
 
 		plugins: [
-      // push manifest is first because RenderHTMLPlug uses its output as perf improvement
-      new PushManifestPlugin(env),
+			new PushManifestPlugin(env),
 			...RenderHTMLPlugin(env),
 			new CopyWebpackPlugin([
 				...(
@@ -118,23 +116,46 @@ function isProd(config) {
 
 		optimization: {
 			minimizer: [
-        new TerserPlugin({
-          terserOptions: {
-            ecma: undefined,
-            warnings: false,
-            parse: {},
-            compress: {},
-            mangle: true, // Note `mangle.properties` is `false` by default.
-            module: false,
-            output: null,
-            toplevel: false,
-            nameCache: null,
-            ie8: false,
-            keep_classnames: undefined,
-            keep_fnames: false,
-            safari10: false
-          }
-        }),
+				new UglifyJsPlugin({
+					cache: true,
+					parallel: true,
+					uglifyOptions: {
+						sourceMap: true,
+						output: { comments:false },
+						mangle: true,
+						compress: {
+							properties: true,
+							keep_fargs: false,
+							pure_getters: true,
+							collapse_vars: true,
+							warnings: false,
+							// screw_ie8: true,
+							sequences: true,
+							dead_code: true,
+							drop_debugger: true,
+							comparisons: true,
+							conditionals: true,
+							evaluate: true,
+							booleans: true,
+							loops: true,
+							unused: true,
+							hoist_funs: true,
+							if_return: true,
+							join_vars: true,
+							// cascade: true,
+							drop_console: false,
+							pure_funcs: [
+								'classCallCheck',
+								'_classCallCheck',
+								'_possibleConstructorReturn',
+								'Object.freeze',
+								'invariant',
+								'warning'
+							]
+						},
+					},
+					sourceMap: true,
+				}),
 				new OptimizeCssAssetsPlugin({}),
 			],
 		},
