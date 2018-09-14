@@ -226,26 +226,7 @@ module.exports = function (env) {
 
 		optimization: {
 			splitChunks: {
-				cacheGroups: {
-					vendors: {
-						name: `chunk-vendors`,
-						test: (module) => {
-							const testRegexp = /[\\/]node_modules[\\/]/;
-							const polyfillRegexp = /promise-polyfill|isomorphic-unfetch/;
-							if (module.nameForCondition && !polyfillRegexp.test(module.nameForCondition()) && testRegexp.test(module.nameForCondition())) {
-								return true;
-							}
-							for (const chunk of module.chunksIterable) {
-								if (chunk.name && !polyfillRegexp.test(chunk.name)  && testRegexp.test(chunk.name)) {
-									return true;
-								}
-							}
-							return false;
-						},
-						priority: -10,
-						chunks: 'initial'
-					}
-				}
+				minChunks: 3,
 			},
 		},
 
