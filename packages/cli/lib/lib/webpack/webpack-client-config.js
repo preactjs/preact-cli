@@ -76,7 +76,7 @@ function clientConfig(env) {
 		},
 
 		plugins: [
-      // push manifest is first because RenderHTMLPlug uses its output
+      // push manifest is first because RenderHTMLPlug uses its output as perf improvement
       new PushManifestPlugin(env),
 			...RenderHTMLPlugin(env),
 			new CopyWebpackPlugin([
