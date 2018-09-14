@@ -9,9 +9,10 @@
 		<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath %>manifest.json">
 		<% if (htmlWebpackPlugin.options.manifest.theme_color) { %>
 			<meta name="theme-color" content="<%= htmlWebpackPlugin.options.manifest.theme_color %>">
-		<% } %>
-		<% for (const file in htmlWebpackPlugin.options.createLoadManifest(compilation.assets, htmlWebpackPlugin.options.config.esm)[htmlWebpackPlugin.options.url]) { %>
-			<% if (file && file.match(/\.(css|js)$/)) { %>
+    <% } %>
+    <% const loadManifest = htmlWebpackPlugin.options.createLoadManifest(compilation.assets, htmlWebpackPlugin.options.config.esm, webpack.namedChunkGroups);%>
+		<% for (const file in loadManifest[htmlWebpackPlugin.options.url]) { %>
+			<% if (file && file.match(/\.(js)$/)) { %>
 				<% /* crossorigin for main bundle as that is loaded from `<script type=module` tag, other lazy loaded bundles are from webpack so its not needed */ %>
 				<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>" <%= file.match(/bundle\.\w{5}\.esm\.js$/)?'crossorigin="anonymous"':'' %>>
 			<% } %>
