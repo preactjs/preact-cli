@@ -1,7 +1,7 @@
 const path = require('path');
 
 exports.default = [
-  '.babelrc',
+	'.babelrc',
 	'.gitignore',
 	'package.json',
 	'README.md',
