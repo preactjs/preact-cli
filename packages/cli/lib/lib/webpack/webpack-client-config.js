@@ -78,7 +78,6 @@ function clientConfig(env) {
 		plugins: [
 			...RenderHTMLPlugin(env),
 			new PushManifestPlugin(env),
-			new CrittersPlugin(),
 			new CopyWebpackPlugin([
 				...(
 					existsSync(source('manifest.json'))
@@ -223,7 +222,15 @@ function isProd(config) {
 				}),
 			);
 		}
-	}
+  }
+
+  if (config['critical-css']) {
+    prodConfig.plugins.push(
+      new CrittersPlugin({
+        preload: 'swap',
+      }),
+    )
+  }
 
 	if (config.analyze) {
 		prodConfig.plugins.push(
