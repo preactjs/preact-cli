@@ -1,0 +1,17 @@
+{
+  "version": "0.0.0",
+  "name": "@preact/async-loader",
+  "description": "Preact's async component loader for Webpack",
+  "files": [
+    "*.js"
+  ],
+  "engines": {
+    "node": ">=6"
+  },
+  "dependencies": {
+    "loader-utils": "^1.1.0"
+  },
+  "peerDependencies": {
+    "preact": "^8.1.0"
+  }
+}
