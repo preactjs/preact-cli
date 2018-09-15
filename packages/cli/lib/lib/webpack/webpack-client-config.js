@@ -222,15 +222,15 @@ function isProd(config) {
 				}),
 			);
 		}
-  }
+	}
 
-  if (config['critical-css']) {
-    prodConfig.plugins.push(
-      new CrittersPlugin({
-        preload: 'swap',
-      }),
-    )
-  }
+	if (config['critical-css']) {
+		prodConfig.plugins.push(
+			new CrittersPlugin({
+				preload: 'swap',
+			}),
+		)
+	}
 
 	if (config.analyze) {
 		prodConfig.plugins.push(

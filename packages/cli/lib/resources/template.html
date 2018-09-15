@@ -9,8 +9,8 @@
 		<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath %>manifest.json">
 		<% if (htmlWebpackPlugin.options.manifest.theme_color) { %>
 			<meta name="theme-color" content="<%= htmlWebpackPlugin.options.manifest.theme_color %>">
-    <% } %>
-    <% const filesRegexp = options.criticalCss ? /\.(js)$/ : /\.(css|js)$/;%>
+		<% } %>
+		<% const filesRegexp = options.criticalCss ? /\.(js)$/ : /\.(css|js)$/;%>
 		<% for (const file in htmlWebpackPlugin.options.createLoadManifest(compilation.assets, htmlWebpackPlugin.options.config.esm)[htmlWebpackPlugin.options.url]) { %>
 			<% if (file && file.match(filesRegexp)) { %>
 				<% /* crossorigin for main bundle as that is loaded from `<script type=module` tag, other lazy loaded bundles are from webpack so its not needed */ %>
