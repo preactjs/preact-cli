@@ -229,7 +229,7 @@ function isProd(config) {
 			new CrittersPlugin({
 				preload: 'swap',
 			}),
-		)
+		);
 	}
 
 	if (config.analyze) {
