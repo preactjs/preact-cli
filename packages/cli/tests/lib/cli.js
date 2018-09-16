@@ -10,6 +10,7 @@ const argv = {
 	dest: 'build',
 	config: 'preact.config.js',
 	prerenderUrls: 'prerender-urls.json',
+	'inline-css': true,
 };
 
 exports.create = async function (template, name) {
