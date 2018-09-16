@@ -224,7 +224,7 @@ function isProd(config) {
 		}
 	}
 
-	if (config['critical-css']) {
+	if (config['inline-css']) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
 				preload: 'swap',

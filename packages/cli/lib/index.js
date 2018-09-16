@@ -32,7 +32,7 @@ prog
 	.option('--prerenderUrls', 'Path to pre-rendered routes config', 'prerender-urls.json')
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', false)
-	.option('--critical-css', 'Adds critical cssto the prerendered markup.', true)
+	.option('--inline-css', 'Adds critical cssto the prerendered markup.', true)
 	.action(commands.build);
 
 prog
