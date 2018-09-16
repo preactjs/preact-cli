@@ -52,7 +52,7 @@ module.exports = function (env) {
 				'react-dom': 'preact-compat',
 				'create-react-class': 'preact-compat/lib/create-react-class',
 				'react-addons-css-transition-group': 'preact-css-transition-group',
-				'preact-cli/async-component': resolve(__dirname, '../../components/async')
+				'preact-cli/async-component': require.resolve('@preact/async-loader/async')
 			}
 		},
 
