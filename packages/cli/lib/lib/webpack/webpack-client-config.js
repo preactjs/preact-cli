@@ -8,6 +8,7 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CrittersPlugin = require('critters-webpack-plugin');
 const RenderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
@@ -221,6 +222,14 @@ function isProd(config) {
 				}),
 			);
 		}
+	}
+
+	if (config['inline-css']) {
+		prodConfig.plugins.push(
+			new CrittersPlugin({
+				preload: 'swap',
+			}),
+		);
 	}
 
 	if (config.analyze) {
