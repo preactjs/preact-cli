@@ -8,6 +8,7 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CrittersPlugin = require('critters-webpack-plugin');
 const RenderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
@@ -43,7 +44,7 @@ function clientConfig(env) {
 
 		resolveLoader: {
 			alias: {
-				async: resolve(__dirname, './async-component-loader')
+				async: require.resolve('@preact/async-loader')
 			}
 		},
 
@@ -56,7 +57,7 @@ function clientConfig(env) {
 						filter(source('routes')+'/{*.js,*/index.js}'),
 						filter(source('components')+'/{routes,async}/{*.js,*/index.js}')
 					],
-					loader: resolve(__dirname, './async-component-loader'),
+					loader: require.resolve('@preact/async-loader'),
 					options: {
 						name(filename) {
 							filename = normalizePath(filename);
@@ -221,6 +222,14 @@ function isProd(config) {
 				}),
 			);
 		}
+	}
+
+	if (config['inline-css']) {
+		prodConfig.plugins.push(
+			new CrittersPlugin({
+				preload: 'swap',
+			}),
+		);
 	}
 
 	if (config.analyze) {

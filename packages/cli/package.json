@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "3.0.0-next.9",
+  "version": "3.0.0-next.11",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "developit/preact-cli",
   "main": "lib/index.js",
@@ -56,6 +56,7 @@
     "@babel/plugin-transform-react-jsx": "^7.0.0-beta.51",
     "@babel/preset-env": "^7.0.0-beta.51",
     "@babel/register": "^7.0.0-beta.51",
+    "@preact/async-loader": "next",
     "autoprefixer": "^8.4.1",
     "babel-esm-plugin": "0.2.4",
     "babel-loader": "^8.0.0-beta.3",
@@ -66,6 +67,7 @@
     "chalk": "^2.4.1",
     "console-clear": "^1.0.0",
     "copy-webpack-plugin": "^4.1.0",
+    "critters-webpack-plugin": "^1.2.1",
     "cross-spawn-promise": "^0.10.1",
     "css-loader": "^0.28.7",
     "css-modules-require-hook": "^4.0.6",
