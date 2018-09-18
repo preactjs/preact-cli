@@ -10,7 +10,7 @@
 		<% if (htmlWebpackPlugin.options.manifest.theme_color) { %>
 			<meta name="theme-color" content="<%= htmlWebpackPlugin.options.manifest.theme_color %>">
 		<% } %>
-		<% const loadManifest = htmlWebpackPlugin.options.createLoadManifest(compilation.assets, htmlWebpackPlugin.options.config.esm, webpack.namedChunkGroups);%>
+		<% const loadManifest = htmlWebpackPlugin.options.createLoadManifest(compilation.assets, webpack.namedChunkGroups);%>
 		<% const filesRegexp = htmlWebpackPlugin.options.inlineCss ? /\.(chunk\.\w{5}\.css|js)$/ : /\.(css|js)$/;%>
 		<% for (const file in loadManifest[htmlWebpackPlugin.options.url]) { %>
 			<% if (file && file.match(filesRegexp)) { %>
