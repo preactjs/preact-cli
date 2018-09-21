@@ -76,8 +76,8 @@ function clientConfig(env) {
 		},
 
 		plugins: [
-			...RenderHTMLPlugin(env),
 			new PushManifestPlugin(env),
+			...RenderHTMLPlugin(env),
 			new CopyWebpackPlugin([
 				...(
 					existsSync(source('manifest.json'))
