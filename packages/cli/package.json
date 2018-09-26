@@ -101,6 +101,7 @@
     "rimraf": "^2.6.1",
     "sade": "^1.4.1",
     "script-ext-html-webpack-plugin": "^2.0.1",
+    "size-plugin": "^1.0.1",
     "source-map": "^0.7.2",
     "stack-trace": "0.0.10",
     "style-loader": "^0.21.0",

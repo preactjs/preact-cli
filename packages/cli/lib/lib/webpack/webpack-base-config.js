@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const { resolve } = require('path');
 const { readFileSync } = require('fs');
+const SizePlugin = require('size-plugin');
 const autoprefixer = require('autoprefixer');
 const requireRelative = require('require-relative');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -208,7 +209,8 @@ module.exports = function (env) {
 				renderThrottle: 100,
 				summary: false,
 				clear: true
-			})
+			}),
+			new SizePlugin()
 		].concat(isProd ? [
 			new webpack.HashedModuleIdsPlugin(),
 			new webpack.LoaderOptionsPlugin({ minimize:true }),
