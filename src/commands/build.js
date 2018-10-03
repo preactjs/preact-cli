@@ -4,6 +4,8 @@ import { isDir, error } from '../util';
 import asyncCommand from '../lib/async-command';
 import runWebpack, { showStats, writeJsonStats } from '../lib/webpack/run-webpack';
 
+const toBool = val => val === void 0 || (val === 'false' ? false : val);
+
 export default asyncCommand({
 	command: 'build [src] [dest]',
 
@@ -59,6 +61,9 @@ export default asyncCommand({
 	async handler(argv) {
 		let cwd = resolve(argv.cwd);
 		let modules = resolve(cwd, 'node_modules');
+
+		argv.prerender = toBool(argv.prerender);
+		argv.production = toBool(argv.production);
 
 		if (!isDir(modules)) {
 			return error('No `node_modules` found! Please run `npm install` before continuing.', 1);
