@@ -23,7 +23,7 @@ function resolveDep(dep, cwd) {
 }
 
 module.exports = function (env) {
-	const { cwd, isProd, src, source } = env;
+	const { cwd, isProd, isWatch, src, source } = env;
 
 	// Apply base-level `env` values
 	env.dest = resolve(cwd, env.dest || 'build');
@@ -136,7 +136,7 @@ module.exports = function (env) {
 						source('routes')
 					],
 					use: [
-						isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
 						{
 							loader: 'css-loader',
 							options: {
@@ -163,7 +163,7 @@ module.exports = function (env) {
 						source('routes')
 					],
 					use: [
-						isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
 						{
 							loader: 'css-loader',
 							options: {
@@ -234,7 +234,7 @@ module.exports = function (env) {
 
 		mode: isProd ? 'production' : 'development',
 
-		devtool: isProd ? 'source-map' : 'cheap-module-eval-source-map',
+		devtool: isWatch ? 'cheap-module-eval-source-map' : 'source-map',
 
 		node: {
 			console: false,
