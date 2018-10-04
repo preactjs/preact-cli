@@ -180,6 +180,7 @@ function stripLoaderFromModuleNames(m) {
 
 module.exports = function (env, watch=false) {
 	env.isProd = env.production; // shorthand
+	env.isWatch = !!watch; // use HMR?
 	env.cwd = resolve(env.cwd || process.cwd());
 
 	// env.src='src' via `build` default

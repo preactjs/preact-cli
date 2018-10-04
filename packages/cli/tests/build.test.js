@@ -73,6 +73,15 @@ describe('preact build', () => {
 		const head2 = await getHead(dir, 'route66/index.html');
 		expect(head2).toEqual(expect.stringMatching(
 			getRegExpFromMarkup(images.prerender.heads.route66)));
+  });
+
+  it('should preload correct files', async () => {
+		let dir = await subject('preload-chunks');
+		await build(dir);
+
+		const head1 = await getHead(dir);
+		expect(head1).toEqual(expect.stringMatching(
+			getRegExpFromMarkup(images.preload.head)));
 	});
 
 	it('should use custom `preact.config.js`', async () => {
