@@ -22,7 +22,8 @@ function clientConfig(env) {
 
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
-		polyfills: resolve(__dirname, './polyfills')
+		polyfills: resolve(__dirname, './polyfills'),
+		sw_debug: resolve(__dirname, './sw_debug')
 	};
 
 	if (!isProd) {
@@ -92,7 +93,6 @@ function clientConfig(env) {
 				),
 				// copy any static files
 				existsSync(source('assets')) && { from:'assets', to:'assets' },
-				{ from: resolve(__dirname,'../../resources/preact-cli-sw.js'), to:'preact-cli-sw.js' },
 			].filter(Boolean))
 		]
 	};
@@ -168,7 +168,6 @@ function isProd(config) {
 			new SWPrecacheWebpackPlugin({
 				filename: 'sw.js',
 				navigateFallback: 'index.html',
-				importScripts: ['preact-cli-sw.js'],
 				navigateFallbackWhitelist: [/^(?!\/__).*/],
 				minify: true,
 				stripPrefix: config.cwd,

@@ -3,6 +3,7 @@ import { h, render } from 'preact';
 if (process.env.NODE_ENV==='development') {
 	// enable preact devtools
 	require('preact/debug');
+	navigator.serviceWorker.register(__webpack_public_path__ + 'sw_debug.js');
 }
 else if (process.env.ADD_SW && 'serviceWorker' in navigator) {
 	// eslint-disable-next-line no-undef
