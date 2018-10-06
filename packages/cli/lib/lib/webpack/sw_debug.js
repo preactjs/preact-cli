@@ -1,16 +1,13 @@
-self.addEventListener('fetch', function(event){
-    const isJsonRequest = event.request.headers.get('content-type') === 'application/json';
-    const isPostRequest = event.request.method === 'POST';
-    event.respondWith(fetch(event.request).then(function(response){
-        return response;
-    }).catch(function(err){
-        console.error(err);
-        if (!navigator.onLine && isJsonRequest) {
-            if (isPostRequest) {
-                console.log('May be you should look into backgroundSync');
-            } else {
-                console.log('Maybe you should look into runtimeCaching');
-            }
+self.addEventListener('fetch', function (event) {
+    var isPostRequest = event.request.method === 'POST';
+    event.respondWith(fetch(event.request).catch(function (err) {
+      if (err instanceof TypeError) {
+        if (isPostRequest) {
+          console.log('PREACT-CLI-FRIENDLY-MESSAGE(IMPROVEMENT): We saw that your POST API call failed. This might fail for your users as well due to a network error, may be you should look into backgroundSync');
+        } else {
+          console.log('PREACT-CLI-FRIENDLY-MESSAGE(IMPROVEMENT): We saw that your GET API call failed. This might fail for your users as well due to a network error, may be you should look into runtimeCaching');
         }
+      }
+      return err;
     }));
-});
+  });
