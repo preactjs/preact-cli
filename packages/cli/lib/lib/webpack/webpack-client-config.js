@@ -22,8 +22,7 @@ function clientConfig(env) {
 
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
-		polyfills: resolve(__dirname, './polyfills'),
-		sw_debug: resolve(__dirname, './sw_debug')
+		polyfills: resolve(__dirname, './polyfills')
 	};
 
 	if (!isProd) {
@@ -93,6 +92,8 @@ function clientConfig(env) {
 				),
 				// copy any static files
 				existsSync(source('assets')) && { from:'assets', to:'assets' },
+				// copy sw_debug
+				{ from: resolve(__dirname,'../webpack/sw_debug.js'), to:'sw_debug.js' },
 			].filter(Boolean))
 		]
 	};
