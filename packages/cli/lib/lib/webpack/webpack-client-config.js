@@ -122,6 +122,7 @@ function isProd(config) {
 					parallel: true,
 					terserOptions: {
 						mangle: true,
+						output: { comments:false },
 						compress: {
 							keep_fargs: false,
 							pure_getters: true,
