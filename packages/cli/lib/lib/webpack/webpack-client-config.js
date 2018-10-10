@@ -5,7 +5,7 @@ const merge = require('webpack-merge');
 const { filter } = require('minimatch');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CrittersPlugin = require('critters-webpack-plugin');
@@ -117,34 +117,14 @@ function isProd(config) {
 
 		optimization: {
 			minimizer: [
-				new UglifyJsPlugin({
+				new TerserPlugin({
 					cache: true,
 					parallel: true,
-					uglifyOptions: {
-						sourceMap: true,
-						output: { comments:false },
-						mangle: true,
+					terserOptions: {
 						compress: {
-							properties: true,
 							keep_fargs: false,
 							pure_getters: true,
-							collapse_vars: true,
-							warnings: false,
-							// screw_ie8: true,
-							sequences: true,
-							dead_code: true,
-							drop_debugger: true,
-							comparisons: true,
-							conditionals: true,
-							evaluate: true,
-							booleans: true,
-							loops: true,
-							unused: true,
 							hoist_funs: true,
-							if_return: true,
-							join_vars: true,
-							// cascade: true,
-							drop_console: false,
 							pure_funcs: [
 								'classCallCheck',
 								'_classCallCheck',
