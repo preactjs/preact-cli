@@ -73,6 +73,7 @@ module.exports = function (env) {
 					test: /\.jsx?$/,
 					loader: 'babel-loader',
 					options: Object.assign(
+						{ babelrc: false },
 						createBabelConfig(env, { browsers }),
 						babelrc // intentionally overwrite our settings
 					)
