@@ -2,7 +2,6 @@ module.exports = function (env, options={}) {
 	const isProd = env && env.production;
 
 	return {
-		babelrc: false,
 		presets: [
 			[require.resolve('@babel/preset-env'), {
 				loose: true,
