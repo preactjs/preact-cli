@@ -4,7 +4,7 @@ const fs = require('fs.promised');
 
 const FILE = 'preact.config.js';
 
-module.exports = async function (env, config, ssr=false) {
+module.exports = async function (env, webpackConfig, ssr=false) {
 	env.config = env.config || FILE;
 	let myConfig = resolve(env.cwd, env.config);
 
@@ -21,12 +21,48 @@ module.exports = async function (env, config, ssr=false) {
 		}]]
 	});
 	const m = require(myConfig);
-	const transformer = m && m.default || m;
+	const config = m && m.default || m;
 	try {
 		let helpers = new WebpackConfigHelpers(env.cwd);
-		await transformer(config, Object.assign({}, env, { ssr }), helpers);
+		const transformers = [];
+		
+		if (typeof config === 'function') {
+			transformers.push(config);
+		} else if (typeof config === 'object' && !Array.isArray(config)) {
+			// TODO: do we want more props?
+			if (config.plugins) {
+				if (!Array.isArray(config.plugins)) {
+				
+				}
+				
+				config.plugins.map((plugin, index) => {
+					if (typeof plugin === 'function') {
+						transformers.push(plugin);
+					} else if (plugin && typeof plugin.apply === 'function') {
+						transformers.push(plugin.apply.bind(plugin));
+					} else {
+						//
+						let name = plugin && plugin.prototype && plugin.prototype.constructor && plugin.prototype.constructor.name;
+						
+						console.error(`Plugin invalid (index: ${index}, name: ${name})\nHas to be a function or an object/class with an \`apply\` function, is: ${typeof plugin}`);
+					}
+				});
+			}
+			if (config.transformWebpack) {
+				if (typeof config.transformWebpack !== 'function') {
+					throw new Error('`transformWebpack` in `preact.config.js` has to be a function');
+				}
+				transformers.push(config.transformWebpack);
+			}
+		} else {
+			throw new Error('Invalid export in `preact.config.js`, should be an object or a function');
+		}
+		
+		await Promise.all(transformers.map(async transformer => {
+			await transformer(webpackConfig, Object.assign({}, env, { ssr }), helpers);
+		}));
 	} catch (err) {
-		throw new Error(`Error at ${myConfig}: \n` + err);
+		throw new Error(`Error at ${myConfig}: \n` + err && err.stack || err);
 	}
 };
 
