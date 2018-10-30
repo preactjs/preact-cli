@@ -32,7 +32,7 @@ module.exports = async function (env, webpackConfig, ssr=false) {
 			// TODO: do we want more props?
 			if (config.plugins) {
 				if (!Array.isArray(config.plugins)) {
-				
+					throw new Error('The `plugins` property in `preact.config.js` has to be an Array');
 				}
 				
 				config.plugins.map((plugin, index) => {
@@ -50,7 +50,7 @@ module.exports = async function (env, webpackConfig, ssr=false) {
 			}
 			if (config.transformWebpack) {
 				if (typeof config.transformWebpack !== 'function') {
-					throw new Error('`transformWebpack` in `preact.config.js` has to be a function');
+					throw new Error('The `transformWebpack` property in `preact.config.js` has to be a Function');
 				}
 				transformers.push(config.transformWebpack);
 			}
