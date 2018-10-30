@@ -58,9 +58,9 @@ module.exports = async function (env, webpackConfig, ssr=false) {
 			throw new Error('Invalid export in `preact.config.js`, should be an object or a function');
 		}
 		
-		await Promise.all(transformers.map(async transformer => {
+		for (let transformer of transformers) {
 			await transformer(webpackConfig, Object.assign({}, env, { ssr }), helpers);
-		}));
+		}
 	} catch (err) {
 		throw new Error(`Error at ${myConfig}: \n` + err && err.stack || err);
 	}
