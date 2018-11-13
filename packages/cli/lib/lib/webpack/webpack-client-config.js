@@ -169,7 +169,14 @@ function isProd(config) {
 			new BabelEsmPlugin({
 				filename: '[name].[chunkhash:5].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
-				beforeStartExecution: plugins => {
+				beforeStartExecution: (plugins, newConfig) => {
+					const babelPlugins = newConfig.options.plugins;
+					newConfig.options.plugins = babelPlugins.filter(plugin => {
+						if (Array.isArray(plugin) && (plugin[0].indexOf('fast-async') !== -1)) {
+							return false;
+						}
+						return true;
+					});
 					plugins.forEach(plugin => {
 						if (plugin.constructor.name === 'DefinePlugin' && plugin.definitions) {
 							for (const definition in plugin.definitions) {
