@@ -4,7 +4,6 @@ const { existsSync } = require('fs');
 const merge = require('webpack-merge');
 const { filter } = require('minimatch');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -14,6 +13,7 @@ const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { normalizePath } = require('../../util');
+const swWebPackConfig = require('./webpack-sw');
 
 const cleanFilename = name => name.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
 
@@ -145,23 +145,25 @@ function isProd(config) {
 	};
 
 	if (config.sw) {
-		prodConfig.plugins.push(
-			new SWPrecacheWebpackPlugin({
-				filename: 'sw.js',
-				navigateFallback: 'index.html',
-				navigateFallbackWhitelist: [/^(?!\/__).*/],
-				minify: true,
-				stripPrefix: config.cwd,
-				staticFileGlobsIgnorePatterns: [
-					/\.esm\.js$/,
-					/polyfills(\..*)?\.js$/,
-					/\.map$/,
-					/push-manifest\.json$/,
-					/.DS_Store/,
-					/\.git/
-				]
-			}),
-		);
+
+		// prodConfig.plugins.push(
+
+		// 	// new SWPrecacheWebpackPlugin({
+		// 	// 	filename: 'sw.js',
+		// 	// 	navigateFallback: 'index.html',
+		// 	// 	navigateFallbackWhitelist: [/^(?!\/__).*/],
+		// 	// 	minify: true,
+		// 	// 	stripPrefix: config.cwd,
+		// 	// 	staticFileGlobsIgnorePatterns: [
+		// 	// 		/\.esm\.js$/,
+		// 	// 		/polyfills(\..*)?\.js$/,
+		// 	// 		/\.map$/,
+		// 	// 		/push-manifest\.json$/,
+		// 	// 		/.DS_Store/,
+		// 	// 		/\.git/
+		// 	// 	]
+		// 	// }),
+		// );
 	}
 
 	if (config.esm) {
@@ -191,26 +193,6 @@ function isProd(config) {
 				},
 			}),
 		);
-
-		if (config.sw) {
-			prodConfig.plugins.push(
-				new SWPrecacheWebpackPlugin({
-					filename: 'sw-esm.js',
-					navigateFallback: 'index.html',
-					navigateFallbackWhitelist: [/^(?!\/__).*/],
-					minify: true,
-					stripPrefix: config.cwd,
-					staticFileGlobsIgnorePatterns: [
-						/(\.[\w]{5}\.js)/,
-						/polyfills(\..*)?\.js$/,
-						/\.map$/,
-						/push-manifest\.json$/,
-						/.DS_Store/,
-						/\.git/
-					]
-				}),
-			);
-		}
 	}
 
 	if (config['inline-css']) {
@@ -268,9 +250,9 @@ function isDev(config) {
 }
 
 module.exports = function (env) {
-	return merge(
+	return [merge(
 		baseConfig(env),
 		clientConfig(env),
 		(env.isProd ? isProd : isDev)(env)
-	);
+	), swWebPackConfig(env)];
 };
