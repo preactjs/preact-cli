@@ -170,8 +170,8 @@ function isProd(config) {
 				filename: '[name].[chunkhash:5].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
 				beforeStartExecution: (plugins, newConfig) => {
-					const babelPlugins = newConfig.options.plugins;
-					newConfig.options.plugins = babelPlugins.filter(plugin => {
+					const babelPlugins = newConfig.plugins;
+					newConfig.plugins = babelPlugins.filter(plugin => {
 						if (Array.isArray(plugin) && (plugin[0].indexOf('fast-async') !== -1)) {
 							return false;
 						}
