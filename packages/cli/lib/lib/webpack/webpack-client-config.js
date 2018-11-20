@@ -13,7 +13,7 @@ const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { normalizePath } = require('../../util');
-const swWebPackConfig = require('./webpack-sw');
+const swWebPackConfig = require('./webpack-sw-config');
 
 const cleanFilename = name => name.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
 
@@ -143,28 +143,6 @@ function isProd(config) {
 			],
 		},
 	};
-
-	if (config.sw) {
-
-		// prodConfig.plugins.push(
-
-		// 	// new SWPrecacheWebpackPlugin({
-		// 	// 	filename: 'sw.js',
-		// 	// 	navigateFallback: 'index.html',
-		// 	// 	navigateFallbackWhitelist: [/^(?!\/__).*/],
-		// 	// 	minify: true,
-		// 	// 	stripPrefix: config.cwd,
-		// 	// 	staticFileGlobsIgnorePatterns: [
-		// 	// 		/\.esm\.js$/,
-		// 	// 		/polyfills(\..*)?\.js$/,
-		// 	// 		/\.map$/,
-		// 	// 		/push-manifest\.json$/,
-		// 	// 		/.DS_Store/,
-		// 	// 		/\.git/
-		// 	// 	]
-		// 	// }),
-		// );
-	}
 
 	if (config.esm) {
 		prodConfig.plugins.push(
