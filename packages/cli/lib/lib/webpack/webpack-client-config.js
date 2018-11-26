@@ -93,7 +93,7 @@ function clientConfig(env) {
 				// copy any static files
 				existsSync(source('assets')) && { from:'assets', to:'assets' },
 				// copy sw_debug
-				{ from: resolve(__dirname,'../webpack/sw_debug.js'), to:'sw_debug.js' },
+				{ from: resolve(__dirname,'../../resources/sw_debug.js'), to:'sw_debug.js' },
 			].filter(Boolean))
 		]
 	};
