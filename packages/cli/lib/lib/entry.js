@@ -7,6 +7,9 @@ if (process.env.NODE_ENV==='development') {
 	if (!process.env.ADD_SW && 'serviceWorker' in navigator) {
 		// eslint-disable-next-line no-undef
 		navigator.serviceWorker.register(__webpack_public_path__ + 'sw_debug.js');
+	} else if (process.env.ADD_SW && 'serviceWorker' in navigator) {
+		// eslint-disable-next-line no-undef
+		navigator.serviceWorker.register(__webpack_public_path__ + (process.env.ES_BUILD ? 'sw-esm.js' : 'sw.js'));
 	}
 }
 else if (process.env.ADD_SW && 'serviceWorker' in navigator) {
