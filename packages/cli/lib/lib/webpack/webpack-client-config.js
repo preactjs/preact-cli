@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const { resolve } = require('path');
+const { resolve, join } = require('path');
 const { existsSync } = require('fs');
 const merge = require('webpack-merge');
 const { filter } = require('minimatch');
@@ -12,6 +12,7 @@ const RenderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
+const { InjectManifest } = require('workbox-webpack-plugin');
 const { normalizePath } = require('../../util');
 const swWebPackConfig = require('./webpack-sw-config');
 
@@ -112,7 +113,12 @@ function isProd(config) {
 				'process.env.ADD_SW': config.sw,
 				'process.env.ES_BUILD': false,
 				'process.env.ESM': config.esm,
-			})
+			}),
+			new InjectManifest({
+				swSrc: resolve(config.dest, 'sw.js'),
+				include: [/\.html$/, /\.js$/, /\.css$/, /\.(png|jpg)$/],
+				exclude: [/\.esm\.js$/]
+			}),
 		],
 
 		optimization: {
@@ -171,6 +177,13 @@ function isProd(config) {
 				},
 			}),
 		);
+		prodConfig.plugins.push(
+			new InjectManifest({
+				swSrc: resolve(config.dest, 'sw-esm.js'),
+				include: [/\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
+				precacheManifestFilename: 'precache-manifest.[manifestHash].esm.js'
+			}),
+		);
 	}
 
 	if (config['inline-css']) {
@@ -184,6 +197,14 @@ function isProd(config) {
 	if (config.analyze) {
 		prodConfig.plugins.push(
 			new BundleAnalyzerPlugin()
+		);
+	}
+
+	if (config.brotli) {
+		prodConfig.plugins.push(
+			new BrotliPlugin({
+				test: /\.esm\.js$/,
+			})
 		);
 	}
 
@@ -228,9 +249,12 @@ function isDev(config) {
 }
 
 module.exports = function (env) {
-	return [merge(
-		baseConfig(env),
-		clientConfig(env),
-		(env.isProd ? isProd : isDev)(env)
-	), swWebPackConfig(env)];
+	return [
+		swWebPackConfig(env),
+		merge(
+			baseConfig(env),
+			clientConfig(env),
+			(env.isProd ? isProd : isDev)(env)
+		)
+	];
 };
