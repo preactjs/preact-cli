@@ -2,6 +2,7 @@ const rimraf = require('rimraf');
 const { resolve } = require('path');
 const { promisify } = require('bluebird');
 const { isDir, error } = require('../util');
+const { orange } = require('chalk');
 const runWebpack = require('../lib/webpack/run-webpack');
 
 const toBool = val => val === void 0 || (val === 'false' ? false : val);
@@ -17,6 +18,11 @@ module.exports = async function (src, argv) {
 
 	if (!isDir(modules)) {
 		return error('No `node_modules` found! Please run `npm install` before continuing.', 1);
+	}
+
+	if (argv.brotli) {
+		console.log(orange("⚛️ ATTENTION! You have enabled BROTLI support. "
+		+ "In order for this to work correctly, make sure .js.br files are served with 'content-encoding: br' header."));
 	}
 
 	if (argv.clean === void 0) {

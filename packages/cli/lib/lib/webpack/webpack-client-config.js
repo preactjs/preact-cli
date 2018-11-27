@@ -115,11 +115,6 @@ function isProd(config) {
 				'process.env.ES_BUILD': false,
 				'process.env.ESM': config.esm,
 			}),
-			new InjectManifest({
-				swSrc: resolve(config.dest, 'sw.js'),
-				include: [/\.html$/, /\.js$/, /\.css$/, /\.(png|jpg)$/],
-				exclude: [/\.esm\.js$/]
-			}),
 		],
 
 		optimization: {
@@ -178,12 +173,22 @@ function isProd(config) {
 				},
 			}),
 		);
-		prodConfig.plugins.push(
+		config['sw'] && prodConfig.plugins.push(
 			new InjectManifest({
 				swSrc: resolve(config.dest, 'sw-esm.js'),
 				include: [/\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
 				precacheManifestFilename: 'precache-manifest.[manifestHash].esm.js'
 			}),
+		);
+	}
+
+	if (config['sw']) {
+		prodConfig.plugins.push(
+			new InjectManifest({
+				swSrc: resolve(config.dest, 'sw.js'),
+				include: [/\.html$/, /\.js$/, /\.css$/, /\.(png|jpg)$/],
+				exclude: [/\.esm\.js$/]
+			})
 		);
 	}
 
@@ -250,12 +255,13 @@ function isDev(config) {
 }
 
 module.exports = function (env) {
-	return [
-		swWebPackConfig(env),
-		merge(
-			baseConfig(env),
-			clientConfig(env),
-			(env.isProd ? isProd : isDev)(env)
-		)
-	];
+	const config = [merge(
+		baseConfig(env),
+		clientConfig(env),
+		(env.isProd ? isProd : isDev)(env)
+	)];
+	if (env.sw) {
+		config.unshift(swWebPackConfig(env));
+	}
+	return config;
 };

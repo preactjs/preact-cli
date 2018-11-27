@@ -2,19 +2,20 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
-const { resolve, join } = require('path');
+const { resolve } = require('path');
 
 function swConfig(config) {
-  const { dest, src, sw, brotli } = config;
-  if (!sw) {
-    return {};
-  }
+  const { dest, src, brotli, esm } = config;
+
   const plugins = [
     new webpack.DefinePlugin({
       'process.env.ES_BUILD': false,
       'process.env.ENABLE_BROTLI': brotli,
       'process.env.NODE_ENV': 'production',
     }),
+  ];
+
+  esm && plugins.push(
     new BabelEsmPlugin({
       filename: '[name]-esm.js',
       beforeStartExecution: (plugins, newConfig) => {
@@ -31,7 +32,7 @@ function swConfig(config) {
         });
       }
     })
-  ];
+  );
 
   let swSrc = resolve(__dirname, './../sw.js');
 	// TODO(prateekbh): Check if sw.js exist in user land an swap it here.
