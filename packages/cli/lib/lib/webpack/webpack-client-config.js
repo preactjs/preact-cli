@@ -13,6 +13,7 @@ const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
+const BrotliPlugin = require('brotli-webpack-plugin');
 const { normalizePath } = require('../../util');
 const swWebPackConfig = require('./webpack-sw-config');
 
