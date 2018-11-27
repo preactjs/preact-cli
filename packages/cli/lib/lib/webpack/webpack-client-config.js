@@ -249,7 +249,10 @@ function isDev(config) {
 	return {
 		plugins: [
 			new webpack.NamedModulesPlugin(),
-			new webpack.HotModuleReplacementPlugin()
+			new webpack.HotModuleReplacementPlugin(),
+			new webpack.DefinePlugin({
+				'process.env.ADD_SW': config.sw,
+			})
 		],
 
 		devServer: {
