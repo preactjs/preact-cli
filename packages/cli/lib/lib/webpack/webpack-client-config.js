@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const { resolve, join } = require('path');
+const { resolve } = require('path');
 const { existsSync } = require('fs');
 const merge = require('webpack-merge');
 const { filter } = require('minimatch');

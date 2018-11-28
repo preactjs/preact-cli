@@ -18,7 +18,7 @@ function swConfig(config) {
   esm && plugins.push(
     new BabelEsmPlugin({
       filename: '[name]-esm.js',
-      beforeStartExecution: (plugins, newConfig) => {
+      beforeStartExecution: (plugins) => {
         plugins.forEach(plugin => {
           if (plugin.constructor.name === 'DefinePlugin' && plugin.definitions) {
             for (const definition in plugin.definitions) {
@@ -48,7 +48,7 @@ function swConfig(config) {
 			filename: '[name].js',
     },
     plugins,
-  }
+  };
 }
 
 module.exports = function (env) {

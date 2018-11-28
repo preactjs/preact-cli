@@ -1,5 +1,6 @@
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 
+/* global workbox */
 workbox.precaching.suppressWarnings();
 /** We are sure brotli is enabled for browsers supporting script type=module
  * so we do brotli support only for them.
@@ -9,8 +10,8 @@ workbox.precaching.suppressWarnings();
 if (process.env.ENABLE_BROTLI && process.env.ES_BUILD) {
   // Alter the precache manifest to precache brotli files instead of gzip files.
   self.__precacheManifest = self.__precacheManifest.map(asset => {
-    if(/.*.js$/.test(asset.url)) {
-      asset.url = asset.url.replace(/.esm.js$/, ".esm.js.br")
+    if (/.*.js$/.test(asset.url)) {
+      asset.url = asset.url.replace(/.esm.js$/, ".esm.js.br");
     }
     return asset;
   });
