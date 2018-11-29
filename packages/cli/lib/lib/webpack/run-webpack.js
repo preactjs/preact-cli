@@ -13,11 +13,11 @@ const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
 	let config = clientConfig(env);
-	const clientConfig = config[config.length - 1];
+	const webpackClientConfig = config[config.length - 1];
 	// client config will always be the last config in array, irrespective of sw is enabled or not..
-	await transformConfig(env, clientConfig);
+	await transformConfig(env, webpackClientConfig);
 
-	let userPort = parseInt(process.env.PORT || clientConfig.devServer.port, 10) || 8080;
+	let userPort = parseInt(process.env.PORT || webpackClientConfig.devServer.port, 10) || 8080;
 	let port = await getPort(userPort);
 
 	let compiler = webpack(config);
@@ -76,8 +76,8 @@ async function devBuild(env) {
 
 async function prodBuild(env) {
 	let config = clientConfig(env);
-	const clientConfig = config[config.length - 1];
-	await transformConfig(env, clientConfig);
+	const webpackClientConfig = config[config.length - 1];
+	await transformConfig(env, webpackClientConfig);
 
 	if (env.prerender) {
 		let ssrConfig = serverConfig(env);
