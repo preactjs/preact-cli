@@ -91,7 +91,9 @@ function clientConfig(env) {
 					}]
 				),
 				// copy any static files
-				existsSync(source('assets')) && { from:'assets', to:'assets' }
+				existsSync(source('assets')) && { from:'assets', to:'assets' },
+				// copy sw-debug
+				{ from: resolve(__dirname,'../../resources/sw-debug.js'), to:'sw-debug.js' },
 			].filter(Boolean))
 		]
 	};
@@ -236,7 +238,10 @@ function isDev(config) {
 	return {
 		plugins: [
 			new webpack.NamedModulesPlugin(),
-			new webpack.HotModuleReplacementPlugin()
+			new webpack.HotModuleReplacementPlugin(),
+			new webpack.DefinePlugin({
+				'process.env.ADD_SW': config.sw,
+			})
 		],
 
 		devServer: {
