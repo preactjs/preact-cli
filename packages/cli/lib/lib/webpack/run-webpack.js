@@ -22,20 +22,20 @@ async function devBuild(env) {
 
 	let compiler = webpack(config);
 	return new Promise((res, rej) => {
-		compiler.plugin('emit', (compilation, callback) => {
-			let missingDeps = compilation.missingDependencies;
-			let nodeModulesPath = resolve(__dirname, '../../../node_modules');
+		// compiler.plugin('emit', (compilation, callback) => {
+		// 	let missingDeps = compilation.missingDependencies;
+		// 	let nodeModulesPath = resolve(__dirname, '../../../node_modules');
 
-			// ...tell webpack to watch node_modules recursively until they appear.
-			if (Array.from(missingDeps).some(file => file.indexOf(nodeModulesPath) !== -1)) {
-				compilation.contextDependencies.push(nodeModulesPath);
-			}
+		// 	// ...tell webpack to watch node_modules recursively until they appear.
+		// 	if (Array.from(missingDeps).some(file => file.indexOf(nodeModulesPath) !== -1)) {
+		// 		compilation.contextDependencies.push(nodeModulesPath);
+		// 	}
 
-			callback();
-		});
+		// 	callback();
+		// });
 
 		compiler.plugin('done', stats => {
-			let devServer = config.devServer;
+			let devServer = webpackClientConfig.devServer;
 			let protocol = (process.env.HTTPS || devServer.https) ? 'https' : 'http';
 
 			let host = process.env.HOST || devServer.host || 'localhost';
@@ -62,9 +62,9 @@ async function devBuild(env) {
 			showStats(stats);
 		});
 
-		compiler.plugin('failed', rej);
+		// compiler.plugin('failed', rej);
 
-		let c = Object.assign({}, config.devServer, {
+		let c = Object.assign({}, webpackClientConfig.devServer, {
 			stats: { colors:true }
 		});
 
