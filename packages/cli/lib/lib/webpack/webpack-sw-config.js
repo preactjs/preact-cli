@@ -2,6 +2,8 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
+const fs = require('fs');
+const {yellow} = require('chalk');
 const { resolve } = require('path');
 
 function swConfig(config) {
@@ -35,7 +37,11 @@ function swConfig(config) {
   );
 
   let swSrc = resolve(__dirname, './../sw.js');
-	// TODO(prateekbh): Check if sw.js exist in user land an swap it here.
+  if (fs.existsSync(resolve(`${src}/sw.js`))) {
+    console.log(yellow('⚛️ Info - CLI found sw.js in source root folder, using that to compile the final service worker instead'));
+    swSrc = resolve(`${src}/sw.js`);
+  }
+
   return {
     context: src,
     entry: {
