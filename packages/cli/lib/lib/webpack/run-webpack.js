@@ -20,19 +20,19 @@ async function devBuild(env) {
 	let userPort = parseInt(process.env.PORT || webpackClientConfig.devServer.port, 10) || 8080;
 	let port = await getPort(userPort);
 
-	let compiler = webpack(config);
+	let compiler = webpack(webpackClientConfig);
 	return new Promise((res, rej) => {
-		// compiler.plugin('emit', (compilation, callback) => {
-		// 	let missingDeps = compilation.missingDependencies;
-		// 	let nodeModulesPath = resolve(__dirname, '../../../node_modules');
+		compiler.plugin('emit', (compilation, callback) => {
+			let missingDeps = compilation.missingDependencies;
+			let nodeModulesPath = resolve(__dirname, '../../../node_modules');
 
-		// 	// ...tell webpack to watch node_modules recursively until they appear.
-		// 	if (Array.from(missingDeps).some(file => file.indexOf(nodeModulesPath) !== -1)) {
-		// 		compilation.contextDependencies.push(nodeModulesPath);
-		// 	}
+			// ...tell webpack to watch node_modules recursively until they appear.
+			if (Array.from(missingDeps).some(file => file.indexOf(nodeModulesPath) !== -1)) {
+				compilation.contextDependencies.push(nodeModulesPath);
+			}
 
-		// 	callback();
-		// });
+			callback();
+		});
 
 		compiler.plugin('done', stats => {
 			let devServer = webpackClientConfig.devServer;
@@ -62,7 +62,7 @@ async function devBuild(env) {
 			showStats(stats);
 		});
 
-		// compiler.plugin('failed', rej);
+		compiler.plugin('failed', rej);
 
 		let c = Object.assign({}, webpackClientConfig.devServer, {
 			stats: { colors:true }
