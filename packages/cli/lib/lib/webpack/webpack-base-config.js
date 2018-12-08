@@ -203,7 +203,7 @@ module.exports = function (env) {
 			// Extract CSS
 			new MiniCssExtractPlugin({
 				filename: isProd ? "[name].[contenthash:5].css" : "[name].css",
-				chunkFilename: isProd ? "[id].chunk.[contenthash:5].css" : "[id].chunk.css"
+				chunkFilename: isProd ? "[name].chunk.[contenthash:5].css" : "[name].chunk.css"
 			}),
 			new ProgressBarPlugin({
 				format: '\u001b[90m\u001b[44mBuild\u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
