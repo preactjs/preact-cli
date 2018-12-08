@@ -53,7 +53,7 @@ exports.prerender.heads.home = `
 	<link rel="manifest" href="\\/manifest\\.json">
 	<link rel="preload" href="\\/bundle\\.\\w{5}\\.js" as="script">
 	<link rel="preload" href="\\/route-home\\.chunk\\.\\w{5}\\.js" as="script">
-	<link rel="preload" href="\\/0\\.chunk\\.\\w{5}\\.css" as="style">
+	<link rel="preload" href="\\/route-home\\.chunk\\.\\w{5}\\.css" as="style">
 	<link rel="shortcut icon" href="\\/favicon\\.ico">
 	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\" onload=\\"this.rel='stylesheet'\\"><noscript>
 		<link rel=\\"stylesheet\\" href="\\/bundle.\\w{5}.css"><\\/noscript>
@@ -71,7 +71,7 @@ exports.prerender.heads.route66 = `
 	<link rel="manifest" href="\\/manifest\\.json">
 	<link rel="preload" href="\\/bundle\\.\\w{5}\\.js" as="script">
 	<link rel="preload" href="\\/route-route66\\.chunk\\.\\w{5}\\.js" as="script">
-	<link rel="preload" href="\\/1\\.chunk\\.\\w{5}\\.css" as="style">
+	<link rel="preload" href="\\/route-route66\\.chunk\\.\\w{5}\\.css" as="style">
 	<link rel="shortcut icon" href="\\/favicon\\.ico">
 	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\" onload=\\"this.rel='stylesheet'\\"><noscript>
 		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\"><\\/noscript>
@@ -91,9 +91,8 @@ exports.preload.head = `
 	<link rel=\\"manifest\\" href=\\"\\/manifest\\.json\\">
 	<link rel=\\"preload\\" href=\\"\\/bundle\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
-	<link rel=\\"preload\\" href=\\"\\/2\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\~route-route66\\~route-route89\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
-	<link rel=\\"preload\\" href=\\"\\/1\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
+	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
 	<link rel=\\"shortcut icon\\" href=\\"\\/favicon\\.ico\\">
 	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"preload\\" as=\\"style\\" onload=\\"this\\.rel='stylesheet'\\">
 	<noscript>
