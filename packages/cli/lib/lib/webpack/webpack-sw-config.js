@@ -3,7 +3,7 @@ const merge = require('webpack-merge');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const fs = require('fs');
-const {yellow} = require('chalk');
+const {blue} = require('chalk');
 const { resolve } = require('path');
 
 function swConfig(config) {
@@ -37,9 +37,14 @@ function swConfig(config) {
   );
 
   let swSrc = resolve(__dirname, './../sw.js');
-  if (fs.existsSync(resolve(`${src}/sw.js`))) {
-    console.log(yellow('⚛️ Info - CLI found sw.js in source root folder, using that to compile the final service worker instead'));
-    swSrc = resolve(`${src}/sw.js`);
+  const exists = fs.existsSync(resolve(`${src}/sw.js`));
+  if (exists) {
+    if (exists) {
+      console.log(blue('⚛️ Detected custom sw.js: compiling instead of default Service Worker.'));
+    }
+    else {
+      console.log(blue('⚛️ No custom sw.js detected: compiling default Service Worker.'));
+    }
   }
 
   return {

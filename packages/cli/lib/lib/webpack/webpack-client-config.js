@@ -175,7 +175,7 @@ function isProd(config) {
 				},
 			}),
 		);
-		config['sw'] && prodConfig.plugins.push(
+		config.sw && prodConfig.plugins.push(
 			new InjectManifest({
 				swSrc: resolve(config.dest, 'sw-esm.js'),
 				include: [/\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
@@ -184,7 +184,7 @@ function isProd(config) {
 		);
 	}
 
-	if (config['sw']) {
+	if (config.sw) {
 		prodConfig.plugins.push(
 			new InjectManifest({
 				swSrc: resolve(config.dest, 'sw.js'),
