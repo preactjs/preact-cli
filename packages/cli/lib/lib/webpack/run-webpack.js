@@ -13,14 +13,13 @@ const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
 	let config = clientConfig(env);
-	const webpackClientConfig = config[config.length - 1];
 	// client config will always be the last config in array, irrespective of sw is enabled or not..
-	await transformConfig(env, webpackClientConfig);
+	await transformConfig(env, config);
 
-	let userPort = parseInt(process.env.PORT || webpackClientConfig.devServer.port, 10) || 8080;
+	let userPort = parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
 	let port = await getPort(userPort);
 
-	let compiler = webpack(webpackClientConfig);
+	let compiler = webpack(config);
 	return new Promise((res, rej) => {
 		compiler.plugin('emit', (compilation, callback) => {
 			let missingDeps = compilation.missingDependencies;
@@ -35,7 +34,7 @@ async function devBuild(env) {
 		});
 
 		compiler.plugin('done', stats => {
-			let devServer = webpackClientConfig.devServer;
+			let devServer = config.devServer;
 			let protocol = (process.env.HTTPS || devServer.https) ? 'https' : 'http';
 
 			let host = process.env.HOST || devServer.host || 'localhost';
@@ -64,7 +63,7 @@ async function devBuild(env) {
 
 		compiler.plugin('failed', rej);
 
-		let c = Object.assign({}, webpackClientConfig.devServer, {
+		let c = Object.assign({}, config.devServer, {
 			stats: { colors:true }
 		});
 
@@ -76,8 +75,7 @@ async function devBuild(env) {
 
 async function prodBuild(env) {
 	let config = clientConfig(env);
-	const webpackClientConfig = config[config.length - 1];
-	await transformConfig(env, webpackClientConfig);
+	await transformConfig(env, config);
 
 	if (env.prerender) {
 		let ssrConfig = serverConfig(env);

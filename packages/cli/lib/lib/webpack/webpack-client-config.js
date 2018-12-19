@@ -15,9 +15,8 @@ const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const BrotliPlugin = require('brotli-webpack-plugin');
 const { normalizePath } = require('../../util');
-const swWebPackConfig = require('./webpack-sw-config');
-
 const cleanFilename = name => name.replace(/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g, '');
+const SWBuilderPlugin = require('./sw-plugin');
 
 function clientConfig(env) {
 	const { isProd, source, src /*, port? */ } = env;
@@ -153,6 +152,7 @@ function isProd(config) {
 			new BabelEsmPlugin({
 				filename: '[name].[chunkhash:5].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
+				excludedPlugins: ['BabelEsmPlugin', 'SWBuilderPlugin'],
 				beforeStartExecution: (plugins, newConfig) => {
 					const babelPlugins = newConfig.plugins;
 					newConfig.plugins = babelPlugins.filter(plugin => {
@@ -177,7 +177,7 @@ function isProd(config) {
 		);
 		config.sw && prodConfig.plugins.push(
 			new InjectManifest({
-				swSrc: resolve(config.dest, 'sw-esm.js'),
+				swSrc: 'sw-esm.js',
 				include: [/\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
 				precacheManifestFilename: 'precache-manifest.[manifestHash].esm.js'
 			}),
@@ -185,9 +185,10 @@ function isProd(config) {
 	}
 
 	if (config.sw) {
+		prodConfig.plugins.push(new SWBuilderPlugin(config));
 		prodConfig.plugins.push(
 			new InjectManifest({
-				swSrc: resolve(config.dest, 'sw.js'),
+				swSrc: 'sw.js',
 				include: [/\.html$/, /\.js$/, /\.css$/, /\.(png|jpg)$/],
 				exclude: [/\.esm\.js$/]
 			})
@@ -260,13 +261,9 @@ function isDev(config) {
 }
 
 module.exports = function (env) {
-	const config = [merge(
+	return merge(
 		baseConfig(env),
 		clientConfig(env),
 		(env.isProd ? isProd : isDev)(env)
-	)];
-	if (env.sw) {
-		config.unshift(swWebPackConfig(env));
-	}
-	return config;
+	);
 };
