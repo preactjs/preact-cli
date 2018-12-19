@@ -12,7 +12,7 @@ class SWBuilderPlugin {
 		this.esm_ = esm;
 		this.src_ = src;
 	}
-  apply(compiler) {
+	apply(compiler) {
 		let swSrc = resolve(__dirname, '../sw.js');
 		const exists = fs.existsSync(resolve(`${this.src_}/sw.js`));
 		if (exists) {
@@ -23,12 +23,12 @@ class SWBuilderPlugin {
 				console.log(blue('⚛️ No custom sw.js detected: compiling default Service Worker.'));
 			}
 		}
-    compiler.hooks.make.tapAsync(this.constructor.name, (compilation, callback) => {
+		compiler.hooks.make.tapAsync(this.constructor.name, (compilation, callback) => {
 			const outputOptions = compiler.options;
 			outputOptions.target = 'webworker';
 			outputOptions.output.filename = "[name].js";
 
-      const plugins = [
+			const plugins = [
 				new BabelEsmPlugin({
 					filename: '[name]-esm.js',
 					excludedPlugins: ['BabelEsmPlugin', this.constructor.name],
@@ -48,14 +48,14 @@ class SWBuilderPlugin {
 				})
 			]
 
-      /**
-       * We are deliberatly not passing plugins in createChildCompiler.
-       * All webpack does with plugins is to call `apply` method on them
-       * with the childCompiler.
-       * But by then we haven't given childCompiler a fileSystem or other options
-       * which a few plugins might expect while execution the apply method.
-       * We do call the `apply` method of all plugins by ourselves later in the code
-       */
+			/**
+			 * We are deliberatly not passing plugins in createChildCompiler.
+			 * All webpack does with plugins is to call `apply` method on them
+			 * with the childCompiler.
+			 * But by then we haven't given childCompiler a fileSystem or other options
+			 * which a few plugins might expect while execution the apply method.
+			 * We do call the `apply` method of all plugins by ourselves later in the code
+			 */
 			const childCompiler = compilation.createChildCompiler(this.constructor.name, outputOptions.output);
 
 			childCompiler.context = compiler.context;
@@ -65,28 +65,28 @@ class SWBuilderPlugin {
 			};
 
 			// Call the `apply` method of all plugins by ourselves.
-      if (Array.isArray(plugins)) {
-        for (const plugin of plugins) {
-          plugin.apply(childCompiler);
-        }
-      }
+			if (Array.isArray(plugins)) {
+				for (const plugin of plugins) {
+					plugin.apply(childCompiler);
+				}
+			}
 
-      childCompiler.apply(new SingleEntryPlugin(compiler.context, swSrc, 'sw'));
+			childCompiler.apply(new SingleEntryPlugin(compiler.context, swSrc, 'sw'));
 
-      compilation.hooks.additionalAssets.tapAsync(this.constructor.name, (childProcessDone) => {
-        childCompiler.runAsChild((err, entries, childCompilation) => {
-          if (!err) {
-            compilation.assets = Object.assign(childCompilation.assets,
-              compilation.assets
-            );
-          }
-          err && compilation.errors.push(err);
-          childProcessDone();
-        });
-      });
-      callback();
-    });
-  }
+			compilation.hooks.additionalAssets.tapAsync(this.constructor.name, (childProcessDone) => {
+				childCompiler.runAsChild((err, entries, childCompilation) => {
+					if (!err) {
+						compilation.assets = Object.assign(childCompilation.assets,
+							compilation.assets
+						);
+					}
+					err && compilation.errors.push(err);
+					childProcessDone();
+				});
+			});
+			callback();
+		});
+	}
 }
 
 module.exports = SWBuilderPlugin;
