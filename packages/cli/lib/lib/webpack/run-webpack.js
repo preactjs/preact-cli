@@ -13,7 +13,6 @@ const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
 	let config = clientConfig(env);
-	// client config will always be the last config in array, irrespective of sw is enabled or not..
 	await transformConfig(env, config);
 
 	let userPort = parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
