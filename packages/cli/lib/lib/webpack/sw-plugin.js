@@ -45,7 +45,7 @@ class SWBuilderPlugin {
 					'process.env.ENABLE_BROTLI': this.brotli_,
 					'process.env.ES_BUILD': false,
 					'process.env.NODE_ENV': 'production',
-				})
+				});
 			]
 
 			/**
