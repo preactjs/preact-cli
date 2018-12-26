@@ -1,68 +1,103 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
 const fs = require('fs.promised');
+const { error } = require('../../util');
 
-const FILE = 'preact.config.js';
+const FILE = 'preact.config';
+const EXTENSIONS = ['js', 'json'];
 
-module.exports = async function (env, webpackConfig, ssr=false) {
-	env.config = env.config || FILE;
+async function findConfig (env) {
+	let idx = 0;
+	for (idx; idx < EXTENSIONS.length; idx++) {
+		let config = `${FILE}.${EXTENSIONS[idx]}`;
+		let path = resolve(env.cwd, config);
+		try {
+			await fs.stat(path);
+			return { configFile: config, isDefault: true };
+		} catch (e) {
+		}
+	}
+
+	return { configFile: undefined, isDefault: true };
+}
+
+function parseConfig (config) {
+	if (typeof config === 'function') {
+		return [config];
+	} else if (typeof config === 'object' && !Array.isArray(config)) {
+		if (config.plugins && !Array.isArray(config.plugins))
+			throw new Error('The `plugins` property in the preact config has to be an array');
+
+		const transformers = config.plugins ?
+			config.plugins.map((plugin, index) => {
+				if (typeof plugin === 'function') {
+					return plugin;
+				} else if (plugin && typeof plugin.apply === 'function') {
+					return plugin.apply.bind(plugin);
+				} else if (Array.isArray(plugin)) {
+					const isLegacy = plugin[0] === 'legacy';
+					const path = isLegacy ? plugin[1] : plugin[0];
+					const opts = isLegacy ? void 0 : plugin[1];
+					const m = require(path);
+					const fn = m && m.default || m;
+
+					if (typeof fn !== 'function') {
+						return () => error(`The plugin ${path} does not seem to be a function or a class`);
+					}
+
+					if (isLegacy) {
+						return fn;
+					}
+
+					return typeof fn.prototype.apply === 'function' ? new fn(opts) : fn(opts);
+				} else if (typeof plugin === 'string') {
+					return require(plugin)(void 0);
+				} else {
+					let name = plugin && plugin.prototype && plugin.prototype.constructor && plugin.prototype.constructor.name;
+
+					return () => error(`Plugin invalid (index: ${index}, name: ${name})\nHas to be a function or an object/class with an \`apply\` function, is: ${typeof plugin}`);
+				}
+			}) : [];
+
+		if (config.transformWebpack) {
+			if (typeof config.transformWebpack !== 'function')
+				throw new Error('The `transformWebpack` property in the preact config has to be a function');
+
+			transformers.push(config.transformWebpack);
+		}
+
+		return transformers;
+	} else {
+		throw new Error('Invalid export in the preact config, should be an object or a function');
+	}
+}
+
+module.exports = async function (env, webpackConfig, ssr = false) {
+	const { configFile, isDefault } = env.config ? {
+		configFile: env.config,
+		isDefault: false
+	} : findConfig(env);
+	env.config = configFile;
 	let myConfig = resolve(env.cwd, env.config);
 
 	try {
 		await fs.stat(myConfig);
 	} catch (e) {
-		if (env.config === FILE) return;
+		if (isDefault) return;
 		throw new Error(`preact-cli config could not be loaded!\nFile ${env.config} not found.`);
 	}
 
-	require('@babel/register')({
-		presets: [[require.resolve('@babel/preset-env'), {
-			"targets": { "node": "current" }
-		}]]
-	});
-	const m = require(myConfig);
-	const config = m && m.default || m;
-	try {
-		let helpers = new WebpackConfigHelpers(env.cwd);
-		const transformers = [];
-		
-		if (typeof config === 'function') {
-			transformers.push(config);
-		} else if (typeof config === 'object' && !Array.isArray(config)) {
-			// TODO: do we want more props?
-			if (config.plugins) {
-				if (!Array.isArray(config.plugins)) {
-					throw new Error('The `plugins` property in `preact.config.js` has to be an Array');
-				}
-				
-				config.plugins.map((plugin, index) => {
-					if (typeof plugin === 'function') {
-						transformers.push(plugin);
-					} else if (plugin && typeof plugin.apply === 'function') {
-						transformers.push(plugin.apply.bind(plugin));
-					} else {
-						//
-						let name = plugin && plugin.prototype && plugin.prototype.constructor && plugin.prototype.constructor.name;
-						
-						console.error(`Plugin invalid (index: ${index}, name: ${name})\nHas to be a function or an object/class with an \`apply\` function, is: ${typeof plugin}`);
-					}
-				});
-			}
-			if (config.transformWebpack) {
-				if (typeof config.transformWebpack !== 'function') {
-					throw new Error('The `transformWebpack` property in `preact.config.js` has to be a Function');
-				}
-				transformers.push(config.transformWebpack);
-			}
-		} else {
-			throw new Error('Invalid export in `preact.config.js`, should be an object or a function');
-		}
-		
-		for (let transformer of transformers) {
+	const m = require('esm')(module)(myConfig);
+
+	const transformers = parseConfig(m && m.default || m);
+
+	const helpers = new WebpackConfigHelpers(env.cwd);
+	for (let transformer of transformers) {
+		try {
 			await transformer(webpackConfig, Object.assign({}, env, { ssr }), helpers);
+		} catch (err) {
+			throw new Error(`Error at ${myConfig}: \n` + err && err.stack || err);
 		}
-	} catch (err) {
-		throw new Error(`Error at ${myConfig}: \n` + err && err.stack || err);
 	}
 };
 
@@ -72,7 +107,7 @@ module.exports = async function (env, webpackConfig, ssr=false) {
  * @class WebpackConfigHelpers
  */
 class WebpackConfigHelpers {
-	constructor(cwd) {
+	constructor (cwd) {
 		this._cwd = cwd;
 	}
 
@@ -83,7 +118,7 @@ class WebpackConfigHelpers {
 	 * @returns {object}
 	 * @memberof WebpackConfigHelpers
 	 */
-	get webpack() {
+	get webpack () {
 		return webpack;
 	}
 
@@ -95,7 +130,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getLoaders(config) {
+	getLoaders (config) {
 		return this.getRules(config).map(({ rule, index }) => ({
 			rule: rule,
 			ruleIndex: index,
@@ -111,7 +146,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getRules(config) {
+	getRules (config) {
 		return [...(config.module.loaders || []), ...(config.module.rules || [])]
 			.map((rule, index) => ({ index, rule }));
 	}
@@ -124,7 +159,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getPlugins(config) {
+	getPlugins (config) {
 		return (config.plugins || []).map((plugin, index) => ({ index, plugin }));
 	}
 
@@ -137,7 +172,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getRulesByMatchingFile(config, file) {
+	getRulesByMatchingFile (config, file) {
 		let filePath = resolve(this._cwd, file);
 		return this.getRules(config)
 			.filter(w => w.rule.test && w.rule.test.exec(filePath));
@@ -154,7 +189,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getLoadersByName(config, name) {
+	getLoadersByName (config, name) {
 		return this.getLoaders(config)
 			.map(({ rule, ruleIndex, loaders }) => Array.isArray(loaders)
 				? loaders.map((loader, loaderIndex) => ({ rule, ruleIndex, loader, loaderIndex }))
@@ -175,7 +210,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getPluginsByName(config, name) {
+	getPluginsByName (config, name) {
 		return this.getPlugins(config)
 			.filter(w => w.plugin && w.plugin.constructor && w.plugin.constructor.name === name);
 	}
@@ -191,7 +226,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getPluginsByType(config, type) {
+	getPluginsByType (config, type) {
 		return this.getPlugins(config)
 			.filter(w => w.plugin instanceof type);
 	}
@@ -204,7 +239,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	setHtmlTemplate(config, template) {
+	setHtmlTemplate (config, template) {
 		let isPath;
 		try {
 			fs.statSync(template);
