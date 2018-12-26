@@ -155,7 +155,7 @@
     "tmp": "0.0.31",
     "unfetch": "^3.0.0",
     "update-notifier": "^2.3.0",
-    "url-loader": "^0.5.8",
+    "url-loader": "^0.6.2",
     "validate-npm-package-name": "^3.0.0",
     "webpack": "^3.7.0",
     "webpack-dev-server": "^2.9.0",
