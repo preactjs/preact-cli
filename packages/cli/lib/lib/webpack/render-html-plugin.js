@@ -54,9 +54,21 @@ module.exports = function(config) {
 		});
 	};
 
-	const pages = readJson(resolve(cwd, config.prerenderUrls || '')) || [
-		{ url: '/' },
-	];
+	let pages;
+	const {prerenderUrls} = config;
+
+	if (!prerenderUrls) {
+		pages = [{ url: '/' }];
+	} else if (/\.json$/i.test(prerenderUrls)) {
+		pages = readJson(resolve(cwd, prerenderUrls));
+	} else if (/\.js$/i.test(prerenderUrls)) {
+		let result = require(resolve(cwd, prerenderUrls));
+		result = result.default ? result.default : result;
+		if (typeof result === 'function') {
+			result = result();
+		}
+		pages = typeof result === 'string' ? JSON.parse(result) : result;
+	}
 
 	return pages
 		.map(htmlWebpackConfig)
