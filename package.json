@@ -1,7 +1,9 @@
 {
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "pretest": "lerna bootstrap",
     "test": "eslint packages && lerna run test"
   },
   "devDependencies": {
