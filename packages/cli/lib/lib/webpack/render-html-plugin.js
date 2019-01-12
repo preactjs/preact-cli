@@ -70,7 +70,9 @@ module.exports = function(config) {
 			if (result instanceof Array) {
 				pages = result;
 			}
-		} catch (ignored) {}
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	return pages
