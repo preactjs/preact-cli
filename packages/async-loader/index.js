@@ -1,11 +1,12 @@
 const { getOptions, stringifyRequest } = require('loader-utils');
 
-exports.pitch = function (req) {
+exports.pitch = function(req) {
 	this.cacheable && this.cacheable();
 
 	let name;
 	let query = getOptions(this) || {};
-	let routeName = typeof query.name === 'function' ? query.name(this.resourcePath) : null;
+	let routeName =
+		typeof query.name === 'function' ? query.name(this.resourcePath) : null;
 
 	if (routeName !== null) {
 		name = routeName;
@@ -20,8 +21,8 @@ exports.pitch = function (req) {
 
 		function load(cb) {
 			require.ensure([], function (require) {
-				cb( require(${stringifyRequest(this, "!!" + req)}) );
-			}${name ? (', '+JSON.stringify(name)) : ''});
+				cb( require(${stringifyRequest(this, '!!' + req)}) );
+			}${name ? ', ' + JSON.stringify(name) : ''});
 		}
 
 		export default Async(load);

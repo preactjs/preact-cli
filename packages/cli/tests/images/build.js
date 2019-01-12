@@ -1,7 +1,7 @@
 const common = {
 	'polyfills.*.js': 4620,
 	'polyfills.*.js.map': 31760,
-	'favicon.ico': 15086
+	'favicon.ico': 15086,
 };
 
 exports.default = exports.full = Object.assign({}, common, {
@@ -27,7 +27,7 @@ exports.default = exports.full = Object.assign({}, common, {
 	'ssr-build/ssr-bundle.js': 41715,
 	'ssr-build/ssr-bundle.js.map': 66661,
 	'ssr-build/style.*.css': 1065,
-	'ssr-build/style.*.css.map': 2345
+	'ssr-build/style.*.css.map': 2345,
 });
 
 exports.sass = `
@@ -134,4 +134,3 @@ exports.webpack = `
 	</body>
 </html>
 `;
-

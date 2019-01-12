@@ -7,8 +7,15 @@ const pkg = require('../package');
 
 const ver = process.version;
 const min = pkg.engines.node;
-if (ver.substring(1).localeCompare(min.match(/\d+/g).join('.'), 'en', { numeric:true }) === -1) {
-	return error(`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!`, 1);
+if (
+	ver
+		.substring(1)
+		.localeCompare(min.match(/\d+/g).join('.'), 'en', { numeric: true }) === -1
+) {
+	return error(
+		`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!`,
+		1
+	);
 }
 
 // Safe to load async-based funcs
@@ -33,8 +40,15 @@ prog
 	.option('--sw', 'Generate and attach a Service Worker', true)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--template', 'Path to custom HTML template')
-	.option('--analyze', 'Launch interactive Analyzer to inspect production bundle(s)')
-	.option('--prerenderUrls', 'Path to pre-rendered routes config', 'prerender-urls.json')
+	.option(
+		'--analyze',
+		'Launch interactive Analyzer to inspect production bundle(s)'
+	)
+	.option(
+		'--prerenderUrls',
+		'Path to pre-rendered routes config',
+		'prerender-urls.json'
+	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
 	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
@@ -51,7 +65,8 @@ prog
 	.option('--git', 'Initialize git repository')
 	.action(commands.create);
 
-prog.command('list')
+prog
+	.command('list')
 	.describe('List official templates')
 	.action(commands.list);
 
