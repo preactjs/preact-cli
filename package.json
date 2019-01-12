@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "pretest": "lerna bootstrap",
+    "clean": "lerna clean --yes",
     "test": "eslint packages && lerna run test"
   },
   "devDependencies": {
