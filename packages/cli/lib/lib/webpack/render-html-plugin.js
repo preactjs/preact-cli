@@ -3,7 +3,6 @@ const { existsSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { readJson } = require('./webpack-base-config');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const template = resolve(__dirname, '../../resources/template.html');
@@ -54,20 +53,24 @@ module.exports = function(config) {
 		});
 	};
 
-	let pages;
-	const {prerenderUrls} = config;
+	let pages = [{ url: '/' }];
 
-	if (!prerenderUrls) {
-		pages = [{ url: '/' }];
-	} else if (/\.json$/i.test(prerenderUrls)) {
-		pages = readJson(resolve(cwd, prerenderUrls));
-	} else if (/\.js$/i.test(prerenderUrls)) {
-		let result = require(resolve(cwd, prerenderUrls));
-		result = result.default ? result.default : result;
-		if (typeof result === 'function') {
-			result = result();
-		}
-		pages = typeof result === 'string' ? JSON.parse(result) : result;
+	if (config.prerenderUrls) {
+		try {
+			let result = require(resolve(cwd, config.prerenderUrls));
+			if (typeof result.default !== 'undefined') {
+				result = result.default();
+			}
+			if (typeof result === 'function') {
+				result = result();
+			}
+			if (typeof result === 'string') {
+				result = JSON.parse(result);
+			}
+			if (result instanceof Array) {
+				pages = result;
+			}
+		} catch (ignored) {}
 	}
 
 	return pages
