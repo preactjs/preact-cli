@@ -4,7 +4,8 @@
   "env": {
     "jest": true,
     "browser": true,
-    "node": true
+    "node": true,
+    "es6": true
   },
   "globals": {
     "Promise": true,

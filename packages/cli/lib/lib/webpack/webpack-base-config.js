@@ -1,6 +1,7 @@
 const webpack = require('webpack');
+const path = require('path');
 const { resolve } = require('path');
-const { readFileSync } = require('fs');
+const { readFileSync, existsSync } = require('fs');
 const SizePlugin = require('size-plugin');
 const autoprefixer = require('autoprefixer');
 const requireRelative = require('require-relative');
@@ -22,6 +23,24 @@ function resolveDep(dep, cwd) {
 	return dep;
 }
 
+function findAllNodeModules(startDir) {
+	let dir = path.resolve(startDir);
+	let dirs = [];
+	const {root} = path.parse(startDir);
+
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		const joined = path.join(dir, 'node_modules');
+		if (existsSync(joined)) {
+			dirs.push(joined);
+		}
+		if (dir === root) {
+			return dirs;
+		}
+		dir = path.dirname(dir);
+	}
+}
+
 module.exports = function (env) {
 	const { cwd, isProd, isWatch, src, source } = env;
 
@@ -33,7 +52,9 @@ module.exports = function (env) {
 	let babelrc = readJson( resolve(cwd, 'old') ) || {};
 	let browsers = env.pkg.browserslist || ['> 0.25%', 'IE >= 9'];
 
-	let nodeModules = resolve(cwd, 'node_modules');
+	let userNodeModules = findAllNodeModules(cwd);
+	let cliNodeModules = findAllNodeModules(__dirname);
+	let nodeModules = [...(new Set([...userNodeModules, ...cliNodeModules]))];
 
 	return {
 		context: src,
@@ -41,7 +62,7 @@ module.exports = function (env) {
 		resolve: {
 			modules: [
 				'node_modules',
-				resolve(__dirname, '../../../node_modules')
+				...nodeModules
 			],
 			extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss', '.sass', '.styl', '.css'],
 			alias: {
@@ -59,8 +80,7 @@ module.exports = function (env) {
 
 		resolveLoader: {
 			modules: [
-				resolve(__dirname, '../../../node_modules'),
-				nodeModules
+				...nodeModules
 			],
 			alias: {
 				'proxy-loader': require.resolve('./proxy-loader')

@@ -17,6 +17,11 @@ const commands = require('./commands');
 // installHooks();
 notifier({ pkg }).notify();
 
+process.on('unhandledRejection', error => {
+	error(error.message);
+	console.error(error.stack);
+});
+
 let prog = sade('preact').version(pkg.version);
 
 prog
