@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const template = resolve(__dirname, '../../resources/template.html');
+const { warn } = require('../../util');
 
 module.exports = function(config) {
 	const { cwd, dest, isProd, src } = config;
@@ -71,7 +72,7 @@ module.exports = function(config) {
 				pages = result;
 			}
 		} catch (error) {
-			console.error(error);
+			warn(error.message);
 		}
 	}
 
