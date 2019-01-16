@@ -15,12 +15,14 @@ export default function(req) {
 		this.shouldComponentUpdate = (_, nxt) => {
 			nxt = nxt.child === void 0;
 			if (nxt && old === void 0 && b) {
-				old =
-					b.nodeType === 3
-						? b.data
-						: h(b.nodeName, {
-								dangerouslySetInnerHTML: { __html: b.innerHTML },
-						  });
+				// Node.TEXT_NODE
+				if (b.nodeType === 3) {
+					old = b.data;
+				} else {
+					old = h(b.nodeName, {
+						dangerouslySetInnerHTML: { __html: b.innerHTML },
+					});
+				}
 			} else {
 				old = ''; // dump it
 			}
