@@ -11,14 +11,14 @@ const argv = {
 	config: 'preact.config.js',
 	prerenderUrls: 'prerender-urls.json',
 	'inline-css': true,
-	'preload': true,
+	preload: true,
 };
 
-exports.create = async function (template, name) {
+exports.create = async function(template, name) {
 	let dest = tmpDir();
 	name = name || `test-${template}`;
 
-	await cmd.create(template, dest, { name, cwd:'.' });
+	await cmd.create(template, dest, { name, cwd: '.' });
 
 	// TODO: temporary – will resolve after 2.x->3.x release
 	// Templates are using 2.x, which needs `.babelrc` for TEST modification.
@@ -29,13 +29,13 @@ exports.create = async function (template, name) {
 	return dest;
 };
 
-exports.build = function (cwd) {
+exports.build = function(cwd) {
 	mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
 	let opts = Object.assign({ cwd }, argv);
 	return cmd.build(argv.src, opts);
 };
 
-exports.watch = function (cwd, port, host='127.0.0.1') {
-	let opts = Object.assign({ cwd, host, port, https:false }, argv);
+exports.watch = function(cwd, port, host = '127.0.0.1') {
+	let opts = Object.assign({ cwd, host, port, https: false }, argv);
 	return cmd.watch(argv.src, opts);
 };

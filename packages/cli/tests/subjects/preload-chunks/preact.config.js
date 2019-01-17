@@ -1,4 +1,4 @@
-module.exports = (config) => {
+module.exports = config => {
 	config.optimization.splitChunks = {
 		minSize: 0,
 	};

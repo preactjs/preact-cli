@@ -16,7 +16,7 @@ const ignores = x => !/node_modules|package-lock|yarn.lock/i.test(x);
 
 function expand(dir, opts) {
 	dir = resolve(dir);
-	opts = Object.assign({ dot:true, nodir:true }, opts);
+	opts = Object.assign({ dot: true, nodir: true }, opts);
 	return globby(`${dir}/**`, opts).then(arr => arr.filter(ignores));
 }
 
@@ -25,7 +25,9 @@ async function bytes(str) {
 }
 
 async function snapshot(dir) {
-	let str, tmp, out={};
+	let str,
+		tmp,
+		out = {};
 	for (str of await expand(dir)) {
 		tmp = relative(dir, str);
 		out[tmp] = await bytes(str);
@@ -34,11 +36,12 @@ async function snapshot(dir) {
 }
 
 const hasKey = (key, arr) => arr.find(k => minimatch(key, k)) || false;
-const isWithin = (val, tar) => (val == tar) || (val > (1-PER)*tar) && (val < (1+PER)*tar);
+const isWithin = (val, tar) =>
+	val == tar || (val > (1 - PER) * tar && val < (1 + PER) * tar);
 
 function isMatch(src, tar) {
 	let k, tmp;
-	let keys=Object.keys(tar);
+	let keys = Object.keys(tar);
 	for (k in src) {
 		tmp = hasKey(k, keys);
 		if (!tmp) return false;
@@ -60,7 +63,7 @@ async function log(fn, msg) {
 }
 
 function waitUntil(action, errorMessage) {
-	return pRetry(action, { retries:10, minTimeout:250 }).catch(err => {
+	return pRetry(action, { retries: 10, minTimeout: 250 }).catch(err => {
 		console.log('> waitUntil error', err);
 		throw new Error(errorMessage);
 	});

@@ -16,7 +16,8 @@ async function devBuild(env) {
 
 	await transformConfig(env, config);
 
-	let userPort = parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
+	let userPort =
+		parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
 	let port = await getPort(userPort);
 
 	let compiler = webpack(config);
@@ -26,7 +27,11 @@ async function devBuild(env) {
 			let nodeModulesPath = resolve(__dirname, '../../../node_modules');
 
 			// ...tell webpack to watch node_modules recursively until they appear.
-			if (Array.from(missingDeps).some(file => file.indexOf(nodeModulesPath) !== -1)) {
+			if (
+				Array.from(missingDeps).some(
+					file => file.indexOf(nodeModulesPath) !== -1
+				)
+			) {
 				compilation.contextDependencies.push(nodeModulesPath);
 			}
 
@@ -35,7 +40,7 @@ async function devBuild(env) {
 
 		compiler.plugin('done', stats => {
 			let devServer = config.devServer;
-			let protocol = (process.env.HTTPS || devServer.https) ? 'https' : 'http';
+			let protocol = process.env.HTTPS || devServer.https ? 'https' : 'http';
 
 			let host = process.env.HOST || devServer.host || 'localhost';
 			if (host === '0.0.0.0') host = 'localhost';
@@ -51,7 +56,9 @@ async function devBuild(env) {
 				process.stdout.write(green('Compiled successfully!\n\n'));
 
 				if (userPort !== port) {
-					process.stdout.write(`Port ${bold(userPort)} is in use, using ${bold(port)} instead\n\n`);
+					process.stdout.write(
+						`Port ${bold(userPort)} is in use, using ${bold(port)} instead\n\n`
+					);
 				}
 				process.stdout.write('You can view the application in browser.\n\n');
 				process.stdout.write(`${bold('Local:')}            ${serverAddr}\n`);
@@ -64,7 +71,7 @@ async function devBuild(env) {
 		compiler.plugin('failed', rej);
 
 		let c = Object.assign({}, config.devServer, {
-			stats: { colors:true }
+			stats: { colors: true },
 		});
 
 		let server = new DevServer(compiler, c);
@@ -125,12 +132,19 @@ function showStats(stats) {
 
 function writeJsonStats(stats) {
 	let outputPath = resolve(process.cwd(), 'stats.json');
-	let jsonStats = stats.toJson({ json:true, chunkModules:true, source:false });
+	let jsonStats = stats.toJson({
+		json: true,
+		chunkModules: true,
+		source: false,
+	});
 
 	function strip(stats) {
 		stats.modules.forEach(stripLoaderFromModuleNames);
 		stats.chunks.forEach(c => {
-			(c.modules || (c.mapModules!=null ? c.mapModules(Object) : c.getModules())).forEach(stripLoaderFromModuleNames);
+			(
+				c.modules ||
+				(c.mapModules != null ? c.mapModules(Object) : c.getModules())
+			).forEach(stripLoaderFromModuleNames);
 		});
 		if (stats.children) stats.children.forEach(strip);
 	}
@@ -140,7 +154,9 @@ function writeJsonStats(stats) {
 	return writeFile(outputPath, JSON.stringify(jsonStats)).then(() => {
 		process.stdout.write('\nWebpack output stats generated.\n\n');
 		process.stdout.write('You can upload your stats.json to:\n');
-		process.stdout.write('- https://chrisbateman.github.io/webpack-visualizer/\n');
+		process.stdout.write(
+			'- https://chrisbateman.github.io/webpack-visualizer/\n'
+		);
 		process.stdout.write('- https://webpack.github.io/analyse/\n');
 	});
 }
@@ -152,20 +168,27 @@ const keysToNormalize = [
 	'name',
 	'module',
 	'moduleName',
-	'moduleIdentifier'
+	'moduleIdentifier',
 ];
 
 /** Removes all loaders from any resource identifiers found in a string */
 function stripLoaderPrefix(str) {
-	if (typeof str==='string') {
-		return str.replace(/(^|\b|@)(\.\/~|\.{0,2}\/[^\s]+\/node_modules)\/\w+-loader(\/[^?!]+)?(\?\?[\w_.-]+|\?({[\s\S]*?})?)?!/g, '');
+	if (typeof str === 'string') {
+		return str.replace(
+			/(^|\b|@)(\.\/~|\.{0,2}\/[^\s]+\/node_modules)\/\w+-loader(\/[^?!]+)?(\?\?[\w_.-]+|\?({[\s\S]*?})?)?!/g,
+			''
+		);
 	}
 	return str;
 }
 
 function stripLoaderFromModuleNames(m) {
 	for (let key in m) {
-		if (m.hasOwnProperty(key) && m[key]!=null && ~keysToNormalize.indexOf(key)) {
+		if (
+			m.hasOwnProperty(key) &&
+			m[key] != null &&
+			~keysToNormalize.indexOf(key)
+		) {
 			m[key] = stripLoaderPrefix(m[key]);
 		}
 	}
@@ -177,8 +200,7 @@ function stripLoaderFromModuleNames(m) {
 	return m;
 }
 
-
-module.exports = function (env, watch=false) {
+module.exports = function(env, watch = false) {
 	env.isProd = env.production; // shorthand
 	env.isWatch = !!watch; // use HMR?
 	env.cwd = resolve(env.cwd || process.cwd());

@@ -15,7 +15,7 @@ const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
-module.exports = async function (repo, dest, argv) {
+module.exports = async function(repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
 		warn('Insufficient arguments! Prompting...');
@@ -35,7 +35,10 @@ module.exports = async function (repo, dest, argv) {
 	let exists = isDir(target);
 
 	if (exists && !argv.force) {
-		return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag', 1);
+		return error(
+			'Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag',
+			1
+		);
 	}
 
 	if (exists && argv.force) {
@@ -43,7 +46,7 @@ module.exports = async function (repo, dest, argv) {
 			type: 'confirm',
 			name: 'enableForce',
 			message: `You are using '--force'. Do you wish to continue?`,
-			default: false
+			default: false,
 		});
 
 		if (enableForce) {
@@ -53,14 +56,14 @@ module.exports = async function (repo, dest, argv) {
 		}
 	}
 
-  // Use `--name` value or `dest` dir's name
-  argv.name = argv.name || dest;
+	// Use `--name` value or `dest` dir's name
+	argv.name = argv.name || dest;
 
-  let { errors } = isValidName(argv.name);
-  if (errors) {
-    errors.unshift(`Invalid package name: ${argv.name}`);
-    return error(errors.map(capitalize).join('\n  ~ '), 1);
-  }
+	let { errors } = isValidName(argv.name);
+	if (errors) {
+		errors.unshift(`Invalid package name: ${argv.name}`);
+		return error(errors.map(capitalize).join('\n  ~ '), 1);
+	}
 
 	if (!repo.includes('/')) {
 		repo = `${ORG}/${repo}`;
@@ -69,18 +72,21 @@ module.exports = async function (repo, dest, argv) {
 
 	// Attempt to fetch the `template`
 	let archive = await gittar.fetch(repo).catch(err => {
-		err = err || { message:'An error occured while fetching template.' };
-		return error(err.code === 404 ? `Could not find repository: ${repo}` : err.message, 1);
+		err = err || { message: 'An error occured while fetching template.' };
+		return error(
+			err.code === 404 ? `Could not find repository: ${repo}` : err.message,
+			1
+		);
 	});
 
 	let spinner = ora({
 		text: 'Creating project',
-		color: 'magenta'
+		color: 'magenta',
 	}).start();
 
 	// Extract files from `archive` to `target`
 	// TODO: read & respond to meta/hooks
-	let keeps=[];
+	let keeps = [];
 	await gittar.extract(archive, target, {
 		strip: 2,
 		filter(path, obj) {
@@ -92,7 +98,7 @@ module.exports = async function (repo, dest, argv) {
 				});
 				return true;
 			}
-		}
+		},
 	});
 
 	if (keeps.length) {
@@ -106,7 +112,9 @@ module.exports = async function (repo, dest, argv) {
 			}
 		});
 		// Update each file's contents
-		let buf, entry, enc='utf8';
+		let buf,
+			entry,
+			enc = 'utf8';
 		for (entry of keeps) {
 			buf = await fs.readFile(entry, enc);
 			dict.forEach((v, k) => {
@@ -115,18 +123,20 @@ module.exports = async function (repo, dest, argv) {
 			await fs.writeFile(entry, buf, enc);
 		}
 	} else {
-		return error(`No \`template\` directory found within ${ repo }!`, 1);
+		return error(`No \`template\` directory found within ${repo}!`, 1);
 	}
 
 	spinner.text = 'Parsing `package.json` file';
 
 	// Validate user's `package.json` file
-	let pkgData, pkgFile=resolve(target, 'package.json');
+	let pkgData,
+		pkgFile = resolve(target, 'package.json');
 
 	if (pkgFile) {
 		pkgData = JSON.parse(await fs.readFile(pkgFile));
 		// Write default "scripts" if none found
-		pkgData.scripts = pkgData.scripts || (await addScripts(pkgData, target, isYarn));
+		pkgData.scripts =
+			pkgData.scripts || (await addScripts(pkgData, target, isYarn));
 	} else {
 		warn('Could not locate `package.json` file!');
 	}
@@ -169,17 +179,19 @@ module.exports = async function (repo, dest, argv) {
 
 	let pfx = isYarn ? 'yarn' : 'npm run';
 
-	return trim(`
+	return (
+		trim(`
 		To get started, cd into the new directory:
-			${ green('cd ' + dest) }
+			${green('cd ' + dest)}
 
 		To start a development live-reload server:
-			${ green(pfx + ' start') }
+			${green(pfx + ' start')}
 
 		To create a production build (in ./build):
-			${ green(pfx + ' build') }
+			${green(pfx + ' build')}
 
 		To start a production HTTP/2 server:
-			${ green(pfx + ' serve') }
-	`) + '\n';
+			${green(pfx + ' serve')}
+	`) + '\n'
+	);
 };

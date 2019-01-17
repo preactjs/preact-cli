@@ -28,7 +28,7 @@ describe('preact', () => {
 
 		await waitUntilExpression(
 			page,
-			`document.querySelector('header > h1').innerText === 'Test App'`,
+			`document.querySelector('header > h1').innerText === 'Test App'`
 		);
 
 		server.close();

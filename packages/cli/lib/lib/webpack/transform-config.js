@@ -107,7 +107,7 @@ module.exports = async function (env, webpackConfig, ssr = false) {
  * @class WebpackConfigHelpers
  */
 class WebpackConfigHelpers {
-	constructor (cwd) {
+	constructor(cwd) {
 		this._cwd = cwd;
 	}
 
@@ -118,7 +118,7 @@ class WebpackConfigHelpers {
 	 * @returns {object}
 	 * @memberof WebpackConfigHelpers
 	 */
-	get webpack () {
+	get webpack() {
 		return webpack;
 	}
 
@@ -130,11 +130,11 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getLoaders (config) {
+	getLoaders(config) {
 		return this.getRules(config).map(({ rule, index }) => ({
 			rule: rule,
 			ruleIndex: index,
-			loaders: (rule.loaders || rule.use || rule.loader)
+			loaders: rule.loaders || rule.use || rule.loader,
 		}));
 	}
 
@@ -146,9 +146,11 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getRules (config) {
-		return [...(config.module.loaders || []), ...(config.module.rules || [])]
-			.map((rule, index) => ({ index, rule }));
+	getRules(config) {
+		return [
+			...(config.module.loaders || []),
+			...(config.module.rules || []),
+		].map((rule, index) => ({ index, rule }));
 	}
 
 	/**
@@ -159,7 +161,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getPlugins (config) {
+	getPlugins(config) {
 		return (config.plugins || []).map((plugin, index) => ({ index, plugin }));
 	}
 
@@ -172,10 +174,11 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getRulesByMatchingFile (config, file) {
+	getRulesByMatchingFile(config, file) {
 		let filePath = resolve(this._cwd, file);
-		return this.getRules(config)
-			.filter(w => w.rule.test && w.rule.test.exec(filePath));
+		return this.getRules(config).filter(
+			w => w.rule.test && w.rule.test.exec(filePath)
+		);
 	}
 
 	/**
@@ -189,14 +192,22 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getLoadersByName (config, name) {
+	getLoadersByName(config, name) {
 		return this.getLoaders(config)
-			.map(({ rule, ruleIndex, loaders }) => Array.isArray(loaders)
-				? loaders.map((loader, loaderIndex) => ({ rule, ruleIndex, loader, loaderIndex }))
-				: [{ rule, ruleIndex, loader: loaders, loaderIndex: -1 }]
+			.map(({ rule, ruleIndex, loaders }) =>
+				Array.isArray(loaders)
+					? loaders.map((loader, loaderIndex) => ({
+							rule,
+							ruleIndex,
+							loader,
+							loaderIndex,
+					  }))
+					: [{ rule, ruleIndex, loader: loaders, loaderIndex: -1 }]
 			)
 			.reduce((arr, loaders) => arr.concat(loaders), [])
-			.filter(({ loader }) => loader === name || (loader && loader.loader === name));
+			.filter(
+				({ loader }) => loader === name || (loader && loader.loader === name)
+			);
 	}
 
 	/**
@@ -210,9 +221,11 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getPluginsByName (config, name) {
-		return this.getPlugins(config)
-			.filter(w => w.plugin && w.plugin.constructor && w.plugin.constructor.name === name);
+	getPluginsByName(config, name) {
+		return this.getPlugins(config).filter(
+			w =>
+				w.plugin && w.plugin.constructor && w.plugin.constructor.name === name
+		);
 	}
 
 	/**
@@ -226,9 +239,8 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	getPluginsByType (config, type) {
-		return this.getPlugins(config)
-			.filter(w => w.plugin instanceof type);
+	getPluginsByType(config, type) {
+		return this.getPlugins(config).filter(w => w.plugin instanceof type);
 	}
 
 	/**
@@ -239,7 +251,7 @@ class WebpackConfigHelpers {
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
-	setHtmlTemplate (config, template) {
+	setHtmlTemplate(config, template) {
 		let isPath;
 		try {
 			fs.statSync(template);

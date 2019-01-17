@@ -33,6 +33,7 @@ $ preact create <template-name> <project-name>
 ```
 
 Example:
+
 ```sh
 $ preact create default my-project
 ```
@@ -156,6 +157,7 @@ npm run serve -- --server config
 Preact CLI in order to follow [PRPL] pattern renders initial route (`/`) into generated static `index.html` - this ensures that users get to see your page before any JavaScript is run, and thus providing users with slow devices or poor connection your website's content much faster.
 
 Preact CLI does this by rendering your app inside node - this means that we don't have access to DOM or other global variables available in browsers, similar how it would be in server-side rendering scenarios. In case you need to rely on browser APIs you could:
+
 - drop out of prerendering by passing `--no-prerender` flag to `preact build`,
 - write your code in a way that supports server-side rendering by wrapping code that requires browser's APIs in conditional statements `if (typeof window !== "undefined") { ... }` ensuring that on server those lines of code are never reached. Alternatively you could use a helper library like [window-or-global](https://www.npmjs.com/package/window-or-global).
 
@@ -174,11 +176,7 @@ By default, `preact-cli` emulates the following config:
 ```json
 // package.json
 {
-  "browserslist": [
-    "> 1%",
-    "IE >= 9",
-    "last 2 versions"
-  ]
+	"browserslist": ["> 1%", "IE >= 9", "last 2 versions"]
 }
 ```
 
@@ -192,44 +190,47 @@ To customize Babel, you have two options:
 
 #### Webpack
 
-To customize preact-cli create a ```preact.config.js``` or a ```preact.config.json``` file.
+To customize preact-cli create a `preact.config.js` or a `preact.config.json` file.
 
 ```js
 // ... imports or other code up here ...
 
 // these props are both optional
-export default { 
+export default {
 	// you can add preact-cli plugins here
 	plugins: [
 		// either a function
 		// (you'd probably import this because you can use the `transformWebpack` function instead of an inline plugin)
-		function () {},
+		function() {},
 		// or a class
 		new Plugin(),
 		// strings also work (they get imported by preact-cli), useful for the json config
-		"plugin-name",
+		'plugin-name',
 		// with options
-		["plugin-name", {
-		  "option": true
-		}],
+		[
+			'plugin-name',
+			{
+				option: true,
+			},
+		],
 		// for pre 3.0 plugins
-		["legacy", "plugin-name"]
+		['legacy', 'plugin-name'],
 	],
-  /**
-   * Function that mutates the original webpack config.
-   * Supports asynchronous changes when a promise is returned (or it's an async function).
-   *
-   * @param {object} config - original webpack config.
-   * @param {object} env - options passed to the CLI.
-   * @param {WebpackConfigHelpers} helpers - object with useful helpers for working with the webpack config.
-   **/
+	/**
+	 * Function that mutates the original webpack config.
+	 * Supports asynchronous changes when a promise is returned (or it's an async function).
+	 *
+	 * @param {object} config - original webpack config.
+	 * @param {object} env - options passed to the CLI.
+	 * @param {WebpackConfigHelpers} helpers - object with useful helpers for working with the webpack config.
+	 **/
 	transformWebpack(config, env, helpers) {
 		/** you can change the config here **/
-	}
-}
+	},
+};
 ```
 
-See [WebpackConfigHelpers] docs for more info on ```helpers``` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki] containing examples on how to change webpack configuration.
+See [WebpackConfigHelpers] docs for more info on `helpers` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki] containing examples on how to change webpack configuration.
 
 #### Prerender multiple routes
 
@@ -239,12 +240,15 @@ The format required for defining your routes is an array of objects with a `url`
 
 ```json
 // prerender-urls.json
-[{
-  "url": "/",
-  "title": "Homepage"
-}, {
-  "url": "/route/random"
-}]
+[
+	{
+		url: '/',
+		title: 'Homepage',
+	},
+	{
+		url: '/route/random',
+	},
+];
 ```
 
 You can customise the path of `prerender-urls.json` by using the flag `--prerenderUrls`.
@@ -268,10 +272,10 @@ preact build --template src/template.html
 preact watch --template src/template.html
 ```
 
-[Promise]: https://npm.im/promise-polyfill
+[promise]: https://npm.im/promise-polyfill
 [fetch]: https://github.com/developit/unfetch
 [preact]: https://github.com/developit/preact
-[WebpackConfigHelpers]: docs/webpack-helpers.md
+[webpackconfighelpers]: docs/webpack-helpers.md
 [`.babelrc`]: https://babeljs.io/docs/usage/babelrc
 [simple]: https://github.com/preactjs-templates/simple
 [`"browserslist"`]: https://github.com/ai/browserslist
@@ -281,14 +285,14 @@ preact watch --template src/template.html
 [preact-router]: https://github.com/developit/preact-router
 [material]: https://github.com/preactjs-templates/material
 [widget]: https://github.com/preactjs-templates/widget
-[Plugins wiki]: https://github.com/developit/preact-cli/wiki/Plugins
+[plugins wiki]: https://github.com/developit/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
 [preactjs-templates/default]: https://github.com/preactjs-templates/default
 [recipes wiki]: https://github.com/developit/preact-cli/wiki/Config-Recipes
-[PRPL]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
+[prpl]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
 [`babel-preset-env`]: https://github.com/babel/babel-preset-env#targetsbrowsers
 [proof]: https://googlechrome.github.io/lighthouse/viewer/?gist=142af6838482417af741d966e7804346
-[Preact CLI preset]: https://github.com/developit/preact-cli/blob/master/src/lib/babel-config.js
-[Service Workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
-[Customize Babel]: https://github.com/developit/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
+[preact cli preset]: https://github.com/developit/preact-cli/blob/master/src/lib/babel-config.js
+[service workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
+[customize babel]: https://github.com/developit/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
 [`async!`]: https://github.com/developit/preact-cli/blob/222e7018dd360e40f7db622191aeca62d6ef0c9a/examples/full/src/components/app.js#L7
