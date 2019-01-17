@@ -1,9 +1,10 @@
 [
-  {
-    "url": "/",
-    "title": "Home"
-  }, {
-    "url": "/route66",
-    "title": "Route66"
-  }
+	{
+		"url": "/",
+		"title": "Home"
+	},
+	{
+		"url": "/route66",
+		"title": "Route66"
+	}
 ]

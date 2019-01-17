@@ -4,7 +4,7 @@ const fs = require('fs.promised');
 
 const FILE = 'preact.config.js';
 
-module.exports = async function (env, config, ssr=false) {
+module.exports = async function(env, config, ssr = false) {
 	env.config = env.config || FILE;
 	let myConfig = resolve(env.cwd, env.config);
 
@@ -12,16 +12,23 @@ module.exports = async function (env, config, ssr=false) {
 		await fs.stat(myConfig);
 	} catch (e) {
 		if (env.config === FILE) return;
-		throw new Error(`preact-cli config could not be loaded!\nFile ${env.config} not found.`);
+		throw new Error(
+			`preact-cli config could not be loaded!\nFile ${env.config} not found.`
+		);
 	}
 
 	require('@babel/register')({
-		presets: [[require.resolve('@babel/preset-env'), {
-			"targets": { "node": "current" }
-		}]]
+		presets: [
+			[
+				require.resolve('@babel/preset-env'),
+				{
+					targets: { node: 'current' },
+				},
+			],
+		],
 	});
 	const m = require(myConfig);
-	const transformer = m && m.default || m;
+	const transformer = (m && m.default) || m;
 	try {
 		let helpers = new WebpackConfigHelpers(env.cwd);
 		await transformer(config, Object.assign({}, env, { ssr }), helpers);
@@ -63,7 +70,7 @@ class WebpackConfigHelpers {
 		return this.getRules(config).map(({ rule, index }) => ({
 			rule: rule,
 			ruleIndex: index,
-			loaders: (rule.loaders || rule.use || rule.loader)
+			loaders: rule.loaders || rule.use || rule.loader,
 		}));
 	}
 
@@ -76,8 +83,10 @@ class WebpackConfigHelpers {
 	 * @memberof WebpackConfigHelpers
 	 */
 	getRules(config) {
-		return [...(config.module.loaders || []), ...(config.module.rules || [])]
-			.map((rule, index) => ({ index, rule }));
+		return [
+			...(config.module.loaders || []),
+			...(config.module.rules || []),
+		].map((rule, index) => ({ index, rule }));
 	}
 
 	/**
@@ -103,8 +112,9 @@ class WebpackConfigHelpers {
 	 */
 	getRulesByMatchingFile(config, file) {
 		let filePath = resolve(this._cwd, file);
-		return this.getRules(config)
-			.filter(w => w.rule.test && w.rule.test.exec(filePath));
+		return this.getRules(config).filter(
+			w => w.rule.test && w.rule.test.exec(filePath)
+		);
 	}
 
 	/**
@@ -120,12 +130,20 @@ class WebpackConfigHelpers {
 	 */
 	getLoadersByName(config, name) {
 		return this.getLoaders(config)
-			.map(({ rule, ruleIndex, loaders }) => Array.isArray(loaders)
-				? loaders.map((loader, loaderIndex) => ({ rule, ruleIndex, loader, loaderIndex }))
-				: [{ rule, ruleIndex, loader: loaders, loaderIndex: -1 }]
+			.map(({ rule, ruleIndex, loaders }) =>
+				Array.isArray(loaders)
+					? loaders.map((loader, loaderIndex) => ({
+							rule,
+							ruleIndex,
+							loader,
+							loaderIndex,
+					  }))
+					: [{ rule, ruleIndex, loader: loaders, loaderIndex: -1 }]
 			)
 			.reduce((arr, loaders) => arr.concat(loaders), [])
-			.filter(({ loader }) => loader === name || (loader && loader.loader === name));
+			.filter(
+				({ loader }) => loader === name || (loader && loader.loader === name)
+			);
 	}
 
 	/**
@@ -140,8 +158,10 @@ class WebpackConfigHelpers {
 	 * @memberof WebpackConfigHelpers
 	 */
 	getPluginsByName(config, name) {
-		return this.getPlugins(config)
-			.filter(w => w.plugin && w.plugin.constructor && w.plugin.constructor.name === name);
+		return this.getPlugins(config).filter(
+			w =>
+				w.plugin && w.plugin.constructor && w.plugin.constructor.name === name
+		);
 	}
 
 	/**
@@ -156,8 +176,7 @@ class WebpackConfigHelpers {
 	 * @memberof WebpackConfigHelpers
 	 */
 	getPluginsByType(config, type) {
-		return this.getPlugins(config)
-			.filter(w => w.plugin instanceof type);
+		return this.getPlugins(config).filter(w => w.plugin instanceof type);
 	}
 
 	/**
@@ -175,8 +194,13 @@ class WebpackConfigHelpers {
 			isPath = true;
 		} catch (e) {}
 
-		let templatePath = isPath ? `!!ejs-loader!${resolve(this._cwd, template)}` : template;
-		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(config, 'HtmlWebpackPlugin')[0];
+		let templatePath = isPath
+			? `!!ejs-loader!${resolve(this._cwd, template)}`
+			: template;
+		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(
+			config,
+			'HtmlWebpackPlugin'
+		)[0];
 		htmlWebpackPlugin.options.template = templatePath;
 	}
 }

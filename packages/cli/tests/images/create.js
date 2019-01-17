@@ -24,6 +24,5 @@ exports.default = [
 	'src/style/index.css',
 	'tests/__mocks__/browserMocks.js',
 	'tests/__mocks__/fileMocks.js',
-	'tests/header.test.js'
+	'tests/header.test.js',
 ].map(s => s.replace(/\//g, path.sep));
-

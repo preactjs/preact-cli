@@ -24,8 +24,8 @@ cache:
     - node_modules
 
 before_script:
-- export WITH_LOG=true
-- export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
+  - export WITH_LOG=true
+  - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
 
 script:
-- npm run test -- --verbose
+  - npm run test -- --verbose
