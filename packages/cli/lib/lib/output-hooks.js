@@ -3,11 +3,19 @@ const HOOKS = [
 		test: /^total precache size /i,
 		handler: text => `\n  \u001b[32m${text}\u001b[39m`,
 	},
+	{
+		test: /DeprecationWarning/,
+		handler: () => false
+	}
 ];
 
 function wrap(stream, handler) {
 	let write = stream.write;
-	stream.write = text => write.call(stream, handler(text));
+	stream.write = text => {
+		const transformed = handler(text);
+		if (transformed === false) return;
+		return write.call(stream, transformed);
+	};
 	return () => {
 		stream.write = write;
 	};
