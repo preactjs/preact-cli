@@ -173,8 +173,9 @@ You may customize your list of supported browser versions by declaring a [`"brow
 
 By default, `preact-cli` emulates the following config:
 
+> `package.json`
+
 ```json
-// package.json
 {
 	"browserslist": ["> 1%", "IE >= 9", "last 2 versions"]
 }
@@ -192,6 +193,8 @@ To customize Babel, you have two options:
 
 To customize preact-cli create a `preact.config.js` or a `preact.config.json` file.
 
+> `preact.config.js`
+
 ```js
 // ... imports or other code up here ...
 
@@ -200,10 +203,8 @@ export default {
 	// you can add preact-cli plugins here
 	plugins: [
 		// either a function
-		// (you'd probably import this because you can use the `transformWebpack` function instead of an inline plugin)
+		// (you'd probably import this because you can use the `webpack` function instead of an inline plugin)
 		function() {},
-		// or a class
-		new Plugin(),
 		// strings also work (they get imported by preact-cli), useful for the json config
 		'plugin-name',
 		// with options
@@ -213,8 +214,6 @@ export default {
 				option: true,
 			},
 		],
-		// for pre 3.0 plugins
-		['legacy', 'plugin-name'],
 	],
 	/**
 	 * Function that mutates the original webpack config.
@@ -223,8 +222,9 @@ export default {
 	 * @param {object} config - original webpack config.
 	 * @param {object} env - options passed to the CLI.
 	 * @param {WebpackConfigHelpers} helpers - object with useful helpers for working with the webpack config.
+	 * @param {object} options - this is mainly relevant for plugins (will always be empty in the config), default to an empty object
 	 **/
-	transformWebpack(config, env, helpers) {
+	webpack(config, env, helpers, options) {
 		/** you can change the config here **/
 	},
 };
@@ -238,17 +238,18 @@ The `--prerender` flag will prerender by default only the root of your applicati
 If you want to prerender other routes you can create a `prerender-urls.json` file, which contains the set of routes you want to render.
 The format required for defining your routes is an array of objects with a `url` key and an optional `title` key.
 
+> `prerender-urls.json`
+
 ```json
-// prerender-urls.json
 [
 	{
-		url: '/',
-		title: 'Homepage',
+		"url": "/",
+		"title": "Homepage"
 	},
 	{
-		url: '/route/random',
-	},
-];
+		"url": "/route/random"
+	}
+]
 ```
 
 You can customise the path of `prerender-urls.json` by using the flag `--prerenderUrls`.

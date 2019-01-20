@@ -6,7 +6,7 @@ const { error } = require('../../util');
 const FILE = 'preact.config';
 const EXTENSIONS = ['js', 'json'];
 
-async function findConfig (env) {
+async function findConfig(env) {
 	let idx = 0;
 	for (idx; idx < EXTENSIONS.length; idx++) {
 		let config = `${FILE}.${EXTENSIONS[idx]}`;
@@ -14,69 +14,89 @@ async function findConfig (env) {
 		try {
 			await fs.stat(path);
 			return { configFile: config, isDefault: true };
-		} catch (e) {
-		}
+		} catch (e) {}
 	}
 
 	return { configFile: undefined, isDefault: true };
 }
 
-function parseConfig (config) {
+function parseConfig(config) {
+	const transformers = [];
+	const addTransformer = (fn, opts = {}) => transformers.push([fn, opts]);
+
 	if (typeof config === 'function') {
-		return [config];
+		addTransformer(config);
 	} else if (typeof config === 'object' && !Array.isArray(config)) {
 		if (config.plugins && !Array.isArray(config.plugins))
-			throw new Error('The `plugins` property in the preact config has to be an array');
+			throw new Error(
+				'The `plugins` property in the preact config has to be an array'
+			);
 
-		const transformers = config.plugins ?
+		config.plugins &&
 			config.plugins.map((plugin, index) => {
 				if (typeof plugin === 'function') {
 					return plugin;
 				} else if (plugin && typeof plugin.apply === 'function') {
 					return plugin.apply.bind(plugin);
 				} else if (Array.isArray(plugin)) {
-					const isLegacy = plugin[0] === 'legacy';
-					const path = isLegacy ? plugin[1] : plugin[0];
-					const opts = isLegacy ? void 0 : plugin[1];
+					const [path, opts] = plugin;
 					const m = require(path);
-					const fn = m && m.default || m;
+					const fn = (m && m.default) || m;
 
 					if (typeof fn !== 'function') {
-						return () => error(`The plugin ${path} does not seem to be a function or a class`);
+						return () =>
+							error(
+								`The plugin ${path} does not seem to be a function or a class`
+							);
 					}
 
-					if (isLegacy) {
-						return fn;
+					// Detect webpack plugins and return wrapper transforms that inject them
+					if (typeof fn.prototype.apply === 'function') {
+						return config => {
+							config.plugins.push(new fn(opts));
+						};
 					}
 
-					return typeof fn.prototype.apply === 'function' ? new fn(opts) : fn(opts);
+					return addTransformer(fn, opts);
 				} else if (typeof plugin === 'string') {
-					return require(plugin)(void 0);
+					return addTransformer(require(plugin));
 				} else {
-					let name = plugin && plugin.prototype && plugin.prototype.constructor && plugin.prototype.constructor.name;
+					let name =
+						plugin &&
+						plugin.prototype &&
+						plugin.prototype.constructor &&
+						plugin.prototype.constructor.name;
 
-					return () => error(`Plugin invalid (index: ${index}, name: ${name})\nHas to be a function or an object/class with an \`apply\` function, is: ${typeof plugin}`);
+					return () =>
+						error(
+							`Plugin invalid (index: ${index}, name: ${name})\nHas to be a function or an object/class with an \`apply\` function, is: ${typeof plugin}`
+						);
 				}
-			}) : [];
+			});
 
-		if (config.transformWebpack) {
-			if (typeof config.transformWebpack !== 'function')
-				throw new Error('The `transformWebpack` property in the preact config has to be a function');
+		if (config.webpack) {
+			if (typeof config.webpack !== 'function')
+				throw new Error(
+					'The `transformWebpack` property in the preact config has to be a function'
+				);
 
-			transformers.push(config.transformWebpack);
+			addTransformer(config.webpack);
 		}
-
-		return transformers;
 	} else {
-		throw new Error('Invalid export in the preact config, should be an object or a function');
+		throw new Error(
+			'Invalid export in the preact config, should be an object or a function'
+		);
 	}
+	return transformers;
 }
 
-module.exports = async function (env, webpackConfig, ssr = false) {
-	const { configFile, isDefault } = env.config ? {
-		configFile: env.config,
-		isDefault: false
-	} : findConfig(env);
+module.exports = async function(env, webpackConfig, isServer = false) {
+	const { configFile, isDefault } = env.config
+		? {
+				configFile: env.config,
+				isDefault: false,
+		  }
+		: findConfig(env);
 	env.config = configFile;
 	let myConfig = resolve(env.cwd, env.config);
 
@@ -84,19 +104,30 @@ module.exports = async function (env, webpackConfig, ssr = false) {
 		await fs.stat(myConfig);
 	} catch (e) {
 		if (isDefault) return;
-		throw new Error(`preact-cli config could not be loaded!\nFile ${env.config} not found.`);
+		throw new Error(
+			`preact-cli config could not be loaded!\nFile ${env.config} not found.`
+		);
 	}
 
 	const m = require('esm')(module)(myConfig);
 
-	const transformers = parseConfig(m && m.default || m);
+	const transformers = parseConfig((m && m.default) || m);
 
 	const helpers = new WebpackConfigHelpers(env.cwd);
-	for (let transformer of transformers) {
+	for (let [transformer, options] of transformers) {
 		try {
-			await transformer(webpackConfig, Object.assign({}, env, { ssr }), helpers);
+			await transformer(
+				webpackConfig,
+				Object.assign({}, env, {
+					isServer,
+					dev: !env.production,
+					ssr: isServer,
+				}),
+				helpers,
+				options
+			);
 		} catch (err) {
-			throw new Error(`Error at ${myConfig}: \n` + err && err.stack || err);
+			throw new Error((`Error at ${myConfig}: \n` + err && err.stack) || err);
 		}
 	}
 };
@@ -258,8 +289,13 @@ class WebpackConfigHelpers {
 			isPath = true;
 		} catch (e) {}
 
-		let templatePath = isPath ? `!!ejs-loader!${resolve(this._cwd, template)}` : template;
-		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(config, 'HtmlWebpackPlugin')[0];
+		let templatePath = isPath
+			? `!!ejs-loader!${resolve(this._cwd, template)}`
+			: template;
+		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(
+			config,
+			'HtmlWebpackPlugin'
+		)[0];
 		htmlWebpackPlugin.options.template = templatePath;
 	}
 }
