@@ -91,12 +91,10 @@ function parseConfig(config) {
 }
 
 module.exports = async function(env, webpackConfig, isServer = false) {
-	const { configFile, isDefault } = env.config !== 'preact.config.js'
-		? {
-				configFile: env.config,
-				isDefault: false,
-		  }
-		: await findConfig(env);
+	const { configFile, isDefault } =
+		env.config !== 'preact.config.js'
+			? { configFile: env.config, isDefault: false }
+			: await findConfig(env);
 	env.config = configFile;
 	let myConfig = resolve(env.cwd, env.config);
 
