@@ -17,7 +17,7 @@ async function findConfig(env) {
 		} catch (e) {}
 	}
 
-	return { configFile: undefined, isDefault: true };
+	return { configFile: 'preact.config.js', isDefault: true };
 }
 
 function parseConfig(config) {
@@ -91,12 +91,12 @@ function parseConfig(config) {
 }
 
 module.exports = async function(env, webpackConfig, isServer = false) {
-	const { configFile, isDefault } = env.config
+	const { configFile, isDefault } = env.config !== 'preact.config.js'
 		? {
 				configFile: env.config,
 				isDefault: false,
 		  }
-		: findConfig(env);
+		: await findConfig(env);
 	env.config = configFile;
 	let myConfig = resolve(env.cwd, env.config);
 
