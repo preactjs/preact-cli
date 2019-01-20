@@ -26,6 +26,7 @@ module.exports = function(env, options = {}) {
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
 			[require.resolve('@babel/plugin-transform-react-jsx'), { pragma: 'h' }],
 			[require.resolve('fast-async'), { spec: true }],
+			require.resolve('babel-plugin-macros')
 		].filter(Boolean),
 	};
 };
