@@ -173,14 +173,11 @@ You may customize your list of supported browser versions by declaring a [`"brow
 
 By default, `preact-cli` emulates the following config:
 
-```js
-// package.json
+> `package.json`
+
+```json
 {
-  "browserslist": [
-    "> 1%",
-    "IE >= 9",
-    "last 2 versions"
-  ]
+	"browserslist": ["> 1%", "IE >= 9", "last 2 versions"]
 }
 ```
 
@@ -194,20 +191,43 @@ To customize Babel, you have two options:
 
 #### Webpack
 
-To customize webpack create `preact.config.js` file which exports function that will change webpack's config.
+To customize preact-cli create a `preact.config.js` or a `preact.config.json` file.
+
+> `preact.config.js`
 
 ```js
-/**
- * Function that mutates original webpack config.
- * Supports asynchronous changes when promise is returned.
- *
- * @param {object} config - original webpack config.
- * @param {object} env - options passed to CLI.
- * @param {WebpackConfigHelpers} helpers - object with useful helpers when working with config.
- **/
-export default function(config, env, helpers) {
-	/** you can change config here **/
-}
+// ... imports or other code up here ...
+
+// these props are both optional
+export default {
+	// you can add preact-cli plugins here
+	plugins: [
+		// either a function
+		// (you'd probably import this because you can use the `webpack` function instead of an inline plugin)
+		function() {},
+		// strings also work (they get imported by preact-cli), useful for the json config
+		'plugin-name',
+		// with options
+		[
+			'plugin-name',
+			{
+				option: true,
+			},
+		],
+	],
+	/**
+	 * Function that mutates the original webpack config.
+	 * Supports asynchronous changes when a promise is returned (or it's an async function).
+	 *
+	 * @param {object} config - original webpack config.
+	 * @param {object} env - options passed to the CLI.
+	 * @param {WebpackConfigHelpers} helpers - object with useful helpers for working with the webpack config.
+	 * @param {object} options - this is mainly relevant for plugins (will always be empty in the config), default to an empty object
+	 **/
+	webpack(config, env, helpers, options) {
+		/** you can change the config here **/
+	},
+};
 ```
 
 See [WebpackConfigHelpers] docs for more info on `helpers` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki] containing examples on how to change webpack configuration.
@@ -218,17 +238,18 @@ The `--prerender` flag will prerender by default only the root of your applicati
 If you want to prerender other routes you can create a `prerender-urls.json` file, which contains the set of routes you want to render.
 The format required for defining your routes is an array of objects with a `url` key and an optional `title` key.
 
-```js
-// prerender-urls.json
+> `prerender-urls.json`
+
+```json
 [
 	{
-		url: '/',
-		title: 'Homepage',
+		"url": "/",
+		"title": "Homepage"
 	},
 	{
-		url: '/route/random',
-	},
-];
+		"url": "/route/random"
+	}
+]
 ```
 
 You can customise the path of `prerender-urls.json` by using the flag `--prerenderUrls`.

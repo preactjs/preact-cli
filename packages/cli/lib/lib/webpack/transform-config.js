@@ -1,39 +1,132 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
 const fs = require('fs.promised');
+const { error } = require('../../util');
 
-const FILE = 'preact.config.js';
+const FILE = 'preact.config';
+const EXTENSIONS = ['js', 'json'];
 
-module.exports = async function(env, config, ssr = false) {
-	env.config = env.config || FILE;
+async function findConfig(env) {
+	let idx = 0;
+	for (idx; idx < EXTENSIONS.length; idx++) {
+		let config = `${FILE}.${EXTENSIONS[idx]}`;
+		let path = resolve(env.cwd, config);
+		try {
+			await fs.stat(path);
+			return { configFile: config, isDefault: true };
+		} catch (e) {}
+	}
+
+	return { configFile: 'preact.config.js', isDefault: true };
+}
+
+function parseConfig(config) {
+	const transformers = [];
+	const addTransformer = (fn, opts = {}) => transformers.push([fn, opts]);
+
+	if (typeof config === 'function') {
+		addTransformer(config);
+	} else if (typeof config === 'object' && !Array.isArray(config)) {
+		if (config.plugins && !Array.isArray(config.plugins))
+			throw new Error(
+				'The `plugins` property in the preact config has to be an array'
+			);
+
+		config.plugins &&
+			config.plugins.map((plugin, index) => {
+				if (typeof plugin === 'function') {
+					return plugin;
+				} else if (plugin && typeof plugin.apply === 'function') {
+					return plugin.apply.bind(plugin);
+				} else if (Array.isArray(plugin)) {
+					const [path, opts] = plugin;
+					const m = require(path);
+					const fn = (m && m.default) || m;
+
+					if (typeof fn !== 'function') {
+						return () =>
+							error(
+								`The plugin ${path} does not seem to be a function or a class`
+							);
+					}
+
+					// Detect webpack plugins and return wrapper transforms that inject them
+					if (typeof fn.prototype.apply === 'function') {
+						return config => {
+							config.plugins.push(new fn(opts));
+						};
+					}
+
+					return addTransformer(fn, opts);
+				} else if (typeof plugin === 'string') {
+					return addTransformer(require(plugin));
+				} else {
+					let name =
+						plugin &&
+						plugin.prototype &&
+						plugin.prototype.constructor &&
+						plugin.prototype.constructor.name;
+
+					return () =>
+						error(
+							`Plugin invalid (index: ${index}, name: ${name})\nHas to be a function or an object/class with an \`apply\` function, is: ${typeof plugin}`
+						);
+				}
+			});
+
+		if (config.webpack) {
+			if (typeof config.webpack !== 'function')
+				throw new Error(
+					'The `transformWebpack` property in the preact config has to be a function'
+				);
+
+			addTransformer(config.webpack);
+		}
+	} else {
+		throw new Error(
+			'Invalid export in the preact config, should be an object or a function'
+		);
+	}
+	return transformers;
+}
+
+module.exports = async function(env, webpackConfig, isServer = false) {
+	const { configFile, isDefault } =
+		env.config !== 'preact.config.js'
+			? { configFile: env.config, isDefault: false }
+			: await findConfig(env);
+	env.config = configFile;
 	let myConfig = resolve(env.cwd, env.config);
 
 	try {
 		await fs.stat(myConfig);
 	} catch (e) {
-		if (env.config === FILE) return;
+		if (isDefault) return;
 		throw new Error(
 			`preact-cli config could not be loaded!\nFile ${env.config} not found.`
 		);
 	}
 
-	require('@babel/register')({
-		presets: [
-			[
-				require.resolve('@babel/preset-env'),
-				{
-					targets: { node: 'current' },
-				},
-			],
-		],
-	});
-	const m = require(myConfig);
-	const transformer = (m && m.default) || m;
-	try {
-		let helpers = new WebpackConfigHelpers(env.cwd);
-		await transformer(config, Object.assign({}, env, { ssr }), helpers);
-	} catch (err) {
-		throw new Error(`Error at ${myConfig}: \n` + err);
+	const m = require('esm')(module)(myConfig);
+
+	const transformers = parseConfig((m && m.default) || m);
+
+	const helpers = new WebpackConfigHelpers(env.cwd);
+	for (let [transformer, options] of transformers) {
+		try {
+			await transformer(
+				webpackConfig,
+				Object.assign({}, env, {
+					isServer,
+					dev: !env.production,
+					ssr: isServer,
+				}),
+				helpers,
+				options
+			);
+		} catch (err) {
+			throw new Error((`Error at ${myConfig}: \n` + err && err.stack) || err);
+		}
 	}
 };
 
