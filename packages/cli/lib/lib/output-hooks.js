@@ -5,8 +5,8 @@ const HOOKS = [
 	},
 	{
 		test: /DeprecationWarning/,
-		handler: () => false
-	}
+		handler: () => false,
+	},
 ];
 
 function wrap(stream, handler) {
