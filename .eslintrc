@@ -1,21 +1,29 @@
 {
-  "extends": "eslint:recommended",
+  "extends": [
+    "eslint:recommended",
+    "prettier"
+  ],
   "parser": "babel-eslint",
   "env": {
-    "jest": true,
     "browser": true,
-    "node": true
-  },
-  "globals": {
-    "Promise": true,
-    "jasmine": true
+    "node": true,
+    "es6": true
   },
   "plugins": [
-    "react"
+    "babel",
+    "react",
+    "prettier"
   ],
   "settings": {
     "react": {
-      "pragma": "h"
+      "pragma": "h",
+      "version": "preact"
+    }
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "ecmaFeatures": {
+      "jsx": true
     }
   },
   "rules": {

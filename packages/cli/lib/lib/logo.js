@@ -12,26 +12,35 @@ const LOGO = `
          ▀▀
 `.replace(/(^\n+|\n+$)/g, '');
 
-const color = (color, text) => `\u001b[${color}m\u001b[2m${text}\u001b[22m\u001b[39m`;
+const color = (color, text) =>
+	`\u001b[${color}m\u001b[2m${text}\u001b[22m\u001b[39m`;
 
 const PURPLE = 35;
 
-module.exports = function (text, useColor=true) {
+module.exports = function(text, useColor = true) {
 	let logo = LOGO;
 
 	if (text) {
 		logo = logo.split('\n');
 
 		let words = text.split(' ');
-		for (let i=0; i<words.length; i++) {
+		for (let i = 0; i < words.length; i++) {
 			let index = words[i].indexOf('\n');
 			if (~index) {
-				words.splice(i, 1, words[i].substring(0, index), '\n', words[i].substring(index+1));
+				words.splice(
+					i,
+					1,
+					words[i].substring(0, index),
+					'\n',
+					words[i].substring(index + 1)
+				);
 				i += 2;
 			}
 		}
-		let index = 3, start = 21, max=50;
-		while (words.length && index<=10) {
+		let index = 3,
+			start = 21,
+			max = 50;
+		while (words.length && index <= 10) {
 			let word = words.shift(),
 				newlines = 0;
 			if (word.match(/^\n/g)) {
@@ -42,7 +51,7 @@ module.exports = function (text, useColor=true) {
 			if (word.match(/\n/)) {
 				newlines = word.length - (word = word.replace(/\n/g, '')).length;
 			}
-			while (logo[index].length<start-1) logo[index] += ' ';
+			while (logo[index].length < start - 1) logo[index] += ' ';
 			if (logo[index].length + 1 + word.length > max) {
 				index++;
 				words.unshift(word);
@@ -55,8 +64,10 @@ module.exports = function (text, useColor=true) {
 		}
 
 		if (useColor) {
-			for (let index=3; index<=10; index++) {
-				logo[index] = color(PURPLE, logo[index].substring(0, start)) + color(0, logo[index].substring(start));
+			for (let index = 3; index <= 10; index++) {
+				logo[index] =
+					color(PURPLE, logo[index].substring(0, start)) +
+					color(0, logo[index].substring(start));
 			}
 		}
 

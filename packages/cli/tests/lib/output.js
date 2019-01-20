@@ -6,7 +6,10 @@ const output = resolve(__dirname, '../output');
 const subjects = resolve(__dirname, '../subjects');
 
 function tmpDir() {
-	let str = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 12);
+	let str = Math.random()
+		.toString(36)
+		.replace(/[^a-z]+/g, '')
+		.substr(0, 12);
 	return resolve(output, str);
 }
 

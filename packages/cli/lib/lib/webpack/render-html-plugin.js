@@ -8,7 +8,7 @@ const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const template = resolve(__dirname, '../../resources/template.html');
 
-module.exports = function (config) {
+module.exports = function(config) {
 	const { cwd, dest, isProd, src } = config;
 
 	const htmlWebpackConfig = values => {
@@ -21,15 +21,23 @@ module.exports = function (config) {
 				removeScriptTypeAttributes: true,
 				removeRedundantAttributes: true,
 				removeStyleLinkTypeAttributes: true,
-				removeComments: true
+				removeComments: true,
 			},
-			favicon: existsSync(resolve(src, 'assets/favicon.ico')) ? 'assets/favicon.ico' : resolve(__dirname, '../../resources/favicon.ico'),
+			favicon: existsSync(resolve(src, 'assets/favicon.ico'))
+				? 'assets/favicon.ico'
+				: resolve(__dirname, '../../resources/favicon.ico'),
 			inject: true,
 			compile: true,
 			inlineCss: config['inline-css'],
 			preload: config.preload,
 			manifest: config.manifest,
-			title: title || config.title || config.manifest.name || config.manifest.short_name || (config.pkg.name || '').replace(/^@[a-z]\//, '') || 'Preact App',
+			title:
+				title ||
+				config.title ||
+				config.manifest.name ||
+				config.manifest.short_name ||
+				(config.pkg.name || '').replace(/^@[a-z]\//, '') ||
+				'Preact App',
 			excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
 			createLoadManifest: (assets, namedChunkGroups) => {
 				if (assets['push-manifest.json']) {
@@ -42,17 +50,22 @@ module.exports = function (config) {
 			ssr(params) {
 				Object.assign(params, { url });
 				return config.prerender ? prerender({ cwd, dest, src }, params) : '';
-			}
+			},
 		});
 	};
 
-	const pages = readJson(resolve(cwd, config.prerenderUrls || '')) || [{ url: '/' }];
+	const pages = readJson(resolve(cwd, config.prerenderUrls || '')) || [
+		{ url: '/' },
+	];
 
-	return pages.map(htmlWebpackConfig).map(conf => new HtmlWebpackPlugin(conf)).concat([
-		new HtmlWebpackExcludeAssetsPlugin(),
-		new ScriptExtHtmlWebpackPlugin({
-			// inline: 'bundle.js',
-			defaultAttribute: 'defer'
-		})
-	]);
+	return pages
+		.map(htmlWebpackConfig)
+		.map(conf => new HtmlWebpackPlugin(conf))
+		.concat([
+			new HtmlWebpackExcludeAssetsPlugin(),
+			new ScriptExtHtmlWebpackPlugin({
+				// inline: 'bundle.js',
+				defaultAttribute: 'defer',
+			}),
+		]);
 };

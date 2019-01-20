@@ -6,7 +6,11 @@ module.exports = class PushManifestPlugin {
 	}
 	apply(compiler) {
 		compiler.plugin('emit', (compilation, callback) => {
-			const manifest = createLoadManifest(compilation.assets, this.isESMBuild_, compilation.namedChunkGroups);
+			const manifest = createLoadManifest(
+				compilation.assets,
+				this.isESMBuild_,
+				compilation.namedChunkGroups
+			);
 
 			let output = JSON.stringify(manifest);
 			compilation.assets['push-manifest.json'] = {
@@ -15,7 +19,7 @@ module.exports = class PushManifestPlugin {
 				},
 				size() {
 					return output.length;
-				}
+				},
 			};
 
 			callback();
