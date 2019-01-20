@@ -101,6 +101,7 @@
     "progress-bar-webpack-plugin": "^1.9.3",
     "promise-polyfill": "^7.1.2",
     "raw-loader": "^0.5.1",
+    "react-hot-loader": "^4.6.3",
     "require-relative": "^0.8.7",
     "rimraf": "^2.6.1",
     "sade": "^1.4.1",
