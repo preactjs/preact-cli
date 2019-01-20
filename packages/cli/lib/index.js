@@ -24,9 +24,9 @@ const commands = require('./commands');
 // installHooks();
 notifier({ pkg }).notify();
 
-process.on('unhandledRejection', error => {
-	error(error.message);
-	console.error(error.stack);
+process.on('unhandledRejection', err => {
+	error(err.message);
+	console.error(err.stack);
 });
 
 let prog = sade('preact').version(pkg.version);
