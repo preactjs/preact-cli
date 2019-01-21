@@ -72,7 +72,7 @@ module.exports = function(config) {
 				pages = result;
 			}
 		} catch (error) {
-			warn(error.message);
+			warn(`Failed to load prerenderUrls file, using default!\n${error.stack}`);
 		}
 	}
 
