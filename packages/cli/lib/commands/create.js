@@ -2,8 +2,9 @@ const ora = require('ora');
 const glob = require('glob');
 const gittar = require('gittar');
 const fs = require('fs.promised');
+const copy = require('ncp');
 const { green } = require('chalk');
-const { resolve } = require('path');
+const { resolve, join } = require('path');
 const { prompt } = require('inquirer');
 const { promisify } = require('bluebird');
 const isValidName = require('validate-npm-package-name');
@@ -165,6 +166,10 @@ module.exports = async function(repo, dest, argv) {
 		// Assume changes were made ¯\_(ツ)_/¯
 		await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 	}
+
+	// Copy over template.html
+	const templateSrc = resolve(__dirname, '../resources/template.html');
+	await promisify(copy)(templateSrc, join(resolve(cwd, dest), 'src', 'template.html'));
 
 	if (argv.install) {
 		spinner.text = 'Installing dependencies';
