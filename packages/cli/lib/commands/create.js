@@ -169,7 +169,7 @@ module.exports = async function(repo, dest, argv) {
 
 	// Copy over template.html
 	const templateSrc = resolve(__dirname, '../resources/template.html');
-	await promisify(copy)(templateSrc, join(resolve(cwd, dest), 'src', 'template.html'));
+	await promisify(copy)(templateSrc, join(resolve(cwd, dest), 'template.html'));
 
 	if (argv.install) {
 		spinner.text = 'Installing dependencies';
