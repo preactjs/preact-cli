@@ -57,22 +57,27 @@ module.exports = function(config) {
 	let pages = [{ url: '/' }];
 
 	if (config.prerenderUrls) {
-		try {
-			let result = require(resolve(cwd, config.prerenderUrls));
-			if (typeof result.default !== 'undefined') {
-				result = result.default();
+		if (existsSync(resolve(cwd, config.prerenderUrls))) {
+			try {
+				let result = require(resolve(cwd, config.prerenderUrls));
+				if (typeof result.default !== 'undefined') {
+					result = result.default();
+				}
+				if (typeof result === 'function') {
+					result = result();
+				}
+				if (typeof result === 'string') {
+					result = JSON.parse(result);
+				}
+				if (result instanceof Array) {
+					pages = result;
+				}
+			} catch (error) {
+				warn(`Failed to load prerenderUrls file, using default!\n${config.verbose ? error.stack : error.message}`);
 			}
-			if (typeof result === 'function') {
-				result = result();
-			}
-			if (typeof result === 'string') {
-				result = JSON.parse(result);
-			}
-			if (result instanceof Array) {
-				pages = result;
-			}
-		} catch (error) {
-			warn(`Failed to load prerenderUrls file, using default!\n${error.stack}`);
+			// don't warn if the default file doesn't exist
+		} else if (config.prerenderUrls !== 'prerender-urls.json' || config.verbose) {
+			warn(`prerenderUrls file (${resolve(cwd, config.prerenderUrls)}) doesn't exist, using default!`);
 		}
 	}
 
