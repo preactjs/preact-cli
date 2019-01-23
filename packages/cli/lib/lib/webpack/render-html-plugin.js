@@ -3,9 +3,9 @@ const { existsSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { readJson } = require('./webpack-base-config');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
+const { warn } = require('../../util');
 let template = resolve(__dirname, '../../resources/template.html');
 
 module.exports = function(config) {
@@ -57,9 +57,27 @@ module.exports = function(config) {
 		});
 	};
 
-	const pages = readJson(resolve(cwd, config.prerenderUrls || '')) || [
-		{ url: '/' },
-	];
+	let pages = [{ url: '/' }];
+
+	if (config.prerenderUrls) {
+		try {
+			let result = require(resolve(cwd, config.prerenderUrls));
+			if (typeof result.default !== 'undefined') {
+				result = result.default();
+			}
+			if (typeof result === 'function') {
+				result = result();
+			}
+			if (typeof result === 'string') {
+				result = JSON.parse(result);
+			}
+			if (result instanceof Array) {
+				pages = result;
+			}
+		} catch (error) {
+			warn(`Failed to load prerenderUrls file, using default!\n${error.stack}`);
+		}
+	}
 
 	return pages
 		.map(htmlWebpackConfig)
