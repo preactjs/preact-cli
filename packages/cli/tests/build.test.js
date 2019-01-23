@@ -100,4 +100,15 @@ describe('preact build', () => {
 
 		looksLike(html, images.webpack);
 	});
+
+	it('should use template from the code folder', async () => {
+		// app with custom template set via preact.config.js
+		let dir = await subject('custom-template');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.template);
+	});
 });

@@ -134,3 +134,19 @@ exports.webpack = `
 	</body>
 </html>
 `;
+
+exports.template = `
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Custom title</title>
+		<link rel="shortcut icon" href="/favicon.ico"></link>
+	</head>
+	<body>
+		<h1>Guess what</h1>
+		<h2>This is an app with custom template</h2>
+		{{ ... }}
+	</body>
+</html>
+`;
