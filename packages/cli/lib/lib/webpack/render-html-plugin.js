@@ -10,9 +10,9 @@ let template = resolve(__dirname, '../../resources/template.html');
 
 module.exports = function(config) {
 	const { cwd, dest, isProd, src } = config;
-	console.log(resolve(cwd, dest, 'template.html'));
-	if (existsSync(resolve(cwd, dest, 'template.html'))) {
-		template = resolve(cwd, dest, 'template.html');
+	const inProjectTemplatePath = resolve(cwd, dest, '../template.html');
+	if (existsSync(inProjectTemplatePath)) {
+		template = inProjectTemplatePath;
 	}
 	const htmlWebpackConfig = values => {
 		let { url, title } = values;
