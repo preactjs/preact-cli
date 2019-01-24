@@ -19,6 +19,6 @@ module.exports = async function() {
 
 		process.stdout.write('\n');
 	} catch (err) {
-		error(err, 1);
+		error(err && err.stack || err.message || err, 1);
 	}
 };

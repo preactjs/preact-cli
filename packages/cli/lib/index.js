@@ -25,8 +25,7 @@ const commands = require('./commands');
 notifier({ pkg }).notify();
 
 process.on('unhandledRejection', err => {
-	error(err.message);
-	console.error(err.stack);
+	error(err.stack || err.message);
 });
 
 let prog = sade('preact').version(pkg.version);
@@ -52,6 +51,7 @@ prog
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
 	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
+	.option('-v, --verbose', 'Verbose output')
 	.action(commands.build);
 
 prog
@@ -63,6 +63,7 @@ prog
 	.option('--install', 'Install dependencies', true)
 	.option('--yarn', 'Use `yarn` instead of `npm`')
 	.option('--git', 'Initialize git repository')
+	.option('-v, --verbose', 'Verbose output')
 	.action(commands.create);
 
 prog

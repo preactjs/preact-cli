@@ -74,7 +74,7 @@ module.exports = async function(repo, dest, argv) {
 	let archive = await gittar.fetch(repo).catch(err => {
 		err = err || { message: 'An error occured while fetching template.' };
 		return error(
-			err.code === 404 ? `Could not find repository: ${repo}` : err.message,
+			err.code === 404 ? `Could not find repository: ${repo}` : (argv.verbose && err.stack || err.message),
 			1
 		);
 	});
