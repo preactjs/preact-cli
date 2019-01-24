@@ -5,12 +5,15 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
-const template = resolve(__dirname, '../../resources/template.html');
 const { warn } = require('../../util');
+let template = resolve(__dirname, '../../resources/template.html');
 
 module.exports = function(config) {
 	const { cwd, dest, isProd, src } = config;
-
+	const inProjectTemplatePath = resolve(cwd, dest, '../template.html');
+	if (existsSync(inProjectTemplatePath)) {
+		template = inProjectTemplatePath;
+	}
 	const htmlWebpackConfig = values => {
 		let { url, title } = values;
 		return Object.assign(values, {
