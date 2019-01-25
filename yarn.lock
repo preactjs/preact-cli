@@ -1595,10 +1595,10 @@ babel-eslint@^8.2.3:
     eslint-scope "3.7.1"
     eslint-visitor-keys "^1.0.0"
 
-babel-esm-plugin@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/babel-esm-plugin/-/babel-esm-plugin-0.3.0.tgz#277b7206bf1183f066f647588520757fb7272d9b"
-  integrity sha512-lg10KTjxaeoXl+xhW8Z3PHlIjA8Y/PIbh9SO7iTUp3btYhpUlWTK21mQwSM8J/GLXrDSyFOWwW23c0o1ho6ozQ==
+babel-esm-plugin@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/babel-esm-plugin/-/babel-esm-plugin-0.4.0.tgz#b67267cdb53ba28b23872a627c489fed6c066bdb"
+  integrity sha512-ZpqObj5PiABy7VwGKcqdFMnJkJfpCj3XuM0Dqr1cYuEl14UZiUSY/SKKEd3s4vv2FgLsF+3YTsW8e2m3y/0MfA==
   dependencies:
     ava "^1.0.1"
     deepcopy "^1.0.0"
