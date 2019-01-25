@@ -11346,10 +11346,10 @@ webpack-merge@^4.1.0:
   dependencies:
     lodash "^4.17.5"
 
-webpack-plugin-replace@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/webpack-plugin-replace/-/webpack-plugin-replace-1.1.1.tgz#9816647fefc98a7d1700f93f2b4b6f481cf20161"
-  integrity sha1-mBZkf+/Jin0XAPk/K0tvSBzyAWE=
+webpack-plugin-replace@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/webpack-plugin-replace/-/webpack-plugin-replace-1.2.0.tgz#3f20db96237400433231e35ea76d9be3f7128916"
+  integrity sha512-1HA3etHpJW55qonJqv84o5w5GY7iqF8fqSHpTWdNwarj1llkkt4jT4QSvYs1hoaU8Lu5akDnq/spHHO5mXwo1w==
 
 webpack-sources@^1.1.0, webpack-sources@^1.3.0:
   version "1.3.0"
