@@ -52,10 +52,11 @@ async function handlePrerenderError(err, env, stack, entry) {
 	}
 
 	if (sourceMapContent) {
-		let sourceMapConsumer = await new SourceMapConsumer(sourceMapContent);
-		position = sourceMapConsumer.originalPositionFor({
-			line: stack.getLineNumber(),
-			column: stack.getColumnNumber(),
+		await SourceMapConsumer.with(sourceMapContent, null, consumer => {
+			position = consumer.originalPositionFor({
+				line: stack.getLineNumber(),
+				column: stack.getColumnNumber(),
+			});
 		});
 
 		position.source = position.source
