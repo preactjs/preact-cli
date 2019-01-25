@@ -263,13 +263,15 @@ Routes can be exported as a JSON string or an object and can optionally be retur
 
 ```js
 // prerender-urls.js
-module.exports = [{
-	url: '/',
-	title: 'Homepage'
-}, {
-	url: '/route/random'
-}];
-
+module.exports = [
+	{
+		url: '/',
+		title: 'Homepage',
+	},
+	{
+		url: '/route/random',
+	},
+];
 ```
 
 #### Template

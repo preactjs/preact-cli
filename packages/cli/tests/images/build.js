@@ -51,12 +51,8 @@ exports.prerender.heads.home = `
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link rel="preload" href="\\/bundle\\.\\w{5}\\.js" as="script">
-	<link rel="preload" href="\\/route-home\\.chunk\\.\\w{5}\\.js" as="script">
-	<link rel="preload" href="\\/route-home\\.chunk\\.\\w{5}\\.css" as="style">
 	<link rel="shortcut icon" href="\\/favicon\\.ico">
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\" onload=\\"this.rel='stylesheet'\\"><noscript>
-		<link rel=\\"stylesheet\\" href="\\/bundle.\\w{5}.css"><\\/noscript>
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0;}<\\/style>
 <\\/head>
 `;
@@ -69,12 +65,8 @@ exports.prerender.heads.route66 = `
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link rel="preload" href="\\/bundle\\.\\w{5}\\.js" as="script">
-	<link rel="preload" href="\\/route-route66\\.chunk\\.\\w{5}\\.js" as="script">
-	<link rel="preload" href="\\/route-route66\\.chunk\\.\\w{5}\\.css" as="style">
 	<link rel="shortcut icon" href="\\/favicon\\.ico">
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\" onload=\\"this.rel='stylesheet'\\"><noscript>
-		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\"><\\/noscript>
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0;}<\\/style>
 <\\/head>
 `;
@@ -94,9 +86,7 @@ exports.preload.head = `
 	<link rel=\\"preload\\" href=\\"\\/route-home\\~route-route66\\~route-route89\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
 	<link rel=\\"shortcut icon\\" href=\\"\\/favicon\\.ico\\">
-	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"preload\\" as=\\"style\\" onload=\\"this\\.rel='stylesheet'\\">
-	<noscript>
-	<link rel=\\"stylesheet\\" href=\\"\\/bundle\\.\\w{5}\\.css\\"><\\/noscript>
+	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0;}<\\/style>
 </head>
 `;

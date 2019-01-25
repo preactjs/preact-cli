@@ -1,7 +1,6 @@
 const { resolve } = require('path');
 const { existsSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
@@ -54,6 +53,7 @@ module.exports = function(config) {
 				Object.assign(params, { url });
 				return config.prerender ? prerender({ cwd, dest, src }, params) : '';
 			},
+			scriptLoading: 'defer',
 		});
 	};
 
@@ -76,22 +76,28 @@ module.exports = function(config) {
 					pages = result;
 				}
 			} catch (error) {
-				warn(`Failed to load prerenderUrls file, using default!\n${config.verbose ? error.stack : error.message}`);
+				warn(
+					`Failed to load prerenderUrls file, using default!\n${
+						config.verbose ? error.stack : error.message
+					}`
+				);
 			}
 			// don't warn if the default file doesn't exist
-		} else if (config.prerenderUrls !== 'prerender-urls.json' || config.verbose) {
-			warn(`prerenderUrls file (${resolve(cwd, config.prerenderUrls)}) doesn't exist, using default!`);
+		} else if (
+			config.prerenderUrls !== 'prerender-urls.json' ||
+			config.verbose
+		) {
+			warn(
+				`prerenderUrls file (${resolve(
+					cwd,
+					config.prerenderUrls
+				)}) doesn't exist, using default!`
+			);
 		}
 	}
 
 	return pages
 		.map(htmlWebpackConfig)
 		.map(conf => new HtmlWebpackPlugin(conf))
-		.concat([
-			new HtmlWebpackExcludeAssetsPlugin(),
-			new ScriptExtHtmlWebpackPlugin({
-				// inline: 'bundle.js',
-				defaultAttribute: 'defer',
-			}),
-		]);
+		.concat([new HtmlWebpackExcludeAssetsPlugin()]);
 };

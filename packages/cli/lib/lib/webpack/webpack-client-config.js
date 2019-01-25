@@ -240,11 +240,7 @@ function isProd(config) {
 	}
 
 	if (config['inline-css']) {
-		prodConfig.plugins.push(
-			new CrittersPlugin({
-				preload: 'swap',
-			})
-		);
+		prodConfig.plugins.push(new CrittersPlugin());
 	}
 
 	if (config.analyze) {

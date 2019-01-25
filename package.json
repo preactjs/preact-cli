@@ -6,7 +6,7 @@
   "scripts": {
     "pretest": "yarn lint",
     "test": "lerna run test",
-    "prettier": "prettier --write **/*.{js,ts,tsx,json,css,md,yml}",
+    "prettier": "prettier --write **/*.{js,ts,tsx,json,css,scss,md,yml}",
     "lint": "eslint ."
   },
   "devDependencies": {
@@ -28,12 +28,12 @@
   },
   "lint-staged": {
     "linters": {
-      "*.{js}": [
+      "*.js": [
         "eslint --fix",
         "prettier --write",
         "git add"
       ],
-      "*.{json,css,md,yml}": [
+      "*.{ts,tsx,json,css,scss,md,yml}": [
         "prettier --write",
         "git add"
       ]
