@@ -1,15 +1,45 @@
 {
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "pretest": "lerna bootstrap",
-    "test": "eslint packages && lerna run test"
+    "pretest": "yarn lint",
+    "test": "lerna run test",
+    "prettier": "prettier --write **/*.{js,ts,tsx,json,css,md,yml}",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
     "eslint": "^4.19.1",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.7.0",
-    "jest": "^22.4.3",
+    "husky": "^1.3.1",
     "lerna": "^2.11.0",
-    "puppeteer": "^1.3.0"
+    "lint-staged": "^8.1.0",
+    "prettier": "^1.15.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "*.{js}": [
+        "eslint --fix",
+        "prettier --write",
+        "git add"
+      ],
+      "*.{json,css,md,yml}": [
+        "prettier --write",
+        "git add"
+      ]
+    },
+    "ignore": [
+      "**/package.json"
+    ]
   }
 }

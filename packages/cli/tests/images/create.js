@@ -22,8 +22,8 @@ exports.default = [
 	'src/routes/profile/index.js',
 	'src/routes/profile/style.css',
 	'src/style/index.css',
+	'template.html',
 	'tests/__mocks__/browserMocks.js',
 	'tests/__mocks__/fileMocks.js',
-	'tests/header.test.js'
+	'tests/header.test.js',
 ].map(s => s.replace(/\//g, path.sep));
-
