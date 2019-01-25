@@ -240,9 +240,7 @@ function isProd(config) {
 	}
 
 	if (config['inline-css']) {
-		prodConfig.plugins.push(
-			new CrittersPlugin()
-		);
+		prodConfig.plugins.push(new CrittersPlugin());
 	}
 
 	if (config.analyze) {

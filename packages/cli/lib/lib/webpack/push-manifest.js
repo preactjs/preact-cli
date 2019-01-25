@@ -5,7 +5,7 @@ module.exports = class PushManifestPlugin {
 		this.isESMBuild_ = env.esm;
 	}
 	apply(compiler) {
-		compiler.hooks.emit.tap('PushManifestPlugin', (compilation) => {
+		compiler.hooks.emit.tap('PushManifestPlugin', compilation => {
 			const manifest = createLoadManifest(
 				compilation.assets,
 				this.isESMBuild_,

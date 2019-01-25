@@ -82,7 +82,7 @@ describe('preact build', () => {
 
 	it('should preload correct files', async () => {
 		let dir = await subject('preload-chunks');
-		await build(dir, {preload: true});
+		await build(dir, { preload: true });
 
 		const head1 = await getHead(dir);
 		expect(head1).toEqual(
