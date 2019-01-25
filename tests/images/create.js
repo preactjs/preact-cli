@@ -1,8 +1,8 @@
 exports.default = [
+	'.babelrc',
 	'.gitignore',
 	'package.json',
 	'README.md',
-	'src/.babelrc',
 	'src/assets/favicon.ico',
 	'src/assets/icons/android-chrome-192x192.png',
 	'src/assets/icons/android-chrome-512x512.png',
@@ -20,9 +20,9 @@ exports.default = [
 	'src/routes/profile/index.js',
 	'src/routes/profile/style.css',
 	'src/style/index.css',
-	'src/tests/__mocks__/browserMocks.js',
-	'src/tests/__mocks__/fileMocks.js',
-	'src/tests/header.test.js'
+	'tests/__mocks__/browserMocks.js',
+	'tests/__mocks__/fileMocks.js',
+	'tests/header.test.js'
 ];
 
 exports.full = exports.default;
