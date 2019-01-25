@@ -39,6 +39,7 @@ prog
 	.option('--sw', 'Generate and attach a Service Worker', true)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--template', 'Path to custom HTML template')
+	.option('--preload', 'Adds preload tags to the document its assets', false)
 	.option(
 		'--analyze',
 		'Launch interactive Analyzer to inspect production bundle(s)'
