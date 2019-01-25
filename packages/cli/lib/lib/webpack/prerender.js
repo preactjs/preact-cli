@@ -39,7 +39,7 @@ module.exports = function(env, params) {
 	}
 };
 
-function handlePrerenderError(err, env, stack, entry) {
+async function handlePrerenderError(err, env, stack, entry) {
 	let errorMessage = err.toString();
 	let isReferenceError = errorMessage.startsWith('ReferenceError');
 	let methodName = stack.getMethodName();
@@ -52,10 +52,11 @@ function handlePrerenderError(err, env, stack, entry) {
 	}
 
 	if (sourceMapContent) {
-		let sourceMapConsumer = new SourceMapConsumer(sourceMapContent);
-		position = sourceMapConsumer.originalPositionFor({
-			line: stack.getLineNumber(),
-			column: stack.getColumnNumber(),
+		await SourceMapConsumer.with(sourceMapContent, null, consumer => {
+			position = consumer.originalPositionFor({
+				line: stack.getLineNumber(),
+				column: stack.getColumnNumber(),
+			});
 		});
 
 		position.source = position.source
