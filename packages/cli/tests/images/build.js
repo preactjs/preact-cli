@@ -55,8 +55,7 @@ exports.prerender.heads.home = `
 	<link rel="preload" href="\\/route-home\\.chunk\\.\\w{5}\\.js" as="script">
 	<link rel="preload" href="\\/route-home\\.chunk\\.\\w{5}\\.css" as="style">
 	<link rel="shortcut icon" href="\\/favicon\\.ico">
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\" onload=\\"this.rel='stylesheet'\\"><noscript>
-		<link rel=\\"stylesheet\\" href="\\/bundle.\\w{5}.css"><\\/noscript>
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0;}<\\/style>
 <\\/head>
 `;
@@ -73,8 +72,7 @@ exports.prerender.heads.route66 = `
 	<link rel="preload" href="\\/route-route66\\.chunk\\.\\w{5}\\.js" as="script">
 	<link rel="preload" href="\\/route-route66\\.chunk\\.\\w{5}\\.css" as="style">
 	<link rel="shortcut icon" href="\\/favicon\\.ico">
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\" onload=\\"this.rel='stylesheet'\\"><noscript>
-		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\"><\\/noscript>
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0;}<\\/style>
 <\\/head>
 `;
@@ -94,9 +92,7 @@ exports.preload.head = `
 	<link rel=\\"preload\\" href=\\"\\/route-home\\~route-route66\\~route-route89\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
 	<link rel=\\"shortcut icon\\" href=\\"\\/favicon\\.ico\\">
-	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"preload\\" as=\\"style\\" onload=\\"this\\.rel='stylesheet'\\">
-	<noscript>
-	<link rel=\\"stylesheet\\" href=\\"\\/bundle\\.\\w{5}\\.css\\"><\\/noscript>
+	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0;}<\\/style>
 </head>
 `;
