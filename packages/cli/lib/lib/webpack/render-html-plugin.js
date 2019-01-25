@@ -1,7 +1,6 @@
 const { resolve } = require('path');
 const { existsSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
@@ -54,6 +53,7 @@ module.exports = function(config) {
 				Object.assign(params, { url });
 				return config.prerender ? prerender({ cwd, dest, src }, params) : '';
 			},
+			scriptLoading: 'defer'
 		});
 	};
 
@@ -89,9 +89,5 @@ module.exports = function(config) {
 		.map(conf => new HtmlWebpackPlugin(conf))
 		.concat([
 			new HtmlWebpackExcludeAssetsPlugin(),
-			new ScriptExtHtmlWebpackPlugin({
-				// inline: 'bundle.js',
-				defaultAttribute: 'defer',
-			}),
 		]);
 };
