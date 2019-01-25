@@ -6,3 +6,6 @@ package-lock.json
 tmp-*.json
 *.log
 *.pem
+
+.idea/
+.vscode

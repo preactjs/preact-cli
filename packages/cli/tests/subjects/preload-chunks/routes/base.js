@@ -1,11 +1,11 @@
-import {h, Component} from 'preact';
+import { h, Component } from 'preact';
 
-export default class Base extends Component{
+export default class Base extends Component {
 	state = {
-		state: 'initialized'
+		state: 'initialized',
 	};
 
 	render() {
-		return (<div>Base</div>);
+		return <div>Base</div>;
 	}
 }

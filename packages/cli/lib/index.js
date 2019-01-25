@@ -7,8 +7,15 @@ const pkg = require('../package');
 
 const ver = process.version;
 const min = pkg.engines.node;
-if (ver.substring(1).localeCompare(min.match(/\d+/g).join('.'), 'en', { numeric:true }) === -1) {
-	return error(`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!`, 1);
+if (
+	ver
+		.substring(1)
+		.localeCompare(min.match(/\d+/g).join('.'), 'en', { numeric: true }) === -1
+) {
+	return error(
+		`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!`,
+		1
+	);
 }
 
 // Safe to load async-based funcs
@@ -16,6 +23,10 @@ const commands = require('./commands');
 
 // installHooks();
 notifier({ pkg }).notify();
+
+process.on('unhandledRejection', err => {
+	error(err.stack || err.message);
+});
 
 let prog = sade('preact').version(pkg.version);
 
@@ -28,11 +39,19 @@ prog
 	.option('--sw', 'Generate and attach a Service Worker', true)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--template', 'Path to custom HTML template')
-	.option('--analyze', 'Launch interactive Analyzer to inspect production bundle(s)')
-	.option('--prerenderUrls', 'Path to pre-rendered routes config', 'prerender-urls.json')
+	.option(
+		'--analyze',
+		'Launch interactive Analyzer to inspect production bundle(s)'
+	)
+	.option(
+		'--prerenderUrls',
+		'Path to pre-rendered routes config',
+		'prerender-urls.json'
+	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
 	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
+	.option('-v, --verbose', 'Verbose output')
 	.action(commands.build);
 
 prog
@@ -44,9 +63,11 @@ prog
 	.option('--install', 'Install dependencies', true)
 	.option('--yarn', 'Use `yarn` instead of `npm`')
 	.option('--git', 'Initialize git repository')
+	.option('-v, --verbose', 'Verbose output')
 	.action(commands.create);
 
-prog.command('list')
+prog
+	.command('list')
 	.describe('List official templates')
 	.action(commands.list);
 
