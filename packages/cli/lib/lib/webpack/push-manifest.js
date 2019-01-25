@@ -5,7 +5,7 @@ module.exports = class PushManifestPlugin {
 		this.isESMBuild_ = env.esm;
 	}
 	apply(compiler) {
-		compiler.plugin('emit', (compilation, callback) => {
+		compiler.hooks.emit.tap('PushManifestPlugin', (compilation) => {
 			const manifest = createLoadManifest(
 				compilation.assets,
 				this.isESMBuild_,
@@ -22,7 +22,9 @@ module.exports = class PushManifestPlugin {
 				},
 			};
 
-			callback();
+			return compilation;
+
+			// callback();
 		});
 	}
 };
