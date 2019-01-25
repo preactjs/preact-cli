@@ -25,6 +25,10 @@
 ```sh
 $ npm install -g preact-cli
 ```
+or
+```sh
+$ yarn global add preact-cli
+```
 
 ### Usage
 
