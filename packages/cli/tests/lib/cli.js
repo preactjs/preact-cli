@@ -28,10 +28,10 @@ exports.create = async function(template, name) {
 	return dest;
 };
 
-exports.build = function(cwd) {
+exports.build = function(cwd, options) {
 	mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
 	let opts = Object.assign({ cwd }, argv);
-	return cmd.build(argv.src, opts);
+	return cmd.build(argv.src, Object.assign({}, opts, options));
 };
 
 exports.watch = function(cwd, port, host = '127.0.0.1') {
