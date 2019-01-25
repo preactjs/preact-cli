@@ -14,14 +14,17 @@
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/tests/setup.js",
+    "moduleDirectories": [
+      "node_modules",
+      "../babel/node_modules"
+    ],
     "testEnvironment": "node"
   },
   "engines": {
     "node": ">=8"
   },
   "files": [
-    "lib",
-    "babel"
+    "lib"
   ],
   "keywords": [
     "preact",
@@ -59,6 +62,7 @@
     "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@babel/preset-env": "^7.3.1",
     "@preact/async-loader": "next",
+    "@preact/babel": "*",
     "autoprefixer": "^8.4.1",
     "babel-esm-plugin": "^0.4.0",
     "babel-loader": "^8.0.5",
