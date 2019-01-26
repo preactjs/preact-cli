@@ -152,6 +152,7 @@ function isProd(config) {
 				navigateFallback: 'index.html',
 				navigateFallbackWhitelist: [/^(?!\/__).*/],
 				minify: true,
+				skipWaiting: false,
 				stripPrefix: config.cwd,
 				staticFileGlobsIgnorePatterns: [
 					/polyfills(\..*)?\.js$/,
