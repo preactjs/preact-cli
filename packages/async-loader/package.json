@@ -1,6 +1,6 @@
 {
   "name": "@preact/async-loader",
-  "version": "3.0.0-next.14",
+  "version": "3.0.0-next.15",
   "description": "Preact's async component loader for Webpack",
   "files": [
     "*.js"

@@ -1,7 +1,7 @@
 <!-- Please don't delete this template -->
 <!-- Before creating an issue please make sure you are using the latest version of preact-cli. -->
 
-**Do you want to request a *feature* or report a *bug*?**
+**Do you want to request a _feature_ or report a _bug_?**
 
 **What is the current behaviour?**
 
@@ -14,6 +14,7 @@
 **If this is a feature request, what is motivation or use case for changing the behaviour?**
 
 **Please mention other relevant information.**
+
 - Node version
 - npm version
 - Operating system

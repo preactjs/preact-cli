@@ -1,9 +1,9 @@
-import {h} from 'preact';
+import { h } from 'preact';
 import Base from './base';
 import './home.css';
 
-export default class Home extends Base{
+export default class Home extends Base {
 	render() {
-		return (<div>Home</div>);
+		return <div>Home</div>;
 	}
 }

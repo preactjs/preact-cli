@@ -6,7 +6,7 @@ export default class App extends Component {
 	async componentDidMount() {
 		await delay(200);
 		this.setState({
-			render: true
+			render: true,
 		});
 	}
 
@@ -14,7 +14,7 @@ export default class App extends Component {
 		return (
 			<div>
 				<h1>Example</h1>
-				<div>{render ? 'after delay' : 'before delay' }</div>
+				<div>{render ? 'after delay' : 'before delay'}</div>
 			</div>
 		);
 	}
