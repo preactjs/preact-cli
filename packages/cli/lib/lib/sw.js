@@ -18,17 +18,19 @@ if (process.env.ENABLE_BROTLI && process.env.ES_BUILD) {
 	class BrotliRedirectPlugin {
 		// Before saving the response in cache, we need to treat the headers.
 		async cacheWillUpdate({ response }) {
-			if (/.js.br$/.test(response.url)) {
-				const headers = response.headers;
+			const clonedResponse = response.clone();
+			if (/.js.br(\?.*)?$/.test(clonedResponse.url)) {
+				const headers = clonedResponse.headers;
 				const newHeaders = {};
 				for (let key of headers.keys()) {
 					newHeaders[key] = headers.get(key);
 				}
 				// make sure the content type is compatible
 				newHeaders['content-type'] = 'application/javascript';
-				return new Response(await response.text(), {
+				const newResponse = new Response(await clonedResponse.text(), {
 					headers: newHeaders,
 				});
+				return newResponse;
 			}
 			return response;
 		}
