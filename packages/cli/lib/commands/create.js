@@ -1,12 +1,10 @@
 const ora = require('ora');
-const glob = require('glob');
+const glob = require('tiny-glob');
 const gittar = require('gittar');
 const fs = require('fs.promised');
-const copy = require('ncp');
-const { green } = require('chalk');
+const { green } = require('kleur');
 const { resolve, join } = require('path');
 const { prompt } = require('inquirer');
-const { promisify } = require('bluebird');
 const isValidName = require('validate-npm-package-name');
 const { info, isDir, hasCommand, error, trim, warn } = require('../util');
 const { addScripts, install, initGit, isMissing } = require('../lib/setup');
@@ -150,7 +148,7 @@ module.exports = async function(repo, dest, argv) {
 		pkgData.name = argv.name.toLowerCase().replace(/\s+/g, '_');
 	}
 	// Find a `manifest.json`; use the first match, if any
-	let files = await promisify(glob)(target + '/**/manifest.json');
+	let files = await glob(target + '/**/manifest.json');
 	let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
 	if (manifest) {
 		spinner.text = 'Updating `name` within `manifest.json` file';
@@ -171,7 +169,7 @@ module.exports = async function(repo, dest, argv) {
 
 	// Copy over template.html
 	const templateSrc = resolve(__dirname, '../resources/template.html');
-	await promisify(copy)(templateSrc, join(resolve(cwd, dest), 'template.html'));
+	await fs.copyFile(templateSrc, join(resolve(cwd, dest), 'template.html'));
 
 	if (argv.install) {
 		spinner.text = 'Installing dependencies';

@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const sade = require('sade');
-global.Promise = require('bluebird');
 const notifier = require('update-notifier');
 const { error } = require('./util');
 const pkg = require('../package');
