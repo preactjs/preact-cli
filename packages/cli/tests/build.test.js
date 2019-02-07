@@ -10,6 +10,8 @@ const images = require('./images/build');
 // const ours = ['empty', 'full', 'simple', 'root'];
 const ours = ['default'];
 
+const prerenderUrlFiles = ['prerender-urls.json', 'prerender-urls.js'];
+
 async function getIndex(dir, file = 'index.html') {
 	file = join(dir, `build/${file}`);
 	let html = await readFile(file, 'utf-8');
@@ -59,25 +61,29 @@ describe('preact build', () => {
 		expect(async () => await build(app)).not;
 	});
 
-	it('should prerender the routes provided with `prerender-urls.json`', async () => {
-		let dir = await subject('multiple-prerendering');
-		await build(dir);
+	prerenderUrlFiles.forEach(prerenderUrls => {
+		it(`should prerender the routes provided with '${prerenderUrls}'`, async () => {
+			let dir = await subject('multiple-prerendering');
+			await build(dir, { prerenderUrls });
 
-		const body1 = await getIndex(dir);
-		looksLike(body1, images.prerender.home);
+			const body1 = await getIndex(dir);
+			looksLike(body1, images.prerender.home);
 
-		const body2 = await getIndex(dir, 'route66/index.html');
-		looksLike(body2, images.prerender.route);
+			const body2 = await getIndex(dir, 'route66/index.html');
+			looksLike(body2, images.prerender.route);
 
-		const head1 = await getHead(dir);
-		expect(head1).toEqual(
-			expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.home))
-		);
+			const head1 = await getHead(dir);
+			expect(head1).toEqual(
+				expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.home))
+			);
 
-		const head2 = await getHead(dir, 'route66/index.html');
-		expect(head2).toEqual(
-			expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.route66))
-		);
+			const head2 = await getHead(dir, 'route66/index.html');
+			expect(head2).toEqual(
+				expect.stringMatching(
+					getRegExpFromMarkup(images.prerender.heads.route66)
+				)
+			);
+		});
 	});
 
 	it('should preload correct files', async () => {
