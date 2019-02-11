@@ -91,7 +91,7 @@
     "mini-css-extract-plugin": "^0.4.0",
     "minimatch": "^3.0.3",
     "ncp": "^2.0.0",
-    "optimize-css-assets-webpack-plugin": "^4.0.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
     "ora": "^2.0.0",
     "postcss-loader": "^2.1.4",
     "preact": "^8.1.0",
