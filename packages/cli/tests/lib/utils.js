@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const { relative, resolve } = require('path');
 const { promisify } = require('bluebird');
-const { stat } = require('fs.promised');
+const { stat } = require('../../lib/fs');
 const minimatch = require('minimatch');
 const pRetry = require('p-retry');
 const glob = require('glob');

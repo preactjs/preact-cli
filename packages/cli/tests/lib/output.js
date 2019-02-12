@@ -1,6 +1,6 @@
 const copy = require('ncp');
 const { resolve } = require('path');
-const { promisify } = require('bluebird');
+const { promisify } = require('util');
 
 const output = resolve(__dirname, '../output');
 const subjects = resolve(__dirname, '../subjects');

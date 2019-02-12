@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const getPort = require('get-port');
 const { resolve } = require('path');
 const clear = require('console-clear');
-const { writeFile } = require('fs.promised');
+const { writeFile } = require('../../fs');
 const { bold, red, green, magenta } = require('kleur');
 const DevServer = require('webpack-dev-server');
 const clientConfig = require('./webpack-client-config');
@@ -18,7 +18,7 @@ async function devBuild(env) {
 
 	let userPort =
 		parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
-	let port = await getPort(userPort);
+	let port = await getPort({ port: userPort });
 
 	let compiler = webpack(config);
 	return new Promise((res, rej) => {
@@ -48,7 +48,7 @@ async function devBuild(env) {
 			let serverAddr = `${protocol}://${host}:${bold(port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
 
-			clear();
+			clear(true);
 
 			if (stats.hasErrors()) {
 				process.stdout.write(red('Build failed!\n\n'));

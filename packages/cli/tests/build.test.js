@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { readFile } = require('fs.promised');
+const { readFile } = require('../lib/fs');
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
 const { snapshot, isMatch } = require('./lib/utils');

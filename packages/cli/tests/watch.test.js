@@ -1,4 +1,4 @@
-const fs = require('fs.promised');
+const fs = require('../lib/fs');
 const { resolve } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');

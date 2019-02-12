@@ -1,7 +1,7 @@
 const ora = require('ora');
 const glob = require('tiny-glob');
 const gittar = require('gittar');
-const fs = require('fs.promised');
+const fs = require('../fs');
 const { green } = require('kleur');
 const { resolve, join } = require('path');
 const { prompt } = require('inquirer');
