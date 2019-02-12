@@ -259,6 +259,7 @@ function isDev(config) {
 			new webpack.HotModuleReplacementPlugin(),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
+				'process.env.RHL': config.rhl,
 			}),
 		],
 

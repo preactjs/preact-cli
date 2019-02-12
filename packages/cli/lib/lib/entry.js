@@ -7,9 +7,11 @@ const interopDefault = m => (m && m.default ? m.default : m);
 if (process.env.NODE_ENV === 'development') {
 	// enable preact devtools
 	require('preact/debug');
-	// enable hot loader
-	const hotLoader = interopDefault(require('react-hot-loader'));
-	hotLoader.preact(interopDefault(require('preact')));
+	if (process.env.RHL) {
+		// enable hot loader
+		const hotLoader = interopDefault(require('react-hot-loader'));
+		hotLoader.preact(interopDefault(require('preact')));
+	}
 	// only add a debug sw if webpack service worker is not requested.
 	if (!process.env.ADD_SW && 'serviceWorker' in navigator) {
 		// eslint-disable-next-line no-undef

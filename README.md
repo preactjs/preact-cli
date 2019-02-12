@@ -109,6 +109,7 @@ $ preact watch
   --host,       Hostname to start a server on                    [string]   [default: "0.0.0.0"]
   --https       Use HTTPS?                                       [boolean]  [default: false]
   --prerender   Pre-render static app content on initial build   [boolean]  [default: false]
+  --rhl         Enable react hot loader                          [boolean]  [default: false]
 ```
 
 Note:
