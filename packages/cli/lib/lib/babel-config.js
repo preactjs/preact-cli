@@ -1,5 +1,5 @@
 module.exports = function(env, options = {}) {
-	const { production: isProd, rhl } = env;
+	const { production: isProd, rhl } = env || {};
 
 	return {
 		presets: [
