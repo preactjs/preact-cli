@@ -1,6 +1,7 @@
+const { blue, yellow, red } = require('kleur');
 const { normalize } = require('path');
 const { statSync, existsSync } = require('fs');
-const log = require('loglevelnext');
+const symbols = require('./symbols');
 const which = require('which');
 
 exports.isDir = function(str) {
@@ -16,20 +17,17 @@ exports.trim = function(str) {
 };
 
 exports.info = function(text, code) {
-	log.info(text);
-	// process.stderr.write(logSymbols.info + blue(' INFO ') + text + '\n');
+	process.stderr.write(symbols.info + blue(' INFO ') + text + '\n');
 	code && process.exit(code);
 };
 
 exports.warn = function(text, code) {
-	log.warn(text);
-	// process.stdout.write(logSymbols.warning + yellow(' WARN ') + text + '\n');
+	process.stdout.write(symbols.warning + yellow(' WARN ') + text + '\n');
 	code && process.exit(code);
 };
 
 exports.error = function(text, code) {
-	log.error(text);
-	// process.stderr.write(logSymbols.error + red(' ERROR ') + text + '\n');
+	process.stderr.write(symbols.error + red(' ERROR ') + text + '\n');
 	code && process.exit(code);
 };
 
