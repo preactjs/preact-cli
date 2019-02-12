@@ -1,5 +1,5 @@
 module.exports = function(env, options = {}) {
-	const { production: isProd, rhl } = env || {};
+	const { production: isProd, rhl: isRHLEnabled } = env || {};
 
 	return {
 		presets: [
@@ -27,7 +27,7 @@ module.exports = function(env, options = {}) {
 			[require.resolve('@babel/plugin-transform-react-jsx'), { pragma: 'h' }],
 			[require.resolve('fast-async'), { spec: true }],
 			require.resolve('babel-plugin-macros'),
-			!isProd && rhl && require.resolve('react-hot-loader/babel'),
+			!isProd && isRHLEnabled && require.resolve('react-hot-loader/babel'),
 		].filter(Boolean),
 	};
 };
