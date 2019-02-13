@@ -4,7 +4,7 @@ const getPort = require('get-port');
 const { resolve } = require('path');
 const clear = require('console-clear');
 const { writeFile } = require('fs.promised');
-const { bold, red, green } = require('chalk');
+const { bold, red, green, magenta } = require('chalk');
 const DevServer = require('webpack-dev-server');
 const clientConfig = require('./webpack-client-config');
 const serverConfig = require('./webpack-server-config');
@@ -117,14 +117,16 @@ function runCompiler(compiler) {
 }
 
 function showStats(stats) {
-	let info = stats.toJson('errors-only');
-
 	if (stats.hasErrors()) {
-		info.errors.map(stripLoaderPrefix).forEach(msg => error(msg));
+		allFields(stats, 'errors')
+			.map(stripLoaderPrefix)
+			.forEach(error);
 	}
 
 	if (stats.hasWarnings()) {
-		info.warnings.map(stripLoaderPrefix).forEach(msg => warn(msg));
+		allFields(stats, 'warnings')
+			.map(stripLoaderPrefix)
+			.forEach(warn);
 	}
 
 	return stats;
@@ -161,6 +163,30 @@ function writeJsonStats(stats) {
 	});
 }
 
+function allFields(stats, field, fields = [], name = null) {
+	const info = stats.toJson({
+		errors: true,
+		warnings: false,
+		errorDetails: false,
+	});
+	const addCompilerPrefix = msg =>
+		name ? bold(magenta(name + ': ')) + msg : msg;
+	if (field === 'errors' && stats.hasErrors()) {
+		fields = fields.concat(info.errors.map(addCompilerPrefix));
+	}
+	if (field === 'warnings' && stats.hasWarnings()) {
+		fields = fields.concat(info.warnings.map(addCompilerPrefix));
+	}
+	if (stats.compilation.children) {
+		stats.compilation.children.forEach((child, index) => {
+			const name = child.name || `Child Compiler ${index + 1}`;
+			const stats = child.getStats();
+			fields = allFields(stats, field, fields, name);
+		});
+	}
+	return fields;
+}
+
 const keysToNormalize = [
 	'issuer',
 	'issuerName',
@@ -174,10 +200,12 @@ const keysToNormalize = [
 /** Removes all loaders from any resource identifiers found in a string */
 function stripLoaderPrefix(str) {
 	if (typeof str === 'string') {
-		return str.replace(
-			/(^|\b|@)(\.\/~|\.{0,2}\/[^\s]+\/node_modules)\/\w+-loader(\/[^?!]+)?(\?\?[\w_.-]+|\?({[\s\S]*?})?)?!/g,
-			''
-		);
+		return str
+			.replace(
+				/(?:(\()|(^|\b|@))(\.\/~|\.{0,2}\/(?:[^\s]+\/)?node_modules)\/\w+-loader(\/[^?!]+)?(\?\?[\w_.-]+|\?({[\s\S]*?})?)?!/g,
+				'$1'
+			)
+			.replace(/(\.?\.?(?:\/[^/ ]+)+)\s+\(\1\)/g, '$1');
 	}
 	return str;
 }
