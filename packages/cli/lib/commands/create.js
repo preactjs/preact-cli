@@ -12,7 +12,7 @@ const { info, isDir, hasCommand, error, trim, warn } = require('../util');
 const { addScripts, install, initGit, isMissing } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';
-const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
+const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
