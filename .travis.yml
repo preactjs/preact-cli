@@ -28,4 +28,4 @@ before_script:
   - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
 
 script:
-  - npm run test -- --verbose
+  - npm run test
