@@ -200,14 +200,27 @@ const keysToNormalize = [
 /** Removes all loaders from any resource identifiers found in a string */
 function stripLoaderPrefix(str) {
 	if (typeof str === 'string') {
-		return str
-			.replace(
-				/(?:(\()|(^|\b|@))(\.\/~|\.{0,2}\/(?:[^\s]+\/)?node_modules)\/\w+-loader(\/[^?!]+)?(\?\?[\w_.-]+|\?({[\s\S]*?})?)?!/g,
-				'$1'
-			)
-			.replace(/(\.?\.?(?:\/[^/ ]+)+)\s+\(\1\)/g, '$1');
+		str = str.replace(
+			/(?:(\()|(^|\b|@))(\.\/~|\.{0,2}\/(?:[^\s]+\/)?node_modules)\/\w+-loader(\/[^?!]+)?(\?\?[\w_.-]+|\?({[\s\S]*?})?)?!/g,
+			'$1'
+		);
+		str = str.replace(/(\.?\.?(?:\/[^/ ]+)+)\s+\(\1\)/g, '$1');
+		str = replaceAll(str, process.cwd(), '.');
+		return str;
 	}
 	return str;
+}
+
+// https://gist.github.com/developit/1a40a6fee65361d1182aaa22ab8c334c
+function replaceAll(str, find, replace) {
+	let s = '',
+		index,
+		next;
+	while (~(next = str.indexOf(find, index))) {
+		s += str.substring(index, next) + replace;
+		index = next + find.length;
+	}
+	return s + str.substring(index);
 }
 
 function stripLoaderFromModuleNames(m) {
