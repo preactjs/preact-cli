@@ -20,17 +20,9 @@ if (process.env.ENABLE_BROTLI && process.env.ES_BUILD) {
 		async cacheWillUpdate({ response }) {
 			const clonedResponse = response.clone();
 			if (/.js.br(\?.*)?$/.test(clonedResponse.url)) {
-				const headers = clonedResponse.headers;
-				const newHeaders = {};
-				for (let key of headers.keys()) {
-					newHeaders[key] = headers.get(key);
-				}
-				// make sure the content type is compatible
-				newHeaders['content-type'] = 'application/javascript';
-				const newResponse = new Response(await clonedResponse.text(), {
-					headers: newHeaders,
-				});
-				return newResponse;
+				const headers = new Headers(clonedResponse.headers);
+				headers.set('content-type', 'application/javascript');
+				return new Response(await clonedResponse.text(), { headers });
 			}
 			return response;
 		}
