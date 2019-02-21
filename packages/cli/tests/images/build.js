@@ -67,7 +67,7 @@ exports.prerender.heads.route66 = `
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="manifest" href="\\/manifest\\.json">
 	<link rel="shortcut icon" href="\\/favicon\\.ico">
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\"	>
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\">
 <\\/head>
 `;
 
