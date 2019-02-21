@@ -72,6 +72,9 @@ describe('preact build', () => {
 			const body2 = await getIndex(dir, 'route66/index.html');
 			looksLike(body2, images.prerender.route);
 
+			const body3 = await getIndex(dir, 'custom/index.html');
+			looksLike(body3, images.prerender.custom);
+
 			const head1 = await getHead(dir);
 			expect(head1).toEqual(
 				expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.home))
@@ -81,6 +84,13 @@ describe('preact build', () => {
 			expect(head2).toEqual(
 				expect.stringMatching(
 					getRegExpFromMarkup(images.prerender.heads.route66)
+				)
+			);
+
+			const head3 = await getHead(dir, 'custom/index.html');
+			expect(head3).toEqual(
+				expect.stringMatching(
+					getRegExpFromMarkup(images.prerender.heads.custom)
 				)
 			);
 		});
