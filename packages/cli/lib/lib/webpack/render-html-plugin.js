@@ -14,7 +14,7 @@ module.exports = function(config) {
 		template = inProjectTemplatePath;
 	}
 	const htmlWebpackConfig = values => {
-		let { url, title } = values;
+		let { url, title, ...props } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
 			template: `!!ejs-loader!${config.template || template}`,
@@ -50,8 +50,8 @@ module.exports = function(config) {
 			config,
 			url,
 			ssr(params) {
-				Object.assign(params, { url });
-				return config.prerender ? prerender({ cwd, dest, src }, params) : '';
+				Object.assign(props, params, { url });
+				return config.prerender ? prerender({ cwd, dest, src }, props) : '';
 			},
 			scriptLoading: 'defer',
 		});
