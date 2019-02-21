@@ -240,7 +240,16 @@ function isProd(config) {
 	}
 
 	if (config['inline-css']) {
-		prodConfig.plugins.push(new CrittersPlugin());
+		prodConfig.plugins.push(
+			new CrittersPlugin({
+				// use `<link rel="stylesheet" media="not x" onload="this.media=''" href="__.css">`
+				preload: 'swap',
+				// don't merge inlined <style> tags
+				mergeStylesheets: false,
+				// only prune inlined styles from external sheet if prerendering an App Shell:
+				pruneSource: [].concat(config.prerenderUrls).length < 2,
+			})
+		);
 	}
 
 	if (config.analyze) {
