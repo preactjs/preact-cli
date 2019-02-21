@@ -56,10 +56,10 @@ function clientConfig(env) {
 		module: {
 			rules: [
 				{
-					test: /\.jsx?$/,
+					test: /\.[jt]sx?$/,
 					include: [
-						filter(source('routes') + '/{*.js,*/index.js}'),
-						filter(source('components') + '/{routes,async}/{*.js,*/index.js}'),
+						filter(source('routes') + '/{*,*/index}.{js,jsx,ts,tsx}'),
+						filter(source('components') + '/{routes,async}/{*,*/index}.{js,jsx,ts,tsx}'),
 					],
 					loader: require.resolve('@preact/async-loader'),
 					options: {
