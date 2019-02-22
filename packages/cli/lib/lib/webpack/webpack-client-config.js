@@ -230,26 +230,24 @@ function isProd(config) {
 		);
 	}
 
-	if (config.esm) {
-		if (config.sw) {
-			prodConfig.plugins.push(
-				new SWPrecacheWebpackPlugin({
-					filename: 'sw-esm.js',
-					navigateFallback: 'index.html',
-					navigateFallbackWhitelist: [/^(?!\/__).*/],
-					minify: true,
-					stripPrefix: config.cwd,
-					staticFileGlobsIgnorePatterns: [
-						/(\.[\w]{5}\.js)/,
-						/polyfills(\..*)?\.js$/,
-						/\.map$/,
-						/push-manifest\.json$/,
-						/.DS_Store/,
-						/\.git/,
-					],
-				})
-			);
-		}
+	if (config.esm && config.sw) {
+		prodConfig.plugins.push(
+			new SWPrecacheWebpackPlugin({
+				filename: 'sw-esm.js',
+				navigateFallback: 'index.html',
+				navigateFallbackWhitelist: [/^(?!\/__).*/],
+				minify: true,
+				stripPrefix: config.cwd,
+				staticFileGlobsIgnorePatterns: [
+					/(\.[\w]{5}\.js)/,
+					/polyfills(\..*)?\.js$/,
+					/\.map$/,
+					/push-manifest\.json$/,
+					/.DS_Store/,
+					/\.git/,
+				],
+			})
+		);
 	}
 
 	if (config['inline-css']) {
