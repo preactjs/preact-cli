@@ -66,6 +66,7 @@ module.exports = function(env) {
 		resolve: {
 			modules: ['node_modules', ...nodeModules],
 			extensions: [
+				'.mjs',
 				'.js',
 				'.jsx',
 				'.ts',
@@ -107,7 +108,8 @@ module.exports = function(env) {
 				{
 					// ES2015
 					enforce: 'pre',
-					test: /\.jsx?$/,
+					test: /\.m?jsx?$/,
+					type: 'javascript/auto',
 					loader: 'babel-loader',
 					options: Object.assign(
 						{ babelrc: false },
@@ -236,6 +238,7 @@ module.exports = function(env) {
 			}),
 			new webpack.ProvidePlugin({
 				h: ['preact', 'h'],
+				Fragment: ['preact', 'Fragment'],
 			}),
 			// Extract CSS
 			new MiniCssExtractPlugin({
