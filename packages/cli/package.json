@@ -16,7 +16,10 @@
     "setupFilesAfterEnv": [
       "<rootDir>/tests/setup.js"
     ],
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "tests/output"
+    ]
   },
   "engines": {
     "node": ">=8"
