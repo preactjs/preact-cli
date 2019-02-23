@@ -28,7 +28,7 @@ module.exports = function(env, params) {
 		let preact = require('preact'),
 			renderToString = require('preact-render-to-string');
 
-		return renderToString(preact.h(app, { url }));
+		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
 		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
 		if (!stack) {

@@ -71,6 +71,20 @@ exports.prerender.heads.route66 = `
 <\\/head>
 `;
 
+exports.prerender.heads.custom = `
+<head>
+	<meta charset="utf-8">
+	<title>Custom<\\/title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="manifest" href="\\/manifest\\.json">
+	<link rel="shortcut icon" href="\\/favicon\\.ico">
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
+	<style>html{padding:0;}<\\/style>
+<\\/head>
+`;
+
 exports.preload = {};
 
 exports.preload.head = `
@@ -104,6 +118,15 @@ exports.prerender.route = `
 <body>
 	<div id="app">
 		<div>Route66</div>
+	</div>
+	{{ ... }}
+</body>
+`;
+
+exports.prerender.custom = `
+<body>
+	<div id="app">
+		<div>It worked!</div>
 	</div>
 	{{ ... }}
 </body>

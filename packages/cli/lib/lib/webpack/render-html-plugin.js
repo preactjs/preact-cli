@@ -49,9 +49,8 @@ module.exports = function(config) {
 			},
 			config,
 			url,
-			ssr(params) {
-				Object.assign(params, { url });
-				return config.prerender ? prerender({ cwd, dest, src }, params) : '';
+			ssr() {
+				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
 			},
 			scriptLoading: 'defer',
 		});
