@@ -1,15 +1,13 @@
 /* eslint-disable no-console */
 const { relative, resolve } = require('path');
-const { promisify } = require('bluebird');
 const { stat } = require('../../lib/fs');
 const minimatch = require('minimatch');
 const pRetry = require('p-retry');
-const glob = require('glob');
+const glob = require('tiny-glob');
 
 const PER = 0.05; // % diff
 const LOG = !!process.env.WITH_LOG;
 const logger = (lvl, msg) => (lvl === 'error' || LOG) && console[lvl](msg);
-const globby = promisify(glob);
 
 // `node-glob` ignore pattern buggy?
 const ignores = x => !/node_modules|package-lock|yarn.lock/i.test(x);
@@ -17,7 +15,7 @@ const ignores = x => !/node_modules|package-lock|yarn.lock/i.test(x);
 function expand(dir, opts) {
 	dir = resolve(dir);
 	opts = Object.assign({ dot: true, nodir: true }, opts);
-	return globby(`${dir}/**`, opts).then(arr => arr.filter(ignores));
+	return glob(`${dir}/**/*.*`, opts).then(arr => arr.filter(ignores));
 }
 
 async function bytes(str) {
