@@ -7,6 +7,11 @@ const data = [
 		url: '/route66',
 		title: 'Route66',
 	},
+	{
+		url: '/custom',
+		title: 'Custom',
+		myProp: 'It worked!',
+	},
 ];
 
 module.exports = () => data;
