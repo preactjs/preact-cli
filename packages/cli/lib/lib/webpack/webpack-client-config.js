@@ -59,7 +59,10 @@ function clientConfig(env) {
 					test: /\.[jt]sx?$/,
 					include: [
 						filter(source('routes') + '/{*,*/index}.{js,jsx,ts,tsx}'),
-						filter(source('components') + '/{routes,async}/{*,*/index}.{js,jsx,ts,tsx}'),
+						filter(
+							source('components') +
+								'/{routes,async}/{*,*/index}.{js,jsx,ts,tsx}'
+						),
 					],
 					loader: require.resolve('@preact/async-loader'),
 					options: {
@@ -82,6 +85,7 @@ function clientConfig(env) {
 		plugins: [
 			new PushManifestPlugin(env),
 			...RenderHTMLPlugin(env),
+			...getBabelEsmPlugin(env),
 			new CopyWebpackPlugin(
 				[
 					...(existsSync(source('manifest.json'))
@@ -107,6 +111,53 @@ function clientConfig(env) {
 			),
 		],
 	};
+}
+
+function getBabelEsmPlugin(config) {
+	const esmPlugins = [];
+	if (config.esm) {
+		esmPlugins.push(
+			new BabelEsmPlugin({
+				filename: config.isProd
+					? '[name].[chunkhash:5].esm.js'
+					: '[name].esm.js',
+				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
+				excludedPlugins: ['BabelEsmPlugin', 'SWBuilderPlugin'],
+				beforeStartExecution: (plugins, newConfig) => {
+					const babelPlugins = newConfig.plugins;
+					newConfig.plugins = babelPlugins.filter(plugin => {
+						if (
+							Array.isArray(plugin) &&
+							plugin[0].indexOf('fast-async') !== -1
+						) {
+							return false;
+						}
+						return true;
+					});
+					plugins.forEach(plugin => {
+						if (
+							plugin.constructor.name === 'DefinePlugin' &&
+							plugin.definitions
+						) {
+							for (const definition in plugin.definitions) {
+								if (definition === 'process.env.ES_BUILD') {
+									plugin.definitions[definition] = true;
+								}
+							}
+						} else if (
+							plugin.constructor.name === 'DefinePlugin' &&
+							!plugin.definitions
+						) {
+							throw new Error(
+								'WebpackDefinePlugin found but not `process.env.ES_BUILD`.'
+							);
+						}
+					});
+				},
+			})
+		);
+	}
+	return esmPlugins;
 }
 
 function isProd(config) {
@@ -179,64 +230,24 @@ function isProd(config) {
 		);
 	}
 
-	if (config.esm) {
+	if (config.esm && config.sw) {
 		prodConfig.plugins.push(
-			new BabelEsmPlugin({
-				filename: '[name].[chunkhash:5].esm.js',
-				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
-				beforeStartExecution: (plugins, newConfig) => {
-					const babelPlugins = newConfig.plugins;
-					newConfig.plugins = babelPlugins.filter(plugin => {
-						if (
-							Array.isArray(plugin) &&
-							plugin[0].indexOf('fast-async') !== -1
-						) {
-							return false;
-						}
-						return true;
-					});
-					plugins.forEach(plugin => {
-						if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							plugin.definitions
-						) {
-							for (const definition in plugin.definitions) {
-								if (definition === 'process.env.ES_BUILD') {
-									plugin.definitions[definition] = true;
-								}
-							}
-						} else if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							!plugin.definitions
-						) {
-							throw new Error(
-								'WebpackDefinePlugin found but not `process.env.ES_BUILD`.'
-							);
-						}
-					});
-				},
+			new SWPrecacheWebpackPlugin({
+				filename: 'sw-esm.js',
+				navigateFallback: 'index.html',
+				navigateFallbackWhitelist: [/^(?!\/__).*/],
+				minify: true,
+				stripPrefix: config.cwd,
+				staticFileGlobsIgnorePatterns: [
+					/(\.[\w]{5}\.js)/,
+					/polyfills(\..*)?\.js$/,
+					/\.map$/,
+					/push-manifest\.json$/,
+					/.DS_Store/,
+					/\.git/,
+				],
 			})
 		);
-
-		if (config.sw) {
-			prodConfig.plugins.push(
-				new SWPrecacheWebpackPlugin({
-					filename: 'sw-esm.js',
-					navigateFallback: 'index.html',
-					navigateFallbackWhitelist: [/^(?!\/__).*/],
-					minify: true,
-					stripPrefix: config.cwd,
-					staticFileGlobsIgnorePatterns: [
-						/(\.[\w]{5}\.js)/,
-						/polyfills(\..*)?\.js$/,
-						/\.map$/,
-						/push-manifest\.json$/,
-						/.DS_Store/,
-						/\.git/,
-					],
-				})
-			);
-		}
 	}
 
 	if (config['inline-css']) {
