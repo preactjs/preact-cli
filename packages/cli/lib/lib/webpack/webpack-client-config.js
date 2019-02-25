@@ -205,7 +205,12 @@ function isProd(config) {
 					},
 					sourceMap: true,
 				}),
-				new OptimizeCssAssetsPlugin({}),
+				new OptimizeCssAssetsPlugin({
+					cssProcessorOptions: {
+						// Fix keyframes in different CSS chunks minifying to colliding names:
+						reduceIdents: false
+					}
+				}),
 			],
 		},
 	};
