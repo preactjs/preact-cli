@@ -145,7 +145,7 @@ function isProd(config) {
 		]
 	};
 
-	if (config.serviceWorker) {
+	if (config.serviceWorker && config.serviceWorker !== 'false') {
 		prodConfig.plugins.push(
 			new SWPrecacheWebpackPlugin({
 				filename: 'sw.js',
