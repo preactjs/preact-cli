@@ -4,7 +4,7 @@ const gittar = require('gittar');
 const fs = require('../fs');
 const { green } = require('kleur');
 const { resolve, join } = require('path');
-const { prompt } = require('inquirer');
+const { prompt } = require('prompts');
 const isValidName = require('validate-npm-package-name');
 const { info, isDir, hasCommand, error, trim, warn } = require('../util');
 const { addScripts, install, initGit, isMissing } = require('../lib/setup');
@@ -45,7 +45,7 @@ module.exports = async function(repo, dest, argv) {
 			type: 'confirm',
 			name: 'enableForce',
 			message: `You are using '--force'. Do you wish to continue?`,
-			default: false,
+			initial: false,
 		});
 
 		if (enableForce) {
