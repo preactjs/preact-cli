@@ -109,6 +109,7 @@ module.exports = function(env) {
 					// ES2015
 					enforce: 'pre',
 					test: /\.m?jsx?$/,
+					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: 'babel-loader',
 					options: Object.assign(
