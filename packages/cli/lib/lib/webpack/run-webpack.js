@@ -22,7 +22,7 @@ async function devBuild(env) {
 
 	let compiler = webpack(config);
 	return new Promise((res, rej) => {
-		compiler.hooks.emit.tapAsync('emit', (compilation, callback) => {
+		compiler.hooks.emit.tapAsync('CliDevPlugin', (compilation, callback) => {
 			let missingDeps = compilation.missingDependencies;
 			let nodeModulesPath = resolve(__dirname, '../../../node_modules');
 
@@ -38,7 +38,7 @@ async function devBuild(env) {
 			callback();
 		});
 
-		compiler.hooks.done.tap('done', stats => {
+		compiler.hooks.done.tap('CliDevPlugin', stats => {
 			let devServer = config.devServer;
 			let protocol = process.env.HTTPS || devServer.https ? 'https' : 'http';
 
@@ -68,7 +68,7 @@ async function devBuild(env) {
 			showStats(stats);
 		});
 
-		compiler.hooks.failed.tap('failed', rej);
+		compiler.hooks.failed.tap('CliDevPlugin', rej);
 
 		let c = Object.assign({}, config.devServer, {
 			stats: { colors: true },
