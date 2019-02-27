@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
+const { CheckerPlugin } = require('awesome-typescript-loader');
 const createBabelConfig = require('../babel-config');
 
 function readJson(file) {
@@ -67,6 +68,12 @@ module.exports = function(env) {
 		compat = 'preact/compat';
 	} catch (e) {}
 
+	let babelConfig = Object.assign(
+		{ babelrc: false },
+		createBabelConfig(env, { browsers }),
+		babelrc // intentionally overwrite our settings
+	);
+
 	return {
 		context: src,
 
@@ -87,7 +94,7 @@ module.exports = function(env) {
 			],
 			alias: {
 				style: source('style'),
-				'preact-cli-entrypoint': source('index.js'),
+				'preact-cli-entrypoint': source('index'),
 				// preact-compat aliases for supporting React dependencies:
 				react: compat,
 				'react-dom': compat,
@@ -108,17 +115,26 @@ module.exports = function(env) {
 		module: {
 			rules: [
 				{
+					enforce: 'pre',
+					test: /\.tsx?$/,
+					loader: 'awesome-typescript-loader',
+					options: {
+						silent: true,
+						useBabel: true,
+						useCache: true,
+						babelOptions: babelConfig,
+						babelCore: '@babel/core',
+						configFileName: 'tsconfig.json',
+					},
+				},
+				{
 					// ES2015
 					enforce: 'pre',
 					test: /\.m?jsx?$/,
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: 'babel-loader',
-					options: Object.assign(
-						{ babelrc: false },
-						createBabelConfig(env, { browsers }),
-						babelrc // intentionally overwrite our settings
-					),
+					options: babelConfig,
 				},
 				{
 					// LESS
@@ -260,6 +276,7 @@ module.exports = function(env) {
 				clear: true,
 			}),
 			new SizePlugin(),
+			new CheckerPlugin(),
 		].concat(
 			isProd
 				? [
