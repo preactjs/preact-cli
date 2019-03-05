@@ -1,6 +1,6 @@
 const rimraf = require('rimraf');
 const { resolve } = require('path');
-const { promisify } = require('bluebird');
+const { promisify } = require('util');
 const { isDir, error } = require('../util');
 const runWebpack = require('../lib/webpack/run-webpack');
 

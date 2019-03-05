@@ -1,5 +1,5 @@
 const fetch = require('isomorphic-unfetch');
-const { bold, magenta } = require('chalk');
+const { bold, magenta } = require('kleur');
 const { error, info } = require('../util');
 
 const REPOS_URL = 'https://api.github.com/users/preactjs-templates/repos';

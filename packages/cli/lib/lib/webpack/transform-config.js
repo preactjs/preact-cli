@@ -1,6 +1,6 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
-const fs = require('fs.promised');
+const fs = require('../../fs');
 const { error } = require('../../util');
 
 const FILE = 'preact.config';

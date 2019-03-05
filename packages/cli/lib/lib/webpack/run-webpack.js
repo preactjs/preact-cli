@@ -3,8 +3,8 @@ const webpack = require('webpack');
 const getPort = require('get-port');
 const { resolve } = require('path');
 const clear = require('console-clear');
-const { writeFile } = require('fs.promised');
-const { bold, red, green, magenta } = require('chalk');
+const { writeFile } = require('../../fs');
+const { bold, red, green, magenta } = require('kleur');
 const DevServer = require('webpack-dev-server');
 const clientConfig = require('./webpack-client-config');
 const serverConfig = require('./webpack-server-config');
@@ -18,11 +18,11 @@ async function devBuild(env) {
 
 	let userPort =
 		parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
-	let port = await getPort(userPort);
+	let port = await getPort({ port: userPort });
 
 	let compiler = webpack(config);
 	return new Promise((res, rej) => {
-		compiler.plugin('emit', (compilation, callback) => {
+		compiler.hooks.emit.tapAsync('CliDevPlugin', (compilation, callback) => {
 			let missingDeps = compilation.missingDependencies;
 			let nodeModulesPath = resolve(__dirname, '../../../node_modules');
 
@@ -38,7 +38,7 @@ async function devBuild(env) {
 			callback();
 		});
 
-		compiler.plugin('done', stats => {
+		compiler.hooks.done.tap('CliDevPlugin', stats => {
 			let devServer = config.devServer;
 			let protocol = process.env.HTTPS || devServer.https ? 'https' : 'http';
 
@@ -48,7 +48,7 @@ async function devBuild(env) {
 			let serverAddr = `${protocol}://${host}:${bold(port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
 
-			clear();
+			clear(true);
 
 			if (stats.hasErrors()) {
 				process.stdout.write(red('Build failed!\n\n'));
@@ -68,7 +68,7 @@ async function devBuild(env) {
 			showStats(stats);
 		});
 
-		compiler.plugin('failed', rej);
+		compiler.hooks.failed.tap('CliDevPlugin', rej);
 
 		let c = Object.assign({}, config.devServer, {
 			stats: { colors: true },
