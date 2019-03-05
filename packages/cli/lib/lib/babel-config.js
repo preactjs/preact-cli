@@ -4,6 +4,12 @@ module.exports = function(env, options = {}) {
 	return {
 		presets: [
 			[
+				require.resolve('@babel/preset-typescript'),
+				{
+					jsxPragma: 'h',
+				},
+			],
+			[
 				require.resolve('@babel/preset-env'),
 				{
 					loose: true,

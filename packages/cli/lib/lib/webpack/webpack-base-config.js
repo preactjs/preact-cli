@@ -9,7 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
-const { CheckerPlugin } = require('awesome-typescript-loader');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const createBabelConfig = require('../babel-config');
 
 function readJson(file) {
@@ -115,22 +115,9 @@ module.exports = function(env) {
 		module: {
 			rules: [
 				{
-					enforce: 'pre',
-					test: /\.tsx?$/,
-					loader: 'awesome-typescript-loader',
-					options: {
-						silent: true,
-						useBabel: true,
-						useCache: true,
-						babelOptions: babelConfig,
-						babelCore: '@babel/core',
-						configFileName: 'tsconfig.json',
-					},
-				},
-				{
 					// ES2015
 					enforce: 'pre',
-					test: /\.m?jsx?$/,
+					test: /\.m?[jt]sx?$/,
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: 'babel-loader',
@@ -276,7 +263,11 @@ module.exports = function(env) {
 				clear: true,
 			}),
 			new SizePlugin(),
-			new CheckerPlugin(),
+			new ForkTsCheckerWebpackPlugin({
+				checkSyntacticErrors: true,
+				async: !isProd,
+				workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE,
+			}),
 		].concat(
 			isProd
 				? [
