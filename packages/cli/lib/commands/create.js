@@ -1,5 +1,6 @@
 const ora = require('ora');
-const glob = require('tiny-glob');
+const { promisify } = require('util');
+const glob = promisify(require('glob').glob);
 const gittar = require('gittar');
 const fs = require('../fs');
 const { green } = require('kleur');

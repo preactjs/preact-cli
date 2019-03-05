@@ -3,7 +3,8 @@ const { relative, resolve } = require('path');
 const { stat } = require('../../lib/fs');
 const minimatch = require('minimatch');
 const pRetry = require('p-retry');
-const glob = require('tiny-glob');
+const { promisify } = require('util');
+const glob = promisify(require('glob').glob);
 
 const PER = 0.05; // % diff
 const LOG = !!process.env.WITH_LOG;
