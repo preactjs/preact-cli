@@ -47,6 +47,16 @@ function findAllNodeModules(startDir) {
 	}
 }
 
+function resolveTsconfig(cwd, isProd, fallback) {
+	if (existsSync(resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`))) {
+		return resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`);
+	} else if (existsSync(resolve(cwd, 'tsconfig.json'))) {
+		return resolve(cwd, 'tsconfig.json');
+	} else {
+		return fallback;
+	}
+}
+
 module.exports = function(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
 
@@ -72,6 +82,12 @@ module.exports = function(env) {
 		{ babelrc: false },
 		createBabelConfig(env, { browsers }),
 		babelrc // intentionally overwrite our settings
+	);
+
+	let tsconfig = resolveTsconfig(
+		cwd,
+		isProd,
+		resolve(__dirname, '../../resources/tsconfig.json')
 	);
 
 	return {
@@ -266,7 +282,8 @@ module.exports = function(env) {
 			new ForkTsCheckerWebpackPlugin({
 				checkSyntacticErrors: true,
 				async: !isProd,
-				workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE,
+				tsconfig: tsconfig,
+				silent: !isWatch,
 			}),
 		].concat(
 			isProd
