@@ -6,6 +6,7 @@ const SizePlugin = require('size-plugin');
 const autoprefixer = require('autoprefixer');
 const requireRelative = require('require-relative');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
 const createBabelConfig = require('../babel-config');
@@ -66,6 +67,7 @@ module.exports = function(env) {
 		resolve: {
 			modules: ['node_modules', ...nodeModules],
 			extensions: [
+				'.mjs',
 				'.js',
 				'.jsx',
 				'.ts',
@@ -107,7 +109,9 @@ module.exports = function(env) {
 				{
 					// ES2015
 					enforce: 'pre',
-					test: /\.jsx?$/,
+					test: /\.m?jsx?$/,
+					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
+					type: 'javascript/auto',
 					loader: 'babel-loader',
 					options: Object.assign(
 						{ babelrc: false },
@@ -145,7 +149,7 @@ module.exports = function(env) {
 								loader: 'sass-loader',
 								options: {
 									sourceMap: true,
-									includePaths: [nodeModules],
+									includePaths: [...nodeModules],
 								},
 							},
 						},
@@ -221,7 +225,7 @@ module.exports = function(env) {
 					loader: 'raw-loader',
 				},
 				{
-					test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
+					test: /\.(svg|woff2?|ttf|eot|jpe?g|png|webp|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
 					loader: isProd ? 'file-loader' : 'url-loader',
 				},
 			],
@@ -236,7 +240,10 @@ module.exports = function(env) {
 			}),
 			new webpack.ProvidePlugin({
 				h: ['preact', 'h'],
+				Fragment: ['preact', 'Fragment'],
 			}),
+			// Fix for https://github.com/webpack-contrib/mini-css-extract-plugin/issues/151
+			new FixStyleOnlyEntriesPlugin(),
 			// Extract CSS
 			new MiniCssExtractPlugin({
 				filename: isProd ? '[name].[contenthash:5].css' : '[name].css',

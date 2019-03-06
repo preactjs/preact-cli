@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { readFile } = require('fs.promised');
+const { readFile } = require('../lib/fs');
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
 const { snapshot, isMatch } = require('./lib/utils');
@@ -9,6 +9,8 @@ const images = require('./images/build');
 // TODO
 // const ours = ['empty', 'full', 'simple', 'root'];
 const ours = ['default'];
+
+const prerenderUrlFiles = ['prerender-urls.json', 'prerender-urls.js'];
 
 async function getIndex(dir, file = 'index.html') {
 	file = join(dir, `build/${file}`);
@@ -59,25 +61,39 @@ describe('preact build', () => {
 		expect(async () => await build(app)).not;
 	});
 
-	it('should prerender the routes provided with `prerender-urls.json`', async () => {
-		let dir = await subject('multiple-prerendering');
-		await build(dir);
+	prerenderUrlFiles.forEach(prerenderUrls => {
+		it(`should prerender the routes provided with '${prerenderUrls}'`, async () => {
+			let dir = await subject('multiple-prerendering');
+			await build(dir, { prerenderUrls });
 
-		const body1 = await getIndex(dir);
-		looksLike(body1, images.prerender.home);
+			const body1 = await getIndex(dir);
+			looksLike(body1, images.prerender.home);
 
-		const body2 = await getIndex(dir, 'route66/index.html');
-		looksLike(body2, images.prerender.route);
+			const body2 = await getIndex(dir, 'route66/index.html');
+			looksLike(body2, images.prerender.route);
 
-		const head1 = await getHead(dir);
-		expect(head1).toEqual(
-			expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.home))
-		);
+			const body3 = await getIndex(dir, 'custom/index.html');
+			looksLike(body3, images.prerender.custom);
 
-		const head2 = await getHead(dir, 'route66/index.html');
-		expect(head2).toEqual(
-			expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.route66))
-		);
+			const head1 = await getHead(dir);
+			expect(head1).toEqual(
+				expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.home))
+			);
+
+			const head2 = await getHead(dir, 'route66/index.html');
+			expect(head2).toEqual(
+				expect.stringMatching(
+					getRegExpFromMarkup(images.prerender.heads.route66)
+				)
+			);
+
+			const head3 = await getHead(dir, 'custom/index.html');
+			expect(head3).toEqual(
+				expect.stringMatching(
+					getRegExpFromMarkup(images.prerender.heads.custom)
+				)
+			);
+		});
 	});
 
 	it('should preload correct files', async () => {

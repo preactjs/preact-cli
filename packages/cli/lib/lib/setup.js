@@ -70,7 +70,7 @@ exports.isMissing = function(argv) {
 
 	const ask = (name, message, val) => {
 		let type = val === void 0 ? 'input' : 'confirm';
-		out.push({ name, message, type, default: val });
+		out.push({ name, message, type, initial: val });
 	};
 
 	// Required data

@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const sade = require('sade');
-global.Promise = require('bluebird');
 const notifier = require('update-notifier');
 const { error } = require('./util');
 const pkg = require('../package');
@@ -78,7 +77,9 @@ prog
 	.describe('Start a live-reload server for development')
 	.option('--src', 'Specify source directory', 'src')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
 	.option('--sw', 'Generate and attach a Service Worker', false)
+	.option('--rhl', 'Enable react hot loader', false)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--https', 'Run server with HTTPS protocol')
 	.option('--key', 'Path to PEM key for custom SSL certificate')

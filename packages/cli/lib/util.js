@@ -1,7 +1,7 @@
-const chalk = require('chalk');
+const { blue, yellow, red } = require('kleur');
 const { normalize } = require('path');
 const { statSync, existsSync } = require('fs');
-const logSymbols = require('log-symbols');
+const symbols = require('./symbols');
 const which = require('which');
 
 exports.isDir = function(str) {
@@ -17,19 +17,17 @@ exports.trim = function(str) {
 };
 
 exports.info = function(text, code) {
-	process.stderr.write(logSymbols.info + chalk.blue(' INFO ') + text + '\n');
+	process.stderr.write(symbols.info + blue(' INFO ') + text + '\n');
 	code && process.exit(code);
 };
 
 exports.warn = function(text, code) {
-	process.stdout.write(
-		logSymbols.warning + chalk.yellow(' WARN ') + text + '\n'
-	);
+	process.stdout.write(symbols.warning + yellow(' WARN ') + text + '\n');
 	code && process.exit(code);
 };
 
 exports.error = function(text, code) {
-	process.stderr.write(logSymbols.error + chalk.red(' ERROR ') + text + '\n');
+	process.stderr.write(symbols.error + red(' ERROR ') + text + '\n');
 	code && process.exit(code);
 };
 
