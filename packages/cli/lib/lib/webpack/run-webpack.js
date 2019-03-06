@@ -13,7 +13,7 @@ const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
 	let config = clientConfig(env);
-	
+
 	await transformConfig(env, config);
 
 	let userPort =
