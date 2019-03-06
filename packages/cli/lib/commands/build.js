@@ -2,7 +2,7 @@ const rimraf = require('rimraf');
 const { resolve } = require('path');
 const { promisify } = require('util');
 const { isDir, error } = require('../util');
-const { yellow } = require('chalk');
+const { yellow } = require('kleur');
 const runWebpack = require('../lib/webpack/run-webpack');
 
 const toBool = val => val === void 0 || (val === 'false' ? false : val);
