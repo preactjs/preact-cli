@@ -1,9 +1,9 @@
 const SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 const BabelEsmPlugin = require('babel-esm-plugin');
-const {DefinePlugin} = require('webpack');
+const { DefinePlugin } = require('webpack');
 const fs = require('fs');
-const {resolve} = require('path');
-const {blue} = require('chalk');
+const { resolve } = require('path');
+const { blue } = require('chalk');
 
 class SWBuilderPlugin {
 	constructor(config) {
@@ -17,75 +17,96 @@ class SWBuilderPlugin {
 		const exists = fs.existsSync(resolve(`${this.src_}/sw.js`));
 		if (exists) {
 			if (exists) {
-				console.log(blue('⚛️ Detected custom sw.js: compiling instead of default Service Worker.'));
-			}
-			else {
-				console.log(blue('⚛️ No custom sw.js detected: compiling default Service Worker.'));
+				console.log(
+					blue(
+						'⚛️ Detected custom sw.js: compiling instead of default Service Worker.'
+					)
+				);
+			} else {
+				console.log(
+					blue('⚛️ No custom sw.js detected: compiling default Service Worker.')
+				);
 			}
 		}
-		compiler.hooks.make.tapAsync(this.constructor.name, (compilation, callback) => {
-			const outputOptions = compiler.options;
-			outputOptions.target = 'webworker';
-			outputOptions.output.filename = "[name].js";
+		compiler.hooks.make.tapAsync(
+			this.constructor.name,
+			(compilation, callback) => {
+				const outputOptions = compiler.options;
+				const plugins = [
+					new BabelEsmPlugin({
+						filename: '[name]-esm.js',
+						excludedPlugins: ['BabelEsmPlugin', this.constructor.name],
+						beforeStartExecution: plugins => {
+							plugins.forEach(plugin => {
+								if (plugin.constructor.name === 'DefinePlugin') {
+									if (!plugin.definitions)
+										throw Error(
+											'ESM Error:  DefinePlugin found without definitions.'
+										);
+									plugin.definitions['process.env.ES_BUILD'] = true;
+								}
+							});
+						},
+					}),
+					new DefinePlugin({
+						'process.env.ENABLE_BROTLI': this.brotli_,
+						'process.env.ES_BUILD': false,
+						'process.env.NODE_ENV': 'production',
+					}),
+				];
 
-			const plugins = [
-				new BabelEsmPlugin({
-					filename: '[name]-esm.js',
-					excludedPlugins: ['BabelEsmPlugin', this.constructor.name],
-					beforeStartExecution: (plugins) => {
-						plugins.forEach(plugin => {
-							if (plugin.constructor.name === 'DefinePlugin') {
-								if (!plugin.definitions) throw Error('ESM Error:  DefinePlugin found without definitions.');
-								plugin.definitions['process.env.ES_BUILD'] = true;
+				/**
+				 * We are deliberatly not passing plugins in createChildCompiler.
+				 * All webpack does with plugins is to call `apply` method on them
+				 * with the childCompiler.
+				 * But by then we haven't given childCompiler a fileSystem or other options
+				 * which a few plugins might expect while execution the apply method.
+				 * We do call the `apply` method of all plugins by ourselves later in the code
+				 */
+				const childCompiler = compilation.createChildCompiler(
+					this.constructor.name
+				);
+
+				childCompiler.context = compiler.context;
+				childCompiler.options = Object.assign({}, outputOptions);
+				childCompiler.options.entry = {
+					sw: swSrc,
+				};
+				childCompiler.options.target = 'webworker';
+				childCompiler.options.output = JSON.parse(
+					JSON.stringify(childCompiler.options.output)
+				);
+				childCompiler.options.output.filename = '[name].js';
+
+				// Call the `apply` method of all plugins by ourselves.
+				if (Array.isArray(plugins)) {
+					for (const plugin of plugins) {
+						plugin.apply(childCompiler);
+					}
+				}
+
+				childCompiler.apply(
+					new SingleEntryPlugin(compiler.context, swSrc, 'sw')
+				);
+
+				compilation.hooks.additionalAssets.tapAsync(
+					this.constructor.name,
+					childProcessDone => {
+						childCompiler.runAsChild((err, entries, childCompilation) => {
+							if (!err) {
+								compilation.assets = Object.assign(
+									childCompilation.assets,
+									compilation.assets
+								);
 							}
+							err && compilation.errors.push(err);
+							childProcessDone();
 						});
 					}
-				}),
-				new DefinePlugin({
-					'process.env.ENABLE_BROTLI': this.brotli_,
-					'process.env.ES_BUILD': false,
-					'process.env.NODE_ENV': 'production',
-				})
-			];
-
-			/**
-			 * We are deliberatly not passing plugins in createChildCompiler.
-			 * All webpack does with plugins is to call `apply` method on them
-			 * with the childCompiler.
-			 * But by then we haven't given childCompiler a fileSystem or other options
-			 * which a few plugins might expect while execution the apply method.
-			 * We do call the `apply` method of all plugins by ourselves later in the code
-			 */
-			const childCompiler = compilation.createChildCompiler(this.constructor.name, outputOptions.output);
-
-			childCompiler.context = compiler.context;
-			childCompiler.options = compiler.options;
-			childCompiler.options.entry = {
-				sw: swSrc
-			};
-
-			// Call the `apply` method of all plugins by ourselves.
-			if (Array.isArray(plugins)) {
-				for (const plugin of plugins) {
-					plugin.apply(childCompiler);
-				}
+				);
+				callback();
 			}
-
-			childCompiler.apply(new SingleEntryPlugin(compiler.context, swSrc, 'sw'));
-
-			compilation.hooks.additionalAssets.tapAsync(this.constructor.name, (childProcessDone) => {
-				childCompiler.runAsChild((err, entries, childCompilation) => {
-					if (!err) {
-						compilation.assets = Object.assign(childCompilation.assets,
-							compilation.assets
-						);
-					}
-					err && compilation.errors.push(err);
-					childProcessDone();
-				});
-			});
-			callback();
-		});
+		);
 	}
 }
 
