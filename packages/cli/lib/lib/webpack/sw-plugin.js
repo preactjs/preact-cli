@@ -73,8 +73,10 @@ class SWBuilderPlugin {
 					sw: swSrc,
 				};
 				childCompiler.options.target = 'webworker';
-				childCompiler.options.output = JSON.parse(
-					JSON.stringify(childCompiler.options.output)
+				childCompiler.options.output = Object.assign(
+					{},
+					childCompiler.options.output,
+					{ filename: '[name].js' }
 				);
 				childCompiler.options.output.filename = '[name].js';
 
