@@ -18,15 +18,15 @@ function readJson(file) {
 }
 
 // attempt to resolve a dependency, giving $CWD/node_modules priority:
-function resolveDep(dep, cwd) {
-	try {
-		return requireRelative.resolve(dep, cwd || process.cwd());
-	} catch (e) {}
-	try {
-		return require.resolve(dep);
-	} catch (e) {}
-	return dep;
-}
+// function resolveDep(dep, cwd) {
+// 	try {
+// 		return requireRelative.resolve(dep, cwd || process.cwd());
+// 	} catch (e) {}
+// 	try {
+// 		return require.resolve(dep);
+// 	} catch (e) {}
+// 	return dep;
+// }
 
 function findAllNodeModules(startDir) {
 	let dir = path.resolve(startDir);
@@ -63,12 +63,9 @@ module.exports = function(env) {
 
 	let compat = 'preact-compat';
 	try {
-		compat = requireRelative.resolve('preact/compat', cwd);
-	} catch (e) {
-		try {
-			compat = requireRelative.resolve('preact-compat', cwd);
-		} catch (e) {}
-	}
+		requireRelative.resolve('preact/compat', cwd);
+		compat = 'preact/compat';
+	} catch (e) {}
 
 	return {
 		context: src,
@@ -91,7 +88,6 @@ module.exports = function(env) {
 			alias: {
 				style: source('style'),
 				'preact-cli-entrypoint': source('index.js'),
-				preact$: resolveDep('preact', cwd),
 				// preact-compat aliases for supporting React dependencies:
 				react: compat,
 				'react-dom': compat,
