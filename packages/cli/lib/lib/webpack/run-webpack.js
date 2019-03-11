@@ -120,13 +120,13 @@ function showStats(stats) {
 	if (stats.hasErrors()) {
 		allFields(stats, 'errors')
 			.map(stripLoaderPrefix)
-			.forEach(error);
+			.forEach(msg => error(msg));
 	}
 
 	if (stats.hasWarnings()) {
 		allFields(stats, 'warnings')
 			.map(stripLoaderPrefix)
-			.forEach(warn);
+			.forEach(msg => warn(msg));
 	}
 
 	return stats;
