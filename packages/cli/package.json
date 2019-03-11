@@ -18,7 +18,12 @@
     ],
     "testEnvironment": "node",
     "testPathIgnorePatterns": [
-      "tests/output"
+      "<rootDir>/tests/output",
+      "<rootDir>/tests/subjects"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/tests/output",
+      "<rootDir>/tests/subjects"
     ]
   },
   "engines": {
