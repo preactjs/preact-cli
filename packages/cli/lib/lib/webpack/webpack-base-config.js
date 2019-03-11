@@ -61,11 +61,20 @@ module.exports = function(env) {
 	let cliNodeModules = findAllNodeModules(__dirname);
 	let nodeModules = [...new Set([...userNodeModules, ...cliNodeModules])];
 
+	let compat = 'preact-compat';
+	try {
+		compat = requireRelative.resolve('preact/compat', cwd);
+	} catch (e) {
+		try {
+			compat = requireRelative.resolve('preact-compat', cwd);
+		} catch (e) {}
+	}
+
 	return {
 		context: src,
 
 		resolve: {
-			modules: ['node_modules', ...nodeModules],
+			modules: [...nodeModules, 'node_modules'],
 			extensions: [
 				'.mjs',
 				'.js',
@@ -82,14 +91,10 @@ module.exports = function(env) {
 			alias: {
 				style: source('style'),
 				'preact-cli-entrypoint': source('index.js'),
-				preact$: resolveDep(
-					isProd ? 'preact/dist/preact.min.js' : 'preact',
-					cwd
-				),
+				preact$: resolveDep('preact', cwd),
 				// preact-compat aliases for supporting React dependencies:
-				react: 'preact-compat',
-				'react-dom': 'preact-compat',
-				'create-react-class': 'preact-compat/lib/create-react-class',
+				react: compat,
+				'react-dom': compat,
 				'react-addons-css-transition-group': 'preact-css-transition-group',
 				'preact-cli/async-component': require.resolve(
 					'@preact/async-loader/async'
