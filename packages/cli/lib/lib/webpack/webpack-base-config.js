@@ -6,7 +6,7 @@ const SizePlugin = require('size-plugin');
 const autoprefixer = require('autoprefixer');
 const requireRelative = require('require-relative');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
+const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
 const createBabelConfig = require('../babel-config');
@@ -244,8 +244,7 @@ module.exports = function(env) {
 				Fragment: ['preact', 'Fragment'],
 			}),
 			// Fix for https://github.com/webpack-contrib/mini-css-extract-plugin/issues/151
-			// Broken https://github.com/fqborges/webpack-fix-style-only-entries/pull/13
-			// new FixStyleOnlyEntriesPlugin(),
+			new FixStyleOnlyEntriesPlugin(),
 			// Extract CSS
 			new MiniCssExtractPlugin({
 				filename: isProd ? '[name].[contenthash:5].css' : '[name].css',
