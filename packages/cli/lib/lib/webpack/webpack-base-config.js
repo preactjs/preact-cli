@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const createBabelConfig = require('../babel-config');
 
 function readJson(file) {
@@ -46,6 +47,16 @@ function findAllNodeModules(startDir) {
 	}
 }
 
+function resolveTsconfig(cwd, isProd, fallback) {
+	if (existsSync(resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`))) {
+		return resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`);
+	} else if (existsSync(resolve(cwd, 'tsconfig.json'))) {
+		return resolve(cwd, 'tsconfig.json');
+	} else {
+		return fallback;
+	}
+}
+
 module.exports = function(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
 
@@ -67,6 +78,18 @@ module.exports = function(env) {
 		compat = 'preact/compat';
 	} catch (e) {}
 
+	let babelConfig = Object.assign(
+		{ babelrc: false },
+		createBabelConfig(env, { browsers }),
+		babelrc // intentionally overwrite our settings
+	);
+
+	let tsconfig = resolveTsconfig(
+		cwd,
+		isProd,
+		resolve(__dirname, '../../resources/tsconfig.json')
+	);
+
 	return {
 		context: src,
 
@@ -87,7 +110,7 @@ module.exports = function(env) {
 			],
 			alias: {
 				style: source('style'),
-				'preact-cli-entrypoint': source('index.js'),
+				'preact-cli-entrypoint': source('index'),
 				// preact-compat aliases for supporting React dependencies:
 				react: compat,
 				'react-dom': compat,
@@ -110,15 +133,11 @@ module.exports = function(env) {
 				{
 					// ES2015
 					enforce: 'pre',
-					test: /\.m?jsx?$/,
+					test: /\.m?[jt]sx?$/,
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: 'babel-loader',
-					options: Object.assign(
-						{ babelrc: false },
-						createBabelConfig(env, { browsers }),
-						babelrc // intentionally overwrite our settings
-					),
+					options: babelConfig,
 				},
 				{
 					// LESS
@@ -260,6 +279,12 @@ module.exports = function(env) {
 				clear: true,
 			}),
 			new SizePlugin(),
+			new ForkTsCheckerWebpackPlugin({
+				checkSyntacticErrors: true,
+				async: !isProd,
+				tsconfig: tsconfig,
+				silent: !isWatch,
+			}),
 		].concat(
 			isProd
 				? [
