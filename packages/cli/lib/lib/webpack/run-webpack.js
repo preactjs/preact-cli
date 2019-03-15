@@ -103,12 +103,10 @@ async function prodBuild(env) {
 function runCompiler(compiler) {
 	return new Promise((res, rej) => {
 		compiler.run((err, stats) => {
-			if (stats && stats.hasErrors()) {
-				showStats(stats);
-			}
+			showStats(stats);
 
 			if (err || (stats && stats.hasErrors())) {
-				rej(red('Build failed! ' + err));
+				rej(red('Build failed! ' + (err || '')));
 			}
 
 			res(stats);

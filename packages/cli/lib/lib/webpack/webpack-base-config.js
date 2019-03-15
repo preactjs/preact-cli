@@ -18,15 +18,15 @@ function readJson(file) {
 }
 
 // attempt to resolve a dependency, giving $CWD/node_modules priority:
-function resolveDep(dep, cwd) {
-	try {
-		return requireRelative.resolve(dep, cwd || process.cwd());
-	} catch (e) {}
-	try {
-		return require.resolve(dep);
-	} catch (e) {}
-	return dep;
-}
+// function resolveDep(dep, cwd) {
+// 	try {
+// 		return requireRelative.resolve(dep, cwd || process.cwd());
+// 	} catch (e) {}
+// 	try {
+// 		return require.resolve(dep);
+// 	} catch (e) {}
+// 	return dep;
+// }
 
 function findAllNodeModules(startDir) {
 	let dir = path.resolve(startDir);
@@ -61,11 +61,17 @@ module.exports = function(env) {
 	let cliNodeModules = findAllNodeModules(__dirname);
 	let nodeModules = [...new Set([...userNodeModules, ...cliNodeModules])];
 
+	let compat = 'preact-compat';
+	try {
+		requireRelative.resolve('preact/compat', cwd);
+		compat = 'preact/compat';
+	} catch (e) {}
+
 	return {
 		context: src,
 
 		resolve: {
-			modules: ['node_modules', ...nodeModules],
+			modules: [...nodeModules, 'node_modules'],
 			extensions: [
 				'.mjs',
 				'.js',
@@ -82,14 +88,9 @@ module.exports = function(env) {
 			alias: {
 				style: source('style'),
 				'preact-cli-entrypoint': source('index.js'),
-				preact$: resolveDep(
-					isProd ? 'preact/dist/preact.min.js' : 'preact',
-					cwd
-				),
 				// preact-compat aliases for supporting React dependencies:
-				react: 'preact-compat',
-				'react-dom': 'preact-compat',
-				'create-react-class': 'preact-compat/lib/create-react-class',
+				react: compat,
+				'react-dom': compat,
 				'react-addons-css-transition-group': 'preact-css-transition-group',
 				'preact-cli/async-component': require.resolve(
 					'@preact/async-loader/async'
