@@ -27,7 +27,6 @@ module.exports = function(env, options = {}) {
 			[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
 			require.resolve('@babel/plugin-proposal-class-properties'),
 			require.resolve('@babel/plugin-proposal-object-rest-spread'),
-			require.resolve('@babel/plugin-transform-react-constant-elements'),
 			isProd &&
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
 			[
