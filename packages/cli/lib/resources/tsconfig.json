@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+
+		"module": "esnext",
+		"target": "esnext",
+
+		"noEmit": true
+	},
+	"exclude": ["*"]
+}
