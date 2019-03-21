@@ -21,7 +21,7 @@ const cleanFilename = name =>
 		''
 	);
 
-function clientConfig(env) {
+async function clientConfig(env) {
 	const { isProd, source, src /*, port? */ } = env;
 
 	let entry = {
@@ -84,7 +84,7 @@ function clientConfig(env) {
 
 		plugins: [
 			new PushManifestPlugin(env),
-			...RenderHTMLPlugin(env),
+			...(await RenderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
 			new CopyWebpackPlugin(
 				[
@@ -208,8 +208,8 @@ function isProd(config) {
 				new OptimizeCssAssetsPlugin({
 					cssProcessorOptions: {
 						// Fix keyframes in different CSS chunks minifying to colliding names:
-						reduceIdents: false
-					}
+						reduceIdents: false,
+					},
 				}),
 			],
 		},
@@ -304,10 +304,10 @@ function isDev(config) {
 	};
 }
 
-module.exports = function(env) {
+module.exports = async function(env) {
 	return merge(
 		baseConfig(env),
-		clientConfig(env),
+		await clientConfig(env),
 		(env.isProd ? isProd : isDev)(env)
 	);
 };

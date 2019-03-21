@@ -5,9 +5,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const { warn } = require('../../util');
+const { yellow } = require('kleur');
+
 let template = resolve(__dirname, '../../resources/template.html');
 
-module.exports = function(config) {
+module.exports = async function(config) {
 	const { cwd, dest, isProd, src } = config;
 	const inProjectTemplatePath = resolve(cwd, dest, '../template.html');
 	if (existsSync(inProjectTemplatePath)) {
@@ -66,7 +68,9 @@ module.exports = function(config) {
 					result = result.default();
 				}
 				if (typeof result === 'function') {
-					result = result();
+					console.log(yellow(`Fetching URLs from ${config.prerenderUrls}`));
+					result = await result();
+					console.log(yellow(`Fetched URLs from ${config.prerenderUrls}`));
 				}
 				if (typeof result === 'string') {
 					result = JSON.parse(result);
