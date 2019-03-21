@@ -9,7 +9,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CrittersPlugin = require('critters-webpack-plugin');
-const RenderHTMLPlugin = require('./render-html-plugin');
+const renderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
@@ -84,7 +84,7 @@ async function clientConfig(env) {
 
 		plugins: [
 			new PushManifestPlugin(env),
-			...(await RenderHTMLPlugin(env)),
+			...(await renderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
 			new CopyWebpackPlugin(
 				[
