@@ -9,10 +9,11 @@ const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CrittersPlugin = require('critters-webpack-plugin');
-const renderHTMLPlugin = require('./render-html-plugin');
-const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
+const requireRelative = require('require-relative');
+const renderHTMLPlugin = require('./render-html-plugin');
+const PushManifestPlugin = require('./push-manifest');
 const { normalizePath } = require('../../util');
 
 const cleanFilename = name =>
@@ -22,7 +23,7 @@ const cleanFilename = name =>
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src /*, port? */ } = env;
+	const { isProd, source, src, cwd /*, port? */ } = env;
 
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
@@ -37,6 +38,13 @@ async function clientConfig(env) {
 		];
 	}
 
+	// FIXME: async loader is broken for preact X, this is a workaround
+	let preactX = false;
+	try {
+		requireRelative.resolve('preact/compat', cwd);
+		preactX = true;
+	} catch (e) {}
+
 	return {
 		entry: entry,
 		output: {
@@ -48,38 +56,45 @@ async function clientConfig(env) {
 
 		resolveLoader: {
 			alias: {
-				async: require.resolve('@preact/async-loader'),
+				async: preactX
+					? resolve(__dirname, './dummy-loader')
+					: require.resolve('@preact/async-loader'),
 			},
 		},
 
 		// automatic async components :)
 		module: {
-			rules: [
-				{
-					test: /\.[jt]sx?$/,
-					include: [
-						filter(source('routes') + '/{*,*/index}.{js,jsx,ts,tsx}'),
-						filter(
-							source('components') +
-								'/{routes,async}/{*,*/index}.{js,jsx,ts,tsx}'
-						),
-					],
-					loader: require.resolve('@preact/async-loader'),
-					options: {
-						name(filename) {
-							filename = normalizePath(filename);
-							let relative = filename.replace(normalizePath(src), '');
-							if (!relative.includes('/routes/')) return false;
-							return 'route-' + cleanFilename(relative);
+			rules: preactX
+				? []
+				: [
+						{
+							test: /\.[jt]sx?$/,
+							include: [
+								filter(source('routes') + '/{*,*/index}.{js,jsx,ts,tsx}'),
+								filter(
+									source('components') +
+										'/{routes,async}/{*,*/index}.{js,jsx,ts,tsx}'
+								),
+							],
+							loader: require.resolve('@preact/async-loader'),
+							options: {
+								name(filename) {
+									filename = normalizePath(filename);
+									let relative = filename.replace(normalizePath(src), '');
+									if (!relative.includes('/routes/')) return false;
+									return 'route-' + cleanFilename(relative);
+								},
+								formatName(filename) {
+									filename = normalizePath(filename);
+									let relative = filename.replace(
+										normalizePath(source('.')),
+										''
+									);
+									return cleanFilename(relative);
+								},
+							},
 						},
-						formatName(filename) {
-							filename = normalizePath(filename);
-							let relative = filename.replace(normalizePath(source('.')), '');
-							return cleanFilename(relative);
-						},
-					},
-				},
-			],
+				  ],
 		},
 
 		plugins: [
