@@ -5,8 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const { warn } = require('../../util');
-const { yellow } = require('kleur');
-
+const { info } = require('../../util');
 let template = resolve(__dirname, '../../resources/template.html');
 
 module.exports = async function(config) {
@@ -68,9 +67,9 @@ module.exports = async function(config) {
 					result = result.default();
 				}
 				if (typeof result === 'function') {
-					console.log(yellow(`Fetching URLs from ${config.prerenderUrls}`));
+					info(`Fetching URLs from ${config.prerenderUrls}`);
 					result = await result();
-					console.log(yellow(`Fetched URLs from ${config.prerenderUrls}`));
+					info(`Fetched URLs from ${config.prerenderUrls}`);
 				}
 				if (typeof result === 'string') {
 					result = JSON.parse(result);
