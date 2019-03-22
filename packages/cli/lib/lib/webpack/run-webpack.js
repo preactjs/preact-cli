@@ -12,7 +12,7 @@ const transformConfig = require('./transform-config');
 const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
-	let config = clientConfig(env);
+	let config = await clientConfig(env);
 
 	await transformConfig(env, config);
 
@@ -81,7 +81,7 @@ async function devBuild(env) {
 }
 
 async function prodBuild(env) {
-	let config = clientConfig(env);
+	let config = await clientConfig(env);
 	await transformConfig(env, config);
 
 	if (env.prerender) {

@@ -10,7 +10,11 @@ const images = require('./images/build');
 // const ours = ['empty', 'full', 'simple', 'root'];
 const ours = ['default'];
 
-const prerenderUrlFiles = ['prerender-urls.json', 'prerender-urls.js'];
+const prerenderUrlFiles = [
+	'prerender-urls.json',
+	'prerender-urls.js',
+	'prerender-urls.promise.js',
+];
 
 async function getIndex(dir, file = 'index.html') {
 	file = join(dir, `build/${file}`);
