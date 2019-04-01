@@ -279,7 +279,7 @@ module.exports = [
 
 A template is used to render your page.
 
-The default one is visible [here](src/resources/template.html) and it's going to be enough for the majority of cases.
+The default one is visible [here](packages/cli/lib/resources/template.html) and it's going to be enough for the majority of cases.
 
 If you want to customise your template you can pass a custom template with the `--template` flag.
 
