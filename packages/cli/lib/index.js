@@ -50,6 +50,7 @@ prog
 	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
+	.option('--brotli', 'Adds brotli redirects to the service worker.', false)
 	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
 	.option('-v, --verbose', 'Verbose output')
 	.action(commands.build);

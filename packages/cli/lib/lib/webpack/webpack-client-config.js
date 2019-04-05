@@ -4,7 +4,6 @@ const { existsSync } = require('fs');
 const merge = require('webpack-merge');
 const { filter } = require('minimatch');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -13,7 +12,10 @@ const renderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
+const { InjectManifest } = require('workbox-webpack-plugin');
+const BrotliPlugin = require('brotli-webpack-plugin');
 const { normalizePath } = require('../../util');
+const SWBuilderPlugin = require('./sw-plugin');
 
 const cleanFilename = name =>
 	name.replace(
@@ -215,42 +217,62 @@ function isProd(config) {
 		},
 	};
 
-	if (config.sw) {
+	if (config.esm) {
 		prodConfig.plugins.push(
-			new SWPrecacheWebpackPlugin({
-				filename: 'sw.js',
-				navigateFallback: 'index.html',
-				navigateFallbackWhitelist: [/^(?!\/__).*/],
-				minify: true,
-				stripPrefix: config.cwd,
-				staticFileGlobsIgnorePatterns: [
-					/\.esm\.js$/,
-					/polyfills(\..*)?\.js$/,
-					/\.map$/,
-					/push-manifest\.json$/,
-					/.DS_Store/,
-					/\.git/,
-				],
+			new BabelEsmPlugin({
+				filename: '[name].[chunkhash:5].esm.js',
+				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
+				excludedPlugins: ['BabelEsmPlugin', 'SWBuilderPlugin'],
+				beforeStartExecution: (plugins, newConfig) => {
+					const babelPlugins = newConfig.plugins;
+					newConfig.plugins = babelPlugins.filter(plugin => {
+						if (
+							Array.isArray(plugin) &&
+							plugin[0].indexOf('fast-async') !== -1
+						) {
+							return false;
+						}
+						return true;
+					});
+					plugins.forEach(plugin => {
+						if (
+							plugin.constructor.name === 'DefinePlugin' &&
+							plugin.definitions
+						) {
+							for (const definition in plugin.definitions) {
+								if (definition === 'process.env.ES_BUILD') {
+									plugin.definitions[definition] = true;
+								}
+							}
+						} else if (
+							plugin.constructor.name === 'DefinePlugin' &&
+							!plugin.definitions
+						) {
+							throw new Error(
+								'WebpackDefinePlugin found but not `process.env.ES_BUILD`.'
+							);
+						}
+					});
+				},
 			})
 		);
+		config.sw &&
+			prodConfig.plugins.push(
+				new InjectManifest({
+					swSrc: 'sw-esm.js',
+					include: [/index\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
+					precacheManifestFilename: 'precache-manifest.[manifestHash].esm.js',
+				})
+			);
 	}
 
-	if (config.esm && config.sw) {
+	if (config.sw) {
+		prodConfig.plugins.push(new SWBuilderPlugin(config));
 		prodConfig.plugins.push(
-			new SWPrecacheWebpackPlugin({
-				filename: 'sw-esm.js',
-				navigateFallback: 'index.html',
-				navigateFallbackWhitelist: [/^(?!\/__).*/],
-				minify: true,
-				stripPrefix: config.cwd,
-				staticFileGlobsIgnorePatterns: [
-					/(\.[\w]{5}\.js)/,
-					/polyfills(\..*)?\.js$/,
-					/\.map$/,
-					/push-manifest\.json$/,
-					/.DS_Store/,
-					/\.git/,
-				],
+			new InjectManifest({
+				swSrc: 'sw.js',
+				include: [/index\.html$/, /\.js$/, /\.css$/, /\.(png|jpg)$/],
+				exclude: [/\.esm\.js$/],
 			})
 		);
 	}
@@ -261,6 +283,14 @@ function isProd(config) {
 
 	if (config.analyze) {
 		prodConfig.plugins.push(new BundleAnalyzerPlugin());
+	}
+
+	if (config.brotli) {
+		prodConfig.plugins.push(
+			new BrotliPlugin({
+				test: /\.esm\.js$/,
+			})
+		);
 	}
 
 	return prodConfig;
