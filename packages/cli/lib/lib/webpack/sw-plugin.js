@@ -3,8 +3,7 @@ const BabelEsmPlugin = require('babel-esm-plugin');
 const { DefinePlugin } = require('webpack');
 const fs = require('fs');
 const { resolve } = require('path');
-const { blue } = require('chalk');
-
+const { info } = require('../../util');
 class SWBuilderPlugin {
 	constructor(config) {
 		const { src, brotli, esm } = config;
@@ -17,15 +16,11 @@ class SWBuilderPlugin {
 		const exists = fs.existsSync(resolve(`${this.src_}/sw.js`));
 		if (exists) {
 			if (exists) {
-				console.log(
-					blue(
-						'⚛️ Detected custom sw.js: compiling instead of default Service Worker.'
-					)
+				info(
+					'⚛️ Detected custom sw.js: compiling instead of default Service Worker.'
 				);
 			} else {
-				console.log(
-					blue('⚛️ No custom sw.js detected: compiling default Service Worker.')
-				);
+				info('⚛️ No custom sw.js detected: compiling default Service Worker.');
 			}
 		}
 		compiler.hooks.make.tapAsync(
