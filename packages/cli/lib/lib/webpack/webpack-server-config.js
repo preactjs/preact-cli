@@ -5,7 +5,7 @@ const baseConfig = require('./webpack-base-config');
 function serverConfig(env) {
 	return {
 		entry: {
-			'ssr-bundle': env.source('index.js'),
+			'ssr-bundle': env.source('index'),
 		},
 		output: {
 			publicPath: '/',

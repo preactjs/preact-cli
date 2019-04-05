@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const createBabelConfig = require('../babel-config');
 
 function readJson(file) {
@@ -18,15 +19,15 @@ function readJson(file) {
 }
 
 // attempt to resolve a dependency, giving $CWD/node_modules priority:
-function resolveDep(dep, cwd) {
-	try {
-		return requireRelative.resolve(dep, cwd || process.cwd());
-	} catch (e) {}
-	try {
-		return require.resolve(dep);
-	} catch (e) {}
-	return dep;
-}
+// function resolveDep(dep, cwd) {
+// 	try {
+// 		return requireRelative.resolve(dep, cwd || process.cwd());
+// 	} catch (e) {}
+// 	try {
+// 		return require.resolve(dep);
+// 	} catch (e) {}
+// 	return dep;
+// }
 
 function findAllNodeModules(startDir) {
 	let dir = path.resolve(startDir);
@@ -46,6 +47,16 @@ function findAllNodeModules(startDir) {
 	}
 }
 
+function resolveTsconfig(cwd, isProd, fallback) {
+	if (existsSync(resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`))) {
+		return resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`);
+	} else if (existsSync(resolve(cwd, 'tsconfig.json'))) {
+		return resolve(cwd, 'tsconfig.json');
+	} else {
+		return fallback;
+	}
+}
+
 module.exports = function(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
 
@@ -61,11 +72,29 @@ module.exports = function(env) {
 	let cliNodeModules = findAllNodeModules(__dirname);
 	let nodeModules = [...new Set([...userNodeModules, ...cliNodeModules])];
 
+	let compat = 'preact-compat';
+	try {
+		requireRelative.resolve('preact/compat', cwd);
+		compat = 'preact/compat';
+	} catch (e) {}
+
+	let babelConfig = Object.assign(
+		{ babelrc: false },
+		createBabelConfig(env, { browsers }),
+		babelrc // intentionally overwrite our settings
+	);
+
+	let tsconfig = resolveTsconfig(
+		cwd,
+		isProd,
+		resolve(__dirname, '../../resources/tsconfig.json')
+	);
+
 	return {
 		context: src,
 
 		resolve: {
-			modules: ['node_modules', ...nodeModules],
+			modules: [...nodeModules, 'node_modules'],
 			extensions: [
 				'.mjs',
 				'.js',
@@ -81,15 +110,10 @@ module.exports = function(env) {
 			],
 			alias: {
 				style: source('style'),
-				'preact-cli-entrypoint': source('index.js'),
-				preact$: resolveDep(
-					isProd ? 'preact/dist/preact.min.js' : 'preact',
-					cwd
-				),
+				'preact-cli-entrypoint': source('index'),
 				// preact-compat aliases for supporting React dependencies:
-				react: 'preact-compat',
-				'react-dom': 'preact-compat',
-				'create-react-class': 'preact-compat/lib/create-react-class',
+				react: compat,
+				'react-dom': compat,
 				'react-addons-css-transition-group': 'preact-css-transition-group',
 				'preact-cli/async-component': require.resolve(
 					'@preact/async-loader/async'
@@ -109,15 +133,11 @@ module.exports = function(env) {
 				{
 					// ES2015
 					enforce: 'pre',
-					test: /\.m?jsx?$/,
+					test: /\.m?[jt]sx?$/,
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: 'babel-loader',
-					options: Object.assign(
-						{ babelrc: false },
-						createBabelConfig(env, { browsers }),
-						babelrc // intentionally overwrite our settings
-					),
+					options: babelConfig,
 				},
 				{
 					// LESS
@@ -259,6 +279,12 @@ module.exports = function(env) {
 				clear: true,
 			}),
 			new SizePlugin(),
+			new ForkTsCheckerWebpackPlugin({
+				checkSyntacticErrors: true,
+				async: !isProd,
+				tsconfig: tsconfig,
+				silent: !isWatch,
+			}),
 		].concat(
 			isProd
 				? [

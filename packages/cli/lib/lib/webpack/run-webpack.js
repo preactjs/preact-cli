@@ -12,7 +12,7 @@ const transformConfig = require('./transform-config');
 const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
-	let config = clientConfig(env);
+	let config = await clientConfig(env);
 
 	await transformConfig(env, config);
 
@@ -81,7 +81,7 @@ async function devBuild(env) {
 }
 
 async function prodBuild(env) {
-	let config = clientConfig(env);
+	let config = await clientConfig(env);
 	await transformConfig(env, config);
 
 	if (env.prerender) {
@@ -103,12 +103,10 @@ async function prodBuild(env) {
 function runCompiler(compiler) {
 	return new Promise((res, rej) => {
 		compiler.run((err, stats) => {
-			if (stats && stats.hasErrors()) {
-				showStats(stats);
-			}
+			showStats(stats);
 
 			if (err || (stats && stats.hasErrors())) {
-				rej(red('Build failed! ' + err));
+				rej(red('Build failed! ' + (err || '')));
 			}
 
 			res(stats);
@@ -120,13 +118,13 @@ function showStats(stats) {
 	if (stats.hasErrors()) {
 		allFields(stats, 'errors')
 			.map(stripLoaderPrefix)
-			.forEach(error);
+			.forEach(msg => error(msg));
 	}
 
 	if (stats.hasWarnings()) {
 		allFields(stats, 'warnings')
 			.map(stripLoaderPrefix)
-			.forEach(warn);
+			.forEach(msg => warn(msg));
 	}
 
 	return stats;

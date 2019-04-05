@@ -8,7 +8,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CrittersPlugin = require('critters-webpack-plugin');
-const RenderHTMLPlugin = require('./render-html-plugin');
+const renderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
@@ -22,7 +22,8 @@ const cleanFilename = name =>
 		/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g,
 		''
 	);
-function clientConfig(env) {
+
+async function clientConfig(env) {
 	const { isProd, source, src /*, port? */ } = env;
 
 	let entry = {
@@ -85,7 +86,7 @@ function clientConfig(env) {
 
 		plugins: [
 			new PushManifestPlugin(env),
-			...RenderHTMLPlugin(env),
+			...(await renderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
 			new CopyWebpackPlugin(
 				[
@@ -333,10 +334,10 @@ function isDev(config) {
 	};
 }
 
-module.exports = function(env) {
+module.exports = async function(env) {
 	return merge(
 		baseConfig(env),
-		clientConfig(env),
+		await clientConfig(env),
 		(env.isProd ? isProd : isDev)(env)
 	);
 };
