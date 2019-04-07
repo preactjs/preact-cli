@@ -28,7 +28,7 @@ module.exports = async function(config) {
 			},
 			favicon: existsSync(resolve(src, 'assets/favicon.ico'))
 				? 'assets/favicon.ico'
-				: resolve(__dirname, '../../resources/favicon.ico'),
+				: '',
 			inject: true,
 			compile: true,
 			inlineCss: config['inline-css'],
