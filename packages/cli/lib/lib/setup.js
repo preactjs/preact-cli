@@ -5,7 +5,7 @@ const stdio = 'ignore';
 
 exports.install = function(cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
-	return spawn(cmd, ['install'], { cwd, stdio });
+	return spawn(cmd, ['install'], { cwd, stdio: 'inherit' });
 };
 
 exports.addScripts = async function(obj, cwd, isYarn) {
