@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "3.0.0-next.19",
+  "version": "3.0.0-rc.0",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "developit/preact-cli",
   "main": "lib/index.js",
@@ -75,7 +75,7 @@
     "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-typescript": "^7.3.3",
-    "@preact/async-loader": "^3.0.0-next.16",
+    "@preact/async-loader": "^3.0.0-rc.0",
     "autoprefixer": "^9.5.1",
     "babel-esm-plugin": "^0.4.0",
     "babel-loader": "^8.0.5",
