@@ -47,13 +47,11 @@ function findAllNodeModules(startDir) {
 	}
 }
 
-function resolveTsconfig(cwd, isProd, fallback) {
+function resolveTsconfig(cwd, isProd) {
 	if (existsSync(resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`))) {
 		return resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`);
 	} else if (existsSync(resolve(cwd, 'tsconfig.json'))) {
 		return resolve(cwd, 'tsconfig.json');
-	} else {
-		return fallback;
 	}
 }
 
@@ -84,11 +82,7 @@ module.exports = function(env) {
 		babelrc // intentionally overwrite our settings
 	);
 
-	let tsconfig = resolveTsconfig(
-		cwd,
-		isProd,
-		resolve(__dirname, '../../resources/tsconfig.json')
-	);
+	let tsconfig = resolveTsconfig(cwd, isProd);
 
 	return {
 		context: src,
@@ -279,14 +273,17 @@ module.exports = function(env) {
 				clear: true,
 			}),
 			new SizePlugin(),
-			new ForkTsCheckerWebpackPlugin({
-				checkSyntacticErrors: true,
-				async: !isProd,
-				tsconfig: tsconfig,
-				silent: !isWatch,
-			}),
-		].concat(
-			isProd
+			...(tsconfig
+				? [
+						new ForkTsCheckerWebpackPlugin({
+							checkSyntacticErrors: true,
+							async: !isProd,
+							tsconfig: tsconfig,
+							silent: !isWatch,
+						}),
+				  ]
+				: []),
+			...(isProd
 				? [
 						new webpack.HashedModuleIdsPlugin(),
 						new webpack.LoaderOptionsPlugin({ minimize: true }),
@@ -303,8 +300,8 @@ module.exports = function(env) {
 							],
 						}),
 				  ]
-				: []
-		),
+				: []),
+		],
 
 		optimization: {
 			splitChunks: {
