@@ -101,7 +101,7 @@ module.exports = function(env) {
 				'.sass',
 				'.styl',
 				'.css',
-        '.wasm',
+				'.wasm',
 			],
 			alias: {
 				style: source('style'),
