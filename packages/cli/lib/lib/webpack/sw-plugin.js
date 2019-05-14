@@ -28,27 +28,32 @@ class SWBuilderPlugin {
 			(compilation, callback) => {
 				const outputOptions = compiler.options;
 				const plugins = [
-					new BabelEsmPlugin({
-						filename: '[name]-esm.js',
-						excludedPlugins: ['BabelEsmPlugin', this.constructor.name],
-						beforeStartExecution: plugins => {
-							plugins.forEach(plugin => {
-								if (plugin.constructor.name === 'DefinePlugin') {
-									if (!plugin.definitions)
-										throw Error(
-											'ESM Error:  DefinePlugin found without definitions.'
-										);
-									plugin.definitions['process.env.ES_BUILD'] = true;
-								}
-							});
-						},
-					}),
 					new DefinePlugin({
 						'process.env.ENABLE_BROTLI': this.brotli_,
 						'process.env.ES_BUILD': false,
 						'process.env.NODE_ENV': 'production',
 					}),
 				];
+
+				if (this.esm_) {
+					plugins.push(
+						new BabelEsmPlugin({
+							filename: '[name]-esm.js',
+							excludedPlugins: ['BabelEsmPlugin', this.constructor.name],
+							beforeStartExecution: plugins => {
+								plugins.forEach(plugin => {
+									if (plugin.constructor.name === 'DefinePlugin') {
+										if (!plugin.definitions)
+											throw Error(
+												'ESM Error:  DefinePlugin found without definitions.'
+											);
+										plugin.definitions['process.env.ES_BUILD'] = true;
+									}
+								});
+							},
+						})
+					);
+				}
 
 				/**
 				 * We are deliberatly not passing plugins in createChildCompiler.
@@ -74,6 +79,7 @@ class SWBuilderPlugin {
 					{ filename: '[name].js' }
 				);
 				childCompiler.options.output.filename = '[name].js';
+				childCompiler.outputFileSystem = compiler.outputFileSystem;
 
 				// Call the `apply` method of all plugins by ourselves.
 				if (Array.isArray(plugins)) {
