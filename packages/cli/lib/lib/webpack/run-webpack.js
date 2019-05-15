@@ -41,9 +41,7 @@ async function devBuild(env) {
 		compiler.hooks.done.tap('CliDevPlugin', stats => {
 			let devServer = config.devServer;
 			let protocol = process.env.HTTPS || devServer.https ? 'https' : 'http';
-
 			let host = process.env.HOST || devServer.host || 'localhost';
-			if (host === '0.0.0.0') host = 'localhost';
 
 			let serverAddr = `${protocol}://${host}:${bold(port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
