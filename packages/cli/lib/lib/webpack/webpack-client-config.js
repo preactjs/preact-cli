@@ -324,7 +324,7 @@ function isDev(config) {
 			disableHostCheck: true,
 			historyApiFallback: true,
 			quiet: true,
-			clientLogLevel: 'none',
+			clientLogLevel: 'silent',
 			overlay: false,
 			stats: 'minimal',
 			watchOptions: {
