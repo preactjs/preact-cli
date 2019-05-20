@@ -15,11 +15,7 @@ function serverConfig(env) {
 			libraryTarget: 'commonjs2',
 		},
 		externals: {
-			/** This makes pre-rendered bundle use the same preact as preact-cli.
-			 * This is needed for the options object of preact-x.
-			 * Note: This means any upgrade of preact in user land will not affect pre-rendered bundle.
-			 */
-			preact: require.resolve('preact'),
+			preact: 'preact',
 		},
 		target: 'node',
 		resolveLoader: {
