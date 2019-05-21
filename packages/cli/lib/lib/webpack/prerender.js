@@ -1,6 +1,6 @@
 const { red, yellow } = require('kleur');
 const { resolve } = require('path');
-const { readFileSync, existsSync } = require('fs');
+const { readFileSync } = require('fs');
 const stackTrace = require('stack-trace');
 const { SourceMapConsumer } = require('source-map');
 
@@ -25,14 +25,10 @@ module.exports = function(env, params) {
 			return '';
 		}
 		const { cwd } = env;
-		const preactPath = require.resolve(`${cwd}/node_modules/preact`);
-		const renderToStringPath = require.resolve(
-			`${cwd}/node_modules/preact-render-to-string`
-		);
-		let preact = require(preactPath),
-			renderToString = require(existsSync(renderToStringPath)
-				? renderToStringPath
-				: 'preact-render-to-string');
+		let preact = require(require.resolve(`${cwd}/node_modules/preact`)),
+			renderToString = require(require.resolve(
+				`${cwd}/node_modules/preact-render-to-string`
+			));
 		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
 		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
