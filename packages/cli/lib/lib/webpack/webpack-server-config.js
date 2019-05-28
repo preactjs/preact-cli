@@ -14,6 +14,9 @@ function serverConfig(env) {
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
 			libraryTarget: 'commonjs2',
 		},
+		externals: {
+			preact: 'preact',
+		},
 		target: 'node',
 		resolveLoader: {
 			alias: {

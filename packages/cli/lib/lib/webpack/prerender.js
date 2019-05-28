@@ -24,9 +24,12 @@ module.exports = function(env, params) {
 			);
 			return '';
 		}
+		const { cwd } = env;
 
-		let preact = require('preact'),
-			renderToString = require('preact-render-to-string');
+		const preact = require(require.resolve(`${cwd}/node_modules/preact`));
+		const renderToString = require(require.resolve(
+			`${cwd}/node_modules/preact-render-to-string`
+		));
 
 		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
