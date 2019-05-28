@@ -25,10 +25,12 @@ module.exports = function(env, params) {
 			return '';
 		}
 		const { cwd } = env;
-		let preact = require(require.resolve(`${cwd}/node_modules/preact`)),
-			renderToString = require(require.resolve(
-				`${cwd}/node_modules/preact-render-to-string`
-			));
+
+		const preact = require(require.resolve(`${cwd}/node_modules/preact`));
+		const renderToString = require(require.resolve(
+			`${cwd}/node_modules/preact-render-to-string`
+		));
+
 		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
 		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
