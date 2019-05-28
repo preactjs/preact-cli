@@ -8,9 +8,7 @@
     "preact": "lib/index.js"
   },
   "scripts": {
-    "pretest": "rimraf tests/output",
-    "test": "jest",
-    "posttest": "rimraf tests/output"
+    "test": "jest"
   },
   "jest": {
     "setupFilesAfterEnv": [
