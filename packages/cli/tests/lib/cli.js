@@ -1,8 +1,14 @@
 const { join } = require('path');
-const { existsSync, unlinkSync } = require('fs');
+const { existsSync, unlinkSync, symlinkSync } = require('fs');
 const cmd = require('../../lib/commands');
 const { tmpDir } = require('./output');
 const mkdirp = require('mkdirp');
+
+const root = join(__dirname, '../../../..');
+
+function linkPackage(name, from, to) {
+	symlinkSync(join(from, 'node_modules', name), join(to, 'node_modules', name));
+}
 
 const argv = {
 	_: [],
@@ -30,6 +36,8 @@ exports.create = async function(template, name) {
 
 exports.build = function(cwd, options) {
 	mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
+	linkPackage('preact', root, cwd);
+	linkPackage('preact-render-to-string', root, cwd);
 	let opts = Object.assign({ cwd }, argv);
 	return cmd.build(argv.src, Object.assign({}, opts, options));
 };
