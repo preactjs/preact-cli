@@ -7,7 +7,9 @@
     "pretest": "yarn lint",
     "test": "lerna run test --stream",
     "prettier": "prettier --write **/*.{js,ts,tsx,json,css,scss,md,yml}",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepack": "cp README.md packages/cli/",
+    "postpack": "rm packages/cli/README.md"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
