@@ -7,7 +7,9 @@
     "pretest": "yarn lint",
     "test": "lerna run test --stream",
     "prettier": "prettier --write **/*.{js,ts,tsx,json,css,scss,md,yml}",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepack": "ncp README.md packages/cli/",
+    "postpack": "rimraf packages/cli/README.md"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
@@ -19,7 +21,9 @@
     "husky": "^2.3.0",
     "lerna": "^3.14.1",
     "lint-staged": "^8.1.7",
-    "prettier": "^1.17.1"
+    "ncp": "^2.0.0",
+    "prettier": "^1.17.1",
+    "rimraf": "^2.6.3"
   },
   "husky": {
     "hooks": {
