@@ -74,7 +74,7 @@
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-typescript": "^7.3.3",
     "@preact/async-loader": "^3.0.0-rc.0",
-    "autoprefixer": "^9.5.1",
+    "autoprefixer": "^9.6.0",
     "babel-esm-plugin": "^0.4.1",
     "babel-loader": "^8.0.6",
     "babel-plugin-macros": "^2.5.1",

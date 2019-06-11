@@ -208,7 +208,7 @@ module.exports = function(env) {
 							options: {
 								ident: 'postcss',
 								sourceMap: true,
-								plugins: [autoprefixer({ browsers })],
+								plugins: [autoprefixer({ overrideBrowserslist: browsers })],
 							},
 						},
 					],
@@ -230,7 +230,7 @@ module.exports = function(env) {
 							options: {
 								ident: 'postcss',
 								sourceMap: true,
-								plugins: [autoprefixer({ browsers })],
+								plugins: [autoprefixer({ overrideBrowserslist: browsers })],
 							},
 						},
 					],
