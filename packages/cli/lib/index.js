@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const envinfo = require('envinfo');
 const sade = require('sade');
 const notifier = require('update-notifier');
 const { error } = require('./util');
@@ -91,5 +92,21 @@ prog
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port', 8080)
 	.action(commands.watch);
+
+prog
+	.command('info')
+	.describe('Print out debugging information about the local environment')
+	.action(() => {
+		console.log();
+		console.log('Environment Info:');
+		envinfo
+			.run({
+				System: ['OS', 'CPU'],
+				Binaries: ['Node', 'Yarn', 'npm'],
+				Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
+				npmGlobalPackages: ['preact-cli'],
+			})
+			.then(console.log);
+	});
 
 prog.parse(process.argv);
