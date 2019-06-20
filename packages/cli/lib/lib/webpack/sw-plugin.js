@@ -15,13 +15,12 @@ class SWBuilderPlugin {
 		let swSrc = resolve(__dirname, '../sw.js');
 		const exists = fs.existsSync(resolve(`${this.src_}/sw.js`));
 		if (exists) {
-			if (exists) {
-				info(
-					'⚛️ Detected custom sw.js: compiling instead of default Service Worker.'
-				);
-			} else {
-				info('⚛️ No custom sw.js detected: compiling default Service Worker.');
-			}
+			swSrc = resolve(`${this.src_}/sw.js`);
+			info(
+				'⚛️ Detected custom sw.js: compiling instead of default Service Worker.'
+			);
+		} else {
+			info('⚛️ No custom sw.js detected: compiling default Service Worker.');
 		}
 		compiler.hooks.make.tapAsync(
 			this.constructor.name,
