@@ -81,7 +81,7 @@ Note: If you don't specify enough data to the `preact create` command, it will p
 
 Create a production build
 
-For the boolean fields you can pass --<option> to set to true or --no-<option> to set to false.
+You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw`, `--no-esm`, and `--no-inline-css`.
 
 ```sh
 $ preact build
