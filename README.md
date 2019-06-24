@@ -64,7 +64,7 @@ Current available templates include:
 
 Create a project to quick start development.
 
-```sh
+```
 $ preact create <template-name> <project-name>
 
   --name        The application name.
@@ -83,10 +83,10 @@ Create a production build
 
 You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw`, `--no-esm`, and `--no-inline-css`.
 
-```sh
+```
 $ preact build
 
-  --src              Specify source directory  (default src)
+    --src              Specify source directory  (default src)
     --dest             Specify output directory  (default build)
     --cwd              A directory to use instead of $PWD  (default .)
     --sw               Generate and attach a Service Worker  (default true)
@@ -107,7 +107,7 @@ $ preact build
 
 Spin up a development server with multiple features like `hot-module-replacement`, `module-watcher`
 
-```sh
+```
 $ preact watch
 
     --src           Specify source directory  (default src)
