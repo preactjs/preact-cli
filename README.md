@@ -86,17 +86,21 @@ You can disable `default: true` flags by prefixing them with `--no-<option>`; fo
 ```sh
 $ preact build
 
-  --src                Entry file (index.js).                     [string]   [default: "src"]
-  --dest               Directory root for output.                 [string]   [default: "build"]
-  --prerenderUrls      Path to pre-render routes configuration.   [string]   [default: "prerender-urls.json"]
-  --template           Path to template file.                     [string]   [default: none]
-  --sw                 Add a service worker to application.       [boolean]  [default: true]
-  --no-service-worker  Dont create a service worker at all.       [boolean]  [default: false]
-  --production, -p     Create a minified production build.        [boolean]  [default: true]
-  --no-prerender       Disable pre-render of static app content.  [boolean]  [default: false]
-  --clean              Clear output directory before building.    [boolean]  [default: true]
-  --json               Generate build statistics for analysis.    [boolean]  [default: false]
-  --config, -c         Path to custom CLI config.
+  --src              Specify source directory  (default src)
+    --dest             Specify output directory  (default build)
+    --cwd              A directory to use instead of $PWD  (default .)
+    --sw               Generate and attach a Service Worker  (default true)
+    --json             Generate build stats for bundle analysis
+    --template         Path to custom HTML template
+    --preload          Adds preload tags to the document its assets  (default false)
+    --analyze          Launch interactive Analyzer to inspect production bundle(s)
+    --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
+    -c, --config       Path to custom CLI config  (default preact.config.js)
+    --esm              Builds ES-2015 bundles for your code.  (default true)
+    --brotli           Adds brotli redirects to the service worker.  (default false)
+    --inline-css       Adds critical css to the prerendered markup.  (default true)
+    -v, --verbose      Verbose output
+    -h, --help         Displays this message
 ```
 
 #### preact watch
@@ -106,35 +110,28 @@ Spin up a development server with multiple features like `hot-module-replacement
 ```sh
 $ preact watch
 
-  --cwd         A directory to use instead of $PWD.              [string]   [default: .]
-  --src         Entry file (index.js)                            [string]   [default: "src"]
-  --port, -p    Port to start a server on                        [string]   [default: "8080"]
-  --host,       Hostname to start a server on                    [string]   [default: "0.0.0.0"]
-  --https       Use HTTPS?                                       [boolean]  [default: false]
-  --prerender   Pre-render static app content on initial build   [boolean]  [default: false]
-  --rhl         Enable react hot loader                          [boolean]  [default: false]
+    --src           Specify source directory  (default src)
+    --cwd           A directory to use instead of $PWD  (default .)
+    --esm           Builds ES-2015 bundles for your code.  (default true)
+    --sw            Generate and attach a Service Worker  (default false)
+    --rhl           Enable react hot loader  (default false)
+    --json          Generate build stats for bundle analysis
+    --https         Run server with HTTPS protocol
+    --key           Path to PEM key for custom SSL certificate
+    --cert          Path to custom SSL certificate
+    --cacert        Path to optional CA certificate override
+    --prerender     Pre-render static content on first run
+    --template      Path to custom HTML template
+    -c, --config    Path to custom CLI config  (default preact.config.js)
+    -H, --host      Set server hostname  (default 0.0.0.0)
+    -p, --port      Set server port  (default 8080)
+    -h, --help      Displays this message
 ```
 
 Note:
 
 1. You can run dev server using `HTTPS` then you can use the following `HTTPS=true preact watch`
 2. You can run the dev server on a different port using `PORT=8091 preact watch`
-
-#### preact serve
-
-Start a production version development server
-
-```sh
-$ preact serve
-
-  --cwd       A directory to use instead of $PWD.                             [string]  [default: .]
-  --dir       Directory root to serve static files from.                      [string]  [default: "build"]
-  --server    Which server to run, or "config" to produce a firebase config.
-              [options: "simplehttp2server", "superstatic", "config"]         [string]  [default: "simplehttp2server"]
-  --dest      Directory or filename where firebase.json should be written
-              (used for --server config)                                      [string]  [default: -]
-  --port, -p  Port to start a server on.                                      [string]  [default: PORT || 8080]
-```
 
 #### preact list
 
