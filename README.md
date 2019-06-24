@@ -81,6 +81,8 @@ Note: If you don't specify enough data to the `preact create` command, it will p
 
 Create a production build
 
+For the boolean fields you can pass --<option> to set to true or --no-<option> to set to false.
+
 ```sh
 $ preact build
 
@@ -88,7 +90,7 @@ $ preact build
   --dest               Directory root for output.                 [string]   [default: "build"]
   --prerenderUrls      Path to pre-render routes configuration.   [string]   [default: "prerender-urls.json"]
   --template           Path to template file.                     [string]   [default: none]
-  --service-worker     Add a service worker to application.       [boolean]  [default: true]
+  --sw                 Add a service worker to application.       [boolean]  [default: true]
   --no-service-worker  Dont create a service worker at all.       [boolean]  [default: false]
   --production, -p     Create a minified production build.        [boolean]  [default: true]
   --no-prerender       Disable pre-render of static app content.  [boolean]  [default: false]
