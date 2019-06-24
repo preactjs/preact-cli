@@ -12,10 +12,9 @@ const renderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
-const { InjectManifest } = require('workbox-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
 const BrotliPlugin = require('brotli-webpack-plugin');
 const { normalizePath } = require('../../util');
-const SWBuilderPlugin = require('./sw-plugin');
 
 const cleanFilename = name =>
 	name.replace(
@@ -222,7 +221,7 @@ function isProd(config) {
 			new BabelEsmPlugin({
 				filename: '[name].[chunkhash:5].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
-				excludedPlugins: ['BabelEsmPlugin', 'SWBuilderPlugin'],
+				excludedPlugins: ['BabelEsmPlugin'],
 				beforeStartExecution: (plugins, newConfig) => {
 					const babelPlugins = newConfig.plugins;
 					newConfig.plugins = babelPlugins.filter(plugin => {
@@ -258,20 +257,21 @@ function isProd(config) {
 		);
 		config.sw &&
 			prodConfig.plugins.push(
-				new InjectManifest({
-					swSrc: 'sw-esm.js',
+				new GenerateSW({
+					swDest: 'sw-esm.js',
 					include: [/index\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
+					navigateFallback: '/index.html',
 					precacheManifestFilename: 'precache-manifest.[manifestHash].esm.js',
 				})
 			);
 	}
 
 	if (config.sw) {
-		prodConfig.plugins.push(new SWBuilderPlugin(config));
 		prodConfig.plugins.push(
-			new InjectManifest({
-				swSrc: 'sw.js',
+			new GenerateSW({
+				swDest: 'sw.js',
 				include: [/index\.html$/, /\.js$/, /\.css$/, /\.(png|jpg)$/],
+				navigateFallback: '/index.html',
 				exclude: [/\.esm\.js$/],
 			})
 		);

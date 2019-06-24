@@ -163,6 +163,31 @@ Preact CLI does this by rendering your app inside node - this means that we don'
 - drop out of prerendering by passing `--no-prerender` flag to `preact build`,
 - write your code in a way that supports server-side rendering by wrapping code that requires browser's APIs in conditional statements `if (typeof window !== "undefined") { ... }` ensuring that on server those lines of code are never reached. Alternatively you could use a helper library like [window-or-global](https://www.npmjs.com/package/window-or-global).
 
+### Service workers
+
+Preact CLI focuses on building world class PWA out of the box and service workers are at the core of that.
+Preact CLI starting v4.0 will give more control to its users over the service worker by copying the `sw.js` file in the root of the project.
+
+The service worker is build using [Workbox's GenerateSw Plugin](https://developers.google.com/web/tools/workbox/) library and thus all the APIs exposed by workbox can be used and altered using `preact.config.js`.
+
+e.g.
+
+```js
+// preact.config.js
+
+export default (config, env, helpers) => {
+	const [es6SwGenerator, es5SwGenerator] = helpers.getPluginsByName(
+		config,
+		'GenerateSW'
+	);
+	if (es6SwGenerator && es5SwGenerator) {
+		es6SwGenerator.plugin.config.navigateFallback = '/home.html';
+		es5SwGenerator.plugin.config.navigateFallback = '/home.html';
+	}
+	return config;
+};
+```
+
 ### Custom Configuration
 
 #### Plugins
@@ -293,7 +318,7 @@ preact watch --template src/template.html
 
 ### Using CSS preprocessors
 
-The default templates comes with a `.css` file for each component. You can start using CSS preprocessors at any given time during your project lifecycle by installing additional packages and then simply replacing those `.css` files. 
+The default templates comes with a `.css` file for each component. You can start using CSS preprocessors at any given time during your project lifecycle by installing additional packages and then simply replacing those `.css` files.
 
 #### [SASS]
 
@@ -301,6 +326,7 @@ The default templates comes with a `.css` file for each component. You can start
 - start replacing `.css` files with `.scss` files
 
 #### [LESS]
+
 - `npm install --save-dev less less-loader` (inside your preact application folder)
 - start replacing `.css` files with `.less` files
 
@@ -328,5 +354,5 @@ The default templates comes with a `.css` file for each component. You can start
 [service workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
 [customize babel]: https://github.com/developit/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
 [`async!`]: https://github.com/developit/preact-cli/blob/222e7018dd360e40f7db622191aeca62d6ef0c9a/examples/full/src/components/app.js#L7
-[SASS]: https://sass-lang.com
-[LESS]: http://lesscss.org
+[sass]: https://sass-lang.com
+[less]: http://lesscss.org

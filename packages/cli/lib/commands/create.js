@@ -168,7 +168,7 @@ module.exports = async function(repo, dest, argv) {
 		await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 	}
 
-	// Copy over template.html
+	// Copy over template.html.
 	const templateSrc = resolve(__dirname, '../resources/template.html');
 	await fs.copyFile(templateSrc, join(resolve(cwd, dest), 'template.html'));
 
