@@ -104,6 +104,13 @@ prog
 				System: ['OS', 'CPU'],
 				Binaries: ['Node', 'Yarn', 'npm'],
 				Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
+				npmPackages: [
+					'preact',
+					'preact-compat',
+					'preact-cli',
+					'preact-router',
+					'preact-render-to-string',
+				],
 				npmGlobalPackages: ['preact-cli'],
 			})
 			.then(console.log);
