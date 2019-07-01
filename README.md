@@ -2,6 +2,30 @@
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
 
+### Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Official Templates](#official-templates)
+- [CLI Options](#cli-options)
+  - [preact create](#preact-create)
+  - [preact build](#preact-build)
+  - [preact watch](#preact-watch)
+  - [preact list](#preact-list)
+  - [preact info](#preact-info)
+- [Deploying](#deploying)
+- [Pre-rendering](#pre-rendering)
+- [Custom Configuration](#custom-configuration)
+  - [Plugins](#plugins)
+  - [Browserslist](#browserslist)
+  - [Babel](#babel) - [Webpack](#webpack)
+  - [Prerender multiple routes](#prerender-multiple-routes)
+  - [Template](#template)
+- [Using CSS preprocessors](#using-css-preprocessors)
+  - [SASS](#sass)
+  - [LESS](#less)
+
 ### Features
 
 - **100/100 Lighthouse score**, right out of the box ([proof])
