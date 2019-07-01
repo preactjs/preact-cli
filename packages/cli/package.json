@@ -86,6 +86,7 @@
     "cross-spawn-promise": "^0.10.1",
     "css-loader": "^2.1.1",
     "ejs-loader": "^0.3.3",
+    "envinfo": "^7.3.1",
     "esm": "^3.2.25",
     "fast-async": "^6.3.7",
     "file-loader": "^3.0.1",

@@ -15,8 +15,4 @@
 
 **Please mention other relevant information.**
 
-- Node version
-- npm version
-- Operating system
-- CLI version
-- Browser
+Please paste the results of `preact info` here.
