@@ -142,6 +142,10 @@ Lists all the official preactjs-cli repositories
 $ preact list
 ```
 
+#### preact info
+
+Prints debugging information concerning the local environment.
+
 ### Deploying
 
 ```sh
@@ -293,7 +297,7 @@ preact watch --template src/template.html
 
 ### Using CSS preprocessors
 
-The default templates comes with a `.css` file for each component. You can start using CSS preprocessors at any given time during your project lifecycle by installing additional packages and then simply replacing those `.css` files. 
+The default templates comes with a `.css` file for each component. You can start using CSS preprocessors at any given time during your project lifecycle by installing additional packages and then simply replacing those `.css` files.
 
 #### [SASS]
 
@@ -301,6 +305,7 @@ The default templates comes with a `.css` file for each component. You can start
 - start replacing `.css` files with `.scss` files
 
 #### [LESS]
+
 - `npm install --save-dev less less-loader` (inside your preact application folder)
 - start replacing `.css` files with `.less` files
 
@@ -328,5 +333,5 @@ The default templates comes with a `.css` file for each component. You can start
 [service workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
 [customize babel]: https://github.com/developit/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
 [`async!`]: https://github.com/developit/preact-cli/blob/222e7018dd360e40f7db622191aeca62d6ef0c9a/examples/full/src/components/app.js#L7
-[SASS]: https://sass-lang.com
-[LESS]: http://lesscss.org
+[sass]: https://sass-lang.com
+[less]: http://lesscss.org
