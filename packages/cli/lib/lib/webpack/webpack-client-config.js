@@ -104,11 +104,6 @@ async function clientConfig(env) {
 						  ]),
 					// copy any static files
 					existsSync(source('assets')) && { from: 'assets', to: 'assets' },
-					// copy sw-debug
-					{
-						from: resolve(__dirname, '../../resources/sw-debug.js'),
-						to: 'sw-debug.js',
-					},
 				].filter(Boolean)
 			),
 		],
