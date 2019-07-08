@@ -260,7 +260,7 @@ function isProd(config) {
 			prodConfig.plugins.push(
 				new InjectManifest({
 					swSrc: 'sw-esm.js',
-					include: [/index\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
+					include: [/^\/?index\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
 					precacheManifestFilename: 'precache-manifest.[manifestHash].esm.js',
 				})
 			);
