@@ -210,7 +210,7 @@ module.exports = function(env) {
 								modules: true,
 								localIdentName: '[local]__[hash:base64:5]',
 								importLoaders: 1,
-								sourceMap: isProd,
+								sourceMap: true,
 							},
 						},
 						{
@@ -232,7 +232,7 @@ module.exports = function(env) {
 						{
 							loader: 'css-loader',
 							options: {
-								sourceMap: isProd,
+								sourceMap: true,
 							},
 						},
 						{
