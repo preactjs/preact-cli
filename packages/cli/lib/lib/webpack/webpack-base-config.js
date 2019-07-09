@@ -97,6 +97,7 @@ module.exports = function(env) {
 				'.tsx',
 				'.json',
 				'.less',
+				'.pcss',
 				'.scss',
 				'.sass',
 				'.styl',
@@ -190,7 +191,7 @@ module.exports = function(env) {
 				},
 				{
 					// User styles
-					test: /\.(css|less|s[ac]ss|styl)$/,
+					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					include: [source('components'), source('routes')],
 					use: [
 						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
@@ -215,7 +216,7 @@ module.exports = function(env) {
 				},
 				{
 					// External / `node_module` styles
-					test: /\.(css|less|s[ac]ss|styl)$/,
+					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					exclude: [source('components'), source('routes')],
 					use: [
 						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
