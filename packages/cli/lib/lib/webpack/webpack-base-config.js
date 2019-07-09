@@ -11,6 +11,7 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const createBabelConfig = require('../babel-config');
+const loadPostcssConfig = require('postcss-load-config');
 
 function readJson(file) {
 	try {
@@ -83,6 +84,14 @@ module.exports = function(env) {
 	);
 
 	let tsconfig = resolveTsconfig(cwd, isProd);
+
+	let postcssPlugins;
+
+	try {
+		postcssPlugins = loadPostcssConfig.sync(cwd).plugins;
+	} catch (error) {
+		postcssPlugins = [autoprefixer({ overrideBrowserslist: browsers })];
+	}
 
 	return {
 		context: src,
@@ -208,7 +217,7 @@ module.exports = function(env) {
 							options: {
 								ident: 'postcss',
 								sourceMap: true,
-								plugins: [autoprefixer({ overrideBrowserslist: browsers })],
+								plugins: postcssPlugins,
 							},
 						},
 					],
@@ -230,7 +239,7 @@ module.exports = function(env) {
 							options: {
 								ident: 'postcss',
 								sourceMap: true,
-								plugins: [autoprefixer({ overrideBrowserslist: browsers })],
+								plugins: postcssPlugins,
 							},
 						},
 					],
