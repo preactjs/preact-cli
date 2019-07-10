@@ -4,6 +4,7 @@ const { resolve } = require('path');
 const { readFileSync, existsSync } = require('fs');
 const SizePlugin = require('size-plugin');
 const autoprefixer = require('autoprefixer');
+const browserslist = require('browserslist');
 const requireRelative = require('require-relative');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
@@ -64,7 +65,15 @@ module.exports = function(env) {
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
 	let babelrc = readJson(resolve(cwd, 'old')) || {};
-	let browsers = env.pkg.browserslist || ['> 0.25%', 'IE >= 9'];
+
+	// use browserslist config environment, config default, or default browsers
+	// default browsers are > 0.25% global market share or Internet Explorer >= 9
+	const browserslistDefaults = ['> 0.25%', 'IE >= 9'];
+	const browserlistConfig = Object(browserslist.findConfig(cwd));
+	const browsers =
+		(isProd ? browserlistConfig.production : browserlistConfig.development) ||
+		browserlistConfig.default ||
+		browserslistDefaults;
 
 	let userNodeModules = findAllNodeModules(cwd);
 	let cliNodeModules = findAllNodeModules(__dirname);
