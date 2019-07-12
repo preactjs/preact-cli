@@ -4,8 +4,9 @@ const { readFileSync } = require('fs');
 const stackTrace = require('stack-trace');
 const { SourceMapConsumer } = require('source-map');
 const { error, info } = require('../../util');
+const outdent = require('outdent');
 
-module.exports = function(env, params) {
+module.exports = function prerender(env, params) {
 	params = params || {};
 
 	let entry = resolve(env.dest, './ssr-build/ssr-bundle.js');
@@ -46,12 +47,26 @@ module.exports = function(env, params) {
 	}
 };
 
+function getLines(env, position) {
+	let sourcePath;
+	try {
+		sourcePath = resolve(env.src, position.source);
+		return readFileSync(sourcePath, 'utf-8').split('\n');
+	} catch (err) {
+		try {
+			sourcePath = resolve(env.cwd, position.source);
+			return readFileSync(sourcePath, 'utf-8').split('\n');
+		} catch (err) {
+			error(`Unable to read file: ${sourcePath} (${position.source})\n`);
+		}
+	}
+}
+
 async function handlePrerenderError(err, env, stack, entry) {
 	const errorMessage = err.toString();
 	const isReferenceError = errorMessage.startsWith('ReferenceError');
 	const methodName = stack.getMethodName();
 	const fileName = stack.getFileName().replace(/\\/g, '/');
-	let sourceCodeHighlight = '';
 
 	let position;
 
@@ -64,7 +79,9 @@ async function handlePrerenderError(err, env, stack, entry) {
 		};
 	} else {
 		try {
-			const sourceMapContent = JSON.parse(readFileSync(`${entry}.map`));
+			const sourceMapContent = JSON.parse(
+				readFileSync(`${entry}.map`, 'utf-8')
+			);
 
 			await SourceMapConsumer.with(sourceMapContent, null, consumer => {
 				position = consumer.originalPositionFor({
@@ -74,7 +91,6 @@ async function handlePrerenderError(err, env, stack, entry) {
 			});
 		} catch (err) {
 			error(`Unable to read sourcemap: ${entry}.map`);
-			return;
 		}
 	}
 
@@ -88,59 +104,6 @@ async function handlePrerenderError(err, env, stack, entry) {
 					.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
 			);
 		info(position.source);
-
-		let sourcePath;
-		let sourceLines;
-		try {
-			sourcePath = resolve(env.src, position.source);
-			sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
-		} catch (err) {
-			try {
-				sourcePath = resolve(env.cwd, position.source);
-				// sourcePath = require.resolve(position.source);
-				sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
-			} catch (err) {
-				error(`Unable to read file: ${sourcePath} (${position.source})\n`);
-				return;
-			}
-		}
-
-		if (sourceLines) {
-			let lnrl = position.line.toString().length + 1;
-			sourceCodeHighlight +=
-				gray(
-					(position.line - 2 || '').toString().padStart(lnrl) +
-						' | ' +
-						sourceLines[position.line - 3] || ''
-				) + '\n';
-			sourceCodeHighlight +=
-				gray(
-					(position.line - 1 || '').toString().padStart(lnrl) +
-						' | ' +
-						sourceLines[position.line - 2] || ''
-				) + '\n';
-			sourceCodeHighlight +=
-				red(position.line.toString().padStart(lnrl)) +
-				gray(' |  ') +
-				sourceLines[position.line - 1] +
-				'\n';
-			sourceCodeHighlight +=
-				gray('| '.padStart(lnrl + 3)) +
-				red('^'.padStart(position.column + 1)) +
-				'\n';
-			sourceCodeHighlight +=
-				gray(
-					(position.line + 1).toString().padStart(lnrl) +
-						' | ' +
-						sourceLines[position.line + 0] || ''
-				) + '\n';
-			sourceCodeHighlight +=
-				gray(
-					(position.line + 2).toString().padStart(lnrl) +
-						' | ' +
-						sourceLines[position.line + 1] || ''
-				) + '\n';
-		}
 	} else {
 		position = {
 			source: stack.getFileName(),
@@ -149,37 +112,51 @@ async function handlePrerenderError(err, env, stack, entry) {
 		};
 	}
 
-	process.stderr.write('\n');
-	process.stderr.write(`[PrerenderError]: ${red(`${errorMessage}\n`)}`);
-	process.stderr.write(
-		`  --> ${position.source}:${position.line}:${
-			position.column
-		} (${methodName || '<anonymous>'})\n`
-	);
-	process.stderr.write(sourceCodeHighlight + '\n');
-	process.stderr.write(red(`${err.stack}\n`));
+	const sourceLines = getLines(env, position);
 
-	process.stderr.write(
-		`This ${
-			isReferenceError ? 'is most likely' : 'could be'
-		} caused by using DOM or Web APIs.\n`
-	);
-	process.stderr.write(
-		`Pre-render runs in node and has no access to globals available in browsers.\n`
-	);
-	process.stderr.write(
-		`Consider wrapping code producing error in: 'if (typeof window !== "undefined") { ... }'\n`
-	);
+	let sourceCodeHighlight = '';
+	if (sourceLines) {
+		const lnrl = position.line.toString().length + 2;
+		const line = position.line;
+		const un = undefined;
 
-	if (methodName === 'componentWillMount') {
-		process.stderr.write(`or place logic in 'componentDidMount' method.\n`);
+		const pad = l =>
+			(l === undefined ? '' : (line + l || '') + '').padStart(lnrl);
+
+		sourceCodeHighlight = gray(outdent`
+			${pad(-2)} | ${sourceLines[line - 3] || ''}
+			${pad(-1)} | ${sourceLines[line - 2] || ''}
+			${pad(-0)} | ${sourceLines[line - 1] || ''}
+			${pad(un)} | ${red('^'.padStart(position.column + 1))}
+			${pad(+1)} | ${sourceLines[line + 0] || ''}
+			${pad(+2)} | ${sourceLines[line + 1] || ''}
+		`);
 	}
-	process.stderr.write('\n');
-	process.stderr.write(
-		'Alternatively use `preact build --no-prerender` to disable prerendering.\n'
-	);
-	process.stderr.write(
-		'See https://github.com/developit/preact-cli#pre-rendering for further information.'
-	);
+
+	const stderr = process.stderr.write.bind(process.stderr);
+
+	stderr('\n');
+	stderr(outdent`
+		[PrerenderError]: ${red(`${errorMessage}`)}
+		  --> ${position.source}:${position.line}:${position.column} (${methodName ||
+		'<anonymous>'})
+		${sourceCodeHighlight}
+
+		${red(`${err.stack}`)}
+		
+		This ${
+			isReferenceError ? 'is most likely' : 'could be'
+		} caused by using DOM or Web APIs.
+		Pre-render runs in node and has no access to globals available in browsers.
+		Consider wrapping code producing error in: 'if (typeof window !== "undefined") { ... }\
+		${
+			methodName === 'componentWillMount'
+				? `\nor place logic in 'componentDidMount' method.`
+				: ''
+		}
+		
+		Alternatively use \`preact build --no-prerender\` to disable prerendering.
+		See https://github.com/developit/preact-cli#pre-rendering for further information.
+	`);
 	process.exit(1);
 }

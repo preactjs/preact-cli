@@ -9653,6 +9653,11 @@ osenv@0, osenv@^0.1.4, osenv@^0.1.5:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
 
+outdent@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/outdent/-/outdent-0.7.0.tgz#cfd1f1956305141e0cf3e898ada6547373c1997a"
+  integrity sha512-Ue462G+UIFoyQmOzapGIKWS3d/9NHeD/018WGEDZIhN2/VaQpVXbofMcZX0socv1fw4/tmEn7Vd3McOdPZfKzQ==
+
 p-cancelable@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/p-cancelable/-/p-cancelable-1.1.0.tgz#d078d15a3af409220c886f1d9a0ca2e441ab26cc"
