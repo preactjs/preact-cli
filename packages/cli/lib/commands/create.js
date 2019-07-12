@@ -169,8 +169,18 @@ module.exports = async function(repo, dest, argv) {
 	}
 
 	// Copy over template.html
-	const templateSrc = resolve(__dirname, '../resources/template.html');
-	await fs.copyFile(templateSrc, join(resolve(cwd, dest), 'template.html'));
+	const templateSrc = resolve(
+		__dirname,
+		join('..', 'resources', 'template.html')
+	);
+	await fs.copyFile(
+		templateSrc,
+		join(resolve(cwd, dest), 'src', 'template.html')
+	);
+
+	// Copy over service worker
+	const serviceWorkerSrc = resolve(__dirname, join('..', 'lib', 'sw.js'));
+	await fs.copyFile(serviceWorkerSrc, join(resolve(cwd, dest), 'src', 'sw.js'));
 
 	if (argv.install) {
 		spinner.text = 'Installing dependencies';
