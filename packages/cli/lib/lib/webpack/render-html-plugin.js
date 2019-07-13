@@ -15,7 +15,7 @@ module.exports = async function(config) {
 		template = inProjectTemplatePath;
 	}
 	const htmlWebpackConfig = values => {
-		let { url, title } = values;
+		const { url, title, ...routeData } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
 			template: `!!ejs-loader!${config.template || template}`,
@@ -54,6 +54,7 @@ module.exports = async function(config) {
 				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
 			},
 			scriptLoading: 'defer',
+			CLI_DATA: { url, ...routeData },
 		});
 	};
 
