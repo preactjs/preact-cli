@@ -87,8 +87,8 @@ class SWBuilderPlugin {
 					}
 				}
 
-				childCompiler.apply(
-					new SingleEntryPlugin(compiler.context, swSrc, 'sw')
+				new SingleEntryPlugin(compiler.context, swSrc, 'sw').apply(
+					childCompiler
 				);
 
 				compilation.hooks.additionalAssets.tapAsync(
