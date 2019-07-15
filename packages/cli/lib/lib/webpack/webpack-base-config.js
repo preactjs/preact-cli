@@ -4,6 +4,7 @@ const { resolve } = require('path');
 const { readFileSync, existsSync } = require('fs');
 const SizePlugin = require('size-plugin');
 const autoprefixer = require('autoprefixer');
+const browserslist = require('browserslist');
 const requireRelative = require('require-relative');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
@@ -64,7 +65,15 @@ module.exports = function(env) {
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
 	let babelrc = readJson(resolve(cwd, 'old')) || {};
-	let browsers = env.pkg.browserslist || ['> 0.25%', 'IE >= 9'];
+
+	// use browserslist config environment, config default, or default browsers
+	// default browsers are > 0.25% global market share or Internet Explorer >= 9
+	const browserslistDefaults = ['> 0.25%', 'IE >= 9'];
+	const browserlistConfig = Object(browserslist.findConfig(cwd));
+	const browsers =
+		(isProd ? browserlistConfig.production : browserlistConfig.development) ||
+		browserlistConfig.default ||
+		browserslistDefaults;
 
 	let userNodeModules = findAllNodeModules(cwd);
 	let cliNodeModules = findAllNodeModules(__dirname);
@@ -97,6 +106,7 @@ module.exports = function(env) {
 				'.tsx',
 				'.json',
 				'.less',
+				'.pcss',
 				'.scss',
 				'.sass',
 				'.styl',
@@ -190,7 +200,7 @@ module.exports = function(env) {
 				},
 				{
 					// User styles
-					test: /\.(css|less|s[ac]ss|styl)$/,
+					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					include: [source('components'), source('routes')],
 					use: [
 						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
@@ -215,7 +225,7 @@ module.exports = function(env) {
 				},
 				{
 					// External / `node_module` styles
-					test: /\.(css|less|s[ac]ss|styl)$/,
+					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					exclude: [source('components'), source('routes')],
 					use: [
 						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
@@ -268,7 +278,7 @@ module.exports = function(env) {
 			}),
 			new ProgressBarPlugin({
 				format:
-					'\u001b[90m\u001b[44mBuild\u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
+					'\u001b[37m\u001b[44m Build \u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
 				renderThrottle: 100,
 				summary: false,
 				clear: true,

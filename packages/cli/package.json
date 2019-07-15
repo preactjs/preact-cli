@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0-rc.3",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "developit/preact-cli",
   "main": "lib/index.js",
@@ -80,6 +80,7 @@
     "babel-plugin-macros": "^2.5.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "brotli-webpack-plugin": "^1.0.0",
+    "browserslist": "^4.6.4",
     "console-clear": "^1.0.0",
     "copy-webpack-plugin": "^5.0.3",
     "critters-webpack-plugin": "^1.3.3",
