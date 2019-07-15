@@ -6,10 +6,25 @@ const { warn } = require('../../util');
  * components can use them to generate html pages at the time of prerendering.
  */
 module.exports = function({ types: t }) {
+	let routerFound = false;
 	return {
 		visitor: {
+			ImportDeclaration(path) {
+				const { node } = path;
+				const { specifiers, source } = node;
+				if (source.value !== 'preact-router' || specifiers.length < 1) {
+					return;
+				}
+				const { local } = specifiers[0];
+				if (local && local.name === 'Router') {
+					routerFound = true;
+				}
+			},
 			JSXOpeningElement(path) {
 				const { node } = path;
+				if (!routerFound) {
+					return;
+				}
 				// Checks if this is a child of <Router> component
 				const routerNode = path.findParent(
 					path =>
