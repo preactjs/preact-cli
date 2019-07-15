@@ -27,5 +27,8 @@ function serverConfig(env) {
 }
 
 module.exports = function(env) {
-	return merge(baseConfig(env), serverConfig(env));
+	return merge(
+		baseConfig({ ...env, isPrerenderBundle: true }),
+		serverConfig(env)
+	);
 };

@@ -25,7 +25,10 @@ module.exports = function(env, options = {}) {
 			require.resolve('@babel/plugin-syntax-dynamic-import'),
 			require.resolve('@babel/plugin-transform-object-assign'),
 			[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-			[require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }],
+			[
+				require.resolve('@babel/plugin-proposal-class-properties'),
+				{ loose: true },
+			],
 			require.resolve('@babel/plugin-proposal-object-rest-spread'),
 			isProd &&
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
@@ -36,6 +39,7 @@ module.exports = function(env, options = {}) {
 			[require.resolve('fast-async'), { spec: true }],
 			require.resolve('babel-plugin-macros'),
 			!isProd && isRHLEnabled && require.resolve('react-hot-loader/babel'),
+			require.resolve('./babel-plugins/prop-driller-for-prerendering'),
 		].filter(Boolean),
 	};
 };
