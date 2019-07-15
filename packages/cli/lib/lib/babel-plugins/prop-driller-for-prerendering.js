@@ -25,7 +25,8 @@ module.exports = function({ types: t }) {
 				if (!routerFound) {
 					return;
 				}
-				// Checks if this is a child of <Router> component
+
+				// Checks if this is a child of <Router> component imported from 'preact-router'
 				const routerNode = path.findParent(
 					path =>
 						path.isJSXElement() &&
@@ -33,7 +34,6 @@ module.exports = function({ types: t }) {
 						path.node.openingElement.name &&
 						path.node.openingElement.name.name === 'Router'
 				);
-				const propDriller = t.JSXSpreadAttribute(t.identifier('props'));
 				const hasPathAttribute = node.attributes.some(attr => {
 					return attr.name && attr.name.name === 'path';
 				});
@@ -48,6 +48,22 @@ module.exports = function({ types: t }) {
 				const isMatchingNode =
 					hasPathAttribute && !optOutDrillingProps && !alreadySpreads;
 				if (routerNode && isMatchingNode) {
+					const parentFunction = path.findParent(
+						path =>
+							(path.isFunctionExpression() || path.isFunctionDeclaration()) &&
+							path.node.params &&
+							path.node.params.length > 0
+					);
+					if (!parentFunction) {
+						return;
+					} else if (parentFunction.node.params[0].type !== 'Identifier') {
+						warn(
+							'Cannot find props as objects or are destructred, cannot inject values while pre-rendering'
+						);
+					}
+					const propDriller = t.JSXSpreadAttribute(
+						t.identifier(parentFunction.node.params[0].name)
+					);
 					node.attributes.push(propDriller);
 				} else if (!routerNode && isMatchingNode) {
 					warn('No router found! Will not be able to drill props to routes');
