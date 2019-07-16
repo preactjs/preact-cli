@@ -1,7 +1,7 @@
 /* global __webpack_public_path__ */
 
 import { h, render } from 'preact';
-import { Provider } from '../pre-render';
+import { Provider } from '../pre-render-data-context';
 
 const interopDefault = m => (m && m.default ? m.default : m);
 

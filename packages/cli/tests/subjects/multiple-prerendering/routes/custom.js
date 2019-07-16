@@ -1,2 +1,4 @@
 import './custom.css';
-export default ({ myProp }) => <div>{myProp}</div>;
+import { withPrerenderData } from '../../../../lib/pre-render-data-context';
+const component = ({ cliData = {} }) => <div>{cliData.myProp}</div>;
+export default withPrerenderData(component);
