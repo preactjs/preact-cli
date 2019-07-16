@@ -8,9 +8,7 @@ export default function(req) {
 		this.componentWillMount = () => {
 			b = this.base = this.nextBase || this.__b; // short circuits 1st render
 			req(m => {
-				this.setState({
-					child: m.default || m,
-				});
+				this.setState({ child: m.default || m });
 			});
 		};
 
