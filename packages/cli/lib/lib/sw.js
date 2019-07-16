@@ -9,8 +9,8 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 if (process.env.ENABLE_BROTLI && process.env.ES_BUILD) {
 	// Alter the precache manifest to precache brotli files instead of gzip files.
 	self.__precacheManifest = self.__precacheManifest.map(asset => {
-		if (/.*.js$/.test(asset.url)) {
-			asset.url = asset.url.replace(/.esm.js$/, '.esm.js.br');
+		if (/\.js$/.test(asset.url)) {
+			asset.url = asset.url.replace(/\.esm\.js$/, '.esm.js.br');
 		}
 		return asset;
 	});
@@ -19,7 +19,7 @@ if (process.env.ENABLE_BROTLI && process.env.ES_BUILD) {
 		// Before saving the response in cache, we need to treat the headers.
 		async cacheWillUpdate({ response }) {
 			const clonedResponse = response.clone();
-			if (/.js.br(\?.*)?$/.test(clonedResponse.url)) {
+			if (/\.js\.br(\?.*)?$/.test(clonedResponse.url)) {
 				const headers = new Headers(clonedResponse.headers);
 				headers.set('content-type', 'application/javascript');
 				return new Response(await clonedResponse.text(), { headers });
@@ -33,8 +33,8 @@ if (process.env.ENABLE_BROTLI && process.env.ES_BUILD) {
 const precacheOptions = {};
 if (process.env.ENABLE_BROTLI) {
 	precacheOptions['urlManipulation'] = ({ url }) => {
-		if (/.esm.js$/.test(url.href)) {
-			url.href = url.href + '.br';
+		if (/\.esm\.js$/.test(url.href)) {
+			url.href += '.br';
 		}
 		return [url];
 	};
