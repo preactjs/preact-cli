@@ -5,7 +5,7 @@ const baseConfig = require('./webpack-base-config');
 function serverConfig(env) {
 	return {
 		entry: {
-			'ssr-bundle': require.resolve('../pre-render-entry'),
+			'ssr-bundle': require.resolve('../app'),
 		},
 		output: {
 			publicPath: '/',
