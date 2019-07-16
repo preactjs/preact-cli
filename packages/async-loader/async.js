@@ -7,16 +7,9 @@ export default function(req) {
 		let b, old;
 		this.componentWillMount = () => {
 			b = this.base = this.nextBase || this.__b; // short circuits 1st render
-			const inlineDataElement = document.querySelector(
-				'[type="__PREACT_CLI_DATA__"]'
-			);
-			const urlData = inlineDataElement
-				? JSON.parse(inlineDataElement.innerHTML)
-				: {};
 			req(m => {
 				this.setState({
 					child: m.default || m,
-					urlData,
 				});
 			});
 		};
@@ -38,13 +31,7 @@ export default function(req) {
 			return !nxt;
 		};
 
-		this.render = (p, s) => {
-			if (!s.urlData || s.urlData.url !== window.location.pathname) {
-				return s.child ? h(s.child, p) : old;
-			}
-
-			return s.child ? h(s.child, { ...s.urlData, ...p }) : old;
-		};
+		this.render = (p, s) => (s.child ? h(s.child, p) : old);
 	}
 	(Async.prototype = new Component()).constructor = Async;
 	return Async;

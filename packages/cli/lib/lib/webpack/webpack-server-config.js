@@ -5,7 +5,7 @@ const baseConfig = require('./webpack-base-config');
 function serverConfig(env) {
 	return {
 		entry: {
-			'ssr-bundle': env.source('index'),
+			'ssr-bundle': require.resolve('../pre-render-entry'),
 		},
 		output: {
 			publicPath: '/',
@@ -27,8 +27,5 @@ function serverConfig(env) {
 }
 
 module.exports = function(env) {
-	return merge(
-		baseConfig({ ...env, isPrerenderBundle: true }),
-		serverConfig(env)
-	);
+	return merge(baseConfig(env), serverConfig(env));
 };

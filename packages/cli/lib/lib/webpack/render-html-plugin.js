@@ -54,7 +54,7 @@ module.exports = async function(config) {
 				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
 			},
 			scriptLoading: 'defer',
-			CLI_DATA: { url, ...routeData },
+			CLI_DATA: { preRenderData: { url, ...routeData } },
 		});
 	};
 
