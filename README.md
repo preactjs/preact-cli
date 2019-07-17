@@ -1,4 +1,4 @@
-# preact-cli [![Build Status](https://travis-ci.org/developit/preact-cli.svg?branch=master)](https://travis-ci.org/developit/preact-cli) [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg?style=flat)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg?style=flat)](https://www.npmjs.com/package/preact-cli)
+# preact-cli [![Build Status](https://img.shields.io/travis/preactjs/preact-cli/master.svg)](https://travis-ci.org/preactjs/preact-cli) [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg)](https://www.npmjs.com/package/preact-cli)
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
 
@@ -335,7 +335,7 @@ The default templates comes with a `.css` file for each component. You can start
 
 [promise]: https://npm.im/promise-polyfill
 [fetch]: https://github.com/developit/unfetch
-[preact]: https://github.com/developit/preact
+[preact]: https://github.com/preactjs/preact
 [webpackconfighelpers]: docs/webpack-helpers.md
 [`.babelrc`]: https://babeljs.io/docs/usage/babelrc
 [simple]: https://github.com/preactjs-templates/simple
@@ -343,19 +343,19 @@ The default templates comes with a `.css` file for each component. You can start
 [```.babelrc```]: https://babeljs.io/docs/usage/babelrc
 [default]: https://github.com/preactjs-templates/default
 [sw-precache]: https://github.com/GoogleChrome/sw-precache
-[preact-router]: https://github.com/developit/preact-router
+[preact-router]: https://github.com/preactjs/preact-router
 [material]: https://github.com/preactjs-templates/material
 [widget]: https://github.com/preactjs-templates/widget
-[plugins wiki]: https://github.com/developit/preact-cli/wiki/Plugins
+[plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
 [preactjs-templates/default]: https://github.com/preactjs-templates/default
-[recipes wiki]: https://github.com/developit/preact-cli/wiki/Config-Recipes
+[recipes wiki]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes
 [prpl]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
 [`babel-preset-env`]: https://github.com/babel/babel-preset-env#targetsbrowsers
 [proof]: https://googlechrome.github.io/lighthouse/viewer/?gist=142af6838482417af741d966e7804346
-[preact cli preset]: https://github.com/developit/preact-cli/blob/master/src/lib/babel-config.js
+[preact cli preset]: https://github.com/preactjs/preact-cli/blob/master/packages/cli/lib/lib/babel-config.js
 [service workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
-[customize babel]: https://github.com/developit/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
-[`async!`]: https://github.com/developit/preact-cli/blob/222e7018dd360e40f7db622191aeca62d6ef0c9a/examples/full/src/components/app.js#L7
+[customize babel]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
+[`async!`]: https://github.com/preactjs/preact-cli/blob/1.4.1/examples/full/src/components/app.js#L7
 [sass]: https://sass-lang.com
 [less]: http://lesscss.org
