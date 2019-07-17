@@ -1,7 +1,6 @@
 /* global __webpack_public_path__ */
 
 import { h, render } from 'preact';
-import App from './app';
 
 const interopDefault = m => (m && m.default ? m.default : m);
 
@@ -36,6 +35,7 @@ if (typeof app === 'function') {
 	let root = document.body.firstElementChild;
 
 	let init = () => {
+		let app = interopDefault(require('preact-cli-entrypoint'));
 		let preRenderData = {};
 		const inlineDataElement = document.querySelector(
 			'[type="__PREACT_CLI_DATA__"]'
@@ -43,10 +43,7 @@ if (typeof app === 'function') {
 		if (inlineDataElement) {
 			preRenderData = JSON.parse(inlineDataElement.innerHTML).preRenderData;
 		}
-		const preRenderApp = h(App, {
-			CLI_DATA: { preRenderData },
-		});
-		root = render(preRenderApp, document.body, root);
+		root = render(h(app, { preRenderData }), document.body, root);
 	};
 
 	if (module.hot) module.hot.accept('preact-cli-entrypoint', init);

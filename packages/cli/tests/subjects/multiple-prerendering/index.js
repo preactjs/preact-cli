@@ -16,7 +16,7 @@ export default class App extends Component {
 				<Router url={props.url} onChange={this.handleRoute} {...props}>
 					<Home path="/" />
 					<Route66 path="/route66" />
-					<Custom path="/custom" />
+					<Custom path="/custom" {...props} />
 				</Router>
 			</div>
 		);
