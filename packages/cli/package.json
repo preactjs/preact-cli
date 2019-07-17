@@ -105,6 +105,7 @@
     "minimatch": "^3.0.3",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "ora": "^3.4.0",
+    "postcss-load-config": "^2.1.0",
     "postcss-loader": "^3.0.0",
     "progress-bar-webpack-plugin": "^1.12.1",
     "promise-polyfill": "^8.1.0",
