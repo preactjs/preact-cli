@@ -40,7 +40,21 @@ if (process.env.ENABLE_BROTLI) {
 	};
 }
 
-workbox.precaching.precacheAndRoute(self.__precacheManifest, precacheOptions);
-workbox.routing.registerNavigationRoute(
-	workbox.precaching.getCacheKeyForURL('/index.html')
+const isNav = event => event.request.mode === 'navigate';
+
+/**
+ * Adding this before `precacheAndRoute` lets us handle all
+ * the navigation requests even if they are in precache.
+ */
+workbox.routing.registerRoute(
+	({ event }) => isNav(event),
+	new workbox.strategies.NetworkFirst()
 );
+
+workbox.precaching.precacheAndRoute(self.__precacheManifest, precacheOptions);
+
+workbox.routing.setCatchHandler(({ event }) => {
+	if (isNav(event))
+		return caches.match(workbox.precaching.getCacheKeyForURL('/index.html'));
+	return Response.error();
+});
