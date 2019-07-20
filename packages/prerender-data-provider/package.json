@@ -1,5 +1,5 @@
 {
-  "name": "prerender-data-provider",
+  "name": "@preact/prerender-data-provider",
   "version": "0.0.1",
   "description": "Prerender Prerender data provider for preact-cli apps",
   "keywords": [
@@ -9,7 +9,7 @@
   "author": "Prateek Bhatnagar <prateek89born@gmail.com>",
   "homepage": "https://github.com/developit/preact-cli#readme",
   "license": "ISC",
-  "main": "lib/prerender-data-provider.js",
+  "main": "index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
