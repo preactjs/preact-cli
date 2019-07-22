@@ -36,7 +36,19 @@ if (typeof app === 'function') {
 
 	let init = () => {
 		let app = interopDefault(require('preact-cli-entrypoint'));
-		root = render(h(app), document.body, root);
+		let preRenderData = {};
+		const inlineDataElement = document.querySelector(
+			'[type="__PREACT_CLI_DATA__"]'
+		);
+		if (inlineDataElement) {
+			preRenderData = JSON.parse(inlineDataElement.innerHTML).preRenderData;
+		}
+		/* An object named CLI_DATA is passed as a prop,
+		 * this keeps us future proof if in case we decide,
+		 * to send other data like at some point in time.
+		 */
+		const CLI_DATA = { preRenderData };
+		root = render(h(app, { CLI_DATA }), document.body, root);
 	};
 
 	if (module.hot) module.hot.accept('preact-cli-entrypoint', init);

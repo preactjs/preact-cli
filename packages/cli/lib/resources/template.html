@@ -35,5 +35,8 @@
 			<script <%= htmlWebpackPlugin.options.scriptLoading %>  src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
 			<script nomodule src="<%= htmlWebpackPlugin.files.chunks["polyfills"].entry %>"></script>
 		<% } %>
+		<script type="__PREACT_CLI_DATA__">
+			<%= JSON.stringify(htmlWebpackPlugin.options.CLI_DATA) %>
+		</script>
 	</body>
 </html>
