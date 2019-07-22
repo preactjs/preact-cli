@@ -178,9 +178,10 @@ module.exports = async function(repo, dest, argv) {
 		join(resolve(cwd, dest), 'src', 'template.html')
 	);
 
+	// Do not copy the service worker file until we have a preact API for the same.
 	// Copy over service worker
-	const serviceWorkerSrc = resolve(__dirname, join('..', 'lib', 'sw.js'));
-	await fs.copyFile(serviceWorkerSrc, join(resolve(cwd, dest), 'src', 'sw.js'));
+	// const serviceWorkerSrc = resolve(__dirname, join('..', 'lib', 'sw.js'));
+	// await fs.copyFile(serviceWorkerSrc, join(resolve(cwd, dest), 'src', 'sw.js'));
 
 	if (argv.install) {
 		spinner.text = 'Installing dependencies';
