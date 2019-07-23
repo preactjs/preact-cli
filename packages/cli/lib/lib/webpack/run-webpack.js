@@ -113,16 +113,18 @@ function runCompiler(compiler) {
 }
 
 function showStats(stats) {
-	if (stats.hasErrors()) {
-		allFields(stats, 'errors')
-			.map(stripLoaderPrefix)
-			.forEach(msg => error(msg));
-	}
+	if (stats) {
+		if (stats.hasErrors()) {
+			allFields(stats, 'errors')
+				.map(stripLoaderPrefix)
+				.forEach(msg => error(msg));
+		}
 
-	if (stats.hasWarnings()) {
-		allFields(stats, 'warnings')
-			.map(stripLoaderPrefix)
-			.forEach(msg => warn(msg));
+		if (stats.hasWarnings()) {
+			allFields(stats, 'warnings')
+				.map(stripLoaderPrefix)
+				.forEach(msg => warn(msg));
+		}
 	}
 
 	return stats;
