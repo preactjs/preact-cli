@@ -48,7 +48,16 @@ const isNav = event => event.request.mode === 'navigate';
  */
 workbox.routing.registerRoute(
 	({ event }) => isNav(event),
-	new workbox.strategies.NetworkFirst()
+	new workbox.strategies.NetworkFirst({
+		// this cache is plunged with every new service worker deploy so we dont need to care about purging the cache.
+		cacheName: workbox.core.cacheNames.precache,
+		networkTimeoutSeconds: 5, // if u dont start getting headers within 5 sec fallback to cache.
+		plugins: [
+			new workbox.cacheableResponse.Plugin({
+				statuses: [200], // only cache valid responses, not opaque responses e.g. wifi portal.
+			}),
+		],
+	})
 );
 
 workbox.precaching.precacheAndRoute(self.__precacheManifest, precacheOptions);
