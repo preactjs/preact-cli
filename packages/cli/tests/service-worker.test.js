@@ -22,20 +22,20 @@ describe('preact service worker tests', () => {
 	});
 
 	afterAll(async () => {
-		server.server.stop();
+		await server.server.stop();
 		await browser.close();
 	});
 
 	it('builds the default output', async () => {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:3000', {
-			waitUntil: 'load',
+			waitUntil: 'networkidle0',
 		});
 		const initialContent = await page.content();
 		await sleep(2000); // wait for service worker installation.
 		await page.setOfflineMode(true);
 		await page.reload({
-			waitUntil: 'load',
+			waitUntil: 'networkidle0',
 		});
 		const offlineContent = await page.content();
 		await page.waitForSelector('h1');
@@ -49,7 +49,7 @@ describe('preact service worker tests', () => {
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
 		await page.goto('http://localhost:3000', {
-			waitUntil: 'load',
+			waitUntil: 'networkidle0',
 		});
 		const initialContent = await page.content();
 		await sleep(2000); // wait for service worker installation.
@@ -61,7 +61,7 @@ describe('preact service worker tests', () => {
 		indexHtml = indexHtml.replace('<title>test-default</title>', NEW_TITLE);
 		await writeFile(indexHtmlPath, indexHtml);
 		await page.reload({
-			waitUntil: 'load',
+			waitUntil: 'networkidle0',
 		});
 		const refreshedContent = await page.content();
 		expect(initialContent).not.toEqual(refreshedContent);
