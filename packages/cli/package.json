@@ -8,7 +8,7 @@
     "preact": "lib/index.js"
   },
   "scripts": {
-    "test": "jest ./tests/watch.test.js"
+    "test": "jest"
   },
   "jest": {
     "setupFilesAfterEnv": [
