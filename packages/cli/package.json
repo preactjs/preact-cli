@@ -8,7 +8,7 @@
     "preact": "lib/index.js"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "jest": {
     "setupFilesAfterEnv": [
