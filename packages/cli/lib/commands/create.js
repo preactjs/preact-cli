@@ -184,7 +184,8 @@ module.exports = async function(repo, dest, argv) {
 	// await fs.copyFile(serviceWorkerSrc, join(resolve(cwd, dest), 'src', 'sw.js'));
 
 	if (argv.install) {
-		spinner.text = 'Installing dependencies';
+		spinner.text = 'Installing dependencies:\n';
+		spinner.stopAndPersist();
 		await install(target, isYarn);
 	}
 
