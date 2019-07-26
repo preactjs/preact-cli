@@ -24,7 +24,7 @@ describe('preact service worker tests', () => {
 		await browser.close();
 	});
 
-	it('builds the default output', async () => {
+	it('works offline', async () => {
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
 		await page.goto('http://localhost:3000', {
@@ -40,7 +40,7 @@ describe('preact service worker tests', () => {
 			await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
 		).toEqual(['Preact App', 'Home']);
 		expect(offlineContent).toEqual(initialContent);
-	}, 8000);
+	});
 
 	it('should fetch navigation requests with networkFirst', async () => {
 		const page = await browser.newPage();
