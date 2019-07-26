@@ -5,7 +5,7 @@ const { sleep } = require('./lib/utils');
 const { getServer } = require('./server');
 const startChrome = require('./lib/chrome');
 
-describe('preact service worker tests', () => {
+describe.skip('preact service worker tests', () => {
 	let server, browser, dir;
 
 	beforeAll(async () => {
