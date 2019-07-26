@@ -26,7 +26,7 @@ describe('preact service worker tests', () => {
 		await browser.close();
 	});
 
-	it('builds the default output', async () => {
+	test('builds the default output', async () => {
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
 		await page.goto('http://localhost:3000', {
@@ -48,7 +48,7 @@ describe('preact service worker tests', () => {
 		// 	await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
 		// ).toEqual(['Preact App', 'Home']);
 		expect(initialContent).toEqual(initialContent);
-	});
+	}, 8000);
 
 	it.skip('should fetch navigation requests with networkFirst', async () => {
 		const page = await browser.newPage();
