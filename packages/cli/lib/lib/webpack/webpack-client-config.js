@@ -13,7 +13,7 @@ const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
-const BrotliPlugin = require('brotli-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 const { normalizePath } = require('../../util');
 const SWBuilderPlugin = require('./sw-plugin');
 
@@ -287,7 +287,9 @@ function isProd(config) {
 
 	if (config.brotli) {
 		prodConfig.plugins.push(
-			new BrotliPlugin({
+			new CompressionPlugin({
+				filename: '[path].br[query]',
+				algorithm: 'brotliCompress',
 				test: /\.esm\.js$/,
 			})
 		);
