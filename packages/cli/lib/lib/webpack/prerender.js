@@ -1,10 +1,13 @@
-const { red, yellow } = require('kleur');
+const { red } = require('kleur');
 const { resolve } = require('path');
 const { readFileSync } = require('fs');
 const stackTrace = require('stack-trace');
 const { SourceMapConsumer } = require('source-map');
+const { error, info } = require('../../util');
+const outdent = require('outdent');
+const { codeFrameColumns } = require('@babel/code-frame');
 
-module.exports = function(env, params) {
+module.exports = function prerender(env, params) {
 	params = params || {};
 
 	let entry = resolve(env.dest, './ssr-build/ssr-bundle.js');
@@ -14,8 +17,8 @@ module.exports = function(env, params) {
 	global.location = { href: url, pathname: url };
 
 	try {
-		let m = require(entry),
-			app = (m && m.default) || m;
+		const m = require(entry);
+		const app = (m && m.default) || m;
 
 		if (typeof app !== 'function') {
 			// eslint-disable-next-line no-console
@@ -32,35 +35,68 @@ module.exports = function(env, params) {
 		));
 		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
-		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
+		const stack = stackTrace
+			.parse(err)
+			.filter(s => s.getFileName().includes('ssr-build'))[0];
 		if (!stack) {
-			throw err;
+			error(err);
+			return '';
 		}
 
 		handlePrerenderError(err, env, stack, entry);
+		return '';
 	}
 };
 
-async function handlePrerenderError(err, env, stack, entry) {
-	let errorMessage = err.toString();
-	let isReferenceError = errorMessage.startsWith('ReferenceError');
-	let methodName = stack.getMethodName();
-	let sourceMapContent, position, sourcePath, sourceLines, sourceCodeHighlight;
-
+function getLines(env, position) {
+	let sourcePath;
 	try {
-		sourceMapContent = JSON.parse(readFileSync(`${entry}.map`));
+		sourcePath = resolve(env.src, position.source);
+		return readFileSync(sourcePath, 'utf-8').split('\n');
 	} catch (err) {
-		process.stderr.write(red(`Unable to read sourcemap: ${entry}.map\n`));
+		try {
+			sourcePath = resolve(env.cwd, position.source);
+			return readFileSync(sourcePath, 'utf-8').split('\n');
+		} catch (err) {
+			error(`Unable to read file: ${sourcePath} (${position.source})\n`);
+		}
+	}
+}
+
+async function handlePrerenderError(err, env, stack, entry) {
+	const errorMessage = err.toString();
+	const isReferenceError = errorMessage.startsWith('ReferenceError');
+	const methodName = stack.getMethodName();
+	const fileName = stack.getFileName().replace(/\\/g, '/');
+
+	let position;
+
+	info(fileName);
+	if (/webpack:/.test(fileName)) {
+		position = {
+			source: fileName.replace(/.+webpack:/, 'webpack://'),
+			line: stack.getLineNumber(),
+			column: stack.getColumnNumber(),
+		};
+	} else {
+		try {
+			const sourceMapContent = JSON.parse(
+				readFileSync(`${entry}.map`, 'utf-8')
+			);
+
+			await SourceMapConsumer.with(sourceMapContent, null, consumer => {
+				position = consumer.originalPositionFor({
+					line: stack.getLineNumber(),
+					column: stack.getColumnNumber(),
+				});
+			});
+		} catch (err) {
+			error(`Unable to read sourcemap: ${entry}.map`);
+		}
 	}
 
-	if (sourceMapContent) {
-		await SourceMapConsumer.with(sourceMapContent, null, consumer => {
-			position = consumer.originalPositionFor({
-				line: stack.getLineNumber(),
-				column: stack.getColumnNumber(),
-			});
-		});
-
+	if (position) {
+		info(JSON.stringify(position));
 		position.source = position.source
 			.replace('webpack://', '.')
 			.replace(/^.*~\/((?:@[^/]+\/)?[^/]+)/, (s, name) =>
@@ -68,69 +104,48 @@ async function handlePrerenderError(err, env, stack, entry) {
 					.resolve(name)
 					.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
 			);
-
-		sourcePath = resolve(env.src, position.source);
-		sourceLines;
-		try {
-			sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
-		} catch (err) {
-			try {
-				sourceLines = readFileSync(
-					require.resolve(position.source),
-					'utf-8'
-				).split('\n');
-			} catch (err) {
-				process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
-			}
-			// process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
-		}
-		sourceCodeHighlight = '';
-
-		if (sourceLines) {
-			for (var i = -4; i <= 4; i++) {
-				let color = i === 0 ? red : yellow;
-				let line = position.line + i;
-				let sourceLine = sourceLines[line - 1];
-				sourceCodeHighlight += sourceLine ? `${color(sourceLine)}\n` : '';
-			}
-		}
-	}
-
-	process.stderr.write('\n');
-	process.stderr.write(red(`${errorMessage}\n`));
-	process.stderr.write(`method: ${methodName}\n`);
-	if (sourceMapContent) {
-		process.stderr.write(
-			`at: ${sourcePath}:${position.line}:${position.column}\n`
-		);
-		process.stderr.write('\n');
-		process.stderr.write('Source code:\n\n');
-		process.stderr.write(sourceCodeHighlight);
-		process.stderr.write('\n');
 	} else {
-		process.stderr.write(stack.toString() + '\n');
+		position = {
+			source: stack.getFileName(),
+			line: stack.getLineNumber(),
+			column: stack.getColumnNumber(),
+		};
 	}
-	process.stderr.write(
-		`This ${
-			isReferenceError ? 'is most likely' : 'could be'
-		} caused by using DOM or Web APIs.\n`
-	);
-	process.stderr.write(
-		`Pre-render runs in node and has no access to globals available in browsers.\n\n`
-	);
-	process.stderr.write(
-		`Consider wrapping code producing error in: 'if (typeof window !== "undefined") { ... }'\n`
-	);
 
-	if (methodName === 'componentWillMount') {
-		process.stderr.write(`or place logic in 'componentDidMount' method.\n`);
-	}
-	process.stderr.write('\n');
-	process.stderr.write(
-		`Alternatively use 'preact build --no-prerender' to disable prerendering.\n\n`
-	);
-	process.stderr.write(
-		'See https://github.com/developit/preact-cli#pre-rendering for further information.'
-	);
+	const sourceLines = getLines(env, position);
+
+	let sourceCodeHighlight = sourceLines
+		? codeFrameColumns(
+				sourceLines.join('\n'),
+				{ start: { line: position.line, column: position.column } },
+				{ highlightCode: true }
+		  )
+		: '';
+
+	const stderr = process.stderr.write.bind(process.stderr);
+
+	stderr('\n');
+	stderr(outdent`
+		[PrerenderError]: ${red(`${errorMessage}`)}
+		  --> ${position.source}:${position.line}:${position.column} (${methodName ||
+		'<anonymous>'})
+		${sourceCodeHighlight}
+
+		${red(`${err.stack}`)}
+		
+		This ${
+			isReferenceError ? 'is most likely' : 'could be'
+		} caused by using DOM or Web APIs.
+		Pre-render runs in node and has no access to globals available in browsers.
+		Consider wrapping code producing error in: 'if (typeof window !== "undefined") { ... }\
+		${
+			methodName === 'componentWillMount'
+				? `\nor place logic in 'componentDidMount' method.`
+				: ''
+		}
+		
+		Alternatively use \`preact build --no-prerender\` to disable prerendering.
+		See https://github.com/developit/preact-cli#pre-rendering for further information.
+	`);
 	process.exit(1);
 }
