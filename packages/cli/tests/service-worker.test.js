@@ -34,7 +34,7 @@ describe('preact service worker tests', () => {
 		});
 		const initialContent = await page.content();
 		await sleep(2000); // wait for service worker installation.
-		await page.setOfflineMode(true);
+		// await page.setOfflineMode(true);
 		try {
 			await page.reload();
 			await page.setOfflineMode(false);
