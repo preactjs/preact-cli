@@ -12,7 +12,6 @@ describe('preact service worker tests', () => {
 
 	beforeAll(async () => {
 		dir = await create('default');
-		console.log({ dir });
 		browser = await startChrome();
 		await build(dir, {
 			sw: true,
@@ -35,20 +34,14 @@ describe('preact service worker tests', () => {
 		});
 		const initialContent = await page.content();
 		await sleep(2000); // wait for service worker installation.
-		// await page.setOfflineMode(true);
-		try {
-			await page.reload();
-			await page.setOfflineMode(false);
-		} catch (e) {
-			// no op
-		}
-
-		//const offlineContent = await page.content();
-		// await page.waitForSelector('h1');
-		// expect(
-		// 	await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
-		// ).toEqual(['Preact App', 'Home']);
-		expect(initialContent).toEqual(initialContent);
+		await page.setOfflineMode(true);
+		await page.reload();
+		const offlineContent = await page.content();
+		await page.waitForSelector('h1');
+		expect(
+			await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
+		).toEqual(['Preact App', 'Home']);
+		expect(offlineContent).toEqual(initialContent);
 	}, 8000);
 
 	it.skip('should fetch navigation requests with networkFirst', async () => {

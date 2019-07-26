@@ -8,6 +8,7 @@
     "preact": "lib/index.js"
   },
   "scripts": {
+    "pretest": "rimraf ./tests/output",
     "test": "jest --runInBand"
   },
   "jest": {
