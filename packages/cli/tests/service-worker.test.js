@@ -12,6 +12,7 @@ describe('preact service worker tests', () => {
 
 	beforeAll(async () => {
 		dir = await create('default');
+		console.log({ dir });
 		browser = await startChrome();
 		await build(dir, {
 			sw: true,

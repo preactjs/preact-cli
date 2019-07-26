@@ -17,6 +17,7 @@ describe('preact', () => {
 
 	it('should create development server with hot reloading.', async () => {
 		let app = await create('default');
+		console.log({ app });
 		server = await watch(app, 8083);
 
 		let page = await loadPage(chrome, 'http://127.0.0.1:8083/');
