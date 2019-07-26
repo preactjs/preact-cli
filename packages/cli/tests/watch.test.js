@@ -15,7 +15,7 @@ describe('preact', () => {
 		await chrome.close();
 	});
 
-	it('should create development server with hot reloading.', async () => {
+	it('should create development server with hot reloading.', async done => {
 		let app = await create('default');
 		server = await watch(app, 8083);
 
@@ -31,6 +31,10 @@ describe('preact', () => {
 			`document.querySelector('header > h1').innerText === 'Test App'`
 		);
 
-		await server.close();
+		// expect(
+		// 	await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
+		// ).toEqual(['Preact App', 'Test App']);
+		server.close();
+		done();
 	});
 });
