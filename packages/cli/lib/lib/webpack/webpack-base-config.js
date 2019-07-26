@@ -223,8 +223,9 @@ module.exports = function(env) {
 						{
 							loader: 'css-loader',
 							options: {
-								modules: true,
-								localIdentName: '[local]__[hash:base64:5]',
+								modules: {
+									localIdentName: '[local]__[hash:base64:5]',
+								},
 								importLoaders: 1,
 								sourceMap: true,
 							},
