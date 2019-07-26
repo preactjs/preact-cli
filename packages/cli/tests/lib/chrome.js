@@ -20,7 +20,6 @@ module.exports.waitUntilExpression = async function(page, expression) {
 
 module.exports.loadPage = async function(chrome, url) {
 	let page = await chrome.newPage();
-	await page.setCacheEnabled(false);
 	await log(() => page.goto(url), `Navigating to ${url}`);
 	return page;
 };
