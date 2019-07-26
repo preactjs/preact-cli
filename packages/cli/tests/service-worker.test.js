@@ -24,7 +24,7 @@ describe('preact service worker tests', () => {
 		await browser.close();
 	});
 
-	test('builds the default output', async () => {
+	it('builds the default output', async () => {
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
 		await page.goto('http://localhost:3000', {
