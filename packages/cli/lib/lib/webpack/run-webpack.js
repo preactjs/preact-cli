@@ -224,7 +224,7 @@ function replaceAll(str, find, replace) {
 function stripLoaderFromModuleNames(m) {
 	for (let key in m) {
 		if (
-			m.hasOwnProperty(key) &&
+			Object.prototype.hasOwnProperty.call(m, key) &&
 			m[key] != null &&
 			~keysToNormalize.indexOf(key)
 		) {
