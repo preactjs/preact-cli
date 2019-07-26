@@ -17,8 +17,6 @@ const argv = {
 	config: 'preact.config.js',
 	prerenderUrls: 'prerender-urls.json',
 	'inline-css': true,
-	sw: true,
-	esm: true,
 };
 
 exports.create = async function(template, name) {
@@ -41,10 +39,13 @@ exports.build = function(cwd, options) {
 	linkPackage('preact', root, cwd);
 	linkPackage('preact-render-to-string', root, cwd);
 	let opts = Object.assign({ cwd }, argv);
-	return cmd.build(argv.src, Object.assign({}, opts, options));
+	return cmd.build(
+		argv.src,
+		Object.assign({ sw: true, esm: true }, opts, options)
+	);
 };
 
 exports.watch = function(cwd, port, host = '127.0.0.1') {
-	let opts = Object.assign({ cwd, host, port, https: false, esm: false }, argv);
+	let opts = Object.assign({ cwd, host, port, https: false }, argv);
 	return cmd.watch(argv.src, opts);
 };
