@@ -6,7 +6,7 @@ const { create, watch } = require('./lib/cli');
 const { loadPage, waitUntilExpression } = startChrome;
 let chrome, server;
 
-describe.skip('preact', () => {
+describe('preact', () => {
 	beforeAll(async () => {
 		chrome = await startChrome();
 	});
