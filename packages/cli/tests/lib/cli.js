@@ -39,10 +39,7 @@ exports.build = function(cwd, options) {
 	linkPackage('preact', root, cwd);
 	linkPackage('preact-render-to-string', root, cwd);
 	let opts = Object.assign({ cwd }, argv);
-	return cmd.build(
-		argv.src,
-		Object.assign({ sw: true, esm: true }, opts, options)
-	);
+	return cmd.build(argv.src, Object.assign({}, opts, options));
 };
 
 exports.watch = function(cwd, port, host = '127.0.0.1') {
