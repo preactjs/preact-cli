@@ -1,10 +1,11 @@
-const { red, gray } = require('kleur');
+const { red } = require('kleur');
 const { resolve } = require('path');
 const { readFileSync } = require('fs');
 const stackTrace = require('stack-trace');
 const { SourceMapConsumer } = require('source-map');
 const { error, info } = require('../../util');
 const outdent = require('outdent');
+const { codeFrameColumns } = require('@babel/code-frame');
 
 module.exports = function prerender(env, params) {
 	params = params || {};
@@ -95,7 +96,7 @@ async function handlePrerenderError(err, env, stack, entry) {
 	}
 
 	if (position) {
-		info(position.source);
+		info(JSON.stringify(position));
 		position.source = position.source
 			.replace('webpack://', '.')
 			.replace(/^.*~\/((?:@[^/]+\/)?[^/]+)/, (s, name) =>
@@ -103,7 +104,6 @@ async function handlePrerenderError(err, env, stack, entry) {
 					.resolve(name)
 					.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
 			);
-		info(position.source);
 	} else {
 		position = {
 			source: stack.getFileName(),
@@ -114,24 +114,13 @@ async function handlePrerenderError(err, env, stack, entry) {
 
 	const sourceLines = getLines(env, position);
 
-	let sourceCodeHighlight = '';
-	if (sourceLines) {
-		const lnrl = position.line.toString().length + 2;
-		const line = position.line;
-		const un = undefined;
-
-		const pad = l =>
-			(l === undefined ? '' : (line + l || '') + '').padStart(lnrl);
-
-		sourceCodeHighlight = gray(outdent`
-			${pad(-2)} | ${sourceLines[line - 3] || ''}
-			${pad(-1)} | ${sourceLines[line - 2] || ''}
-			${pad(-0)} | ${sourceLines[line - 1] || ''}
-			${pad(un)} | ${red('^'.padStart(position.column + 1))}
-			${pad(+1)} | ${sourceLines[line + 0] || ''}
-			${pad(+2)} | ${sourceLines[line + 1] || ''}
-		`);
-	}
+	let sourceCodeHighlight = sourceLines
+		? codeFrameColumns(
+				sourceLines.join('\n'),
+				{ start: { line: position.line, column: position.column } },
+				{ highlightCode: true }
+		  )
+		: '';
 
 	const stderr = process.stderr.write.bind(process.stderr);
 
