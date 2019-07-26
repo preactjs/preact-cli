@@ -45,6 +45,6 @@ exports.build = function(cwd, options) {
 };
 
 exports.watch = function(cwd, port, host = '127.0.0.1') {
-	let opts = Object.assign({ cwd, host, port, https: false }, argv);
+	let opts = Object.assign({ cwd, host, port, https: false, esm: false }, argv);
 	return cmd.watch(argv.src, opts);
 };
