@@ -31,6 +31,6 @@ describe('preact', () => {
 			`document.querySelector('header > h1').innerText === 'Test App'`
 		);
 
-		server.close();
+		await server.close();
 	});
 });

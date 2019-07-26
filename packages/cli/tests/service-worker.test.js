@@ -44,7 +44,7 @@ describe('preact service worker tests', () => {
 		expect(offlineContent).toEqual(initialContent);
 	}, 8000);
 
-	it.skip('should fetch navigation requests with networkFirst', async () => {
+	it('should fetch navigation requests with networkFirst', async () => {
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
 		await page.goto('http://localhost:3000', {
