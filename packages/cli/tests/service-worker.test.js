@@ -1,11 +1,9 @@
 const { join } = require('path');
 const { create, build } = require('./lib/cli');
-const { promisify } = require('util');
 const { readFile, writeFile } = require('../lib/fs');
+const { sleep } = require('./lib/utils');
 const { getServer } = require('./server');
 const startChrome = require('./lib/chrome');
-
-const sleep = promisify(setTimeout);
 
 describe('preact service worker tests', () => {
 	let server, browser, dir;
