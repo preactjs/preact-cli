@@ -8,7 +8,8 @@
     "preact": "lib/index.js"
   },
   "scripts": {
-    "test": "jest"
+    "pretest": "rimraf ./tests/output",
+    "test": "jest --forceExit"
   },
   "jest": {
     "setupFilesAfterEnv": [
@@ -52,12 +53,14 @@
     "ncp": "^2.0.0",
     "node-sass": "^4.12.0",
     "p-retry": "^4.1.0",
+    "polka": "^0.5.2",
     "preact": "^8.1.0",
     "preact-compat": "^3.18.5",
     "preact-render-to-string": "^4.1.0",
     "preact-router": "^2.6.1",
     "puppeteer": "^1.19.0",
-    "sass-loader": "^7.0.1"
+    "sass-loader": "^7.0.1",
+    "sirv": "^0.4.2"
   },
   "peerDependencies": {
     "preact": "*",

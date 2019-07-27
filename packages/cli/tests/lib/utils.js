@@ -68,4 +68,6 @@ function waitUntil(action, errorMessage) {
 	});
 }
 
-module.exports = { expand, bytes, snapshot, isMatch, log, waitUntil };
+const sleep = promisify(setTimeout);
+
+module.exports = { expand, bytes, snapshot, isMatch, log, waitUntil, sleep };
