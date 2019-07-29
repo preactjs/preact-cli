@@ -1,7 +1,7 @@
 const rimraf = require('rimraf');
 const { resolve } = require('path');
 const { promisify } = require('util');
-const { isDir, error, warn } = require('../util');
+const { isDir, error, warn } = require('@preact/cli-util');
 const runWebpack = require('../lib/webpack/run-webpack');
 
 const toBool = val => val === void 0 || (val === 'false' ? false : val);

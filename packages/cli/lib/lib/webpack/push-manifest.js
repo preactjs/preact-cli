@@ -1,4 +1,4 @@
-const createLoadManifest = require('./create-load-manifest');
+const createLoadManifest = require('@preact/cli-util/webpack/create-load-manifest');
 
 module.exports = class PushManifestPlugin {
 	constructor(env = {}) {

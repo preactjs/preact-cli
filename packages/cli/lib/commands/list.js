@@ -1,6 +1,6 @@
 const fetch = require('isomorphic-unfetch');
 const { bold, magenta } = require('kleur');
-const { error, info } = require('../util');
+const { error, info } = require('@preact/cli-util');
 
 const REPOS_URL = 'https://api.github.com/users/preactjs-templates/repos';
 

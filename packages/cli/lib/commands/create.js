@@ -7,7 +7,7 @@ const { green } = require('kleur');
 const { resolve, join } = require('path');
 const { prompt } = require('prompts');
 const isValidName = require('validate-npm-package-name');
-const { info, isDir, hasCommand, error, trim, warn } = require('../util');
+const { info, isDir, hasCommand, error, trim, warn } = require('@preact/cli-util');
 const { addScripts, install, initGit, isMissing } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';

@@ -9,7 +9,7 @@ const DevServer = require('webpack-dev-server');
 const clientConfig = require('./webpack-client-config');
 const serverConfig = require('./webpack-server-config');
 const transformConfig = require('./transform-config');
-const { error, isDir, warn } = require('../../util');
+const { error, isDir, warn } = require('@preact/cli-util');
 
 async function devBuild(env) {
 	let config = await clientConfig(env);

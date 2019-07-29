@@ -3,7 +3,7 @@ const BabelEsmPlugin = require('babel-esm-plugin');
 const { DefinePlugin } = require('webpack');
 const fs = require('fs');
 const { resolve } = require('path');
-const { info } = require('../../util');
+const { info } = require('@preact/cli-util');
 class SWBuilderPlugin {
 	constructor(config) {
 		const { src, brotli, esm } = config;
