@@ -4,7 +4,7 @@
     "packages/*"
   ],
   "scripts": {
-    "pretest": "yarn lerna bootstrap && yarn lint",
+    "pretest": "yarn lint",
     "test": "lerna run test --stream",
     "prettier": "prettier --write **/*.{js,ts,tsx,json,css,scss,md,yml}",
     "lint": "eslint .",
