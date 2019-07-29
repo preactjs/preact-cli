@@ -1,5 +1,5 @@
 const spawn = require('cross-spawn-promise');
-const { hasCommand, warn } = require('../util');
+const { hasCommand, warn } = require('@preact/cli-util');
 
 const stdio = 'ignore';
 

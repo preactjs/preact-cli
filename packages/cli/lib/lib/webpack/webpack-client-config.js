@@ -8,13 +8,13 @@ const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CrittersPlugin = require('critters-webpack-plugin');
-const renderHTMLPlugin = require('./render-html-plugin');
+const renderHTMLPlugin = require('@preact/render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const { normalizePath } = require('../../util');
+const { normalizePath } = require('@preact/cli-util');
 const SWBuilderPlugin = require('./sw-plugin');
 
 const cleanFilename = name =>
@@ -86,7 +86,7 @@ async function clientConfig(env) {
 
 		plugins: [
 			new PushManifestPlugin(env),
-			...(await renderHTMLPlugin(env)),
+			...(await renderHTMLPlugin({})(env)),
 			...getBabelEsmPlugin(env),
 			new CopyWebpackPlugin(
 				[

@@ -1,7 +1,7 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
 const fs = require('../../fs');
-const { error } = require('../../util');
+const { error } = require('@preact/cli-util');
 
 const FILE = 'preact.config';
 const EXTENSIONS = ['js', 'json'];

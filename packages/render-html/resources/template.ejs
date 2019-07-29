@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title><%= htmlWebpackPlugin.options.title %></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath %>manifest.json">
+		<% if (htmlWebpackPlugin.options.manifest.theme_color) { %>
+			<meta name="theme-color" content="<%= htmlWebpackPlugin.options.manifest.theme_color %>">
+		<% } %>
+		<% const loadManifest = htmlWebpackPlugin.options.createLoadManifest(compilation.assets, webpack.namedChunkGroups);%>
+		<% const filesRegexp = htmlWebpackPlugin.options.inlineCss ? /\.(chunk\.\w{5}\.css|js)$/ : /\.(css|js)$/;%>
+		<% for (const file in loadManifest[htmlWebpackPlugin.options.url]) { %>
+			<% if (htmlWebpackPlugin.options.preload && file && file.match(filesRegexp)) { %>
+				<% /* crossorigin for main bundle as that is loaded from `<script type=module` tag, other lazy loaded bundles are from webpack so its not needed */ %>
+				<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>" <%= file.match(/bundle\.\w{5}\.esm\.js$/)?'crossorigin="anonymous"':'' %>>
+			<% } %>
+		<% } %>
+	</head>
+	<body>
+		<%= htmlWebpackPlugin.options.ssr() %>
+		<% if (webpack.assets.filter(entry => entry.name.match(/bundle(\.\w{5})?.esm.js$/)).length > 0) { %>
+			<% /* Fix for safari < 11 nomodule bug. TODO: Do the following only for safari. */ %>
+			<script nomodule>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()},!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script>
+			<script crossorigin="anonymous" src="<%= htmlWebpackPlugin.files.publicPath %><%= webpack.assets.filter(entry => entry.name.match(/bundle(\.\w{5})?.esm.js$/))[0].name %>" type="module"></script>
+			<%
+				/*Fetch and Promise polyfills are not needed for browsers that support type=module
+				Please re-evaluate below line if adding more polyfills.*/
+			%>
+			<script nomodule src="<%= htmlWebpackPlugin.files.chunks["polyfills"].entry %>"></script>
+			<script nomodule defer src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
+		<% } else { %>
+			<script <%= htmlWebpackPlugin.options.scriptLoading %>  src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
+			<script nomodule src="<%= htmlWebpackPlugin.files.chunks["polyfills"].entry %>"></script>
+		<% } %>
+		<script type="__PREACT_CLI_DATA__">
+			<%= JSON.stringify(htmlWebpackPlugin.options.CLI_DATA) %>
+		</script>
+	</body>
+</html>

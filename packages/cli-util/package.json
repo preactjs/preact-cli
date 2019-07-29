@@ -1,0 +1,19 @@
+{
+  "name": "@preact/cli-util",
+  "version": "3.0.0-rc.5",
+  "description": "Preact-cli's util library",
+  "main": "index.js",
+  "files": [
+    "*.js"
+  ],
+  "engines": {
+    "node": ">=6"
+  },
+  "dependencies": {
+    "kleur": "^3.0.3",
+    "which": "^1.2.14"
+  },
+  "peerDependencies": {
+    "preact": "^8.1.0"
+  }
+}

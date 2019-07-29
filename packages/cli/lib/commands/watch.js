@@ -1,5 +1,5 @@
 const runWebpack = require('../lib/webpack/run-webpack');
-const { warn } = require('../util');
+const { warn } = require('@preact/cli-util');
 
 module.exports = async function(src, argv) {
 	argv.src = src || argv.src;

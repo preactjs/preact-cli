@@ -2,7 +2,7 @@
 const envinfo = require('envinfo');
 const sade = require('sade');
 const notifier = require('update-notifier');
-const { error } = require('./util');
+const { error } = require('@preact/cli-util');
 const pkg = require('../package');
 
 const ver = process.version;
