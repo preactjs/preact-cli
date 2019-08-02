@@ -131,4 +131,9 @@ describe('preact build', () => {
 
 		looksLike(html, images.template);
 	});
+
+	it('should patch global location object', async () => {
+		let dir = await subject('location-patch');
+		expect(() => build(dir)).not.toThrow();
+	});
 });

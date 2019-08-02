@@ -2,6 +2,7 @@ const { red, yellow } = require('kleur');
 const { resolve } = require('path');
 const { readFileSync } = require('fs');
 const stackTrace = require('stack-trace');
+const URL = require('url');
 const { SourceMapConsumer } = require('source-map');
 
 module.exports = function(env, params) {
@@ -11,7 +12,7 @@ module.exports = function(env, params) {
 	let url = params.url || '/';
 
 	global.history = {};
-	global.location = { href: url, pathname: url };
+	global.location = { ...URL.parse(url) };
 
 	try {
 		let m = require(entry),
