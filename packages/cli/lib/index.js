@@ -79,6 +79,7 @@ prog
 	.option('--src', 'Specify source directory', 'src')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
+	.option('--no-clear', "Don't clear the console", false)
 	.option('--sw', 'Generate and attach a Service Worker', false)
 	.option('--rhl', 'Enable react hot loader', false)
 	.option('--json', 'Generate build stats for bundle analysis')
