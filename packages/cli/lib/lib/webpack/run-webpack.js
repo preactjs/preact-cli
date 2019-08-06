@@ -46,7 +46,7 @@ async function devBuild(env) {
 			let serverAddr = `${protocol}://${host}:${bold(port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
 
-			if (config['clear']) clear(true);
+			if (env['clear']) clear(true);
 
 			if (stats.hasErrors()) {
 				process.stdout.write(red('Build failed!\n\n'));
