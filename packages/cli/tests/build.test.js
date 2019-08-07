@@ -139,11 +139,18 @@ describe('preact build', () => {
 
 	it('should inject preact.* variables into template', async () => {
 		let dir = await subject('custom-template-2');
-		await build(dir);
+		try {
+			await build(dir);
+		} catch (e) {
+			console.log('ERROR', e);
+			throw e;
+		}
 
+		console.log('YEAAAH');
 		let file = join(dir, 'build/index.html');
 		let html = await readFile(file, 'utf-8');
 
+		console.log('REPLACED', html);
 		looksLike(html, images.templateReplaced);
 	});
 });

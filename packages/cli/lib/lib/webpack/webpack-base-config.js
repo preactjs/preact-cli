@@ -139,6 +139,7 @@ module.exports = function(env) {
 			modules: [...nodeModules],
 			alias: {
 				'proxy-loader': require.resolve('./proxy-loader'),
+				'inline-loader': require.resolve('./inline-loader'),
 			},
 		},
 

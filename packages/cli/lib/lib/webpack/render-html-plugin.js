@@ -1,5 +1,5 @@
 const { resolve } = require('path');
-const { existsSync, readFileSync, writeFileSync } = require('fs');
+const { existsSync, readFileSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
@@ -23,7 +23,9 @@ module.exports = async function(config) {
 	template = config.template || template;
 
 	let content = read(template);
+	let hasAbtraction = false;
 	if (/preact\.headEnd|preact\.bodyEnd/.test(content)) {
+		hasAbtraction = true;
 		const headEnd = read('../../resources/head-end.ejs');
 		const bodyEnd = read('../../resources/body-end.ejs');
 		content = content
@@ -34,17 +36,22 @@ module.exports = async function(config) {
 			.replace(/<%\s+preact\.headEnd\s+%>/, headEnd)
 			.replace(/<%\s+preact\.bodyEnd\s+%>/, bodyEnd);
 
-		// Unfortunately html-webpack-plugin expects a true file,
-		// so we'll create a temporary one.
-		template = resolve(__dirname, 'template.tmp.ejs');
-		writeFileSync(template, content);
+		// webpack treats every ! as a loader call. We'll replace it back to the
+		// original in our loader.
+		content = content.replace(/!/g, '__PREACT__BANG__');
+		template = `!!ejs-loader!inline-loader?filename=template.js&code=${content}!${resolve(
+			__dirname,
+			'empty.html'
+		)}`;
+		// template = resolve(__dirname, 'template.tmp.ejs');
+		// writeFileSync(template, content);
 	}
 
 	const htmlWebpackConfig = values => {
 		const { url, title, ...routeData } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
-			template: `!!ejs-loader!${template}`,
+			template: !hasAbtraction ? `!!ejs-loader!${template}` : template,
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
