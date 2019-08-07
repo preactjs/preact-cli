@@ -2,6 +2,7 @@
   "name": "jest-preact-preset",
   "version": "1.0.0",
   "license": "MIT",
+  "main": "src/config.js",
   "author": "Preact Authors <core@preactjs.com>",
   "scripts": {
     "test": "jest"
@@ -9,6 +10,10 @@
   "jest": {
     "preset": "./jest-preset.js"
   },
+  "files": [
+    "src",
+    "jest-preset.js"
+  ],
   "dependencies": {
     "@babel/core": "^7.5.5",
     "babel-jest": "^24.8.0",
