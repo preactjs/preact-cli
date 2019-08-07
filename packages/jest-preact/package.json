@@ -20,6 +20,8 @@
     "jest": "24.x"
   },
   "devDependencies": {
-    "jest": "^24.8.0"
+    "jest": "^24.8.0",
+    "preact": "^8.5.0",
+    "preact-compat": "^3.19.0"
   }
 }
