@@ -136,4 +136,14 @@ describe('preact build', () => {
 		let dir = await subject('location-patch');
 		expect(() => build(dir)).not.toThrow();
 	});
+
+	it('should inject preact.* variables into template', async () => {
+		let dir = await subject('custom-template-2');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.templateReplaced);
+	});
 });

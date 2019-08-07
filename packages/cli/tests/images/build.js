@@ -153,3 +153,19 @@ exports.template = `
 	</body>
 </html>
 `;
+
+exports.templateReplaced = `
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>preact-webpack</title>
+		<link rel="manifest" href="/manifest.json">
+	</head>
+	<body>
+		<h1>Guess what</h1>
+		<h2>This is an app with custom template</h2>
+		{{ ... }}
+	</body>
+</html>
+`;
