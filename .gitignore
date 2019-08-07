@@ -9,3 +9,4 @@ tmp-*.json
 
 .idea/
 .vscode
+*.tmp.*
