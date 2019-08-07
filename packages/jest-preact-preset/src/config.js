@@ -15,7 +15,7 @@ if (isVersion10) {
 }
 
 module.exports = {
-	setupFiles: ['jest-preact/src/jsdom-polyfills.js'],
+	setupFiles: [resolve(__dirname, 'jsdom-polyfills.js')],
 	collectCoverageFrom: ['src/**/*.{mjs,js,jsx,ts,tsx}', '!src/**/*.d.ts'],
 	testMatch: [
 		'<rootDir>/src/**/__tests__/**/*.{mjs,js,jsx,ts,tsx}',
