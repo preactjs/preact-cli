@@ -1,9 +1,5 @@
 {
 	"env": {
-		"jest": true,
-		"jasmine": true
-	},
-	"globals": {
-		"jasmine": true
+		"jest": true
 	}
 }
