@@ -1,5 +1,5 @@
 {
-  "name": "jest-preact-preset",
+  "name": "jest-preset-preact",
   "version": "1.0.0",
   "license": "MIT",
   "main": "src/config.js",
