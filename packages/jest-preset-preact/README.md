@@ -1,9 +1,9 @@
-# jest-preact
+# jest-preset-preact
 
-Jest preset containing all required configuration for writing tests for [preact](https://github.com/preactjs/preact.
+Jest preset containing all required configuration for writing tests for [preact](https://github.com/preactjs/preact).
 
 ```bash
-npm install jest-preact-preset
+npm install jest-preset-preact
 ```
 
 ## Usage
@@ -11,7 +11,7 @@ npm install jest-preact-preset
 ```js
 // jest.config.js
 module.exports = {
-	preset: 'jest-preact-preset',
+	preset: 'jest-preset-preact',
 };
 ```
 
