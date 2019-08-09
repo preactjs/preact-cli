@@ -24,7 +24,7 @@ const cleanFilename = name =>
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src, cwd /*, port? */ } = env;
+	const { isProd, source, src /*, port? */ } = env;
 
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
@@ -111,7 +111,7 @@ async function clientConfig(env) {
 					},
 					existsSync(source('static/root')) && {
 						from: resolve(source('static/root')),
-						to: resolve(cwd),
+						to: '.',
 					},
 				].filter(Boolean)
 			),

@@ -141,7 +141,7 @@ describe('preact build', () => {
 	it('should copy resources from static/root to root directory', async () => {
 		let dir = await subject('static-root');
 		await build(dir);
-		let file = join(dir, '.htaccess');
+		let file = join(dir, 'build', '.htaccess');
 		expect(existsSync(file)).toBe(true);
 	});
 });
