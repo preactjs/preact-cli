@@ -24,7 +24,7 @@ const cleanFilename = name =>
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src /*, port? */ } = env;
+	const { isProd, source, src, cwd /*, port? */ } = env;
 
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
@@ -108,6 +108,10 @@ async function clientConfig(env) {
 					{
 						from: resolve(__dirname, '../../resources/sw-debug.js'),
 						to: 'sw-debug.js',
+					},
+					existsSync(source('static/root')) && {
+						from: resolve(source('static/root')),
+						to: resolve(cwd),
 					},
 				].filter(Boolean)
 			),
