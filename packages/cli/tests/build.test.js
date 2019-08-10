@@ -138,7 +138,7 @@ describe('preact build', () => {
 		expect(() => build(dir)).not.toThrow();
 	});
 
-	it('should copy resources from static/root to root directory', async () => {
+	it('should copy resources from root to build directory', async () => {
 		let dir = await subject('static-root');
 		await build(dir);
 		let file = join(dir, 'build', '.htaccess');
