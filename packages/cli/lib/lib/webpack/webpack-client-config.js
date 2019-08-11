@@ -109,9 +109,9 @@ async function clientConfig(env) {
 						from: resolve(__dirname, '../../resources/sw-debug.js'),
 						to: 'sw-debug.js',
 					},
-					// copy files from root to build directory
-					existsSync(source('root')) && {
-						from: resolve(source('root')),
+					// copy files from static to build directory
+					existsSync(source('static')) && {
+						from: resolve(source('static')),
 						to: '.',
 					},
 				].filter(Boolean)
