@@ -72,7 +72,6 @@ module.exports = async function(repo, dest, argv) {
 	}
 
 	if (!fs.existsSync(resolve(cwd, dest), 'src')) {
-		console.log('Directory not found', join(resolve(cwd, dest), 'src'));
 		mkdirp.sync(join(resolve(cwd, dest), 'src'));
 	}
 
