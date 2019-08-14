@@ -2,6 +2,7 @@ const ora = require('ora');
 const { promisify } = require('util');
 const glob = promisify(require('glob').glob);
 const gittar = require('gittar');
+const mkdirp = require('mkdirp');
 const fs = require('../fs');
 const { green } = require('kleur');
 const { resolve, join } = require('path');
@@ -70,9 +71,15 @@ module.exports = async function(repo, dest, argv) {
 		info(`Assuming you meant ${repo}...`);
 	}
 
+	if (!fs.existsSync(resolve(cwd, dest), 'src')) {
+		console.log('Directory not found', join(resolve(cwd, dest), 'src'));
+		mkdirp.sync(join(resolve(cwd, dest), 'src'));
+	}
+
 	// Attempt to fetch the `template`
 	let archive = await gittar.fetch(repo).catch(err => {
 		err = err || { message: 'An error occured while fetching template.' };
+
 		return error(
 			err.code === 404
 				? `Could not find repository: ${repo}`
