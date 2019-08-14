@@ -30,7 +30,7 @@ module.exports = async function(config) {
 		const bodyEnd = read('../../resources/body-end.ejs');
 		content = content
 			.replace(
-				/<%\s+preact\.title\s+%>/,
+				/<%[=]?\s+preact\.title\s+%>/,
 				'<%= htmlWebpackPlugin.options.title %>'
 			)
 			.replace(/<%\s+preact\.headEnd\s+%>/, headEnd)

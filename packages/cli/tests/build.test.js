@@ -154,4 +154,14 @@ describe('preact build', () => {
 
 		looksLike(html, images.templateReplaced);
 	});
+
+	it('should replace title with <%= preact.title %>', async () => {
+		let dir = await subject('custom-template-3');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.templateReplaced);
+	});
 });
