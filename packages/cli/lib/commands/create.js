@@ -8,25 +8,114 @@ const { resolve, join } = require('path');
 const { prompt } = require('prompts');
 const isValidName = require('validate-npm-package-name');
 const { info, isDir, hasCommand, error, trim, warn } = require('../util');
-const { addScripts, install, initGit, isMissing } = require('../lib/setup');
+const { addScripts, install, initGit } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
+// Formulate Questions if `create` args are missing
+function requestParams(argv) {
+	return [
+		// Required data
+		{
+			type: argv.template ? null : 'select',
+			name: 'template',
+			message: 'Pick a template',
+			choices: [
+				{
+					value: 'default',
+					title: 'Default (JavaScript)',
+					description: 'Default template with all features',
+				},
+				{
+					value: 'typescript',
+					title: 'Default (TypeScript)',
+					description: 'Default template with all features',
+				},
+				{
+					value: 'material',
+					title: 'Material',
+					description: 'Material template using preact-material-components',
+				},
+				{
+					value: 'simple',
+					title: 'Simple',
+					description: 'The simplest possible preact setup in a single file',
+				},
+				{
+					value: 'widget',
+					title: 'Widget',
+					description:
+						'Template for a widget to be embedded in another website',
+				},
+				{
+					value: 'custom',
+					title: 'Custom',
+					description: 'Use your own template',
+				},
+			],
+			initial: 0,
+		},
+		{
+			type: prev => (prev === 'custom' ? 'text' : null),
+			name: 'template',
+			message: 'Remote template to clone (user/repo#tag)',
+		},
+		{
+			type: argv.dest ? null : 'text',
+			name: 'dest',
+			message: 'Directory to create the app',
+		},
+		// Extra data / flags
+		{
+			type: argv.name ? null : 'text',
+			name: 'name',
+			message: 'The name of your application',
+		},
+		{
+			type: argv.force ? null : 'confirm',
+			name: 'force',
+			message: 'Overwrite destination directory if exists',
+			initial: false,
+		},
+		{
+			type: 'confirm',
+			name: 'install',
+			message: 'Install dependencies',
+			initial: true,
+		},
+		{
+			type: prev => (!argv.yarn && prev ? 'confirm' : null),
+			name: 'yarn',
+			message: 'Install with `yarn` instead of `npm`',
+			initial: false,
+		},
+		{
+			type: argv.git ? null : 'confirm',
+			name: 'git',
+			message: 'Initialize a `git` repository',
+			initial: false,
+		},
+	];
+}
+
 module.exports = async function(repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
-		warn('Insufficient arguments! Prompting...');
-		info('Alternatively, run `preact create --help` for usage info.');
-
-		let questions = isMissing(argv);
-		let response = await prompt(questions);
+		const questions = requestParams(argv);
+		const response = await prompt(questions);
 
 		Object.assign(argv, response);
 		repo = repo || response.template;
 		dest = dest || response.dest;
+	}
+
+	if (!repo || !dest) {
+		warn('Insufficient arguments!');
+		info('Alternatively, run `preact create --help` for usage info.');
+		return;
 	}
 
 	let cwd = resolve(argv.cwd);
