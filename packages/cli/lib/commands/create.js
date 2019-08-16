@@ -25,27 +25,27 @@ function requestParams(argv) {
 			message: 'Pick a template',
 			choices: [
 				{
-					value: 'default',
+					value: 'preactjs-templates/default',
 					title: 'Default (JavaScript)',
 					description: 'Default template with all features',
 				},
 				{
-					value: 'typescript',
+					value: 'preactjs-templates/typescript',
 					title: 'Default (TypeScript)',
 					description: 'Default template with all features',
 				},
 				{
-					value: 'material',
+					value: 'preactjs-templates/material',
 					title: 'Material',
 					description: 'Material template using preact-material-components',
 				},
 				{
-					value: 'simple',
+					value: 'preactjs-templates/simple',
 					title: 'Simple',
 					description: 'The simplest possible preact setup in a single file',
 				},
 				{
-					value: 'widget',
+					value: 'preactjs-templates/widget',
 					title: 'Widget',
 					description:
 						'Template for a widget to be embedded in another website',
