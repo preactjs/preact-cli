@@ -1,4 +1,11 @@
-const { readFile, writeFile, copyFile, stat, statSync } = require('fs');
+const {
+	readFile,
+	writeFile,
+	copyFile,
+	stat,
+	statSync,
+	existsSync,
+} = require('fs');
 const { promisify } = require('util');
 
 module.exports = {
@@ -7,4 +14,5 @@ module.exports = {
 	writeFile: promisify(writeFile),
 	stat: promisify(stat),
 	statSync,
+	existsSync,
 };
