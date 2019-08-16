@@ -112,7 +112,7 @@
     "postcss-loader": "^3.0.0",
     "progress-bar-webpack-plugin": "^1.12.1",
     "promise-polyfill": "^8.1.0",
-    "prompts": "^2.1.0",
+    "prompts": "^2.2.1",
     "raw-loader": "^3.1.0",
     "react-hot-loader": "^4.12.9",
     "require-relative": "^0.8.7",
