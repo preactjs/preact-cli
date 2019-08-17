@@ -15,8 +15,18 @@ const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
+function directoryExists(workingDir, destDir) {
+	if (workingDir && destDir) {
+		const target = resolve(workingDir, destDir);
+		return isDir(target);
+	}
+	return false;
+}
+
 // Formulate Questions if `create` args are missing
 function requestParams(argv) {
+	const cwd = resolve(argv.cwd);
+
 	return [
 		// Required data
 		{
@@ -68,17 +78,25 @@ function requestParams(argv) {
 			name: 'dest',
 			message: 'Directory to create the app',
 		},
+		{
+			type: prev =>
+				!directoryExists(cwd, prev || argv.dest) ? null : 'confirm',
+			name: 'force',
+			message: 'The destination directory exists. Overwrite?',
+			initial: false,
+			onState: state => {
+				if (state.aborted || !state.value) {
+					process.stdout.write('\n');
+					warn('Aborting due to existing directory');
+					process.exit();
+				}
+			},
+		},
 		// Extra data / flags
 		{
 			type: argv.name ? null : 'text',
 			name: 'name',
 			message: 'The name of your application',
-		},
-		{
-			type: argv.force ? null : 'confirm',
-			name: 'force',
-			message: 'Overwrite destination directory if exists',
-			initial: false,
 		},
 		{
 			type: 'confirm',
@@ -105,7 +123,11 @@ module.exports = async function(repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
 		const questions = requestParams(argv);
-		const response = await prompt(questions);
+		const onCancel = () => {
+			info('Aborting execution');
+			process.exit();
+		};
+		const response = await prompt(questions, { onCancel });
 
 		Object.assign(argv, response);
 		repo = repo || response.template;
