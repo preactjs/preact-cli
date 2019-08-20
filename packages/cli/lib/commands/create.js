@@ -228,6 +228,7 @@ module.exports = async function(repo, dest, argv) {
 		dict.set(templateVar('pkg-run'), isYarn ? 'yarn' : 'npm run');
 		dict.set(templateVar('pkg-add'), isYarn ? 'yarn add' : 'npm install');
 		dict.set(templateVar('now-year'), new Date().getFullYear());
+		dict.set(templateVar('license'), argv.license || 'MIT');
 
 		// TODO: concat author-driven patterns
 		['name'].forEach(str => {
