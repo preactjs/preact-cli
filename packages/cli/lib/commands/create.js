@@ -222,12 +222,19 @@ module.exports = async function(repo, dest, argv) {
 
 	if (keeps.length) {
 		// eslint-disable-next-line
-		let dict = new Map();
+		const dict = new Map();
+		const templateVar = str => new RegExp(`{{\\s?${str}\\s}}`, 'g');
+
+		dict.set(templateVar('pkg-install'), isYarn ? 'yarn' : 'npm install');
+		dict.set(templateVar('pkg-run'), isYarn ? 'yarn' : 'npm run');
+		dict.set(templateVar('pkg-add'), isYarn ? 'yarn add' : 'npm install');
+		dict.set(templateVar('now-year'), new Date().getFullYear());
+
 		// TODO: concat author-driven patterns
 		['name'].forEach(str => {
 			// if value is defined
 			if (argv[str] !== void 0) {
-				dict.set(new RegExp(`{{\\s?${str}\\s}}`, 'g'), argv[str]);
+				dict.set(templateVar(str), argv[str]);
 			}
 		});
 		// Update each file's contents
