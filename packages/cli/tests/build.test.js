@@ -144,4 +144,24 @@ describe('preact build', () => {
 		let file = join(dir, 'build', '.htaccess');
 		expect(existsSync(file)).toBe(true);
 	});
+
+	it('should inject preact.* variables into template', async () => {
+		let dir = await subject('custom-template-2');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.templateReplaced);
+	});
+
+	it('should replace title with <%= preact.title %>', async () => {
+		let dir = await subject('custom-template-3');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.templateReplaced);
+	});
 });
