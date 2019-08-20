@@ -1,12 +1,23 @@
 const { blue, yellow, red } = require('kleur');
-const { normalize } = require('path');
+const { normalize, resolve } = require('path');
 const { statSync, existsSync } = require('fs');
 const symbols = require('./symbols');
 const which = require('which');
 
-exports.isDir = function(str) {
+function isDir(str) {
 	return existsSync(str) && statSync(str).isDirectory();
-};
+}
+
+function dirExits(workingDir, destDir) {
+	if (workingDir && destDir) {
+		const target = resolve(workingDir, destDir);
+		return isDir(target);
+	}
+	return false;
+}
+
+exports.isDir = isDir;
+exports.dirExists = dirExits;
 
 exports.hasCommand = function(str) {
 	return !!which.sync(str, { nothrow: true });

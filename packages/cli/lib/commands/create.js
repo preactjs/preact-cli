@@ -8,21 +8,21 @@ const { green } = require('kleur');
 const { resolve, join } = require('path');
 const { prompt } = require('prompts');
 const isValidName = require('validate-npm-package-name');
-const { info, isDir, hasCommand, error, trim, warn } = require('../util');
+const {
+	info,
+	isDir,
+	hasCommand,
+	error,
+	trim,
+	warn,
+	dirExists,
+} = require('../util');
 const { addScripts, install, initGit } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
-
-function directoryExists(workingDir, destDir) {
-	if (workingDir && destDir) {
-		const target = resolve(workingDir, destDir);
-		return isDir(target);
-	}
-	return false;
-}
 
 // Formulate Questions if `create` args are missing
 function requestParams(argv) {
@@ -80,8 +80,7 @@ function requestParams(argv) {
 			message: 'Directory to create the app',
 		},
 		{
-			type: prev =>
-				!directoryExists(cwd, prev || argv.dest) ? null : 'confirm',
+			type: prev => (!dirExists(cwd, prev || argv.dest) ? null : 'confirm'),
 			name: 'force',
 			message: 'The destination directory exists. Overwrite?',
 			initial: false,
