@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "3.0.0-rc.4",
+  "version": "3.0.0-rc.5",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "developit/preact-cli",
   "main": "lib/index.js",
