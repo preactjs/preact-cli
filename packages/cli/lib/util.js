@@ -4,20 +4,17 @@ const { statSync, existsSync } = require('fs');
 const symbols = require('./symbols');
 const which = require('which');
 
-function isDir(str) {
+exports.isDir = function(str) {
 	return existsSync(str) && statSync(str).isDirectory();
-}
+};
 
-function dirExits(workingDir, destDir) {
+exports.dirExists = function(workingDir, destDir) {
 	if (workingDir && destDir) {
 		const target = resolve(workingDir, destDir);
-		return isDir(target);
+		return exports.isDir(target);
 	}
 	return false;
-}
-
-exports.isDir = isDir;
-exports.dirExists = dirExits;
+};
 
 exports.hasCommand = function(str) {
 	return !!which.sync(str, { nothrow: true });
