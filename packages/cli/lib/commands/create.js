@@ -8,21 +8,21 @@ const { green } = require('kleur');
 const { resolve, join } = require('path');
 const { prompt } = require('prompts');
 const isValidName = require('validate-npm-package-name');
-const { info, isDir, hasCommand, error, trim, warn } = require('../util');
+const {
+	info,
+	isDir,
+	hasCommand,
+	error,
+	trim,
+	warn,
+	dirExists,
+} = require('../util');
 const { addScripts, install, initGit } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
-
-function directoryExists(workingDir, destDir) {
-	if (workingDir && destDir) {
-		const target = resolve(workingDir, destDir);
-		return isDir(target);
-	}
-	return false;
-}
 
 // Formulate Questions if `create` args are missing
 function requestParams(argv) {
@@ -80,8 +80,7 @@ function requestParams(argv) {
 			message: 'Directory to create the app',
 		},
 		{
-			type: prev =>
-				!directoryExists(cwd, prev || argv.dest) ? null : 'confirm',
+			type: prev => (!dirExists(cwd, prev || argv.dest) ? null : 'confirm'),
 			name: 'force',
 			message: 'The destination directory exists. Overwrite?',
 			initial: false,
@@ -222,12 +221,20 @@ module.exports = async function(repo, dest, argv) {
 
 	if (keeps.length) {
 		// eslint-disable-next-line
-		let dict = new Map();
+		const dict = new Map();
+		const templateVar = str => new RegExp(`{{\\s?${str}\\s}}`, 'g');
+
+		dict.set(templateVar('pkg-install'), isYarn ? 'yarn' : 'npm install');
+		dict.set(templateVar('pkg-run'), isYarn ? 'yarn' : 'npm run');
+		dict.set(templateVar('pkg-add'), isYarn ? 'yarn add' : 'npm install');
+		dict.set(templateVar('now-year'), new Date().getFullYear());
+		dict.set(templateVar('license'), argv.license || 'MIT');
+
 		// TODO: concat author-driven patterns
 		['name'].forEach(str => {
 			// if value is defined
 			if (argv[str] !== void 0) {
-				dict.set(new RegExp(`{{\\s?${str}\\s}}`, 'g'), argv[str]);
+				dict.set(templateVar(str), argv[str]);
 			}
 		});
 		// Update each file's contents
