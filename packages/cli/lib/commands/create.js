@@ -182,7 +182,7 @@ module.exports = async function(repo, dest, argv) {
 	}
 
 	if (!fs.existsSync(resolve(cwd, dest, 'src'))) {
-		mkdirp.sync(join(resolve(cwd, dest), 'src'));
+		mkdirp.sync(resolve(cwd, dest, 'src'));
 	}
 
 	// Attempt to fetch the `template`
