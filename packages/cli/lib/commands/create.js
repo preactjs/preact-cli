@@ -181,7 +181,7 @@ module.exports = async function(repo, dest, argv) {
 		info(`Assuming you meant ${repo}...`);
 	}
 
-	if (!fs.existsSync(resolve(cwd, dest), 'src')) {
+	if (!fs.existsSync(resolve(cwd, dest, 'src'))) {
 		mkdirp.sync(join(resolve(cwd, dest), 'src'));
 	}
 
