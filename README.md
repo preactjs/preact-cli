@@ -325,7 +325,7 @@ The default templates comes with a `.css` file for each component. You can start
 
 #### [SASS]
 
-- `npm install --save-dev node-sass sass-loader` (inside your preact application folder)
+- `npm install --save-dev node-sass sass-loader@7` (inside your preact application folder)
 - start replacing `.css` files with `.scss` files
 
 #### [LESS]
