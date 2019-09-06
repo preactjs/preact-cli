@@ -212,14 +212,7 @@ module.exports = function(env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					include: [source('components'), source('routes')],
 					use: [
-						isWatch
-							? {
-									loader: 'style-loader',
-									options: {
-										sourceMap: true,
-									},
-							  }
-							: MiniCssExtractPlugin.loader,
+						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
 						{
 							loader: 'css-loader',
 							options: {
@@ -245,14 +238,7 @@ module.exports = function(env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					exclude: [source('components'), source('routes')],
 					use: [
-						isWatch
-							? {
-									loader: 'style-loader',
-									options: {
-										sourceMap: true,
-									},
-							  }
-							: MiniCssExtractPlugin.loader,
+						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
 						{
 							loader: 'css-loader',
 							options: {
