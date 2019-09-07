@@ -25,6 +25,9 @@ module.exports = async function(config) {
 	if (config.template) {
 		const templatePathFromArg = resolve(cwd, config.template);
 		if (existsSync(templatePathFromArg)) template = templatePathFromArg;
+		else {
+			warn(`Template not found at ${templatePathFromArg}`);
+		}
 	}
 
 	let content = read(template);
