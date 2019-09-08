@@ -1,0 +1,4 @@
+**/node_modules
+**/tests/output
+**/package.json
+**/*.ejs

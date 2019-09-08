@@ -1,0 +1,32 @@
+{
+  "name": "jest-preset-preact",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "src/config.js",
+  "author": "Preact Authors <core@preactjs.com>",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "./jest-preset.js"
+  },
+  "files": [
+    "src",
+    "jest-preset.js"
+  ],
+  "dependencies": {
+    "@babel/core": "^7.5.5",
+    "babel-jest": "^24.8.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest-environment-jsdom-fourteen": "^0.1.0",
+    "isomorphic-unfetch": "^3.0.0"
+  },
+  "peerDependencies": {
+    "jest": "24.x"
+  },
+  "devDependencies": {
+    "jest": "^24.8.0",
+    "preact": "^8.5.0",
+    "preact-compat": "^3.19.0"
+  }
+}

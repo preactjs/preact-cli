@@ -1,6 +1,31 @@
-# preact-cli [![Build Status](https://travis-ci.org/developit/preact-cli.svg?branch=master)](https://travis-ci.org/developit/preact-cli) [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg?style=flat)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg?style=flat)](https://www.npmjs.com/package/preact-cli) [![Lighthouse score: 100/100](https://lighthouse-badge.appspot.com/?score=100)](https://github.com/developit/preact-cli)
+# preact-cli [![Build Status](https://img.shields.io/travis/preactjs/preact-cli/master.svg)](https://travis-ci.org/preactjs/preact-cli) [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg)](https://www.npmjs.com/package/preact-cli)
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
+
+### Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Official Templates](#official-templates)
+- [CLI Options](#cli-options)
+  - [preact create](#preact-create)
+  - [preact build](#preact-build)
+  - [preact watch](#preact-watch)
+  - [preact list](#preact-list)
+  - [preact info](#preact-info)
+- [Deploying](#deploying)
+- [Pre-rendering](#pre-rendering)
+- [Custom Configuration](#custom-configuration)
+  - [Plugins](#plugins)
+  - [Browserslist](#browserslist)
+  - [Babel](#babel)
+  - [Webpack](#webpack)
+  - [Prerender multiple routes](#prerender-multiple-routes)
+  - [Template](#template)
+- [Using CSS preprocessors](#using-css-preprocessors)
+  - [SASS](#sass)
+  - [LESS](#less)
 
 ### Features
 
@@ -25,10 +50,6 @@
 ```sh
 $ npm install -g preact-cli
 ```
-or
-```sh
-$ yarn global add preact-cli
-```
 
 ### Usage
 
@@ -37,6 +58,7 @@ $ preact create <template-name> <project-name>
 ```
 
 Example:
+
 ```sh
 $ preact create default my-project
 ```
@@ -67,7 +89,7 @@ Current available templates include:
 
 Create a project to quick start development.
 
-```sh
+```
 $ preact create <template-name> <project-name>
 
   --name        The application name.
@@ -84,58 +106,57 @@ Note: If you don't specify enough data to the `preact create` command, it will p
 
 Create a production build
 
-```sh
+You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw`, `--no-esm`, and `--no-inline-css`.
+
+```
 $ preact build
 
-  --src             Entry file (index.js).                       [string]   [default: "src"]
-  --dest            Directory root for output.                   [string]   [default: "build"]
-  --prerenderUrls   Path to pre-render routes configuration.     [string]   [default: "prerender-urls.json"]
-  --template        Path to template file.                       [string]   [default: none]
-  --service-worker  Add a service worker to application.         [boolean]  [default: true]
-  --production, -p  Create a minified production build.          [boolean]  [default: true]
-  --no-prerender    Disable pre-render of static app content.    [boolean]  [default: false]
-  --clean           Clear output directory before building.      [boolean]  [default: true]
-  --json            Generate build statistics for analysis.      [boolean]  [default: false]
-  --config, -c      Path to custom CLI config.
+    --src              Specify source directory  (default src)
+    --dest             Specify output directory  (default build)
+    --cwd              A directory to use instead of $PWD  (default .)
+    --sw               Generate and attach a Service Worker  (default true)
+    --json             Generate build stats for bundle analysis
+    --template         Path to custom HTML template
+    --preload          Adds preload tags to the document its assets  (default false)
+    --analyze          Launch interactive Analyzer to inspect production bundle(s)
+    --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
+    -c, --config       Path to custom CLI config  (default preact.config.js)
+    --esm              Builds ES-2015 bundles for your code.  (default true)
+    --brotli           Adds brotli redirects to the service worker.  (default false)
+    --inline-css       Adds critical css to the prerendered markup.  (default true)
+    -v, --verbose      Verbose output
+    -h, --help         Displays this message
 ```
 
 #### preact watch
 
 Spin up a development server with multiple features like `hot-module-replacement`, `module-watcher`
 
-```sh
+```
 $ preact watch
 
-  --cwd         A directory to use instead of $PWD.              [string]   [default: .]
-  --src         Entry file (index.js)                            [string]   [default: "src"]
-  --port, -p    Port to start a server on                        [string]   [default: "8080"]
-  --host, -H    Hostname to start a server on                    [string]   [default: "0.0.0.0"]
-  --https       Use HTTPS?                                       [boolean]  [default: false]
-  --prerender   Pre-render static app content on initial build   [boolean]  [default: false]
-  --template    Path to template used by webpack                 [string]   [default: none]
-  --config, c   Path to custom preact.config.js                  [string]   [default: none]
+    --src           Specify source directory  (default src)
+    --cwd           A directory to use instead of $PWD  (default .)
+    --esm           Builds ES-2015 bundles for your code.  (default true)
+    --sw            Generate and attach a Service Worker  (default false)
+    --rhl           Enable react hot loader  (default false)
+    --json          Generate build stats for bundle analysis
+    --https         Run server with HTTPS protocol
+    --key           Path to PEM key for custom SSL certificate
+    --cert          Path to custom SSL certificate
+    --cacert        Path to optional CA certificate override
+    --prerender     Pre-render static content on first run
+    --template      Path to custom HTML template
+    -c, --config    Path to custom CLI config  (default preact.config.js)
+    -H, --host      Set server hostname  (default 0.0.0.0)
+    -p, --port      Set server port  (default 8080)
+    -h, --help      Displays this message
 ```
 
 Note:
 
 1. You can run dev server using `HTTPS` then you can use the following `HTTPS=true preact watch`
 2. You can run the dev server on a different port using `PORT=8091 preact watch`
-
-#### preact serve
-
-Start a production version development server
-
-```sh
-$ preact serve
-
-  --cwd       A directory to use instead of $PWD.                             [string]  [default: .]
-  --dir       Directory root to serve static files from.                      [string]  [default: "build"]
-  --server    Which server to run, or "config" to produce a firebase config.
-              [options: "simplehttp2server", "superstatic", "config"]         [string]  [default: "simplehttp2server"]
-  --dest      Directory or filename where firebase.json should be written
-              (used for --server config)                                      [string]  [default: -]
-  --port, -p  Port to start a server on.                                      [string]  [default: PORT || 8080]
-```
 
 #### preact list
 
@@ -144,6 +165,10 @@ Lists all the official preactjs-cli repositories
 ```sh
 $ preact list
 ```
+
+#### preact info
+
+Prints debugging information concerning the local environment.
 
 ### Deploying
 
@@ -162,6 +187,7 @@ npm run serve -- --server config
 Preact CLI in order to follow [PRPL] pattern renders initial route (`/`) into generated static `index.html` - this ensures that users get to see your page before any JavaScript is run, and thus providing users with slow devices or poor connection your website's content much faster.
 
 Preact CLI does this by rendering your app inside node - this means that we don't have access to DOM or other global variables available in browsers, similar how it would be in server-side rendering scenarios. In case you need to rely on browser APIs you could:
+
 - drop out of prerendering by passing `--no-prerender` flag to `preact build`,
 - write your code in a way that supports server-side rendering by wrapping code that requires browser's APIs in conditional statements `if (typeof window !== "undefined") { ... }` ensuring that on server those lines of code are never reached. Alternatively you could use a helper library like [window-or-global](https://www.npmjs.com/package/window-or-global).
 
@@ -177,14 +203,11 @@ You may customize your list of supported browser versions by declaring a [`"brow
 
 By default, `preact-cli` emulates the following config:
 
-```js
-// package.json
+> `package.json`
+
+```json
 {
-  "browserslist": [
-    "> 1%",
-    "IE >= 9",
-    "last 2 versions"
-  ]
+	"browserslist": ["> 1%", "IE >= 9", "last 2 versions"]
 }
 ```
 
@@ -198,23 +221,46 @@ To customize Babel, you have two options:
 
 #### Webpack
 
-To customize webpack create ```preact.config.js``` file which exports function that will change webpack's config.
+To customize preact-cli create a `preact.config.js` or a `preact.config.json` file.
+
+> `preact.config.js`
 
 ```js
-/**
- * Function that mutates original webpack config.
- * Supports asynchronous changes when promise is returned.
- *
- * @param {object} config - original webpack config.
- * @param {object} env - options passed to CLI.
- * @param {WebpackConfigHelpers} helpers - object with useful helpers when working with config.
- **/
-export default function (config, env, helpers) {
-  /** you can change config here **/
-}
+// ... imports or other code up here ...
+
+// these props are both optional
+export default {
+	// you can add preact-cli plugins here
+	plugins: [
+		// either a function
+		// (you'd probably import this because you can use the `webpack` function instead of an inline plugin)
+		function() {},
+		// strings also work (they get imported by preact-cli), useful for the json config
+		'plugin-name',
+		// with options
+		[
+			'plugin-name',
+			{
+				option: true,
+			},
+		],
+	],
+	/**
+	 * Function that mutates the original webpack config.
+	 * Supports asynchronous changes when a promise is returned (or it's an async function).
+	 *
+	 * @param {object} config - original webpack config.
+	 * @param {object} env - options passed to the CLI.
+	 * @param {WebpackConfigHelpers} helpers - object with useful helpers for working with the webpack config.
+	 * @param {object} options - this is mainly relevant for plugins (will always be empty in the config), default to an empty object
+	 **/
+	webpack(config, env, helpers, options) {
+		/** you can change the config here **/
+	},
+};
 ```
 
-See [WebpackConfigHelpers] docs for more info on ```helpers``` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki] containing examples on how to change webpack configuration.
+See [WebpackConfigHelpers] docs for more info on `helpers` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki] containing examples on how to change webpack configuration.
 
 #### Prerender multiple routes
 
@@ -222,27 +268,47 @@ The `--prerender` flag will prerender by default only the root of your applicati
 If you want to prerender other routes you can create a `prerender-urls.json` file, which contains the set of routes you want to render.
 The format required for defining your routes is an array of objects with a `url` key and an optional `title` key.
 
-```js
-// prerender-urls.json
-[{
-  "url": "/",
-  "title": "Homepage"
-}, {
-  "url": "/route/random"
-}]
+> `prerender-urls.json`
+
+```json
+[
+	{
+		"url": "/",
+		"title": "Homepage"
+	},
+	{
+		"url": "/route/random"
+	}
+]
 ```
 
-You can customise the path of `prerender-urls.json` by using the flag `--prerenderUrls`.
+You can customise the path and/or name of `prerender-urls.json` by using the flag `--prerenderUrls`.
 
 ```sh
 preact build --prerenderUrls src/prerender-urls.json
+```
+
+If a static JSON file is too restrictive, you may want to provide a javascript file that exports your routes instead.
+Routes can be exported as a JSON string or an object and can optionally be returned from a function.
+
+```js
+// prerender-urls.js
+module.exports = [
+	{
+		url: '/',
+		title: 'Homepage',
+	},
+	{
+		url: '/route/random',
+	},
+];
 ```
 
 #### Template
 
 A template is used to render your page.
 
-The default one is visible [here](src/resources/template.html) and it's going to be enough for the majority of cases.
+The default one is visible [here](packages/cli/lib/resources/template.html) and it's going to be enough for the majority of cases.
 
 If you want to customise your template you can pass a custom template with the `--template` flag.
 
@@ -253,27 +319,43 @@ preact build --template src/template.html
 preact watch --template src/template.html
 ```
 
-[Promise]: https://npm.im/promise-polyfill
+### Using CSS preprocessors
+
+The default templates comes with a `.css` file for each component. You can start using CSS preprocessors at any given time during your project lifecycle by installing additional packages and then simply replacing those `.css` files.
+
+#### [SASS]
+
+- `npm install --save-dev node-sass sass-loader` (inside your preact application folder)
+- start replacing `.css` files with `.scss` files
+
+#### [LESS]
+
+- `npm install --save-dev less less-loader` (inside your preact application folder)
+- start replacing `.css` files with `.less` files
+
+[promise]: https://npm.im/promise-polyfill
 [fetch]: https://github.com/developit/unfetch
-[preact]: https://github.com/developit/preact
-[WebpackConfigHelpers]: docs/webpack-helpers.md
+[preact]: https://github.com/preactjs/preact
+[webpackconfighelpers]: docs/webpack-helpers.md
 [`.babelrc`]: https://babeljs.io/docs/usage/babelrc
 [simple]: https://github.com/preactjs-templates/simple
 [`"browserslist"`]: https://github.com/ai/browserslist
 [```.babelrc```]: https://babeljs.io/docs/usage/babelrc
 [default]: https://github.com/preactjs-templates/default
 [sw-precache]: https://github.com/GoogleChrome/sw-precache
-[preact-router]: https://github.com/developit/preact-router
+[preact-router]: https://github.com/preactjs/preact-router
 [material]: https://github.com/preactjs-templates/material
 [widget]: https://github.com/preactjs-templates/widget
-[Plugins wiki]: https://github.com/developit/preact-cli/wiki/Plugins
+[plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
 [preactjs-templates/default]: https://github.com/preactjs-templates/default
-[recipes wiki]: https://github.com/developit/preact-cli/wiki/Config-Recipes
-[PRPL]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
+[recipes wiki]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes
+[prpl]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
 [`babel-preset-env`]: https://github.com/babel/babel-preset-env#targetsbrowsers
 [proof]: https://googlechrome.github.io/lighthouse/viewer/?gist=142af6838482417af741d966e7804346
-[Preact CLI preset]: https://github.com/developit/preact-cli/blob/master/src/lib/babel-config.js
-[Service Workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
-[Customize Babel]: https://github.com/developit/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
-[`async!`]: https://github.com/developit/preact-cli/blob/222e7018dd360e40f7db622191aeca62d6ef0c9a/examples/full/src/components/app.js#L7
+[preact cli preset]: https://github.com/preactjs/preact-cli/blob/master/packages/cli/lib/lib/babel-config.js
+[service workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
+[customize babel]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
+[`async!`]: https://github.com/preactjs/preact-cli/blob/1.4.1/examples/full/src/components/app.js#L7
+[sass]: https://sass-lang.com
+[less]: http://lesscss.org
