@@ -13,6 +13,7 @@ import { error, isDir, warn } from '../../util';
 
 export default function (watch=false, env, onprogress) {
 	env.isProd = env.production; // shorthand
+	env.isWatch = !!watch; // use HMR?
 	env.cwd = resolve(env.cwd || process.cwd());
 
 	// env.src='src' via `build` default

@@ -25,6 +25,10 @@
 ```sh
 $ npm install -g preact-cli
 ```
+or
+```sh
+$ yarn global add preact-cli
+```
 
 ### Usage
 
@@ -105,9 +109,11 @@ $ preact watch
   --cwd         A directory to use instead of $PWD.              [string]   [default: .]
   --src         Entry file (index.js)                            [string]   [default: "src"]
   --port, -p    Port to start a server on                        [string]   [default: "8080"]
-  --host,       Hostname to start a server on                    [string]   [default: "0.0.0.0"]
+  --host, -H    Hostname to start a server on                    [string]   [default: "0.0.0.0"]
   --https       Use HTTPS?                                       [boolean]  [default: false]
   --prerender   Pre-render static app content on initial build   [boolean]  [default: false]
+  --template    Path to template used by webpack                 [string]   [default: none]
+  --config, c   Path to custom preact.config.js                  [string]   [default: none]
 ```
 
 Note:

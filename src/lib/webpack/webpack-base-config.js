@@ -25,7 +25,7 @@ function resolveDep(dep, cwd) {
 }
 
 export default function (env) {
-	const { cwd, isProd, src, source } = env;
+	const { cwd, isProd, isWatch, src, source } = env;
 
 	// Apply base-level `env` values
 	env.dest = resolve(cwd, env.dest || 'build');
@@ -204,12 +204,13 @@ export default function (env) {
 		plugins: [
 			new webpack.NoEmitOnErrorsPlugin(),
 			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
+				'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
+				'PRERENDER': env.ssr ? 'true' : 'false'
 			}),
 			// Extract CSS
 			new ExtractTextPlugin({
 				filename: isProd ? 'style.[contenthash:5].css' : 'style.css',
-				disable: !isProd,
+				disable: isWatch,
 				allChunks: true
 			}),
 			new webpack.optimize.CommonsChunkPlugin({
@@ -238,7 +239,7 @@ export default function (env) {
 			})
 		] : []),
 
-		devtool: isProd ? 'source-map' : 'cheap-module-eval-source-map',
+		devtool: isWatch ? 'cheap-module-eval-source-map' : 'source-map',
 
 		node: {
 			console: false,
