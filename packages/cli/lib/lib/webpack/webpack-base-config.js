@@ -122,17 +122,20 @@ module.exports = function(env) {
 				'.css',
 				'.wasm',
 			],
-			alias: {
-				style: source('style'),
-				'preact-cli-entrypoint': source('index'),
-				// preact-compat aliases for supporting React dependencies:
-				react: compat,
-				'react-dom': compat,
-				'react-addons-css-transition-group': 'preact-css-transition-group',
-				'preact-cli/async-component': require.resolve(
-					'@preact/async-loader/async'
-				),
-			},
+			alias: Object.assign(
+				{
+					style: source('style'),
+					'preact-cli-entrypoint': source('index'),
+					// preact-compat aliases for supporting React dependencies:
+					react: compat,
+					'react-dom': compat,
+					'react-addons-css-transition-group': 'preact-css-transition-group',
+					'preact-cli/async-component': require.resolve(
+						'@preact/async-loader/async'
+					),
+				},
+				compat !== 'preact-compat' ? { 'preact-compat': compat } : {}
+			),
 		},
 
 		resolveLoader: {
