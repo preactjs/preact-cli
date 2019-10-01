@@ -3,7 +3,7 @@ const babelJest = require('babel-jest');
 
 const config = createConfig(
 	{ production: false },
-	{ modules: 'commonjs', browsers: 'node 10' }
+	{ modules: 'commonjs', browsers: 'maintained node versions' }
 );
 
 module.exports = babelJest.createTransformer({
