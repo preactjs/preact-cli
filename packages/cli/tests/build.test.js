@@ -115,6 +115,9 @@ describe('preact build', () => {
 			const body3 = await getIndex(dir, 'custom/index.html');
 			looksLike(body3, images.prerender.custom);
 
+			const body4 = await getIndex(dir, 'customhook/index.html');
+			looksLike(body4, images.prerender.customhook);
+
 			const head1 = await getHead(dir);
 			expect(head1).toEqual(
 				expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.home))

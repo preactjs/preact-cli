@@ -124,6 +124,15 @@ exports.prerender.custom = `
 </body>
 `;
 
+exports.prerender.customhook = `
+<body>
+	<div id="app">
+		<div>It worked with hook!</div>
+	</div>
+	{{ ... }}
+</body>
+`;
+
 exports.webpack = `
 <!DOCTYPE html>
 <html lang="en">

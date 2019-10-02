@@ -4,6 +4,7 @@ import { Provider } from '@preact/prerender-data-provider';
 import Home from './routes/home';
 import Route66 from './routes/route66';
 import Custom from './routes/custom';
+import CustomWithHook from './routes/custom-with-hook';
 import './style.css';
 
 export default class App extends Component {
@@ -19,6 +20,7 @@ export default class App extends Component {
 						<Home path="/" />
 						<Route66 path="/route66" />
 						<Custom path="/custom" />
+						<CustomWithHook path="/customhook" />
 					</Router>
 				</div>
 			</Provider>

@@ -12,6 +12,11 @@ const data = [
 		title: 'Custom',
 		myProp: 'It worked!',
 	},
+	{
+		url: '/customhook',
+		title: 'CustomHook',
+		myProp: 'It worked with hook!',
+	},
 ];
 
 module.exports = () => data;

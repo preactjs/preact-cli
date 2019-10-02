@@ -23,5 +23,8 @@
   },
   "bugs": {
     "url": "https://github.com/developit/preact-cli/issues"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0"
   }
 }

@@ -1,7 +1,8 @@
-import { Component } from 'preact';
-import { createContext } from 'preact-compat';
+import { Component, createContext } from 'preact';
+import { useContext } from 'preact/hooks';
 
-const { Provider, Consumer } = createContext(null);
+const PrerenderDataContext = createContext(null);
+const { Provider, Consumer } = PrerenderDataContext;
 
 const withPrerenderData = WrapperComponent => {
 	return class extends Component {
@@ -36,6 +37,8 @@ const withPrerenderData = WrapperComponent => {
 	};
 };
 
-// TODO: implement a hook when we move to PreactX.
+function usePrerenderData() {
+	return useContext(PrerenderDataContext);
+}
 
-export { Provider, withPrerenderData };
+export { Provider, withPrerenderData, usePrerenderData };
