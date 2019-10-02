@@ -3,6 +3,7 @@ const { readFile } = require('../lib/fs');
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
 const { snapshot, isMatch } = require('./lib/utils');
+const { existsSync } = require('fs');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
 
@@ -165,5 +166,37 @@ describe('preact build', () => {
 		let html = await readFile(file, 'utf-8');
 
 		looksLike(html, images.template);
+	});
+
+	it('should patch global location object', async () => {
+		let dir = await subject('location-patch');
+		expect(() => build(dir)).not.toThrow();
+	});
+
+	it('should copy resources from static to build directory', async () => {
+		let dir = await subject('static-root');
+		await build(dir);
+		let file = join(dir, 'build', '.htaccess');
+		expect(existsSync(file)).toBe(true);
+	});
+
+	it('should inject preact.* variables into template', async () => {
+		let dir = await subject('custom-template-2');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.templateReplaced);
+	});
+
+	it('should replace title with <%= preact.title %>', async () => {
+		let dir = await subject('custom-template-3');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.templateReplaced);
 	});
 });

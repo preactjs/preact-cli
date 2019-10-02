@@ -122,17 +122,20 @@ module.exports = function(env) {
 				'.css',
 				'.wasm',
 			],
-			alias: {
-				style: source('style'),
-				'preact-cli-entrypoint': source('index'),
-				// preact-compat aliases for supporting React dependencies:
-				react: compat,
-				'react-dom': compat,
-				'react-addons-css-transition-group': 'preact-css-transition-group',
-				'preact-cli/async-component': require.resolve(
-					'@preact/async-loader/async'
-				),
-			},
+			alias: Object.assign(
+				{
+					style: source('style'),
+					'preact-cli-entrypoint': source('index'),
+					// preact-compat aliases for supporting React dependencies:
+					react: compat,
+					'react-dom': compat,
+					'react-addons-css-transition-group': 'preact-css-transition-group',
+					'preact-cli/async-component': require.resolve(
+						'@preact/async-loader/async'
+					),
+				},
+				compat !== 'preact-compat' ? { 'preact-compat': compat } : {}
+			),
 		},
 
 		resolveLoader: {
@@ -212,14 +215,7 @@ module.exports = function(env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					include: [source('components'), source('routes')],
 					use: [
-						isWatch
-							? {
-									loader: 'style-loader',
-									options: {
-										sourceMap: true,
-									},
-							  }
-							: MiniCssExtractPlugin.loader,
+						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
 						{
 							loader: 'css-loader',
 							options: {
@@ -245,14 +241,7 @@ module.exports = function(env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					exclude: [source('components'), source('routes')],
 					use: [
-						isWatch
-							? {
-									loader: 'style-loader',
-									options: {
-										sourceMap: true,
-									},
-							  }
-							: MiniCssExtractPlugin.loader,
+						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
 						{
 							loader: 'css-loader',
 							options: {
@@ -302,7 +291,7 @@ module.exports = function(env) {
 			}),
 			new ProgressBarPlugin({
 				format:
-					'\u001b[37m\u001b[44m Build \u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
+					'\u001b[97m\u001b[44m Build \u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
 				renderThrottle: 100,
 				summary: false,
 				clear: true,

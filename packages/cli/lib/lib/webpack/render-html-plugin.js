@@ -1,24 +1,62 @@
-const { resolve } = require('path');
-const { existsSync } = require('fs');
+const { resolve, join } = require('path');
+const os = require('os');
+const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const { warn } = require('../../util');
 const { info } = require('../../util');
-let template = resolve(__dirname, '../../resources/template.html');
+
+let defaultTemplate = resolve(__dirname, '../../resources/template.html');
+
+function read(path) {
+	return readFileSync(resolve(__dirname, path), 'utf-8');
+}
 
 module.exports = async function(config) {
 	const { cwd, dest, isProd, src } = config;
 	const inProjectTemplatePath = resolve(src, 'template.html');
+	let template = defaultTemplate;
 	if (existsSync(inProjectTemplatePath)) {
 		template = inProjectTemplatePath;
 	}
+
+	if (config.template) {
+		const templatePathFromArg = resolve(cwd, config.template);
+		if (existsSync(templatePathFromArg)) template = templatePathFromArg;
+		else {
+			warn(`Template not found at ${templatePathFromArg}`);
+		}
+	}
+
+	let content = read(template);
+	if (/preact\.headEnd|preact\.bodyEnd/.test(content)) {
+		const headEnd = read('../../resources/head-end.ejs');
+		const bodyEnd = read('../../resources/body-end.ejs');
+		content = content
+			.replace(
+				/<%[=]?\s+preact\.title\s+%>/,
+				'<%= htmlWebpackPlugin.options.title %>'
+			)
+			.replace(/<%\s+preact\.headEnd\s+%>/, headEnd)
+			.replace(/<%\s+preact\.bodyEnd\s+%>/, bodyEnd);
+
+		// Unfortunately html-webpack-plugin expects a true file,
+		// so we'll create a temporary one.
+		const tmpDir = join(os.tmpdir(), 'preact-cli');
+		if (!existsSync(tmpDir)) {
+			mkdirSync(tmpDir);
+		}
+		template = resolve(tmpDir, 'template.tmp.ejs');
+		writeFileSync(template, content);
+	}
+
 	const htmlWebpackConfig = values => {
 		const { url, title, ...routeData } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
-			template: `!!ejs-loader!${config.template || template}`,
+			template: `!!ejs-loader!${template}`,
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
