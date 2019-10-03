@@ -1,4 +1,7 @@
 import './custom.css';
-import { withPrerenderData } from '@preact/prerender-data-provider';
-const Custom = ({ CLI_PRERENDER_DATA: { myProp } }) => <div>{myProp}</div>;
-export default withPrerenderData(Custom);
+import { usePrerenderData } from '@preact/prerender-data-provider';
+const Custom = props => {
+	const { myProp } = usePrerenderData(props);
+	return <div>{myProp}</div>;
+};
+export default Custom;

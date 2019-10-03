@@ -10,7 +10,8 @@ function getPrerenderdata(value, props) {
 		value.CLI_DATA &&
 		value.CLI_DATA.preRenderData &&
 		value.CLI_DATA.preRenderData.url &&
-		props.url === value.CLI_DATA.preRenderData.url
+		(props.url === value.CLI_DATA.preRenderData.url ||
+			props.url + '/' === value.CLI_DATA.preRenderData.url)
 	) {
 		return value.CLI_DATA.preRenderData;
 	}
@@ -41,9 +42,9 @@ const withPrerenderData = WrapperComponent => {
 	};
 };
 
-function usePrerenderData(url) {
+function usePrerenderData(props) {
 	const value = useContext(PrerenderDataContext);
-	return getPrerenderdata(value, { url }) || {};
+	return getPrerenderdata(value, props) || {};
 }
 
 export { Provider, withPrerenderData, usePrerenderData };
