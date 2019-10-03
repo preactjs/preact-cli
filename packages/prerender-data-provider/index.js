@@ -1,8 +1,12 @@
 import { Component, createContext } from 'preact';
-import { useContext } from 'preact/hooks';
+import { useState, useContext } from 'preact/hooks';
 
 const PrerenderDataContext = createContext(null);
 const { Provider, Consumer } = PrerenderDataContext;
+
+function normalizeUrl(url) {
+	return url.endsWith('/') ? url : url + '/';
+}
 
 function getPrerenderdata(value, props) {
 	if (
@@ -10,8 +14,7 @@ function getPrerenderdata(value, props) {
 		value.CLI_DATA &&
 		value.CLI_DATA.preRenderData &&
 		value.CLI_DATA.preRenderData.url &&
-		(props.url === value.CLI_DATA.preRenderData.url ||
-			props.url + '/' === value.CLI_DATA.preRenderData.url)
+		normalizeUrl(props.url) === value.CLI_DATA.preRenderData.url
 	) {
 		return value.CLI_DATA.preRenderData;
 	}
@@ -44,7 +47,15 @@ const withPrerenderData = WrapperComponent => {
 
 function usePrerenderData(props) {
 	const value = useContext(PrerenderDataContext);
-	return getPrerenderdata(value, props) || {};
+	const [preRenderData, setPreRenderData] = useState(value);
+	function fetchPreRenderData(url) {
+		fetch(`${normalizeUrl(url)}preact_prerender_data.json`)
+			.then(data => data.json())
+			.then(data => {
+				setPreRenderData(data);
+			});
+	}
+	return [getPrerenderdata(preRenderData, props) || {}, fetchPreRenderData];
 }
 
 export { Provider, withPrerenderData, usePrerenderData };
