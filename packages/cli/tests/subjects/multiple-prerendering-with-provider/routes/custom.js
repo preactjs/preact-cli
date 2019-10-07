@@ -1,6 +1,17 @@
+import { h, Component } from 'preact';
 import './custom.css';
 import { PreRenderDataSource } from '@preact/prerender-data-provider';
-const Custom = props => (
-	<PreRenderDataSource {...props} render={({ value }) => <div>{value}</div>} />
-);
+class Custom extends Component {
+	render(props) {
+		return (
+			<PreRenderDataSource
+				{...props}
+				render={({ value }) => {
+					return <div>{(value || {}).myProp}</div>;
+				}}
+			/>
+		);
+	}
+}
+
 export default Custom;

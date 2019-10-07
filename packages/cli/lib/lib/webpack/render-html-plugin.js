@@ -149,7 +149,7 @@ module.exports = async function(config) {
 class PrerenderDataExtractPlugin {
 	constructor(page) {
 		const { url } = page.CLI_DATA.preRenderData;
-		this.location_ = url;
+		this.location_ = url.endsWith('/') ? url : url + '/';
 		this.data_ = JSON.stringify(page.CLI_DATA.preRenderData || {});
 	}
 	apply(compiler) {
