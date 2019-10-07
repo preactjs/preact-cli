@@ -42,7 +42,7 @@ function usePrerenderData(props) {
 		value = contextValue.CLI_DATA.preRenderData;
 	}
 
-	const data = getPrerenderdata(state.value, props);
+	const data = getPrerenderdata(state.value || value, props);
 	if (!data && !state.isLoading && !state.error) {
 		fetchPreRenderData();
 	}

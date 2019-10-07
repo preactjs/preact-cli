@@ -3,7 +3,11 @@ function normalizeUrl(url) {
 }
 
 function getPrerenderdata(value, props) {
-	if (value && value.url && normalizeUrl(props.url) === value.url) {
+	if (
+		value &&
+		value.url &&
+		normalizeUrl(props.url) === normalizeUrl(value.url)
+	) {
 		return value;
 	}
 	return null;
