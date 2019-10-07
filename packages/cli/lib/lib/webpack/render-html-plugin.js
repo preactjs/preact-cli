@@ -7,6 +7,7 @@ const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const { warn } = require('../../util');
 const { info } = require('../../util');
+const { PRERENDER_DATA_FILE_NAME } = require('../constants');
 
 let defaultTemplate = resolve(__dirname, '../../resources/template.html');
 
@@ -140,5 +141,27 @@ module.exports = async function(config) {
 	return pages
 		.map(htmlWebpackConfig)
 		.map(conf => new HtmlWebpackPlugin(conf))
-		.concat([new HtmlWebpackExcludeAssetsPlugin()]);
+		.concat([new HtmlWebpackExcludeAssetsPlugin()])
+		.concat([...pages.map(page => new PrerenderDataExtractPlugin(page))]);
 };
+
+// Adds a preact_prerender_data in every folder so that the data could be fetched separately.
+class PrerenderDataExtractPlugin {
+	constructor(page) {
+		const { url } = page.CLI_DATA.preRenderData;
+		this.location_ = url;
+		this.data_ = JSON.stringify(page.CLI_DATA.preRenderData || {});
+	}
+	apply(compiler) {
+		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', compilation => {
+			let path = this.location_ + PRERENDER_DATA_FILE_NAME;
+			if (path.startsWith('/')) {
+				path = path.substr(1);
+			}
+			compilation.assets[path] = {
+				source: () => this.data_,
+				size: () => this.data_.length,
+			};
+		});
+	}
+}
