@@ -6,7 +6,7 @@
     "preact",
     "preact-cli"
   ],
-  "author": "Prateek Bhatnagar <prateek89born@gmail.com>",
+  "author": "Preact Authors <core@preactjs.com>",
   "homepage": "https://github.com/developit/preact-cli#readme",
   "license": "ISC",
   "main": "index.js",
