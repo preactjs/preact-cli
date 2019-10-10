@@ -9,13 +9,13 @@
   "author": "Preact Authors <core@preactjs.com>",
   "homepage": "https://github.com/developit/preact-cli#readme",
   "license": "ISC",
-  "main": "index.js",
+  "main": "src/index.js",
   "directories": {
-    "lib": "lib",
+    "lib": "src",
     "test": "__tests__"
   },
   "files": [
-    "lib"
+    "src"
   ],
   "repository": {
     "type": "git",
