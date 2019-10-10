@@ -3,8 +3,6 @@ const sirv = require('sirv');
 
 exports.getServer = dir => {
 	return polka()
-		.use(
-			sirv(dir, {maxAge: 0})
-		)
+		.use(sirv(dir, { maxAge: 0 }))
 		.listen(3000);
 };

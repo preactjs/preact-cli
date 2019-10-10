@@ -93,6 +93,11 @@ prog
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port', 8080)
+	.option(
+		'--prerenderUrls',
+		'Path to pre-rendered routes config',
+		'prerender-urls.json'
+	)
 	.action(commands.watch);
 
 prog
