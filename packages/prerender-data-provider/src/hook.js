@@ -3,7 +3,7 @@ import { normalizeUrl, getPrerenderdata, checkProps } from './utils';
 import { PrerenderDataContext } from './context';
 import { PRERENDER_DATA_FILE_NAME } from './constants';
 
-function usePrerenderData(props) {
+function usePrerenderData(props, doAutomaticFetch = true) {
 	const [state, setState] = useState({
 		value,
 		isLoading: false,
@@ -43,7 +43,7 @@ function usePrerenderData(props) {
 	}
 
 	const data = getPrerenderdata(state.value || value, props);
-	if (!data && !state.isLoading && !state.error) {
+	if (doAutomaticFetch && !data && !state.isLoading && !state.error) {
 		fetchPreRenderData();
 	}
 	return [data, state.isLoading, state.error];

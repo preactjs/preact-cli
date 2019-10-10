@@ -41,6 +41,9 @@ class PreRenderDataSource extends Component {
 	};
 
 	render(props, { value, isLoading, error }) {
+		if (!('doAutomaticFetch' in props)) {
+			props.doAutomaticFetch = true;
+		}
 		return (
 			<Consumer>
 				{contextValue => {
@@ -54,7 +57,12 @@ class PreRenderDataSource extends Component {
 						props
 					);
 					// if the data is not in script tag, we'll fetch it from the server
-					if (preRenderDataToBePassed === null && !isLoading && !error) {
+					if (
+						props.doAutomaticFetch &&
+						preRenderDataToBePassed === null &&
+						!isLoading &&
+						!error
+					) {
 						this.fetchPrerenderData();
 					}
 
