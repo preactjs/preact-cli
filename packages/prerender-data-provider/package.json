@@ -8,7 +8,7 @@
   ],
   "author": "Preact Authors <core@preactjs.com>",
   "homepage": "https://github.com/developit/preact-cli#readme",
-  "license": "ISC",
+  "license": "MIT",
   "main": "src/index.js",
   "directories": {
     "lib": "src",
