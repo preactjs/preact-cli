@@ -34,7 +34,7 @@ exports.warn = function(text, code) {
 	code && process.exit(code);
 };
 
-exports.error = function(text, code) {
+exports.error = function(text, code = 1) {
 	process.stderr.write(symbols.error + red(' ERROR ') + text + '\n');
 	code && process.exit(code);
 };
