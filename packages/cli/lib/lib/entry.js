@@ -1,6 +1,6 @@
-/* global __webpack_public_path__ */
+/* global __webpack_public_path__, IS_PREACT_X */
 
-import { h, render } from 'preact';
+import { h, render, hydrate } from 'preact';
 
 const interopDefault = m => (m && m.default ? m.default : m);
 
@@ -32,7 +32,9 @@ if (process.env.NODE_ENV === 'development') {
 let app = interopDefault(require('preact-cli-entrypoint'));
 
 if (typeof app === 'function') {
-	let root = document.body.firstElementChild;
+	// only use hydrate() in production - we don't SSR/prerender in development.
+	let doRender = process.env.NODE_ENV === 'production' ? hydrate : render;
+	let root;
 
 	let init = () => {
 		let app = interopDefault(require('preact-cli-entrypoint'));
@@ -48,7 +50,17 @@ if (typeof app === 'function') {
 		 * to send other data like at some point in time.
 		 */
 		const CLI_DATA = { preRenderData };
-		root = render(h(app, { CLI_DATA }), document.body, root);
+		if (IS_PREACT_X) {
+			doRender(h(app, { CLI_DATA }), document.body);
+			doRender = render;
+		} else {
+			// Prior to Preact 10,
+			root = render(
+				h(app, { CLI_DATA }),
+				document.body,
+				root || document.body.firstElementChild
+			);
+		}
 	};
 
 	if (module.hot) module.hot.accept('preact-cli-entrypoint', init);

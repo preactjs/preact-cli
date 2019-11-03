@@ -12,6 +12,6 @@
     "loader-utils": "^1.1.0"
   },
   "peerDependencies": {
-    "preact": "^8.1.0"
+    "preact": ">= 10"
   }
 }
