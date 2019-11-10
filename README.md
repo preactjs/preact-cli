@@ -79,6 +79,8 @@ Current available templates include:
 
 - [simple] - The simplest possible preact setup in a single file
 
+- [netlify] - Netlify CMS template using preact.
+
 - [widget] - Template for a widget to be embedded in another website.
 
 > 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `preact create <username>/<repository> <project-name>`
@@ -345,6 +347,7 @@ The default templates comes with a `.css` file for each component. You can start
 [sw-precache]: https://github.com/GoogleChrome/sw-precache
 [preact-router]: https://github.com/preactjs/preact-router
 [material]: https://github.com/preactjs-templates/material
+[netlify]: https://github.com/preactjs-templates/netlify
 [widget]: https://github.com/preactjs-templates/widget
 [plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
