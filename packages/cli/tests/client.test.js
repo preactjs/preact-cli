@@ -36,7 +36,9 @@ describe('client-side tests', () => {
 		await sleep(500);
 
 		const mutations = await page.evaluate('window.mutations');
+		let bodyHTML = await page.evaluate(() => document.body.innerHTML);
 
+		console.log(bodyHTML);
 		console.log(mutations);
 
 		expect(mutations).toHaveLength(0);
