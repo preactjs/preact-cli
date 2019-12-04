@@ -53,7 +53,7 @@ if (IS_PRERENDERED) {
 
 function Pending() {
 	// 1. this fake component makes sure that the route markup is not removed on hydration.
-	return h(hydrationNode.localName, {
+	return h(hydrationNode ? hydrationNode.localName : 'div', {
 		dangerouslySetInnerHTML: {
 			__html: hydrationNode ? hydrationNode.outerHTML : '',
 		},
