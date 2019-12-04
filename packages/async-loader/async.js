@@ -1,11 +1,16 @@
 // import { options, h, Component } from 'preact';
-import { h, Component, options, hydrate } from 'preact';
+import { h, Component, options, render } from 'preact';
 
 const f = 'unmount';
 const oldUnmountOpts = options[f];
 const oldDiffed = options.diffed;
 
 options[f] = function(vnode) {
+	/**
+	 *  3. now Pending is being unmount and its dom is being removed
+	 *  so we detach the dom from the vnode and empty its children so that Pending is unmount
+	 *  but the DOM is never actually removed.
+	 */
 	if (vnode.type === Pending) {
 		vnode.__e = null;
 		vnode.__k = [];
@@ -14,6 +19,10 @@ options[f] = function(vnode) {
 };
 
 options.diffed = function(vnode) {
+	/**
+	 *  4. The route component is now contructed and its DOM will be appended to the browser's DOM.
+	 *  But right before it, we swap its newly contructed DOM with the DOM already present on the browser.
+	 */
 	if (
 		vnode.__e &&
 		vnode.__e.parentNode === null &&
@@ -27,8 +36,9 @@ options.diffed = function(vnode) {
 
 function Pending() {
 	const __html = document.querySelector('#app').lastChild.outerHTML;
+	// 1. this fake component makes sure that the route markup is not removed on hydration.
 	return (
-		<section
+		<div
 			dangerouslySetInnerHTML={{
 				__html,
 			}}
@@ -44,6 +54,7 @@ export default function async(load) {
 			this.componentWillMount = () => {
 				load(mod => {
 					component = (mod && mod.default) || mod;
+					// 2. this mounts the actual route component.
 					this.setState({});
 				});
 			};
@@ -52,7 +63,12 @@ export default function async(load) {
 		this.render = props => {
 			const vnode = h(component || Pending, props);
 			if (component) {
-				hydrate(vnode, document.querySelector('#app'));
+				// hydrating this vnode with the DOM already present on screen.
+				render(
+					vnode,
+					document.querySelector('#app'),
+					document.querySelector('#app').lastChild
+				);
 				return;
 			}
 			return vnode;
