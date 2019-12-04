@@ -1,4 +1,3 @@
-// import { options, h, Component } from 'preact';
 import { h, Component, options, render } from 'preact';
 
 const DOM = '__e';
@@ -55,7 +54,7 @@ function Pending() {
 	// 1. this fake component makes sure that the route markup is not removed on hydration.
 	return h(hydrationNode ? hydrationNode.localName : 'div', {
 		dangerouslySetInnerHTML: {
-			__html: hydrationNode ? hydrationNode.outerHTML : '',
+			__html: hydrationNode ? hydrationNode.innerHTML : '',
 		},
 	});
 }
