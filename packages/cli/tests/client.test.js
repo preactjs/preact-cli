@@ -39,9 +39,6 @@ describe('client-side tests', () => {
 
 		expect(mutations).toHaveLength(0);
 
-		// await page.evaluate(`document.querySelector('a[href="/"]').click()`);
-		// await sleep(500);
-
 		server.server.close();
 	});
 });

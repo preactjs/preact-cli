@@ -1,19 +1,26 @@
 // import { options, h, Component } from 'preact';
 import { h, Component, options, render } from 'preact';
 
-const f = 'unmount';
-const oldUnmountOpts = options[f];
+const DOM = '__e';
+const CHILDREN = '__k';
+const PARENT = '__';
+const UNMOUNT = 'unmount';
+const oldUnmountOpts = options[UNMOUNT];
 const oldDiffed = options.diffed;
 
-options[f] = function(vnode) {
+let __html = document.querySelector('#app').lastChild.outerHTML;
+let IS_HYDRATING = true;
+
+options[UNMOUNT] = function(vnode) {
 	/**
 	 *  3. now Pending is being unmount and its dom is being removed
 	 *  so we detach the dom from the vnode and empty its children so that Pending is unmount
 	 *  but the DOM is never actually removed.
 	 */
 	if (vnode.type === Pending) {
-		vnode.__e = null;
-		vnode.__k = [];
+		vnode[DOM] = null;
+		vnode[CHILDREN] = [];
+		options[UNMOUNT] = oldUnmountOpts;
 	}
 	oldUnmountOpts && oldUnmountOpts(vnode);
 };
@@ -24,23 +31,24 @@ options.diffed = function(vnode) {
 	 *  But right before it, we swap its newly contructed DOM with the DOM already present on the browser.
 	 */
 	if (
-		vnode.__e &&
-		vnode.__e.parentNode === null &&
-		vnode.__.__ &&
-		vnode.__.__.type.name === 'AsyncComponent'
+		vnode[DOM] &&
+		vnode[DOM].parentNode === null &&
+		vnode[PARENT] &&
+		vnode[PARENT][PARENT] &&
+		vnode[PARENT][PARENT].type.name === 'AsyncComponent'
 	) {
-		vnode.__e = document.querySelector('#app').lastChild;
+		vnode[DOM] = document.querySelector('#app').lastChild;
+		options.diffed = oldDiffed;
 	}
 	oldDiffed && oldDiffed(vnode);
 };
 
 function Pending() {
-	const __html = document.querySelector('#app').lastChild.outerHTML;
 	// 1. this fake component makes sure that the route markup is not removed on hydration.
 	return (
 		<div
 			dangerouslySetInnerHTML={{
-				__html,
+				__html: IS_HYDRATING ? __html : '',
 			}}
 		/>
 	);
@@ -62,7 +70,9 @@ export default function async(load) {
 		}
 		this.render = props => {
 			const vnode = h(component || Pending, props);
-			if (component) {
+			if (component && IS_HYDRATING) {
+				IS_HYDRATING = false;
+
 				// hydrating this vnode with the DOM already present on screen.
 				render(
 					vnode,
