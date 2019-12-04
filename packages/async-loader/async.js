@@ -7,48 +7,56 @@ const PARENT = '__';
 const UNMOUNT = 'unmount';
 const oldUnmountOpts = options[UNMOUNT];
 const oldDiffed = options.diffed;
+const IS_PRERENDERED = document.querySelector('#app');
 
-let __html = document.querySelector('#app').lastChild.outerHTML;
-let IS_HYDRATING = true;
+let __html = '';
+let IS_HYDRATING = false;
 
-options[UNMOUNT] = function(vnode) {
-	/**
-	 *  3. now Pending is being unmount and its dom is being removed
-	 *  so we detach the dom from the vnode and empty its children so that Pending is unmount
-	 *  but the DOM is never actually removed.
-	 */
-	if (vnode.type === Pending) {
-		vnode[DOM] = null;
-		vnode[CHILDREN] = [];
-		options[UNMOUNT] = oldUnmountOpts;
-	}
-	oldUnmountOpts && oldUnmountOpts(vnode);
-};
+if (IS_PRERENDERED) {
+	__html = document.querySelector('#app').lastChild.outerHTML;
+	IS_HYDRATING = true;
 
-options.diffed = function(vnode) {
-	/**
-	 *  4. The route component is now contructed and its DOM will be appended to the browser's DOM.
-	 *  But right before it, we swap its newly contructed DOM with the DOM already present on the browser.
-	 */
-	if (
-		vnode[DOM] &&
-		vnode[DOM].parentNode === null &&
-		vnode[PARENT] &&
-		vnode[PARENT][PARENT] &&
-		vnode[PARENT][PARENT].type.name === 'AsyncComponent'
-	) {
-		vnode[DOM] = document.querySelector('#app').lastChild;
-		options.diffed = oldDiffed;
-	}
-	oldDiffed && oldDiffed(vnode);
-};
+	options[UNMOUNT] = function(vnode) {
+		/**
+		 *  3. now Pending is being unmount and its dom is being removed
+		 *  so we detach the dom from the vnode and empty its children so that Pending is unmount
+		 *  but the DOM is never actually removed.
+		 */
+		if (vnode.type === Pending) {
+			vnode[DOM] = null;
+			vnode[CHILDREN] = [];
+			// this hook in options is no more needed once hydration is done.
+			options[UNMOUNT] = oldUnmountOpts;
+		}
+		oldUnmountOpts && oldUnmountOpts(vnode);
+	};
+
+	options.diffed = function(vnode) {
+		/**
+		 *  4. The route component is now contructed and its DOM will be appended to the browser's DOM.
+		 *  But right before it, we swap its newly contructed DOM with the DOM already present on the browser.
+		 */
+		if (
+			vnode[DOM] &&
+			vnode[DOM].parentNode === null &&
+			vnode[PARENT] &&
+			vnode[PARENT][PARENT] &&
+			vnode[PARENT][PARENT].type.name === 'AsyncComponent'
+		) {
+			vnode[DOM] = document.querySelector('#app').lastChild;
+			// this hook in options is no more needed once hydration is done.
+			options.diffed = oldDiffed;
+		}
+		oldDiffed && oldDiffed(vnode);
+	};
+}
 
 function Pending() {
 	// 1. this fake component makes sure that the route markup is not removed on hydration.
 	return (
 		<div
 			dangerouslySetInnerHTML={{
-				__html: IS_HYDRATING ? __html : '',
+				__html,
 			}}
 		/>
 	);
@@ -71,6 +79,7 @@ export default function async(load) {
 		this.render = props => {
 			const vnode = h(component || Pending, props);
 			if (component && IS_HYDRATING) {
+				// switch to non hydrating mode for further routes
 				IS_HYDRATING = false;
 
 				// hydrating this vnode with the DOM already present on screen.
