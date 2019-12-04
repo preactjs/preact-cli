@@ -9,11 +9,11 @@ const oldUnmountOpts = options[UNMOUNT];
 const oldDiffed = options.diffed;
 const IS_PRERENDERED = document.querySelector('#app');
 
-let __html = '';
+let hydrationNode = null;
 let IS_HYDRATING = false;
 
 if (IS_PRERENDERED) {
-	__html = document.querySelector('#app').lastChild.outerHTML;
+	hydrationNode = document.querySelector('#app').lastChild;
 	IS_HYDRATING = true;
 
 	options[UNMOUNT] = function(vnode) {
@@ -53,13 +53,11 @@ if (IS_PRERENDERED) {
 
 function Pending() {
 	// 1. this fake component makes sure that the route markup is not removed on hydration.
-	return (
-		<div
-			dangerouslySetInnerHTML={{
-				__html,
-			}}
-		/>
-	);
+	return h(hydrationNode.localName, {
+		dangerouslySetInnerHTML: {
+			__html: hydrationNode ? hydrationNode.outerHTML : '',
+		},
+	});
 }
 
 export default function async(load) {
@@ -81,7 +79,7 @@ export default function async(load) {
 			if (component && IS_HYDRATING) {
 				// switch to non hydrating mode for further routes
 				IS_HYDRATING = false;
-
+				hydrationNode = null;
 				// hydrating this vnode with the DOM already present on screen.
 				render(
 					vnode,
