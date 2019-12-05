@@ -6,7 +6,9 @@ const PARENT = '__';
 const UNMOUNT = 'unmount';
 const oldUnmountOpts = options[UNMOUNT];
 const oldDiffed = options.diffed;
-const IS_PRERENDERED = document.querySelector('#app');
+const IS_PRERENDERED =
+	document.querySelector('#app') &&
+	document.querySelector('#app').childElementCount;
 
 let hydrationNode = null;
 let IS_HYDRATING = false;
