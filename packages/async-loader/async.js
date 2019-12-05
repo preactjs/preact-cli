@@ -36,6 +36,7 @@ if (IS_PRERENDERED) {
 		/**
 		 *  4. The route component is now contructed and its DOM will be appended to the browser's DOM.
 		 *  But right before it, we swap its newly contructed DOM with the DOM already present on the browser.
+		 *  TLDR; This prevent a duplicate DOM entry
 		 */
 		if (
 			vnode[DOM] &&
