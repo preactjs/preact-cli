@@ -6,12 +6,13 @@ const PARENT = '__';
 const UNMOUNT = 'unmount';
 const oldUnmountOpts = options[UNMOUNT];
 const oldDiffed = options.diffed;
+const parentNode = document.querySelector('#app');
 
 let hydrationNode = null;
 let IS_HYDRATING = false;
 
 const appChildren = [].map.call(
-	document.querySelector('#app').childNodes,
+	parentNode ? parentNode.childNodes : [],
 	elem => elem
 );
 
@@ -44,7 +45,7 @@ if (IS_PRERENDERED) {
 		if (
 			!hydrationNode &&
 			vnode[DOM] &&
-			vnode[DOM].parentNode === document.querySelector('#app') &&
+			vnode[DOM].parentNode === parentNode &&
 			appChildren.includes(vnode[DOM])
 		) {
 			appChildren.shift();
@@ -100,7 +101,7 @@ export default function async(load) {
 				// switch to non hydrating mode for further routes
 				IS_HYDRATING = false;
 				// hydrating this vnode with the DOM already present on screen.
-				render(vnode, document.querySelector('#app'), hydrationNode);
+				render(vnode, parentNode, hydrationNode);
 				return;
 			}
 			return vnode;
