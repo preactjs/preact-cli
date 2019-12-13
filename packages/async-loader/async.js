@@ -13,8 +13,12 @@ const IS_PRERENDERED =
 let hydrationNode = null;
 let IS_HYDRATING = false;
 
+const appChildren = [].map.call(
+	document.querySelector('#app').childNodes,
+	elem => elem
+);
+
 if (IS_PRERENDERED) {
-	hydrationNode = document.querySelector('#app').lastChild;
 	IS_HYDRATING = true;
 
 	options[UNMOUNT] = function(vnode) {
@@ -34,6 +38,20 @@ if (IS_PRERENDERED) {
 
 	options.diffed = function(vnode) {
 		/**
+		 * We started with an array of all children of #app.
+		 * As preact diffs vnodes top down, we remove their DOM from the array.
+		 * When AsyncComponent is required to render we pick whatever child is on top and render it with dangerouslySetInnerHTML
+		 */
+		if (
+			!hydrationNode &&
+			vnode[DOM] &&
+			vnode[DOM].parentNode === document.querySelector('#app') &&
+			appChildren.includes(vnode[DOM])
+		) {
+			appChildren.shift();
+		}
+
+		/**
 		 *  4. The route component is now contructed and its DOM will be appended to the browser's DOM.
 		 *  But right before it, we swap its newly contructed DOM with the DOM already present on the browser.
 		 *  TLDR; This prevent a duplicate DOM entry
@@ -45,7 +63,7 @@ if (IS_PRERENDERED) {
 			vnode[PARENT][PARENT] &&
 			vnode[PARENT][PARENT].type.name === 'AsyncComponent'
 		) {
-			vnode[DOM] = document.querySelector('#app').lastChild;
+			vnode[DOM] = hydrationNode;
 			// this hook in options is no more needed once hydration is done.
 			options.diffed = oldDiffed;
 		}
@@ -54,6 +72,7 @@ if (IS_PRERENDERED) {
 }
 
 function Pending() {
+	hydrationNode = appChildren.length > 0 ? appChildren[0] : null;
 	// 1. this fake component makes sure that the route markup is not removed on hydration.
 	return h(hydrationNode ? hydrationNode.localName : 'div', {
 		dangerouslySetInnerHTML: {
@@ -81,13 +100,8 @@ export default function async(load) {
 			if (component && IS_HYDRATING) {
 				// switch to non hydrating mode for further routes
 				IS_HYDRATING = false;
-				hydrationNode = null;
 				// hydrating this vnode with the DOM already present on screen.
-				render(
-					vnode,
-					document.querySelector('#app'),
-					document.querySelector('#app').lastChild
-				);
+				render(vnode, document.querySelector('#app'), hydrationNode);
 				return;
 			}
 			return vnode;
