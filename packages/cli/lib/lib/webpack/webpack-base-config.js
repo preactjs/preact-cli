@@ -73,7 +73,7 @@ module.exports = function(env) {
 	const browserlistConfig = Object(browserslist.findConfig(cwd));
 	const browsers =
 		(isProd ? browserlistConfig.production : browserlistConfig.development) ||
-		browserlistConfig.default ||
+		browserlistConfig.defaults ||
 		browserslistDefaults;
 
 	let userNodeModules = findAllNodeModules(cwd);
