@@ -27,7 +27,7 @@ function proxyLoader(source, map) {
 	var resultFromLoader = loader.call(this, source, map);
 	this.query.__proxy_loader__ = proxyOptions;
 
-	return resultFromLoader
+	return resultFromLoader;
 }
 
 function swapOptions(loaderContext, newOptions) {
