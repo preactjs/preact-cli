@@ -287,6 +287,7 @@ function isProd(config) {
 			new CrittersPlugin({
 				pruneSource: false,
 				logLevel: 'silent',
+				additionalStylesheets: ['*.css'],
 			})
 		);
 	}

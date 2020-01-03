@@ -47,7 +47,6 @@ exports.prerender.heads.home = `
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link href=\\"\\/route-home.chunk.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0}<\\/style>
 	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 <\\/head>
@@ -61,7 +60,6 @@ exports.prerender.heads.route66 = `
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link href=\\"\\/route-route66.chunk.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0}<\\/style>
 	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 <\\/head>
@@ -75,7 +73,6 @@ exports.prerender.heads.custom = `
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link href=\\"\\/route-custom.chunk.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0}<\\/style>
 	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 <\\/head>
@@ -95,7 +92,6 @@ exports.preload.head = `
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\~route-route66\\~route-route89\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
-	<link href=\\"/route-home.chunk.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 	<style>html{padding:0}<\\/style>
 	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"preload\\" as=\\"style\\">
 </head>

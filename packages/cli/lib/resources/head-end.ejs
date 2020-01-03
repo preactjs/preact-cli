@@ -12,10 +12,3 @@
 		<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>" <%= file.match(/bundle\.\w{5}\.esm\.js$/)?'crossorigin="anonymous"':'' %>>
 	<% } %>
 <% } %>
-
-<% /* Load styles for specific routes as well */ %>
-<% for (const file in loadManifest[htmlWebpackPlugin.options.url]) { %>
-	<% if (file && file.match(/\.(chunk\.\w{5}\.css)$/)) { %>
-		<link href="<%= htmlWebpackPlugin.files.publicPath + file %>" rel="stylesheet">
-	<% } %>
-<% } %>
