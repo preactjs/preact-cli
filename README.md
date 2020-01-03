@@ -310,7 +310,7 @@ module.exports = [
 
 #### Template
 
-A template is used to render your page.
+A template is used to render your page by [EJS](https://ejs.co/).
 
 The default one is visible [here](packages/cli/lib/resources/template.html) and it's going to be enough for the majority of cases.
 
