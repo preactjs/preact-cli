@@ -310,7 +310,8 @@ module.exports = [
 
 #### Template
 
-A template is used to render your page by [EJS](https://ejs.co/).
+A template is used to render your page by [EJS](https://ejs.co/).  
+You can uses the data of `prerenderUrls` which does not have `title`, using `htmlWebpackPlugin.options.CLI_DATA.preRenderData` in EJS.
 
 The default one is visible [here](packages/cli/lib/resources/template.html) and it's going to be enough for the majority of cases.
 
