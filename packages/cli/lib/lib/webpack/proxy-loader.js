@@ -13,17 +13,24 @@ function proxyLoader(source, map) {
 		// Remove proxy-loader options and make this.query act as requested loader query
 		swapOptions(this, options.options);
 	}
-	var proxyOptions = this.query.__proxy_loader__;
 
+	var proxyOptions = this.query.__proxy_loader__;
 	var loader;
+
 	try {
 		loader = requireRelative(proxyOptions.loader, proxyOptions.cwd);
 	} catch (e) {
 		loader = require(proxyOptions.loader);
 	}
 
+	delete this.query.__proxy_loader__;
+
 	// Run actual loader
-	return loader.call(this, source, map);
+	var loaderRun = loader.call(this, source, map);
+
+	this.query.__proxy_loader__ = proxyOptions;
+
+	return loaderRun;
 }
 
 function swapOptions(loaderContext, newOptions) {

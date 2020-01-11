@@ -186,7 +186,9 @@ module.exports = function(env) {
 								loader: 'sass-loader',
 								options: {
 									sourceMap: true,
-									includePaths: [...nodeModules],
+									sassOptions: {
+										includePaths: [...nodeModules],
+									},
 								},
 							},
 						},
