@@ -1,6 +1,6 @@
 /* global __webpack_public_path__ */
 
-import { h, render } from 'preact';
+import { h, render, hydrate } from 'preact';
 
 const interopDefault = m => (m && m.default ? m.default : m);
 
@@ -48,7 +48,11 @@ if (typeof app === 'function') {
 		 * to send other data like at some point in time.
 		 */
 		const CLI_DATA = { preRenderData };
-		root = render(h(app, { CLI_DATA }), document.body, root);
+		const doRender =
+			process.env.NODE_ENV !== 'production' || root.tagName !== 'script'
+				? render
+				: hydrate;
+		root = doRender(h(app, { CLI_DATA }), document.body, root);
 	};
 
 	if (module.hot) module.hot.accept('preact-cli-entrypoint', init);
