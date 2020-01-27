@@ -32,7 +32,8 @@ if (process.env.NODE_ENV === 'development') {
 let app = interopDefault(require('preact-cli-entrypoint'));
 
 if (typeof app === 'function') {
-	let root = document.body.firstElementChild;
+	let root =
+		document.getElementById('preact_root') || document.body.firstElementChild;
 
 	let init = () => {
 		let app = interopDefault(require('preact-cli-entrypoint'));
