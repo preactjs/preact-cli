@@ -1,3 +1,4 @@
+const path = require('path');
 const { getOptions, stringifyRequest } = require('loader-utils');
 
 exports.pitch = function(req) {
@@ -16,8 +17,12 @@ exports.pitch = function(req) {
 		name = query.formatName(this.resourcePath);
 	}
 
+	// import Async from '${path.relative(process.cwd(), path.resolve(__dirname, 'async-component.js'))}';
 	return `
-		import Async from '@preact/async-loader/async';
+		import Async from ${stringifyRequest(
+			this,
+			path.resolve(__dirname, 'async.js')
+		)};
 
 		function load(cb) {
 			require.ensure([], function (require) {
