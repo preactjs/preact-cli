@@ -1,7 +1,8 @@
 const path = require('path');
 const { getOptions, stringifyRequest } = require('loader-utils');
+export const PREACT_LEGACY_MODE = 'PREACT_LEGACY_MODE';
 
-exports.pitch = function(req, legacy) {
+exports.pitch = function(req, mode) {
 	this.cacheable && this.cacheable();
 	let name;
 	let query = getOptions(this) || {};
@@ -20,7 +21,10 @@ exports.pitch = function(req, legacy) {
 	return `
 		import Async from ${stringifyRequest(
 			this,
-			path.resolve(__dirname, legacy === true ? 'async-legacy.js' : 'async.js')
+			path.resolve(
+				__dirname,
+				mode === PREACT_LEGACY_MODE ? 'async-legacy.js' : 'async.js'
+			) // explicit value check because webpack sends 2nd argument values but we dont use it
 		)};
 
 		function load(cb) {
