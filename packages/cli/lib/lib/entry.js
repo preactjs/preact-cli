@@ -50,7 +50,7 @@ if (typeof app === 'function') {
 		 */
 		const CLI_DATA = { preRenderData };
 		const doRender =
-			process.env.NODE_ENV !== 'production' || root.tagName !== 'script'
+			process.env.NODE_ENV !== 'production' || root.tagName === 'script'
 				? render
 				: hydrate;
 		root = doRender(h(app, { CLI_DATA }), document.body, root);
