@@ -1,6 +1,7 @@
 /* global __webpack_public_path__ */
 
-import { h, render, hydrate } from 'preact';
+import * as Preact from 'preact';
+const { h, render, hydrate } = Preact;
 
 const interopDefault = m => (m && m.default ? m.default : m);
 
@@ -50,7 +51,9 @@ if (typeof app === 'function') {
 		 */
 		const CLI_DATA = { preRenderData };
 		const doRender =
-			process.env.NODE_ENV !== 'production' || root.tagName === 'script'
+			process.env.NODE_ENV !== 'production' ||
+			root.tagName === 'script' ||
+			!hydrate
 				? render
 				: hydrate;
 		root = doRender(h(app, { CLI_DATA }), document.body, root);

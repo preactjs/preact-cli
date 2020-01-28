@@ -1,9 +1,8 @@
 const path = require('path');
 const { getOptions, stringifyRequest } = require('loader-utils');
 
-exports.pitch = function(req) {
+exports.pitch = function(req, legacy) {
 	this.cacheable && this.cacheable();
-
 	let name;
 	let query = getOptions(this) || {};
 	let routeName =
@@ -21,7 +20,7 @@ exports.pitch = function(req) {
 	return `
 		import Async from ${stringifyRequest(
 			this,
-			path.resolve(__dirname, 'async.js')
+			path.resolve(__dirname, legacy === true ? 'async-legacy.js' : 'async.js')
 		)};
 
 		function load(cb) {

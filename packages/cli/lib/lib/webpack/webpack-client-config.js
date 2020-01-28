@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const { resolve } = require('path');
 const { existsSync } = require('fs');
+const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const merge = require('webpack-merge');
 const { filter } = require('minimatch');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -25,6 +26,10 @@ const cleanFilename = name =>
 
 async function clientConfig(env) {
 	const { isProd, source, src /*, port? */ } = env;
+	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(src);
+	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
+		? require.resolve('@preact/async-loader')
+		: require.resolve('@preact/async-loader/legacy');
 
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
@@ -50,7 +55,10 @@ async function clientConfig(env) {
 
 		resolveLoader: {
 			alias: {
-				async: require.resolve('@preact/async-loader'),
+				async: asyncLoader,
+				'preact-cli/async-component': IS_SOURCE_PREACT_X_OR_ABOVE
+					? require.resolve('@preact/async-loader/async')
+					: require.resolve('@preact/async-loader/async-legacy'),
 			},
 		},
 
@@ -66,7 +74,7 @@ async function clientConfig(env) {
 								'/{routes,async}/{*,*/index}.{js,jsx,ts,tsx}'
 						),
 					],
-					loader: require.resolve('@preact/async-loader'),
+					loader: asyncLoader,
 					options: {
 						name(filename) {
 							filename = normalizePath(filename);

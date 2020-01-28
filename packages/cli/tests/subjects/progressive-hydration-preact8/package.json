@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "name": "preact-prerender",
+  "dependencies": {
+    "preact": "8.5.3",
+    "preact-render-to-string": "5.0.0"
+  }
+}
