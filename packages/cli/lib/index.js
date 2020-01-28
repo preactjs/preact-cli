@@ -79,7 +79,7 @@ prog
 	.describe('Start a live-reload server for development')
 	.option('--src', 'Specify source directory', 'src')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
+	.option('--esm', 'Builds ES-2015 bundles for your code.', false)
 	.option('--clear', 'Clear the console', true)
 	.option('--sw', 'Generate and attach a Service Worker', undefined)
 	.option('--rhl', 'Enable react hot loader', false)
