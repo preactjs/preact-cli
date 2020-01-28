@@ -3,6 +3,7 @@ const { existsSync, unlinkSync, symlinkSync } = require('fs');
 const cmd = require('../../lib/commands');
 const { tmpDir } = require('./output');
 const mkdirp = require('mkdirp');
+const shell = require('shelljs');
 
 const root = join(__dirname, '../../../..');
 
@@ -34,11 +35,14 @@ exports.create = async function(template, name) {
 	return dest;
 };
 
-exports.build = function(cwd, options, skipSymlink = false) {
-	if (!skipSymlink) {
+exports.build = function(cwd, options, installNodeModules = false) {
+	if (!installNodeModules) {
 		mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
 		linkPackage('preact', root, cwd);
 		linkPackage('preact-render-to-string', root, cwd);
+	} else {
+		shell.cd(cwd);
+		shell.exec('npm i');
 	}
 	let opts = Object.assign({ cwd }, argv);
 	return cmd.build(argv.src, Object.assign({}, opts, options));

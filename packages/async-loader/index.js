@@ -1,6 +1,6 @@
 const path = require('path');
 const { getOptions, stringifyRequest } = require('loader-utils');
-export const PREACT_LEGACY_MODE = 'PREACT_LEGACY_MODE';
+const PREACT_LEGACY_MODE = 'PREACT_LEGACY_MODE';
 
 exports.pitch = function(req, mode) {
 	this.cacheable && this.cacheable();
@@ -36,3 +36,5 @@ exports.pitch = function(req, mode) {
 		export default Async(load);
 	`;
 };
+
+exports.PREACT_LEGACY_MODE = PREACT_LEGACY_MODE;
