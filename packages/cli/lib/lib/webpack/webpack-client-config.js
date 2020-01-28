@@ -25,17 +25,15 @@ const cleanFilename = name =>
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src /*, port? */ } = env;
-	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(src);
+	const { isProd, source, src, cwd /*, port? */ } = env;
+	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
 		? require.resolve('@preact/async-loader')
 		: require.resolve('@preact/async-loader/legacy');
-
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
 		polyfills: resolve(__dirname, './polyfills'),
 	};
-
 	if (!isProd) {
 		entry.bundle = [
 			entry.bundle,
@@ -56,9 +54,6 @@ async function clientConfig(env) {
 		resolveLoader: {
 			alias: {
 				async: asyncLoader,
-				'preact-cli/async-component': IS_SOURCE_PREACT_X_OR_ABOVE
-					? require.resolve('@preact/async-loader/async')
-					: require.resolve('@preact/async-loader/async-legacy'),
 			},
 		},
 

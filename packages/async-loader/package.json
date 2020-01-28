@@ -9,6 +9,7 @@
     "node": ">=6"
   },
   "dependencies": {
+    "kleur": "^3.0.3",
     "loader-utils": "^1.1.0"
   },
   "peerDependencies": {

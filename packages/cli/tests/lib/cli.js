@@ -34,10 +34,12 @@ exports.create = async function(template, name) {
 	return dest;
 };
 
-exports.build = function(cwd, options) {
-	mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
-	linkPackage('preact', root, cwd);
-	linkPackage('preact-render-to-string', root, cwd);
+exports.build = function(cwd, options, skipSymlink = false) {
+	if (!skipSymlink) {
+		mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
+		linkPackage('preact', root, cwd);
+		linkPackage('preact-render-to-string', root, cwd);
+	}
 	let opts = Object.assign({ cwd }, argv);
 	return cmd.build(argv.src, Object.assign({}, opts, options));
 };

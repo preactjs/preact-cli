@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const { resolve } = require('path');
 const { readFileSync, existsSync } = require('fs');
+const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const SizePlugin = require('size-plugin');
 const autoprefixer = require('autoprefixer');
 const browserslist = require('browserslist');
@@ -59,7 +60,7 @@ function resolveTsconfig(cwd, isProd) {
 
 module.exports = function(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
-
+	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	// Apply base-level `env` values
 	env.dest = resolve(cwd, env.dest || 'build');
 	env.manifest = readJson(source('manifest.json')) || {};
@@ -130,9 +131,9 @@ module.exports = function(env) {
 					react: compat,
 					'react-dom': compat,
 					'react-addons-css-transition-group': 'preact-css-transition-group',
-					'preact-cli/async-component': require.resolve(
-						'@preact/async-loader/async'
-					),
+					'preact-cli/async-component': IS_SOURCE_PREACT_X_OR_ABOVE
+						? require.resolve('@preact/async-loader/async')
+						: require.resolve('@preact/async-loader/async-legacy'),
 				},
 				compat !== 'preact-compat' ? { 'preact-compat': compat } : {}
 			),
