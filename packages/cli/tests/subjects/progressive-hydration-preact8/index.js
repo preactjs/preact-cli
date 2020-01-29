@@ -6,7 +6,7 @@ if (typeof window !== 'undefined') {
 	const old = root.removeChild;
 	root.removeChild = child => {
 		window.ROOT_MUTATION_COUNT++;
-		old(child);
+		old.call(this, child);
 	};
 }
 
