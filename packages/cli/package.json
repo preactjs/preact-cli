@@ -60,6 +60,7 @@
     "preact-router": "^3.0.1",
     "puppeteer": "^1.19.0",
     "sass-loader": "^7.0.1",
+    "shelljs": "^0.8.3",
     "sirv": "^0.4.2"
   },
   "peerDependencies": {
