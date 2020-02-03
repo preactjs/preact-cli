@@ -1,6 +1,6 @@
 #!/usr/bin/env node
+const envinfo = require('envinfo');
 const sade = require('sade');
-global.Promise = require('bluebird');
 const notifier = require('update-notifier');
 const { error } = require('./util');
 const pkg = require('../package');
@@ -51,6 +51,7 @@ prog
 	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
+	.option('--brotli', 'Adds brotli redirects to the service worker.', false)
 	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
 	.option('-v, --verbose', 'Verbose output')
 	.action(commands.build);
@@ -60,11 +61,12 @@ prog
 	.describe('Create a new application')
 	.option('--name', 'The application name')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--force', 'Force destination output; will override!')
+	.option('--force', 'Force destination output; will override!', false)
 	.option('--install', 'Install dependencies', true)
-	.option('--yarn', 'Use `yarn` instead of `npm`')
-	.option('--git', 'Initialize git repository')
-	.option('-v, --verbose', 'Verbose output')
+	.option('--yarn', 'Use `yarn` instead of `npm`', false)
+	.option('--git', 'Initialize git repository', false)
+	.option('--license', 'License type', 'MIT')
+	.option('-v, --verbose', 'Verbose output', false)
 	.action(commands.create);
 
 prog
@@ -77,7 +79,9 @@ prog
 	.describe('Start a live-reload server for development')
 	.option('--src', 'Specify source directory', 'src')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--sw', 'Generate and attach a Service Worker', false)
+	.option('--esm', 'Builds ES-2015 bundles for your code.', false)
+	.option('--clear', 'Clear the console', true)
+	.option('--sw', 'Generate and attach a Service Worker', undefined)
 	.option('--rhl', 'Enable react hot loader', false)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--https', 'Run server with HTTPS protocol')
@@ -89,6 +93,34 @@ prog
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port', 8080)
+	.option(
+		'--prerenderUrls',
+		'Path to pre-rendered routes config',
+		'prerender-urls.json'
+	)
 	.action(commands.watch);
+
+prog
+	.command('info')
+	.describe('Print out debugging information about the local environment')
+	.action(() => {
+		console.log();
+		console.log('Environment Info:');
+		envinfo
+			.run({
+				System: ['OS', 'CPU'],
+				Binaries: ['Node', 'Yarn', 'npm'],
+				Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
+				npmPackages: [
+					'preact',
+					'preact-compat',
+					'preact-cli',
+					'preact-router',
+					'preact-render-to-string',
+				],
+				npmGlobalPackages: ['preact-cli'],
+			})
+			.then(console.log);
+	});
 
 prog.parse(process.argv);

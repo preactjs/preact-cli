@@ -1,0 +1,30 @@
+{
+  "name": "@preact/prerender-data-provider",
+  "version": "0.0.1",
+  "description": "Prerender Prerender data provider for preact-cli apps",
+  "keywords": [
+    "preact",
+    "preact-cli"
+  ],
+  "author": "Preact Authors <core@preactjs.com>",
+  "homepage": "https://github.com/developit/preact-cli#readme",
+  "license": "MIT",
+  "main": "src/index.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/developit/preact-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/developit/preact-cli/issues"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0"
+  }
+}

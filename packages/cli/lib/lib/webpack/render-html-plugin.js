@@ -1,23 +1,63 @@
-const { resolve } = require('path');
-const { existsSync } = require('fs');
+const { resolve, join } = require('path');
+const os = require('os');
+const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const { warn } = require('../../util');
-let template = resolve(__dirname, '../../resources/template.html');
+const { info } = require('../../util');
+const { PRERENDER_DATA_FILE_NAME } = require('../constants');
 
-module.exports = function(config) {
+let defaultTemplate = resolve(__dirname, '../../resources/template.html');
+
+function read(path) {
+	return readFileSync(resolve(__dirname, path), 'utf-8');
+}
+
+module.exports = async function(config) {
 	const { cwd, dest, isProd, src } = config;
-	const inProjectTemplatePath = resolve(cwd, dest, '../template.html');
+	const inProjectTemplatePath = resolve(src, 'template.html');
+	let template = defaultTemplate;
 	if (existsSync(inProjectTemplatePath)) {
 		template = inProjectTemplatePath;
 	}
+
+	if (config.template) {
+		const templatePathFromArg = resolve(cwd, config.template);
+		if (existsSync(templatePathFromArg)) template = templatePathFromArg;
+		else {
+			warn(`Template not found at ${templatePathFromArg}`);
+		}
+	}
+
+	let content = read(template);
+	if (/preact\.headEnd|preact\.bodyEnd/.test(content)) {
+		const headEnd = read('../../resources/head-end.ejs');
+		const bodyEnd = read('../../resources/body-end.ejs');
+		content = content
+			.replace(
+				/<%[=]?\s+preact\.title\s+%>/,
+				'<%= htmlWebpackPlugin.options.title %>'
+			)
+			.replace(/<%\s+preact\.headEnd\s+%>/, headEnd)
+			.replace(/<%\s+preact\.bodyEnd\s+%>/, bodyEnd);
+
+		// Unfortunately html-webpack-plugin expects a true file,
+		// so we'll create a temporary one.
+		const tmpDir = join(os.tmpdir(), 'preact-cli');
+		if (!existsSync(tmpDir)) {
+			mkdirSync(tmpDir);
+		}
+		template = resolve(tmpDir, 'template.tmp.ejs');
+		writeFileSync(template, content);
+	}
+
 	const htmlWebpackConfig = values => {
-		let { url, title } = values;
+		const { url, title, ...routeData } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
-			template: `!!ejs-loader!${config.template || template}`,
+			template: `!!ejs-loader!${template}`,
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
@@ -27,7 +67,7 @@ module.exports = function(config) {
 			},
 			favicon: existsSync(resolve(src, 'assets/favicon.ico'))
 				? 'assets/favicon.ico'
-				: resolve(__dirname, '../../resources/favicon.ico'),
+				: '',
 			inject: true,
 			compile: true,
 			inlineCss: config['inline-css'],
@@ -49,11 +89,11 @@ module.exports = function(config) {
 			},
 			config,
 			url,
-			ssr(params) {
-				Object.assign(params, { url });
-				return config.prerender ? prerender({ cwd, dest, src }, params) : '';
+			ssr() {
+				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
 			},
 			scriptLoading: 'defer',
+			CLI_DATA: { preRenderData: { url, ...routeData } },
 		});
 	};
 
@@ -67,7 +107,9 @@ module.exports = function(config) {
 					result = result.default();
 				}
 				if (typeof result === 'function') {
-					result = result();
+					info(`Fetching URLs from ${config.prerenderUrls}`);
+					result = await result();
+					info(`Fetched URLs from ${config.prerenderUrls}`);
 				}
 				if (typeof result === 'string') {
 					result = JSON.parse(result);
@@ -99,5 +141,27 @@ module.exports = function(config) {
 	return pages
 		.map(htmlWebpackConfig)
 		.map(conf => new HtmlWebpackPlugin(conf))
-		.concat([new HtmlWebpackExcludeAssetsPlugin()]);
+		.concat([new HtmlWebpackExcludeAssetsPlugin()])
+		.concat([...pages.map(page => new PrerenderDataExtractPlugin(page))]);
 };
+
+// Adds a preact_prerender_data in every folder so that the data could be fetched separately.
+class PrerenderDataExtractPlugin {
+	constructor(page) {
+		const { url } = page.CLI_DATA.preRenderData;
+		this.location_ = url.endsWith('/') ? url : url + '/';
+		this.data_ = JSON.stringify(page.CLI_DATA.preRenderData || {});
+	}
+	apply(compiler) {
+		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', compilation => {
+			let path = this.location_ + PRERENDER_DATA_FILE_NAME;
+			if (path.startsWith('/')) {
+				path = path.substr(1);
+			}
+			compilation.assets[path] = {
+				source: () => this.data_,
+				size: () => this.data_.length,
+			};
+		});
+	}
+}

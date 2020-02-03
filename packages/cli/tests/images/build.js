@@ -1,16 +1,12 @@
 const common = {
 	'polyfills.*.js': 4620,
 	'polyfills.*.js.map': 31760,
-	'favicon.ico': 15086,
 };
 
 exports.default = exports.full = Object.assign({}, common, {
-	'assets/favicon.ico': 15086,
 	'assets/icons/android-chrome-192x192.png': 14058,
 	'assets/icons/android-chrome-512x512.png': 51484,
 	'assets/icons/apple-touch-icon.png': 12746,
-	'assets/icons/favicon-16x16.png': 626,
-	'assets/icons/favicon-32x32.png': 1487,
 	'assets/icons/mstile-150x150.png': 9050,
 	'push-manifest.json': 327,
 	'manifest.json': 426,
@@ -51,9 +47,8 @@ exports.prerender.heads.home = `
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link rel="shortcut icon" href="\\/favicon\\.ico">
+	<style>html{padding:0}<\\/style>
 	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
-	<style>html{padding:0;}<\\/style>
 <\\/head>
 `;
 
@@ -65,9 +60,21 @@ exports.prerender.heads.route66 = `
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link rel="shortcut icon" href="\\/favicon\\.ico">
+	<style>html{padding:0}<\\/style>
 	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
-	<style>html{padding:0;}<\\/style>
+<\\/head>
+`;
+
+exports.prerender.heads.custom = `
+<head>
+	<meta charset="utf-8">
+	<title>Custom<\\/title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="manifest" href="\\/manifest\\.json">
+	<style>html{padding:0}<\\/style>
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"preload\\" as=\\"style\\">
 <\\/head>
 `;
 
@@ -85,9 +92,8 @@ exports.preload.head = `
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\~route-route66\\~route-route89\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
-	<link rel=\\"shortcut icon\\" href=\\"\\/favicon\\.ico\\">
+	<style>html{padding:0}<\\/style>
 	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"preload\\" as=\\"style\\">
-	<style>html{padding:0;}<\\/style>
 </head>
 `;
 
@@ -109,13 +115,30 @@ exports.prerender.route = `
 </body>
 `;
 
+exports.prerender.custom = `
+<body>
+	<div id="app">
+		<div>It worked!</div>
+	</div>
+	{{ ... }}
+</body>
+`;
+
+exports.prerender.customhook = `
+<body>
+	<div id="app">
+		<div>It worked with hook!</div>
+	</div>
+	{{ ... }}
+</body>
+`;
+
 exports.webpack = `
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<title>preact-webpack</title>
-		<link rel="shortcut icon" href="/favicon.ico"></link>
 	</head>
 	<body>
 		<h1>Guess what</h1>
@@ -131,7 +154,22 @@ exports.template = `
 	<head>
 		<meta charset="utf-8">
 		<title>Custom title</title>
-		<link rel="shortcut icon" href="/favicon.ico"></link>
+	</head>
+	<body>
+		<h1>Guess what</h1>
+		<h2>This is an app with custom template</h2>
+		{{ ... }}
+	</body>
+</html>
+`;
+
+exports.templateReplaced = `
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>preact-webpack</title>
+		<link rel="manifest" href="/manifest.json">
 	</head>
 	<body>
 		<h1>Guess what</h1>

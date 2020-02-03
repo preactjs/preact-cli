@@ -3,8 +3,8 @@ const webpack = require('webpack');
 const getPort = require('get-port');
 const { resolve } = require('path');
 const clear = require('console-clear');
-const { writeFile } = require('fs.promised');
-const { bold, red, green, magenta } = require('chalk');
+const { writeFile } = require('../../fs');
+const { bold, red, green, magenta } = require('kleur');
 const DevServer = require('webpack-dev-server');
 const clientConfig = require('./webpack-client-config');
 const serverConfig = require('./webpack-server-config');
@@ -12,17 +12,17 @@ const transformConfig = require('./transform-config');
 const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
-	let config = clientConfig(env);
+	let config = await clientConfig(env);
 
 	await transformConfig(env, config);
 
 	let userPort =
 		parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
-	let port = await getPort(userPort);
+	let port = await getPort({ port: userPort });
 
 	let compiler = webpack(config);
 	return new Promise((res, rej) => {
-		compiler.plugin('emit', (compilation, callback) => {
+		compiler.hooks.emit.tapAsync('CliDevPlugin', (compilation, callback) => {
 			let missingDeps = compilation.missingDependencies;
 			let nodeModulesPath = resolve(__dirname, '../../../node_modules');
 
@@ -38,17 +38,15 @@ async function devBuild(env) {
 			callback();
 		});
 
-		compiler.plugin('done', stats => {
+		compiler.hooks.done.tap('CliDevPlugin', stats => {
 			let devServer = config.devServer;
 			let protocol = process.env.HTTPS || devServer.https ? 'https' : 'http';
-
 			let host = process.env.HOST || devServer.host || 'localhost';
-			if (host === '0.0.0.0') host = 'localhost';
 
 			let serverAddr = `${protocol}://${host}:${bold(port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
 
-			clear();
+			if (env['clear']) clear(true);
 
 			if (stats.hasErrors()) {
 				process.stdout.write(red('Build failed!\n\n'));
@@ -65,10 +63,10 @@ async function devBuild(env) {
 				process.stdout.write(`${bold('On Your Network:')}  ${localIpAddr}\n`);
 			}
 
-			showStats(stats);
+			showStats(stats, false);
 		});
 
-		compiler.plugin('failed', rej);
+		compiler.hooks.failed.tap('CliDevPlugin', rej);
 
 		let c = Object.assign({}, config.devServer, {
 			stats: { colors: true },
@@ -81,7 +79,7 @@ async function devBuild(env) {
 }
 
 async function prodBuild(env) {
-	let config = clientConfig(env);
+	let config = await clientConfig(env);
 	await transformConfig(env, config);
 
 	if (env.prerender) {
@@ -97,18 +95,16 @@ async function prodBuild(env) {
 	// Timeout for plugins that work on `after-emit` event of webpack
 	await new Promise(r => setTimeout(r, 20));
 
-	return showStats(stats);
+	return showStats(stats, true);
 }
 
 function runCompiler(compiler) {
 	return new Promise((res, rej) => {
 		compiler.run((err, stats) => {
-			if (stats && stats.hasErrors()) {
-				showStats(stats);
-			}
+			showStats(stats, true);
 
 			if (err || (stats && stats.hasErrors())) {
-				rej(red('Build failed! ' + err));
+				rej(red('Build failed! ' + (err || '')));
 			}
 
 			res(stats);
@@ -116,17 +112,19 @@ function runCompiler(compiler) {
 	});
 }
 
-function showStats(stats) {
-	if (stats.hasErrors()) {
-		allFields(stats, 'errors')
-			.map(stripLoaderPrefix)
-			.forEach(error);
-	}
+function showStats(stats, isProd) {
+	if (stats) {
+		if (stats.hasErrors()) {
+			allFields(stats, 'errors')
+				.map(stripLoaderPrefix)
+				.forEach(msg => error(msg, isProd ? 1 : 0));
+		}
 
-	if (stats.hasWarnings()) {
-		allFields(stats, 'warnings')
-			.map(stripLoaderPrefix)
-			.forEach(warn);
+		if (stats.hasWarnings()) {
+			allFields(stats, 'warnings')
+				.map(stripLoaderPrefix)
+				.forEach(msg => warn(msg));
+		}
 	}
 
 	return stats;
@@ -226,7 +224,7 @@ function replaceAll(str, find, replace) {
 function stripLoaderFromModuleNames(m) {
 	for (let key in m) {
 		if (
-			m.hasOwnProperty(key) &&
+			Object.prototype.hasOwnProperty.call(m, key) &&
 			m[key] != null &&
 			~keysToNormalize.indexOf(key)
 		) {

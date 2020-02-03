@@ -1,7 +1,8 @@
-const chalk = require('chalk');
+const { red, yellow } = require('kleur');
 const { resolve } = require('path');
 const { readFileSync } = require('fs');
 const stackTrace = require('stack-trace');
+const URL = require('url');
 const { SourceMapConsumer } = require('source-map');
 
 module.exports = function(env, params) {
@@ -11,7 +12,7 @@ module.exports = function(env, params) {
 	let url = params.url || '/';
 
 	global.history = {};
-	global.location = { href: url, pathname: url };
+	global.location = { ...URL.parse(url) };
 
 	try {
 		let m = require(entry),
@@ -24,11 +25,13 @@ module.exports = function(env, params) {
 			);
 			return '';
 		}
+		const { cwd } = env;
 
-		let preact = require('preact'),
-			renderToString = require('preact-render-to-string');
-
-		return renderToString(preact.h(app, { url }));
+		const preact = require(require.resolve(`${cwd}/node_modules/preact`));
+		const renderToString = require(require.resolve(
+			`${cwd}/node_modules/preact-render-to-string`
+		));
+		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
 		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
 		if (!stack) {
@@ -48,7 +51,7 @@ async function handlePrerenderError(err, env, stack, entry) {
 	try {
 		sourceMapContent = JSON.parse(readFileSync(`${entry}.map`));
 	} catch (err) {
-		process.stderr.write(chalk.red(`Unable to read sourcemap: ${entry}.map\n`));
+		process.stderr.write(red(`Unable to read sourcemap: ${entry}.map\n`));
 	}
 
 	if (sourceMapContent) {
@@ -78,15 +81,15 @@ async function handlePrerenderError(err, env, stack, entry) {
 					'utf-8'
 				).split('\n');
 			} catch (err) {
-				process.stderr.write(chalk.red(`Unable to read file: ${sourcePath}\n`));
+				process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
 			}
-			// process.stderr.write(chalk.red(`Unable to read file: ${sourcePath}\n`));
+			// process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
 		}
 		sourceCodeHighlight = '';
 
 		if (sourceLines) {
 			for (var i = -4; i <= 4; i++) {
-				let color = i === 0 ? chalk.red : chalk.yellow;
+				let color = i === 0 ? red : yellow;
 				let line = position.line + i;
 				let sourceLine = sourceLines[line - 1];
 				sourceCodeHighlight += sourceLine ? `${color(sourceLine)}\n` : '';
@@ -95,7 +98,7 @@ async function handlePrerenderError(err, env, stack, entry) {
 	}
 
 	process.stderr.write('\n');
-	process.stderr.write(chalk.red(`${errorMessage}\n`));
+	process.stderr.write(red(`${errorMessage}\n`));
 	process.stderr.write(`method: ${methodName}\n`);
 	if (sourceMapContent) {
 		process.stderr.write(

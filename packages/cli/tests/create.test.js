@@ -15,7 +15,7 @@ describe('preact create', () => {
 				return arr.map(x => relative(dir, x));
 			});
 
-			expect(output).toEqual(snapshots[key]);
+			expect(output.sort()).toEqual(snapshots[key]);
 		});
 	});
 

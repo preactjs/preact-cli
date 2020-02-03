@@ -1,19 +1,22 @@
 const webpack = require('webpack');
 const { resolve } = require('path');
 const { existsSync } = require('fs');
+const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const merge = require('webpack-merge');
 const { filter } = require('minimatch');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CrittersPlugin = require('critters-webpack-plugin');
-const RenderHTMLPlugin = require('./render-html-plugin');
+const renderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
+const { InjectManifest } = require('workbox-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 const { normalizePath } = require('../../util');
+const SWBuilderPlugin = require('./sw-plugin');
 
 const cleanFilename = name =>
 	name.replace(
@@ -21,14 +24,16 @@ const cleanFilename = name =>
 		''
 	);
 
-function clientConfig(env) {
-	const { isProd, source, src /*, port? */ } = env;
-
+async function clientConfig(env) {
+	const { isProd, source, src, cwd /*, port? */ } = env;
+	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
+	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
+		? require.resolve('@preact/async-loader')
+		: require.resolve('@preact/async-loader/legacy');
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
 		polyfills: resolve(__dirname, './polyfills'),
 	};
-
 	if (!isProd) {
 		entry.bundle = [
 			entry.bundle,
@@ -48,7 +53,7 @@ function clientConfig(env) {
 
 		resolveLoader: {
 			alias: {
-				async: require.resolve('@preact/async-loader'),
+				async: asyncLoader,
 			},
 		},
 
@@ -56,12 +61,15 @@ function clientConfig(env) {
 		module: {
 			rules: [
 				{
-					test: /\.jsx?$/,
+					test: /\.[jt]sx?$/,
 					include: [
-						filter(source('routes') + '/{*.js,*/index.js}'),
-						filter(source('components') + '/{routes,async}/{*.js,*/index.js}'),
+						filter(source('routes') + '/{*,*/index}.{js,jsx,ts,tsx}'),
+						filter(
+							source('components') +
+								'/{routes,async}/{*,*/index}.{js,jsx,ts,tsx}'
+						),
 					],
-					loader: require.resolve('@preact/async-loader'),
+					loader: asyncLoader,
 					options: {
 						name(filename) {
 							filename = normalizePath(filename);
@@ -81,7 +89,8 @@ function clientConfig(env) {
 
 		plugins: [
 			new PushManifestPlugin(env),
-			...RenderHTMLPlugin(env),
+			...(await renderHTMLPlugin(env)),
+			...getBabelEsmPlugin(env),
 			new CopyWebpackPlugin(
 				[
 					...(existsSync(source('manifest.json'))
@@ -103,10 +112,62 @@ function clientConfig(env) {
 						from: resolve(__dirname, '../../resources/sw-debug.js'),
 						to: 'sw-debug.js',
 					},
+					// copy files from static to build directory
+					existsSync(source('static')) && {
+						from: resolve(source('static')),
+						to: '.',
+					},
 				].filter(Boolean)
 			),
 		],
 	};
+}
+
+function getBabelEsmPlugin(config) {
+	const esmPlugins = [];
+	if (config.esm) {
+		esmPlugins.push(
+			new BabelEsmPlugin({
+				filename: config.isProd
+					? '[name].[chunkhash:5].esm.js'
+					: '[name].esm.js',
+				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
+				excludedPlugins: ['BabelEsmPlugin', 'SWBuilderPlugin'],
+				beforeStartExecution: (plugins, newConfig) => {
+					const babelPlugins = newConfig.plugins;
+					newConfig.plugins = babelPlugins.filter(plugin => {
+						if (
+							Array.isArray(plugin) &&
+							plugin[0].indexOf('fast-async') !== -1
+						) {
+							return false;
+						}
+						return true;
+					});
+					plugins.forEach(plugin => {
+						if (
+							plugin.constructor.name === 'DefinePlugin' &&
+							plugin.definitions
+						) {
+							for (const definition in plugin.definitions) {
+								if (definition === 'process.env.ES_BUILD') {
+									plugin.definitions[definition] = true;
+								}
+							}
+						} else if (
+							plugin.constructor.name === 'DefinePlugin' &&
+							!plugin.definitions
+						) {
+							throw new Error(
+								'WebpackDefinePlugin found but not `process.env.ES_BUILD`.'
+							);
+						}
+					});
+				},
+			})
+		);
+	}
+	return esmPlugins;
 }
 
 function isProd(config) {
@@ -154,36 +215,22 @@ function isProd(config) {
 					},
 					sourceMap: true,
 				}),
-				new OptimizeCssAssetsPlugin({}),
+				new OptimizeCssAssetsPlugin({
+					cssProcessorOptions: {
+						// Fix keyframes in different CSS chunks minifying to colliding names:
+						reduceIdents: false,
+					},
+				}),
 			],
 		},
 	};
-
-	if (config.sw) {
-		prodConfig.plugins.push(
-			new SWPrecacheWebpackPlugin({
-				filename: 'sw.js',
-				navigateFallback: 'index.html',
-				navigateFallbackWhitelist: [/^(?!\/__).*/],
-				minify: true,
-				stripPrefix: config.cwd,
-				staticFileGlobsIgnorePatterns: [
-					/\.esm\.js$/,
-					/polyfills(\..*)?\.js$/,
-					/\.map$/,
-					/push-manifest\.json$/,
-					/.DS_Store/,
-					/\.git/,
-				],
-			})
-		);
-	}
 
 	if (config.esm) {
 		prodConfig.plugins.push(
 			new BabelEsmPlugin({
 				filename: '[name].[chunkhash:5].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
+				excludedPlugins: ['BabelEsmPlugin', 'SWBuilderPlugin'],
 				beforeStartExecution: (plugins, newConfig) => {
 					const babelPlugins = newConfig.plugins;
 					newConfig.plugins = babelPlugins.filter(plugin => {
@@ -217,43 +264,49 @@ function isProd(config) {
 				},
 			})
 		);
-
-		if (config.sw) {
+		config.sw &&
 			prodConfig.plugins.push(
-				new SWPrecacheWebpackPlugin({
-					filename: 'sw-esm.js',
-					navigateFallback: 'index.html',
-					navigateFallbackWhitelist: [/^(?!\/__).*/],
-					minify: true,
-					stripPrefix: config.cwd,
-					staticFileGlobsIgnorePatterns: [
-						/(\.[\w]{5}\.js)/,
-						/polyfills(\..*)?\.js$/,
-						/\.map$/,
-						/push-manifest\.json$/,
-						/.DS_Store/,
-						/\.git/,
-					],
+				new InjectManifest({
+					swSrc: 'sw-esm.js',
+					include: [/^\/?index\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
+					precacheManifestFilename: 'precache-manifest.[manifestHash].esm.js',
 				})
 			);
-		}
+	}
+
+	if (config.sw) {
+		prodConfig.plugins.push(new SWBuilderPlugin(config));
+		prodConfig.plugins.push(
+			new InjectManifest({
+				swSrc: 'sw.js',
+				include: [/index\.html$/, /\.js$/, /\.css$/, /\.(png|jpg)$/],
+				exclude: [/\.esm\.js$/],
+			})
+		);
 	}
 
 	if (config['inline-css']) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
-				// use `<link rel="stylesheet" media="not x" onload="this.media=''" href="__.css">`
-				preload: 'swap',
-				// don't merge inlined <style> tags
-				mergeStylesheets: false,
-				// only prune inlined styles from external sheet if prerendering an App Shell:
-				pruneSource: [].concat(config.prerenderUrls).length < 2,
+				pruneSource: false,
+				logLevel: 'silent',
+				additionalStylesheets: ['*.css'],
 			})
 		);
 	}
 
 	if (config.analyze) {
 		prodConfig.plugins.push(new BundleAnalyzerPlugin());
+	}
+
+	if (config.brotli) {
+		prodConfig.plugins.push(
+			new CompressionPlugin({
+				filename: '[path].br[query]',
+				algorithm: 'brotliCompress',
+				test: /\.esm\.js$/,
+			})
+		);
 	}
 
 	return prodConfig;
@@ -297,10 +350,10 @@ function isDev(config) {
 	};
 }
 
-module.exports = function(env) {
+module.exports = async function(env) {
 	return merge(
 		baseConfig(env),
-		clientConfig(env),
+		await clientConfig(env),
 		(env.isProd ? isProd : isDev)(env)
 	);
 };

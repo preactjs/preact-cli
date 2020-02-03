@@ -17,4 +17,4 @@
 
 **Other information**
 
-<!-- Node version, npm version, CLI version, operating system, browser -->
+Please paste the results of `preact info` here.

@@ -4,6 +4,12 @@ module.exports = function(env, options = {}) {
 	return {
 		presets: [
 			[
+				require.resolve('@babel/preset-typescript'),
+				{
+					jsxPragma: 'h',
+				},
+			],
+			[
 				require.resolve('@babel/preset-env'),
 				{
 					loose: true,
@@ -19,12 +25,17 @@ module.exports = function(env, options = {}) {
 			require.resolve('@babel/plugin-syntax-dynamic-import'),
 			require.resolve('@babel/plugin-transform-object-assign'),
 			[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-			require.resolve('@babel/plugin-proposal-class-properties'),
+			[
+				require.resolve('@babel/plugin-proposal-class-properties'),
+				{ loose: true },
+			],
 			require.resolve('@babel/plugin-proposal-object-rest-spread'),
-			require.resolve('@babel/plugin-transform-react-constant-elements'),
 			isProd &&
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
-			[require.resolve('@babel/plugin-transform-react-jsx'), { pragma: 'h' }],
+			[
+				require.resolve('@babel/plugin-transform-react-jsx'),
+				{ pragma: 'h', pragmaFrag: 'Fragment' },
+			],
 			[require.resolve('fast-async'), { spec: true }],
 			require.resolve('babel-plugin-macros'),
 			!isProd && isRHLEnabled && require.resolve('react-hot-loader/babel'),

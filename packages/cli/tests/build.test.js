@@ -1,8 +1,9 @@
 const { join } = require('path');
-const { readFile } = require('fs.promised');
+const { readFile } = require('../lib/fs');
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
 const { snapshot, isMatch } = require('./lib/utils');
+const { existsSync } = require('fs');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
 
@@ -10,7 +11,11 @@ const images = require('./images/build');
 // const ours = ['empty', 'full', 'simple', 'root'];
 const ours = ['default'];
 
-const prerenderUrlFiles = ['prerender-urls.json', 'prerender-urls.js'];
+const prerenderUrlFiles = [
+	'prerender-urls.json',
+	'prerender-urls.js',
+	'prerender-urls.promise.js',
+];
 
 async function getIndex(dir, file = 'index.html') {
 	file = join(dir, `build/${file}`);
@@ -72,6 +77,9 @@ describe('preact build', () => {
 			const body2 = await getIndex(dir, 'route66/index.html');
 			looksLike(body2, images.prerender.route);
 
+			const body3 = await getIndex(dir, 'custom/index.html');
+			looksLike(body3, images.prerender.custom);
+
 			const head1 = await getHead(dir);
 			expect(head1).toEqual(
 				expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.home))
@@ -81,6 +89,51 @@ describe('preact build', () => {
 			expect(head2).toEqual(
 				expect.stringMatching(
 					getRegExpFromMarkup(images.prerender.heads.route66)
+				)
+			);
+
+			const head3 = await getHead(dir, 'custom/index.html');
+			expect(head3).toEqual(
+				expect.stringMatching(
+					getRegExpFromMarkup(images.prerender.heads.custom)
+				)
+			);
+		});
+	});
+
+	prerenderUrlFiles.forEach(prerenderUrls => {
+		it(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
+			let dir = await subject('multiple-prerendering-with-provider');
+			await build(dir, { prerenderUrls });
+
+			const body1 = await getIndex(dir);
+			looksLike(body1, images.prerender.home);
+
+			const body2 = await getIndex(dir, 'route66/index.html');
+			looksLike(body2, images.prerender.route);
+
+			const body3 = await getIndex(dir, 'custom/index.html');
+			looksLike(body3, images.prerender.custom);
+
+			const body4 = await getIndex(dir, 'customhook/index.html');
+			looksLike(body4, images.prerender.customhook);
+
+			const head1 = await getHead(dir);
+			expect(head1).toEqual(
+				expect.stringMatching(getRegExpFromMarkup(images.prerender.heads.home))
+			);
+
+			const head2 = await getHead(dir, 'route66/index.html');
+			expect(head2).toEqual(
+				expect.stringMatching(
+					getRegExpFromMarkup(images.prerender.heads.route66)
+				)
+			);
+
+			const head3 = await getHead(dir, 'custom/index.html');
+			expect(head3).toEqual(
+				expect.stringMatching(
+					getRegExpFromMarkup(images.prerender.heads.custom)
 				)
 			);
 		});
@@ -116,5 +169,37 @@ describe('preact build', () => {
 		let html = await readFile(file, 'utf-8');
 
 		looksLike(html, images.template);
+	});
+
+	it('should patch global location object', async () => {
+		let dir = await subject('location-patch');
+		expect(() => build(dir)).not.toThrow();
+	});
+
+	it('should copy resources from static to build directory', async () => {
+		let dir = await subject('static-root');
+		await build(dir);
+		let file = join(dir, 'build', '.htaccess');
+		expect(existsSync(file)).toBe(true);
+	});
+
+	it('should inject preact.* variables into template', async () => {
+		let dir = await subject('custom-template-2');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.templateReplaced);
+	});
+
+	it('should replace title with <%= preact.title %>', async () => {
+		let dir = await subject('custom-template-3');
+		await build(dir);
+
+		let file = join(dir, 'build/index.html');
+		let html = await readFile(file, 'utf-8');
+
+		looksLike(html, images.templateReplaced);
 	});
 });

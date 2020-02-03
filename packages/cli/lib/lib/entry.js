@@ -1,6 +1,7 @@
 /* global __webpack_public_path__ */
 
-import { h, render } from 'preact';
+import * as Preact from 'preact';
+const { h, render, hydrate } = Preact;
 
 const interopDefault = m => (m && m.default ? m.default : m);
 
@@ -13,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
 		hotLoader.preact(interopDefault(require('preact')));
 	}
 	// only add a debug sw if webpack service worker is not requested.
-	if (!process.env.ADD_SW && 'serviceWorker' in navigator) {
+	if (process.env.ADD_SW === undefined && 'serviceWorker' in navigator) {
 		// eslint-disable-next-line no-undef
 		navigator.serviceWorker.register(__webpack_public_path__ + 'sw-debug.js');
 	} else if (process.env.ADD_SW && 'serviceWorker' in navigator) {
@@ -32,11 +33,30 @@ if (process.env.NODE_ENV === 'development') {
 let app = interopDefault(require('preact-cli-entrypoint'));
 
 if (typeof app === 'function') {
-	let root = document.body.firstElementChild;
+	let root =
+		document.getElementById('preact_root') || document.body.firstElementChild;
 
 	let init = () => {
 		let app = interopDefault(require('preact-cli-entrypoint'));
-		root = render(h(app), document.body, root);
+		let preRenderData = {};
+		const inlineDataElement = document.querySelector(
+			'[type="__PREACT_CLI_DATA__"]'
+		);
+		if (inlineDataElement) {
+			preRenderData = JSON.parse(inlineDataElement.innerHTML).preRenderData;
+		}
+		/* An object named CLI_DATA is passed as a prop,
+		 * this keeps us future proof if in case we decide,
+		 * to send other data like at some point in time.
+		 */
+		const CLI_DATA = { preRenderData };
+		const doRender =
+			process.env.NODE_ENV !== 'production' ||
+			root.tagName === 'script' ||
+			!hydrate
+				? render
+				: hydrate;
+		root = doRender(h(app, { CLI_DATA }), document.body, root);
 	};
 
 	if (module.hot) module.hot.accept('preact-cli-entrypoint', init);

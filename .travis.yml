@@ -7,7 +7,8 @@ addons:
 
 language: node_js
 node_js:
-  - 8
+  - lts/*
+  - node
 
 git:
   depth: 1
@@ -28,4 +29,4 @@ before_script:
   - export LIGHTHOUSE_CHROMIUM_PATH=`which google-chrome-stable`
 
 script:
-  - npm run test -- --verbose
+  - yarn test
