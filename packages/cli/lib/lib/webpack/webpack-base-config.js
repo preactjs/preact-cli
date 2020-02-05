@@ -58,6 +58,19 @@ function resolveTsconfig(cwd, isProd) {
 	}
 }
 
+function getSassConfiguration(...includePaths) {
+	const config = {
+		sourceMap: true,
+		sassOptions: {
+			includePaths,
+		},
+	};
+
+	Object.defineProperty(config, 'includePaths', { value: includePaths });
+
+	return config;
+}
+
 module.exports = function(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
@@ -185,10 +198,7 @@ module.exports = function(env) {
 							options: {
 								cwd,
 								loader: 'sass-loader',
-								options: {
-									sourceMap: true,
-									includePaths: [...nodeModules],
-								},
+								options: getSassConfiguration(...nodeModules),
 							},
 						},
 					],
