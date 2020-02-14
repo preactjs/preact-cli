@@ -19,7 +19,7 @@
     "babel-jest": "^24.8.0",
     "identity-obj-proxy": "^3.0.0",
     "isomorphic-unfetch": "^3.0.0",
-    "jest-environment-jsdom-fourteen": "^0.1.0"
+    "jest-environment-jsdom-fourteen": "^1.0.1"
   },
   "peerDependencies": {
     "jest": "24.x"
