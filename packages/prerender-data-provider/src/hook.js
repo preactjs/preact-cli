@@ -45,6 +45,7 @@ function usePrerenderData(props, doAutomaticFetch = true) {
 	const data = getPrerenderdata(state.value || value, props);
 	if (doAutomaticFetch && !data && !state.isLoading && !state.error) {
 		fetchPreRenderData();
+		return [data, true, state.error];
 	}
 	return [data, state.isLoading, state.error];
 }

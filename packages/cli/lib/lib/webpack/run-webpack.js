@@ -126,7 +126,7 @@ function showStats(stats, isProd) {
 				.forEach(msg => {
 					if (
 						msg.match(
-							/Conflict: Multiple assets emit different content to the same filename .*\..{5}\.css/
+							/Conflict: Multiple assets emit different content to the same filename .*\.(css|map)/
 						)
 					) {
 						/**
