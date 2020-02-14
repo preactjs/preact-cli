@@ -4019,9 +4019,9 @@ critters-webpack-plugin@^2.5.0:
     webpack-sources "^1.3.0"
 
 cross-spawn-promise@^0.10.1:
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/cross-spawn-promise/-/cross-spawn-promise-0.10.1.tgz#db9cb4c50c60b72a15be049b78122ce382d87b10"
-  integrity sha1-25y0xQxgtyoVvgSbeBIs44LYexA=
+  version "0.10.2"
+  resolved "https://registry.yarnpkg.com/cross-spawn-promise/-/cross-spawn-promise-0.10.2.tgz#0e6338149caf53a6d557ac5c65efb3086d8704ac"
+  integrity sha512-74PXJf6DYaab2klRS+D+9qxKJL1Weo3/ao9OPoH6NFzxtINSa/HE2mcyAPu1fpEmRTPD4Gdmpg3xEXQSgI8lpg==
   dependencies:
     cross-spawn "^5.1.0"
 
