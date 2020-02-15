@@ -1,6 +1,6 @@
 {
   "name": "@preact/prerender-data-provider",
-  "version": "3.0.0-rc.8",
+  "version": "3.0.0-rc.9",
   "description": "Prerender Prerender data provider for preact-cli apps",
   "keywords": [
     "preact",
