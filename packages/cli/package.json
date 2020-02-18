@@ -117,7 +117,7 @@
     "raw-loader": "^3.1.0",
     "react-hot-loader": "^4.12.9",
     "require-relative": "^0.8.7",
-    "rimraf": "^2.6.3",
+    "rimraf": "^3.0.2",
     "sade": "^1.4.1",
     "size-plugin": "^2.0.1",
     "source-map": "^0.7.2",
