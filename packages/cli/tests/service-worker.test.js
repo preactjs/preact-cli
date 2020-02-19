@@ -36,10 +36,9 @@ describe('preact service worker tests', () => {
 		await page.reload();
 		const offlineContent = await page.content();
 		await page.waitForSelector('h1');
-		expect(await page.$$eval('h1', nodes => nodes.map(n => n.innerText))).to([
-			'Preact App',
-			'Home',
-		]);
+		expect(
+			await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
+		).toEqual(['Preact App', 'Home']);
 		expect(offlineContent).toEqual(initialContent);
 	});
 
