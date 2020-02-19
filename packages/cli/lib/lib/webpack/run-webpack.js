@@ -63,7 +63,7 @@ async function devBuild(env) {
 				process.stdout.write(`${bold('On Your Network:')}  ${localIpAddr}\n`);
 			}
 
-			showStats(stats);
+			showStats(stats, false);
 		});
 
 		compiler.hooks.failed.tap('CliDevPlugin', rej);
@@ -95,13 +95,13 @@ async function prodBuild(env) {
 	// Timeout for plugins that work on `after-emit` event of webpack
 	await new Promise(r => setTimeout(r, 20));
 
-	return showStats(stats);
+	return showStats(stats, true);
 }
 
 function runCompiler(compiler) {
 	return new Promise((res, rej) => {
 		compiler.run((err, stats) => {
-			showStats(stats);
+			showStats(stats, true);
 
 			if (err || (stats && stats.hasErrors())) {
 				rej(red('Build failed! ' + (err || '')));
@@ -112,18 +112,31 @@ function runCompiler(compiler) {
 	});
 }
 
-function showStats(stats) {
+function showStats(stats, isProd) {
 	if (stats) {
 		if (stats.hasErrors()) {
 			allFields(stats, 'errors')
 				.map(stripLoaderPrefix)
-				.forEach(msg => error(msg));
+				.forEach(msg => error(msg, isProd ? 1 : 0));
 		}
 
 		if (stats.hasWarnings()) {
 			allFields(stats, 'warnings')
 				.map(stripLoaderPrefix)
-				.forEach(msg => warn(msg));
+				.forEach(msg => {
+					if (
+						msg.match(
+							/Conflict: Multiple assets emit different content to the same filename .*\.(css|map)/
+						)
+					) {
+						/**
+						 * This particular warning is expected due to `babel-esm-plugin`.
+						 * This can be removed when upgrading to webpack5 with https://webpack.js.org/configuration/output/#outputcomparebeforeemit
+						 */
+						return;
+					}
+					warn(msg);
+				});
 		}
 	}
 

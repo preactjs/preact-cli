@@ -4,7 +4,6 @@ const PREACT_LEGACY_MODE = 'PREACT_LEGACY_MODE';
 
 exports.pitch = function(req, mode) {
 	this.cacheable && this.cacheable();
-
 	let name;
 	let query = getOptions(this) || {};
 	let routeName =
@@ -18,6 +17,7 @@ exports.pitch = function(req, mode) {
 		name = query.formatName(this.resourcePath);
 	}
 
+	// import Async from '${path.relative(process.cwd(), path.resolve(__dirname, 'async-component.js'))}';
 	return `
 		import Async from ${stringifyRequest(
 			this,
@@ -36,3 +36,5 @@ exports.pitch = function(req, mode) {
 		export default Async(load);
 	`;
 };
+
+exports.PREACT_LEGACY_MODE = PREACT_LEGACY_MODE;

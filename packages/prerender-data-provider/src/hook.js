@@ -4,6 +4,7 @@ import { PrerenderDataContext } from './context';
 import { PRERENDER_DATA_FILE_NAME } from './constants';
 
 function usePrerenderData(props, doAutomaticFetch = true) {
+	let value;
 	const [state, setState] = useState({
 		value,
 		isLoading: false,
@@ -37,7 +38,6 @@ function usePrerenderData(props, doAutomaticFetch = true) {
 		}
 	}
 
-	let value;
 	if (contextValue.CLI_DATA && contextValue.CLI_DATA.preRenderData) {
 		value = contextValue.CLI_DATA.preRenderData;
 	}
@@ -45,6 +45,7 @@ function usePrerenderData(props, doAutomaticFetch = true) {
 	const data = getPrerenderdata(state.value || value, props);
 	if (doAutomaticFetch && !data && !state.isLoading && !state.error) {
 		fetchPreRenderData();
+		return [data, true, state.error];
 	}
 	return [data, state.isLoading, state.error];
 }

@@ -23,7 +23,11 @@ function proxyLoader(source, map) {
 	}
 
 	// Run actual loader
-	return loader.call(this, source, map);
+	delete this.query.__proxy_loader__;
+	var resultFromLoader = loader.call(this, source, map);
+	this.query.__proxy_loader__ = proxyOptions;
+
+	return resultFromLoader;
 }
 
 function swapOptions(loaderContext, newOptions) {

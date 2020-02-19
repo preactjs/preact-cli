@@ -79,6 +79,10 @@ Current available templates include:
 
 - [simple] - The simplest possible preact setup in a single file
 
+- [netlify] - Netlify CMS template using preact.
+
+- [typescript] - Default template implemented in TypeScript
+
 - [widget] - Template for a widget to be embedded in another website.
 
 > 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `preact create <username>/<repository> <project-name>`
@@ -306,7 +310,8 @@ module.exports = [
 
 #### Template
 
-A template is used to render your page.
+A template is used to render your page by [EJS](https://ejs.co/).  
+You can uses the data of `prerenderUrls` which does not have `title`, using `htmlWebpackPlugin.options.CLI_DATA.preRenderData` in EJS.
 
 The default one is visible [here](packages/cli/lib/resources/template.html) and it's going to be enough for the majority of cases.
 
@@ -345,6 +350,8 @@ The default templates comes with a `.css` file for each component. You can start
 [sw-precache]: https://github.com/GoogleChrome/sw-precache
 [preact-router]: https://github.com/preactjs/preact-router
 [material]: https://github.com/preactjs-templates/material
+[netlify]: https://github.com/preactjs-templates/netlify
+[typescript]: https://github.com/preactjs-templates/typescript
 [widget]: https://github.com/preactjs-templates/widget
 [plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates

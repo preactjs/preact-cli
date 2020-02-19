@@ -6,11 +6,4 @@ module.exports = function(config) {
 	alias['preact-cli/async-component'] = alias[
 		'@preact/async-loader/async'
 	] = loader;
-
-	for (const rule of config.module.rules) {
-		if (/async-loader/.test(rule.loader)) {
-			rule.loader = path.resolve(__dirname, '../../../../async-loader');
-			// rule.loader = path.resolve(__dirname, '../../../../cli/lib/lib/webpack/dummy-loader.js');
-		}
-	}
 };

@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const { resolve } = require('path');
 const { existsSync } = require('fs');
+const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const merge = require('webpack-merge');
 const { filter } = require('minimatch');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -24,13 +25,15 @@ const cleanFilename = name =>
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src /*, port? */ } = env;
-
+	const { isProd, source, src, cwd /*, port? */ } = env;
+	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
+	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
+		? require.resolve('@preact/async-loader')
+		: require.resolve('@preact/async-loader/legacy');
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
 		polyfills: resolve(__dirname, './polyfills'),
 	};
-
 	if (!isProd) {
 		entry.bundle = [
 			entry.bundle,
@@ -50,7 +53,7 @@ async function clientConfig(env) {
 
 		resolveLoader: {
 			alias: {
-				async: require.resolve('@preact/async-loader'),
+				async: asyncLoader,
 			},
 		},
 
@@ -66,7 +69,7 @@ async function clientConfig(env) {
 								'/{routes,async}/{*,*/index}.{js,jsx,ts,tsx}'
 						),
 					],
-					loader: require.resolve('@preact/async-loader'),
+					loader: asyncLoader,
 					options: {
 						name(filename) {
 							filename = normalizePath(filename);
@@ -283,7 +286,13 @@ function isProd(config) {
 	}
 
 	if (config['inline-css']) {
-		prodConfig.plugins.push(new CrittersPlugin());
+		prodConfig.plugins.push(
+			new CrittersPlugin({
+				pruneSource: false,
+				logLevel: 'silent',
+				additionalStylesheets: ['*.css'],
+			})
+		);
 	}
 
 	if (config.analyze) {
