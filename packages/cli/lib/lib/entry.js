@@ -52,7 +52,7 @@ if (typeof app === 'function') {
 		const CLI_DATA = { preRenderData };
 		const doRender =
 			process.env.NODE_ENV !== 'production' ||
-			root.tagName === 'script' ||
+			root.tagName.toLowerCase() === 'script' ||
 			!hydrate
 				? render
 				: hydrate;
