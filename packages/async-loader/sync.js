@@ -1,7 +1,7 @@
 import { h } from 'preact';
 
-var component;
 export default function sync(load) {
+	var component;
 	return function SyncComponent(props) {
 		if (!component) {
 			load(mod => {
@@ -9,7 +9,7 @@ export default function sync(load) {
 			});
 		}
 		var modifiedComponent = () => {
-			var c = component();
+			var c = component(props);
 			if ('props' in c) {
 				c.props['data-pacr'] = '';
 			} else if ('attributes' in c) {
