@@ -5,18 +5,12 @@ const CHILDREN = '__k';
 const UNMOUNT = 'unmount';
 const oldUnmountOpts = options[UNMOUNT];
 const oldDiffed = options.diffed;
-const parentNode = document.querySelector('#app');
 const AsyncComponentName = async().name;
 
 let hydrationNode = null;
 let IS_HYDRATING = false;
 
-const appChildren = [].map.call(
-	parentNode ? parentNode.childNodes : [],
-	elem => elem
-);
-
-const IS_PRERENDERED = appChildren.length > 0;
+const IS_PRERENDERED = !!document.querySelector('[data-pacr]');
 
 if (IS_PRERENDERED) {
 	IS_HYDRATING = true;
@@ -36,20 +30,6 @@ if (IS_PRERENDERED) {
 	};
 
 	options.diffed = function(vnode) {
-		/**
-		 * We started with an array of all children of #app.
-		 * As preact diffs vnodes top down, we remove their DOM from the array.
-		 * When AsyncComponent is required to render we pick whatever child is on top and render it with dangerouslySetInnerHTML
-		 */
-		if (
-			!hydrationNode &&
-			vnode[DOM] &&
-			vnode[DOM].parentNode === parentNode &&
-			appChildren.includes(vnode[DOM])
-		) {
-			appChildren.shift();
-		}
-
 		const PARENT = '__p' in vnode ? '__p' : '__';
 		/**
 		 *  4. The route component is now contructed and its DOM will be appended to the browser's DOM.
@@ -72,7 +52,7 @@ if (IS_PRERENDERED) {
 }
 
 function Pending() {
-	hydrationNode = appChildren.length > 0 ? appChildren[0] : null;
+	hydrationNode = document.querySelector('[data-pacr]');
 	const isInPlaceHydration = hydrationNode && IS_HYDRATING;
 	// 1. this fake component makes sure that the route markup is not removed on hydration.
 	return isInPlaceHydration

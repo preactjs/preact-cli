@@ -1,8 +1,11 @@
 const { resolve } = require('path');
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack-base-config');
+const { filter } = require('minimatch');
 
 function serverConfig(env) {
+	const asyncLoader = resolve(__dirname, './dummy-loader');
+	const { source } = env;
 	return {
 		entry: {
 			'ssr-bundle': env.source('index'),
@@ -20,8 +23,22 @@ function serverConfig(env) {
 		target: 'node',
 		resolveLoader: {
 			alias: {
-				async: resolve(__dirname, './dummy-loader'),
+				async: asyncLoader,
 			},
+		},
+		module: {
+			rules: [
+				{
+					test: /\.[jt]sx?$/,
+					include: [
+						filter(source('routes') + '/{*,*/index}.{js,jsx,ts,tsx}'),
+						filter(
+							source('components') + '/{routes}/{*,*/index}.{js,jsx,ts,tsx}'
+						),
+					],
+					loader: asyncLoader,
+				},
+			],
 		},
 	};
 }
