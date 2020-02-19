@@ -6,7 +6,7 @@ const UNMOUNT = 'unmount';
 const oldUnmountOpts = options[UNMOUNT];
 const oldDiffed = options.diffed;
 const parentNode = document.querySelector('#app');
-const AsyncComponentName = async(null).name;
+const AsyncComponentName = async().name;
 
 let hydrationNode = null;
 let IS_HYDRATING = false;
