@@ -1,8 +1,7 @@
-import { h, Component, options, render } from 'preact';
+import { h, Component, options } from 'preact';
 
 const DOM = '__e';
 const CHILDREN = '__k';
-const PARENT = '__';
 const UNMOUNT = 'unmount';
 const oldUnmountOpts = options[UNMOUNT];
 const oldDiffed = options.diffed;
@@ -20,7 +19,6 @@ const IS_PRERENDERED = appChildren.length > 0;
 
 if (IS_PRERENDERED) {
 	IS_HYDRATING = true;
-
 	options[UNMOUNT] = function(vnode) {
 		/**
 		 *  3. now Pending is being unmount and its dom is being removed
@@ -51,6 +49,7 @@ if (IS_PRERENDERED) {
 			appChildren.shift();
 		}
 
+		const PARENT = '__p' in vnode ? '__p' : '__';
 		/**
 		 *  4. The route component is now contructed and its DOM will be appended to the browser's DOM.
 		 *  But right before it, we swap its newly contructed DOM with the DOM already present on the browser.
@@ -73,12 +72,15 @@ if (IS_PRERENDERED) {
 
 function Pending() {
 	hydrationNode = appChildren.length > 0 ? appChildren[0] : null;
+	const isInPlaceHydration = hydrationNode && IS_HYDRATING;
 	// 1. this fake component makes sure that the route markup is not removed on hydration.
-	return h(hydrationNode ? hydrationNode.localName : 'div', {
-		dangerouslySetInnerHTML: {
-			__html: hydrationNode ? hydrationNode.innerHTML : '',
-		},
-	});
+	return isInPlaceHydration
+		? h(hydrationNode.localName, {
+				dangerouslySetInnerHTML: {
+					__html: hydrationNode.innerHTML,
+				},
+		  })
+		: h('div');
 }
 
 export default function async(load) {
@@ -100,9 +102,6 @@ export default function async(load) {
 			if (component && IS_HYDRATING) {
 				// switch to non hydrating mode for further routes
 				IS_HYDRATING = false;
-				// hydrating this vnode with the DOM already present on screen.
-				render(vnode, parentNode, hydrationNode);
-				return;
 			}
 			return vnode;
 		};
