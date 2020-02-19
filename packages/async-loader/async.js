@@ -6,6 +6,7 @@ const UNMOUNT = 'unmount';
 const oldUnmountOpts = options[UNMOUNT];
 const oldDiffed = options.diffed;
 const parentNode = document.querySelector('#app');
+const AsyncComponentName = async(null).name;
 
 let hydrationNode = null;
 let IS_HYDRATING = false;
@@ -60,7 +61,7 @@ if (IS_PRERENDERED) {
 			vnode[DOM].parentNode === null &&
 			vnode[PARENT] &&
 			vnode[PARENT][PARENT] &&
-			vnode[PARENT][PARENT].type.name === 'AsyncComponent'
+			vnode[PARENT][PARENT].type.name === AsyncComponentName
 		) {
 			vnode[DOM] = hydrationNode;
 			// this hook in options is no more needed once hydration is done.
