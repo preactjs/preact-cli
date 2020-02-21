@@ -22,7 +22,7 @@ describe('client-side tests', () => {
 		PORT = await getPort();
 	});
 
-	it('should hydrate routes progressively.', async () => {
+	it.skip('should hydrate routes progressively.', async () => {
 		let dir = await subject('progressive-hydration');
 		await build(dir);
 		const server = getServer(join(dir, 'build'), PORT);

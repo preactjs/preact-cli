@@ -43,7 +43,12 @@ if (IS_PRERENDERED) {
 			vnode[PARENT][PARENT] &&
 			vnode[PARENT][PARENT].type.name === AsyncComponentName
 		) {
-			vnode[DOM] = hydrationNode;
+			/**
+			 * Old markup is now being removed and preact will replace it with fresh DOM.
+			 * THIS IS FAKE HYDRATION. THE OLD DOM IS RIPPED AND NEW ONE IS CONSTRUCTED.
+			 * THIS SHOULD BE FIXED IN PREACT CORE.
+			 */
+			hydrationNode.parentNode.removeChild(hydrationNode);
 			// this hook in options is no more needed once hydration is done.
 			options.diffed = oldDiffed;
 		}
