@@ -770,10 +770,10 @@
     levenary "^1.1.1"
     semver "^5.5.0"
 
-"@babel/preset-modules@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@babel/preset-modules/-/preset-modules-0.1.0.tgz#bbf47ed5530f8d663f0eb1c592864964b7cdaead"
-  integrity sha512-6t3sNgGW4AhaR71sfXCVUq/4BlWDn1QhRbECD6CMPkMPxUhj66d1ss7xllftdi4WnrJWJ1RD3jDQnEqMcAFd5g==
+"@babel/preset-modules@0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@babel/preset-modules/-/preset-modules-0.1.3.tgz#13242b53b5ef8c883c3cf7dddd55b36ce80fbc72"
+  integrity sha512-Ra3JXOHBq2xd56xSF7lMKXdjBn3T772Y1Wet3yWnkDly9zHvJki029tAFzvAAK5cf4YV3yoxuP61crYRol6SVg==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-proposal-unicode-property-regex" "^7.4.4"
@@ -2756,11 +2756,11 @@ babel-eslint@^10.0.1:
     resolve "^1.12.0"
 
 babel-esm-plugin@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/babel-esm-plugin/-/babel-esm-plugin-0.7.0.tgz#108e9d237b7b85e7ea321a2cb77528e1160b5184"
-  integrity sha512-5OZOciBqtpahBZS8IAQPJJTe3t0fc25QbV/Emg15SmFszymjmJwrOAfXzi6OEYK/cEbj72Bkj3wR7bqdtbDYNQ==
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/babel-esm-plugin/-/babel-esm-plugin-0.7.1.tgz#0ce2e18ba4e7c75a2ae7b4196fb09a1a8292d019"
+  integrity sha512-BNlOdUS8i7RI6HwuIo3pNBjWlrGYaZxx0vYf8ZWJozUkiAV8Q/IEoquKPODcz4Xvcsqm8MEl15oH+zYdPb0eyQ==
   dependencies:
-    "@babel/preset-modules" "0.1.0"
+    "@babel/preset-modules" "0.1.3"
     chalk "2.4.1"
     deepcopy "1.0.0"
 
