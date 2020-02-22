@@ -33,12 +33,10 @@
   "lint-staged": {
     "*.js": [
       "eslint --fix",
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ],
     "*.{ts,tsx,json,css,scss,md,yml}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   }
 }
