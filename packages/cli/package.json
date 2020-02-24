@@ -134,7 +134,7 @@
     "webpack-fix-style-only-entries": "^0.4.0",
     "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.2.0",
-    "which": "^1.2.14",
+    "which": "^2.0.2",
     "workbox-webpack-plugin": "^4.3.1"
   }
 }
