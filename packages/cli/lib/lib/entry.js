@@ -5,6 +5,8 @@ const { h, render, hydrate } = Preact;
 
 const interopDefault = m => (m && m.default ? m.default : m);
 
+const normalizeURL = url => (url[url.length - 1] === '/' ? url : url + '/');
+
 if (process.env.NODE_ENV === 'development') {
 	// enable preact devtools
 	require('preact/debug');
@@ -43,19 +45,21 @@ if (typeof app === 'function') {
 			'[type="__PREACT_CLI_DATA__"]'
 		);
 		if (inlineDataElement) {
-			preRenderData = JSON.parse(inlineDataElement.innerHTML).preRenderData;
+			preRenderData =
+				JSON.parse(inlineDataElement.innerHTML).preRenderData || preRenderData;
 		}
 		/* An object named CLI_DATA is passed as a prop,
 		 * this keeps us future proof if in case we decide,
 		 * to send other data like at some point in time.
 		 */
 		const CLI_DATA = { preRenderData };
-		const doRender =
-			!process.env.PRERENDER ||
-			process.env.NODE_ENV !== 'production' ||
-			!hydrate
-				? render
-				: hydrate;
+		const currentURL = preRenderData.url ? normalizeURL(preRenderData.url) : '';
+		const canHydrate =
+			process.env.PRERENDER &&
+			process.env.NODE_ENV === 'production' &&
+			hydrate &&
+			currentURL === location.pathname;
+		const doRender = canHydrate ? hydrate : render;
 		root = doRender(h(app, { CLI_DATA }), document.body, root);
 	};
 
