@@ -188,6 +188,7 @@ function isProd(config) {
 				'process.env.ADD_SW': config.sw,
 				'process.env.ES_BUILD': false,
 				'process.env.ESM': config.esm,
+				'process.env.PRERENDER': config.prerender,
 			}),
 		],
 
