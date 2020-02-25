@@ -56,7 +56,6 @@ if (typeof app === 'function') {
 			!hydrate
 				? render
 				: hydrate;
-		console.log(doRender === render);
 		root = doRender(h(app, { CLI_DATA }), document.body, root);
 	};
 
