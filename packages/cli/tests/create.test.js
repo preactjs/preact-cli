@@ -20,7 +20,7 @@ describe('preact create', () => {
 		});
 	});
 
-	it(`Check if custom template is being used or not`, async () => {
+	it(`should use template.html from the github repo`, async () => {
 		let dir = await create('netlify');
 
 		const templateFilePath = resolve(__dirname, dir, 'src', 'template.html');
