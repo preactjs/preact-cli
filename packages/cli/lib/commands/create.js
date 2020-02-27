@@ -297,10 +297,12 @@ module.exports = async function(repo, dest, argv) {
 		__dirname,
 		join('..', 'resources', 'template.html')
 	);
-	await fs.copyFile(
-		templateSrc,
-		join(resolve(cwd, dest), 'src', 'template.html')
-	);
+
+	const destTemplatePath = join(resolve(cwd, dest), 'src', 'template.html');
+	// Check whether the `template.html` exists in the repo and then use it.
+	if (!fs.existsSync(destTemplatePath)) {
+		await fs.copyFile(templateSrc, destTemplatePath);
+	}
 
 	// Do not copy the service worker file until we have a preact API for the same.
 	// Copy over service worker
