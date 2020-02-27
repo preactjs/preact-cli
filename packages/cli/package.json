@@ -46,9 +46,9 @@
   "devDependencies": {
     "eslint": "^6.1.0",
     "html-looks-like": "^1.0.2",
-    "jest": "^24.8.0",
+    "jest": "^25.1.0",
     "lerna": "^3.16.4",
-    "lint-staged": "^9.2.1",
+    "lint-staged": "^10.0.7",
     "mkdirp": "^1.0.3",
     "ncp": "^2.0.0",
     "node-sass": "^4.12.0",
@@ -58,7 +58,7 @@
     "preact-compat": "^3.18.5",
     "preact-render-to-string": "^5.0.6",
     "preact-router": "^3.0.1",
-    "puppeteer": "^1.19.0",
+    "puppeteer": "^2.1.1",
     "sass-loader": "^8.0.2",
     "shelljs": "^0.8.3",
     "sirv": "^0.4.2"
@@ -111,7 +111,7 @@
     "ora": "^4.0.3",
     "postcss-load-config": "^2.1.0",
     "postcss-loader": "^3.0.0",
-    "progress-bar-webpack-plugin": "^1.12.1",
+    "progress-bar-webpack-plugin": "^2.1.0",
     "promise-polyfill": "^8.1.0",
     "prompts": "^2.2.1",
     "raw-loader": "^3.1.0",
@@ -134,7 +134,7 @@
     "webpack-fix-style-only-entries": "^0.4.0",
     "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.2.0",
-    "which": "^1.2.14",
+    "which": "^2.0.2",
     "workbox-webpack-plugin": "^4.3.1"
   }
 }
