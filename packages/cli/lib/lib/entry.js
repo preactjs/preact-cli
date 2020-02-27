@@ -58,7 +58,7 @@ if (typeof app === 'function') {
 			process.env.PRERENDER &&
 			process.env.NODE_ENV === 'production' &&
 			hydrate &&
-			currentURL === location.pathname;
+			currentURL === location.pathname + location.search;
 		const doRender = canHydrate ? hydrate : render;
 		root = doRender(h(app, { CLI_DATA }), document.body, root);
 	};
