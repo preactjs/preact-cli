@@ -9,3 +9,6 @@ tmp-*.json
 
 .idea/
 .vscode
+
+# auto generted while running tests
+packages/cli/size-plugin.json
