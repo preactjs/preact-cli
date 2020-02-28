@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const { log, waitUntil } = require('./utils');
 
 module.exports = async function() {
-	return await puppeteer.launch();
+	return await puppeteer.launch({ args: ['--no-sandbox'] });
 };
 
 module.exports.waitUntilExpression = async function(page, expression) {
