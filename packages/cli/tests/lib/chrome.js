@@ -2,7 +2,9 @@ const puppeteer = require('puppeteer');
 const { log, waitUntil } = require('./utils');
 
 module.exports = async function() {
-	return await puppeteer.launch({ args: ['--no-sandbox'] });
+	return await puppeteer.launch({
+		args: ['--no-sandbox', '--disable-setuid-sandbox'],
+	});
 };
 
 module.exports.waitUntilExpression = async function(page, expression) {
