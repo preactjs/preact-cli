@@ -73,4 +73,25 @@ describe('client-side tests', () => {
 
 		server.server.close();
 	});
+
+	it('should hydrate for pre-rendered URLs only', async () => {
+		let dir = await subject('prerendering-hydration');
+		await build(dir, {});
+		const server = getServer(join(dir, 'build'), PORT, true);
+		const page = await chrome.newPage();
+		await page.goto(`http://127.0.0.1:${PORT}/`);
+		await sleep(500);
+		expect(
+			await page.evaluate(
+				'document.querySelector("div").getAttribute("rendered-on")'
+			)
+		).toEqual('server');
+		await page.goto(`http://127.0.0.1:${PORT}/foo`);
+		expect(
+			await page.evaluate(
+				'document.querySelector("div").getAttribute("rendered-on")'
+			)
+		).toEqual('client');
+		server.server.close();
+	});
 });
