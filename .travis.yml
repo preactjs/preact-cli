@@ -3,7 +3,7 @@ sudo: required
 addons:
   chrome: stable
   apt:
-    packages: libnss3-tools
+    packages: libnss3
 
 language: node_js
 node_js:

@@ -29,6 +29,15 @@ describe('preact create', () => {
 		expect(template.includes('twitter:card')).toEqual(true);
 	});
 
+	it(`should have 'apple-touch-icon' meta tag`, async () => {
+		let dir = await create('simple');
+
+		const templateFilePath = resolve(__dirname, dir, 'src', 'template.html');
+		const template = fs.readFileSync(templateFilePath).toString('utf8');
+
+		expect(template.includes('apple-touch-icon')).toEqual(true);
+	});
+
 	// it('should fail given an invalid name', async () => {
 	// 	const exit = jest.spyOn(process, 'exit');
 	// 	await create('default', '*()@!#!$-invalid-name');
