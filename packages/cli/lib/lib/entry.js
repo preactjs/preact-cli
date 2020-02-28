@@ -5,18 +5,7 @@ const { h, render, hydrate } = Preact;
 
 const interopDefault = m => (m && m.default ? m.default : m);
 
-const normalizeURL = url => {
-	if (typeof url !== 'string') {
-		return '';
-	}
-
-	// check for query string in the url, if exists return the entire url
-	if (url.indexOf('?') > -1) {
-		return url;
-	}
-
-	return url[url.length - 1] === '/' ? url : url + '/';
-};
+const normalizeURL = url => (url[url.length - 1] === '/' ? url : url + '/');
 
 if (process.env.NODE_ENV === 'development') {
 	// enable preact devtools
