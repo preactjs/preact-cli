@@ -90,7 +90,7 @@ exports.preload.head = `
 	<meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\">
 	<meta name=\\"mobile-web-app-capable\\" content=\\"yes\\">
 	<meta name=\\"apple-mobile-web-app-capable\\" content=\\"yes\\">
-	<link rel="apple-touch-icon" href=\\"\\.\\/assets\\/icons\\/apple-touch-icon\\.png\\">
+	<link rel=\\"apple-touch-icon\\" href=\\"\\.\\/assets\\/icons\\/apple-touch-icon\\.png\\">
 	<link rel=\\"manifest\\" href=\\"\\/manifest\\.json\\">
 	<link rel=\\"preload\\" href=\\"\\/bundle\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
