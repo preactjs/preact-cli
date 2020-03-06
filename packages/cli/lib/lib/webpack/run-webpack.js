@@ -90,12 +90,17 @@ async function prodBuild(env) {
 	}
 
 	let clientCompiler = webpack(config);
-	let stats = await runCompiler(clientCompiler);
 
-	// Timeout for plugins that work on `after-emit` event of webpack
-	await new Promise(r => setTimeout(r, 20));
+	try {
+		let stats = await runCompiler(clientCompiler);
 
-	return showStats(stats, true);
+		// Timeout for plugins that work on `after-emit` event of webpack
+		await new Promise(r => setTimeout(r, 20));
+
+		return showStats(stats, true);
+	} catch (error) {
+		console.log(error);
+	}
 }
 
 function runCompiler(compiler) {
@@ -104,7 +109,7 @@ function runCompiler(compiler) {
 			showStats(stats, true);
 
 			if (err || (stats && stats.hasErrors())) {
-				rej(red('Build failed! ' + (err || '')));
+				rej(`${red('\n\nBuild failed! \n\n')} ${err || ''}`);
 			}
 
 			res(stats);
