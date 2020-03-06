@@ -109,7 +109,7 @@ function runCompiler(compiler) {
 			showStats(stats, true);
 
 			if (err || (stats && stats.hasErrors())) {
-				rej(red('\n\nBuild failed! \n\n' + (err || '')));
+				rej(`${red('\n\nBuild failed! \n\n')} ${err || ''}`);
 			}
 
 			res(stats);
