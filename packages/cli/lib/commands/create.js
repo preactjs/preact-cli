@@ -99,6 +99,7 @@ async function fetchTemplates() {
 
 	try {
 		// fetch the repos list from the github API
+		info('\nFetching official templates:\n');
 		const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
 		const officialTemplates = normalizeTemplatesResponse(repos || []);
 
