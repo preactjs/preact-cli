@@ -108,6 +108,11 @@ async function fetchTemplates() {
 			await fs.writeFile(TEMPLATES_CACHE_FILENAME, JSON.stringify(repos, null, 2), 'utf-8');
 		}
 
+		// fetch the API response from cache file
+		const templatesFromCache = await fs.readFile(TEMPLATES_CACHE_FILENAME, 'utf8');
+		const parsedTemplates = JSON.parse(templatesFromCache);
+		const officialTemplates = normalizeTemplatesResponse(parsedTemplates || []);
+
 		templates = officialTemplates.concat(CUSTOM_TEMPLATE);
 	} catch (e) {
 		// in case github API fails to fetch the data, fallback to the hard coded listings
