@@ -39,3 +39,5 @@ exports.FALLBACK_TEMPLATE_OPTIONS = [
 		description: 'Template for a widget to be embedded in another website',
 	},
 ];
+
+exports.TEMPLATES_CACHE_FILENAME = '.preact-templates.json';
