@@ -20,8 +20,9 @@ const {
 	normalizeTemplatesResponse,
 } = require('../util');
 const {
-	TEMPLATES_REPO_URL,
 	CUSTOM_TEMPLATE,
+	TEMPLATES_REPO_URL,
+	TEMPLATES_CACHE_FILENAME,
 	FALLBACK_TEMPLATE_OPTIONS,
 } = require('../constants');
 const { addScripts, install, initGit } = require('../lib/setup');
@@ -99,9 +100,13 @@ async function fetchTemplates() {
 
 	try {
 		// fetch the repos list from the github API
-		info('\nFetching official templates:\n');
-		const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
-		const officialTemplates = normalizeTemplatesResponse(repos || []);
+		info('Fetching official templates:\n');
+
+		// If cache file doesn't exist, then hit the API and fetch the data
+		if (!fs.existsSync(TEMPLATES_CACHE_FILENAME)) {
+			const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+			await fs.writeFile(TEMPLATES_CACHE_FILENAME, JSON.stringify(repos, null, 2), 'utf-8');
+		}
 
 		templates = officialTemplates.concat(CUSTOM_TEMPLATE);
 	} catch (e) {
