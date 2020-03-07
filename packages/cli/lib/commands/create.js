@@ -105,11 +105,29 @@ async function fetchTemplates() {
 		// If cache file doesn't exist, then hit the API and fetch the data
 		if (!fs.existsSync(TEMPLATES_CACHE_FILENAME)) {
 			const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
-			await fs.writeFile(TEMPLATES_CACHE_FILENAME, JSON.stringify(repos, null, 2), 'utf-8');
+			await fs.writeFile(
+				TEMPLATES_CACHE_FILENAME,
+				JSON.stringify(repos, null, 2),
+				'utf-8'
+			);
 		}
 
+		// update the cache file without blocking the rest of the tasks.
+		fetch(TEMPLATES_REPO_URL)
+			.then(r => r.json())
+			.then(repos => {
+				fs.writeFile(
+					TEMPLATES_CACHE_FILENAME,
+					JSON.stringify(repos, null, 2),
+					'utf-8'
+				);
+			});
+
 		// fetch the API response from cache file
-		const templatesFromCache = await fs.readFile(TEMPLATES_CACHE_FILENAME, 'utf8');
+		const templatesFromCache = await fs.readFile(
+			TEMPLATES_CACHE_FILENAME,
+			'utf8'
+		);
 		const parsedTemplates = JSON.parse(templatesFromCache);
 		const officialTemplates = normalizeTemplatesResponse(parsedTemplates || []);
 
