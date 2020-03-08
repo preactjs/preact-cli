@@ -95,6 +95,15 @@ function requestParams(argv, templates) {
 	];
 }
 
+async function updateTemplatesCache() {
+	const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+	await fs.writeFile(
+		TEMPLATES_CACHE_FILENAME,
+		JSON.stringify(repos, null, 2),
+		'utf-8'
+	);
+}
+
 async function fetchTemplates() {
 	let templates = [];
 
@@ -113,15 +122,7 @@ async function fetchTemplates() {
 		}
 
 		// update the cache file without blocking the rest of the tasks.
-		fetch(TEMPLATES_REPO_URL)
-			.then(r => r.json())
-			.then(repos => {
-				fs.writeFile(
-					TEMPLATES_CACHE_FILENAME,
-					JSON.stringify(repos, null, 2),
-					'utf-8'
-				);
-			});
+		updateTemplatesCache();
 
 		// fetch the API response from cache file
 		const templatesFromCache = await fs.readFile(
