@@ -1,5 +1,6 @@
 const ora = require('ora');
 const { promisify } = require('util');
+const fetch = require('isomorphic-unfetch');
 const glob = promisify(require('glob').glob);
 const gittar = require('gittar');
 const mkdirp = require('mkdirp');
@@ -16,7 +17,14 @@ const {
 	trim,
 	warn,
 	dirExists,
+	normalizeTemplatesResponse,
 } = require('../util');
+const {
+	CUSTOM_TEMPLATE,
+	TEMPLATES_REPO_URL,
+	TEMPLATES_CACHE_FILENAME,
+	FALLBACK_TEMPLATE_OPTIONS,
+} = require('../constants');
 const { addScripts, install, initGit } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';
@@ -25,7 +33,7 @@ const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
 // Formulate Questions if `create` args are missing
-function requestParams(argv) {
+function requestParams(argv, templates) {
 	const cwd = resolve(argv.cwd);
 
 	return [
@@ -34,39 +42,7 @@ function requestParams(argv) {
 			type: argv.template ? null : 'select',
 			name: 'template',
 			message: 'Pick a template',
-			choices: [
-				{
-					value: 'preactjs-templates/default',
-					title: 'Default (JavaScript)',
-					description: 'Default template with all features',
-				},
-				{
-					value: 'preactjs-templates/typescript',
-					title: 'Default (TypeScript)',
-					description: 'Default template with all features',
-				},
-				{
-					value: 'preactjs-templates/material',
-					title: 'Material',
-					description: 'Material template using preact-material-components',
-				},
-				{
-					value: 'preactjs-templates/simple',
-					title: 'Simple',
-					description: 'The simplest possible preact setup in a single file',
-				},
-				{
-					value: 'preactjs-templates/widget',
-					title: 'Widget',
-					description:
-						'Template for a widget to be embedded in another website',
-				},
-				{
-					value: 'custom',
-					title: 'Custom',
-					description: 'Use your own template',
-				},
-			],
+			choices: templates,
 			initial: 0,
 		},
 		{
@@ -119,10 +95,57 @@ function requestParams(argv) {
 	];
 }
 
+async function updateTemplatesCache() {
+	const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+	await fs.writeFile(
+		TEMPLATES_CACHE_FILENAME,
+		JSON.stringify(repos, null, 2),
+		'utf-8'
+	);
+}
+
+async function fetchTemplates() {
+	let templates = [];
+
+	try {
+		// fetch the repos list from the github API
+		info('Fetching official templates:\n');
+
+		// If cache file doesn't exist, then hit the API and fetch the data
+		if (!fs.existsSync(TEMPLATES_CACHE_FILENAME)) {
+			const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+			await fs.writeFile(
+				TEMPLATES_CACHE_FILENAME,
+				JSON.stringify(repos, null, 2),
+				'utf-8'
+			);
+		}
+
+		// update the cache file without blocking the rest of the tasks.
+		updateTemplatesCache();
+
+		// fetch the API response from cache file
+		const templatesFromCache = await fs.readFile(
+			TEMPLATES_CACHE_FILENAME,
+			'utf8'
+		);
+		const parsedTemplates = JSON.parse(templatesFromCache);
+		const officialTemplates = normalizeTemplatesResponse(parsedTemplates || []);
+
+		templates = officialTemplates.concat(CUSTOM_TEMPLATE);
+	} catch (e) {
+		// in case github API fails to fetch the data, fallback to the hard coded listings
+		templates = FALLBACK_TEMPLATE_OPTIONS.concat(CUSTOM_TEMPLATE);
+	}
+
+	return templates;
+}
+
 module.exports = async function(repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
-		const questions = requestParams(argv);
+		const templates = await fetchTemplates();
+		const questions = requestParams(argv, templates);
 		const onCancel = () => {
 			info('Aborting execution');
 			process.exit();
