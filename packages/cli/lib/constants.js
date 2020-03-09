@@ -1,3 +1,5 @@
+const os = require('os');
+
 exports.TEMPLATES_REPO_URL =
 	'https://api.github.com/users/preactjs-templates/repos';
 
@@ -40,4 +42,4 @@ exports.FALLBACK_TEMPLATE_OPTIONS = [
 	},
 ];
 
-exports.TEMPLATES_CACHE_FILENAME = '.preact-templates.json';
+exports.TEMPLATES_CACHE_FILENAME = `${os.homedir()}/.cache/preact-templates.json`;
