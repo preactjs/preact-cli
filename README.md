@@ -1,4 +1,4 @@
-# preact-cli [![Build Status](https://img.shields.io/travis/preactjs/preact-cli/master.svg)](https://travis-ci.org/preactjs/preact-cli) [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg)](https://www.npmjs.com/package/preact-cli)
+# preact-cli [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg)](https://www.npmjs.com/package/preact-cli)
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
 
