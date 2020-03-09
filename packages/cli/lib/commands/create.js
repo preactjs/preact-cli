@@ -96,12 +96,17 @@ function requestParams(argv, templates) {
 }
 
 async function updateTemplatesCache() {
-	const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
-	await fs.writeFile(
-		TEMPLATES_CACHE_FILENAME,
-		JSON.stringify(repos, null, 2),
-		'utf-8'
-	);
+	try {
+		const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+		await fs.writeFile(
+			TEMPLATES_CACHE_FILENAME,
+			JSON.stringify(repos, null, 2),
+			'utf-8'
+		);
+	} catch (err) {
+		// eslint-disable-next-line
+		console.log(err);
+	}
 }
 
 async function fetchTemplates() {
@@ -127,7 +132,7 @@ async function fetchTemplates() {
 		// fetch the API response from cache file
 		const templatesFromCache = await fs.readFile(
 			TEMPLATES_CACHE_FILENAME,
-			'utf8'
+			'utf-8'
 		);
 		const parsedTemplates = JSON.parse(templatesFromCache);
 		const officialTemplates = normalizeTemplatesResponse(parsedTemplates || []);
