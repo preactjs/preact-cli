@@ -31,6 +31,7 @@ describe('client-side tests', () => {
 		const page = await chrome.newPage();
 
 		page.on('console', consoleMessage => {
+			// eslint-disable-next-line
 			console[consoleMessage.type()](consoleMessage.text());
 		});
 
@@ -55,6 +56,7 @@ describe('client-side tests', () => {
 		const page = await chrome.newPage();
 
 		page.on('console', consoleMessage => {
+			// eslint-disable-next-line
 			console[consoleMessage.type()](consoleMessage.text());
 		});
 

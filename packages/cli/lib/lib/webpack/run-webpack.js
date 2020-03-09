@@ -98,8 +98,9 @@ async function prodBuild(env) {
 		await new Promise(r => setTimeout(r, 20));
 
 		return showStats(stats, true);
-	} catch (error) {
-		console.log(error);
+	} catch (err) {
+		// eslint-disable-next-line
+		console.log(err);
 	}
 }
 
