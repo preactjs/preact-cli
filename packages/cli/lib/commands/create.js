@@ -104,8 +104,7 @@ async function updateTemplatesCache() {
 			'utf-8'
 		);
 	} catch (err) {
-		// eslint-disable-next-line
-		console.log('failed to update template cache', err);
+		error(`\nFailed to update template cache\n ${err}`);
 	}
 }
 
