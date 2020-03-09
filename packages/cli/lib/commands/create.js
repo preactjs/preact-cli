@@ -98,7 +98,11 @@ function requestParams(argv, templates) {
 }
 
 async function updateTemplatesCache() {
-	const cacheFilePath = `${os.homedir()}/${TEMPLATES_CACHE_FOLDER}/${TEMPLATES_CACHE_FILENAME}`;
+	const cacheFilePath = join(
+		os.homedir(),
+		TEMPLATES_CACHE_FOLDER,
+		TEMPLATES_CACHE_FILENAME
+	);
 
 	try {
 		const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
@@ -110,8 +114,12 @@ async function updateTemplatesCache() {
 
 async function fetchTemplates() {
 	let templates = [];
-	const cacheFolder = `${os.homedir()}/${TEMPLATES_CACHE_FOLDER}`;
-	const cacheFilePath = `${cacheFolder}/${TEMPLATES_CACHE_FILENAME}`;
+	const cacheFolder = join(os.homedir(), TEMPLATES_CACHE_FOLDER);
+	const cacheFilePath = join(
+		os.homedir(),
+		TEMPLATES_CACHE_FOLDER,
+		TEMPLATES_CACHE_FILENAME
+	);
 
 	try {
 		// fetch the repos list from the github API
