@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - next
+  pull_request
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2-beta
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 'lts'
+    - name: Cache node modules
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: ~/.yarn
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+    - run: yarn install --frozen-lockfile
+    - name: test
+      env:
+        CI: true
+        WITH_LOG: true
+        LIGHTHOUSE_CHROMIUM_PATH: 'which google-chrome-stable'
+      run: npm run test
+
