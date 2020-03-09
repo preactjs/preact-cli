@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - master
+      - next
 
 jobs:
   test:
@@ -19,7 +20,7 @@ jobs:
         fetch-depth: 1
     - uses: actions/setup-node@v1
       with:
-        node-version: 'lts'
+        node-version: '12.x'
     - name: Cache node modules
       uses: actions/cache@v1
       env:
