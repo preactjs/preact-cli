@@ -104,8 +104,7 @@ prog
 	.command('info')
 	.describe('Print out debugging information about the local environment')
 	.action(() => {
-		console.log();
-		console.log('Environment Info:');
+		process.stdout.write('\nEnvironment Info:');
 		envinfo
 			.run({
 				System: ['OS', 'CPU'],
@@ -120,7 +119,7 @@ prog
 				],
 				npmGlobalPackages: ['preact-cli'],
 			})
-			.then(console.log);
+			.then(info => process.stdout.write(`${info}\n`));
 	});
 
 prog.parse(process.argv);
