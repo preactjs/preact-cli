@@ -105,7 +105,7 @@ async function updateTemplatesCache() {
 		);
 	} catch (err) {
 		// eslint-disable-next-line
-		console.log(err);
+		console.log('failed to update template cache', err);
 	}
 }
 
