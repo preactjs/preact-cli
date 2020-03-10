@@ -40,4 +40,5 @@ exports.FALLBACK_TEMPLATE_OPTIONS = [
 	},
 ];
 
-exports.TEMPLATES_CACHE_FILENAME = '.preact-templates.json';
+exports.TEMPLATES_CACHE_FOLDER = '.cache';
+exports.TEMPLATES_CACHE_FILENAME = 'preact-templates.json';
