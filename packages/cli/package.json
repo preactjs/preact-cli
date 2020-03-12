@@ -135,6 +135,11 @@
     "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.2.0",
     "which": "^2.0.2",
-    "workbox-webpack-plugin": "^4.3.1"
+    "workbox-cacheable-response": "^5.0.0",
+    "workbox-core": "^5.0.0",
+    "workbox-precaching": "^5.0.0",
+    "workbox-routing": "^5.0.0",
+    "workbox-strategies": "^5.0.0",
+    "workbox-webpack-plugin": "^5.0.0"
   }
 }
