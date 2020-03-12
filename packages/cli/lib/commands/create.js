@@ -5,6 +5,7 @@ const glob = promisify(require('glob').glob);
 const gittar = require('gittar');
 const mkdirp = require('mkdirp');
 const fs = require('../fs');
+const os = require('os');
 const { green } = require('kleur');
 const { resolve, join } = require('path');
 const { prompt } = require('prompts');
@@ -22,6 +23,7 @@ const {
 const {
 	CUSTOM_TEMPLATE,
 	TEMPLATES_REPO_URL,
+	TEMPLATES_CACHE_FOLDER,
 	TEMPLATES_CACHE_FILENAME,
 	FALLBACK_TEMPLATE_OPTIONS,
 } = require('../constants');
@@ -96,26 +98,43 @@ function requestParams(argv, templates) {
 }
 
 async function updateTemplatesCache() {
-	const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
-	await fs.writeFile(
-		TEMPLATES_CACHE_FILENAME,
-		JSON.stringify(repos, null, 2),
-		'utf-8'
+	const cacheFilePath = join(
+		os.homedir(),
+		TEMPLATES_CACHE_FOLDER,
+		TEMPLATES_CACHE_FILENAME
 	);
+
+	try {
+		const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+		await fs.writeFile(cacheFilePath, JSON.stringify(repos, null, 2), 'utf-8');
+	} catch (err) {
+		error(`\nFailed to update template cache\n ${err}`);
+	}
 }
 
 async function fetchTemplates() {
 	let templates = [];
+	const cacheFolder = join(os.homedir(), TEMPLATES_CACHE_FOLDER);
+	const cacheFilePath = join(
+		os.homedir(),
+		TEMPLATES_CACHE_FOLDER,
+		TEMPLATES_CACHE_FILENAME
+	);
 
 	try {
 		// fetch the repos list from the github API
 		info('Fetching official templates:\n');
 
+		// check if `.cache` folder exists or not, and create if does not exists
+		if (!fs.existsSync(cacheFolder)) {
+			await fs.mkdir(cacheFolder);
+		}
+
 		// If cache file doesn't exist, then hit the API and fetch the data
-		if (!fs.existsSync(TEMPLATES_CACHE_FILENAME)) {
+		if (!fs.existsSync(cacheFilePath)) {
 			const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
 			await fs.writeFile(
-				TEMPLATES_CACHE_FILENAME,
+				cacheFilePath,
 				JSON.stringify(repos, null, 2),
 				'utf-8'
 			);
@@ -125,10 +144,7 @@ async function fetchTemplates() {
 		updateTemplatesCache();
 
 		// fetch the API response from cache file
-		const templatesFromCache = await fs.readFile(
-			TEMPLATES_CACHE_FILENAME,
-			'utf8'
-		);
+		const templatesFromCache = await fs.readFile(cacheFilePath, 'utf-8');
 		const parsedTemplates = JSON.parse(templatesFromCache);
 		const officialTemplates = normalizeTemplatesResponse(parsedTemplates || []);
 
