@@ -9,7 +9,7 @@
   },
   "scripts": {
     "pretest": "rimraf ./tests/output",
-    "test": "jest --forceExit --runInBand"
+    "test": "jest --forceExit"
   },
   "jest": {
     "setupFilesAfterEnv": [
