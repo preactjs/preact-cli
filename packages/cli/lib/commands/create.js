@@ -141,6 +141,12 @@ async function fetchTemplates() {
 	return templates;
 }
 
+async function copyFileToDestination(srcPath, destPath, force = false) {
+	if (!fs.existsSync(destPath) || force) {
+		await fs.copyFile(srcPath, destPath);
+	}
+}
+
 module.exports = async function(repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
@@ -315,22 +321,20 @@ module.exports = async function(repo, dest, argv) {
 		await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 	}
 
+	const sourceDirectory = join(resolve(cwd, dest), 'src');
+
 	// Copy over template.html
 	const templateSrc = resolve(
 		__dirname,
 		join('..', 'resources', 'template.html')
 	);
+	const templateDest = join(sourceDirectory, 'template.html');
+	copyFileToDestination(templateSrc, templateDest);
 
-	const destTemplatePath = join(resolve(cwd, dest), 'src', 'template.html');
-	// Check whether the `template.html` exists in the repo and then use it.
-	if (!fs.existsSync(destTemplatePath)) {
-		await fs.copyFile(templateSrc, destTemplatePath);
-	}
-
-	// Do not copy the service worker file until we have a preact API for the same.
-	// Copy over service worker
-	// const serviceWorkerSrc = resolve(__dirname, join('..', 'lib', 'sw.js'));
-	// await fs.copyFile(serviceWorkerSrc, join(resolve(cwd, dest), 'src', 'sw.js'));
+	// Copy over sw.js
+	const serviceWorkerSrc = resolve(__dirname, join('..', '..', 'sw', 'sw.js'));
+	const serviceWorkerDest = join(sourceDirectory, 'sw.js');
+	copyFileToDestination(serviceWorkerSrc, serviceWorkerDest);
 
 	if (argv.install) {
 		spinner.text = 'Installing dependencies:\n';

@@ -15,7 +15,7 @@ const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const { normalizePath } = require('../../util');
+const { normalizePath, warn } = require('../../util');
 
 const cleanFilename = name =>
 	name.replace(
@@ -171,7 +171,14 @@ function getBabelEsmPlugin(config) {
 
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
-	const fallbackSwPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
+	const { src } = config;
+	let swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
+	const userSwPath = join(src, 'sw.js');
+	if (existsSync(userSwPath)) {
+		swPath = userSwPath;
+	} else {
+		warn(`Could not find sw.js in ${src}. Using a fallback service worker.`);
+	}
 	const prodConfig = {
 		performance: Object.assign(
 			{
@@ -228,7 +235,7 @@ function isProd(config) {
 	if (config.esm && config.sw) {
 		prodConfig.plugins.push(
 			new InjectManifest({
-				swSrc: fallbackSwPath,
+				swSrc: swPath,
 				swDest: 'sw-esm.js',
 				include: [
 					/^\/?index\.html$/,
@@ -248,7 +255,7 @@ function isProd(config) {
 	if (config.sw) {
 		prodConfig.plugins.push(
 			new InjectManifest({
-				swSrc: fallbackSwPath,
+				swSrc: swPath,
 				include: [
 					/index\.html$/,
 					/\.js$/,
