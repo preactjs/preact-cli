@@ -140,7 +140,7 @@ module.exports = function(env) {
 				{
 					style: source('style'),
 					'preact-cli-entrypoint': source('index'),
-					...(env.esm ? { url: 'native-url' } : {}),
+					url: 'native-url',
 					// preact-compat aliases for supporting React dependencies:
 					react: compat,
 					'react-dom': compat,
