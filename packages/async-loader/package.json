@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "kleur": "^3.0.3",
-    "loader-utils": "^1.1.0"
+    "loader-utils": "^2.0.0"
   },
   "peerDependencies": {
     "preact": "^8.1.0"
