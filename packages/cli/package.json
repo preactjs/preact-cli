@@ -136,6 +136,6 @@
     "webpack-merge": "^4.1.0",
     "webpack-plugin-replace": "^1.2.0",
     "which": "^2.0.2",
-    "workbox-webpack-plugin": "^4.3.1"
+    "workbox-webpack-plugin": "^5.1.1"
   }
 }
