@@ -227,44 +227,6 @@ function isProd(config) {
 	};
 
 	if (config.esm) {
-		prodConfig.plugins.push(
-			new BabelEsmPlugin({
-				filename: '[name].[chunkhash:5].esm.js',
-				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
-				excludedPlugins: ['BabelEsmPlugin', 'SWBuilderPlugin'],
-				beforeStartExecution: (plugins, newConfig) => {
-					const babelPlugins = newConfig.plugins;
-					newConfig.plugins = babelPlugins.filter(plugin => {
-						if (
-							Array.isArray(plugin) &&
-							plugin[0].indexOf('fast-async') !== -1
-						) {
-							return false;
-						}
-						return true;
-					});
-					plugins.forEach(plugin => {
-						if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							plugin.definitions
-						) {
-							for (const definition in plugin.definitions) {
-								if (definition === 'process.env.ES_BUILD') {
-									plugin.definitions[definition] = true;
-								}
-							}
-						} else if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							!plugin.definitions
-						) {
-							throw new Error(
-								'WebpackDefinePlugin found but not `process.env.ES_BUILD`.'
-							);
-						}
-					});
-				},
-			})
-		);
 		config.sw &&
 			prodConfig.plugins.push(
 				new InjectManifest({

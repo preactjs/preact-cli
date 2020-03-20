@@ -38,7 +38,7 @@ function getRegExpFromMarkup(markup) {
 }
 
 describe('preact build', () => {
-	ours.forEach(key =>
+	ours.forEach(key => {
 		it(`builds the '${key}' output`, async () => {
 			let dir = await create(key);
 
@@ -46,10 +46,19 @@ describe('preact build', () => {
 			dir = join(dir, 'build');
 
 			let output = await snapshot(dir);
+			expect(isMatch(output, images[key])).toBeTruthy();
+		});
 
-			isMatch(output, images[key]);
-		})
-	);
+		it(`builds the '${key}' output with esm`, async () => {
+			let dir = await create(key);
+
+			await build(dir, { esm: true });
+			dir = join(dir, 'build');
+
+			let output = await snapshot(dir);
+			expect(isMatch(output, images[key + '-esm'])).toBeTruthy();
+		});
+	});
 
 	it('should use SASS styles', async () => {
 		let dir = await subject('sass');
