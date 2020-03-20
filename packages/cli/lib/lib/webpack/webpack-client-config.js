@@ -177,7 +177,7 @@ function isProd(config) {
 	if (existsSync(userSwPath)) {
 		swPath = userSwPath;
 	} else {
-		warn(`Could not find sw.js in ${src}. Using a fallback service worker.`);
+		warn(`Could not find sw.js in ${src}. Using the default service worker.`);
 	}
 	const prodConfig = {
 		performance: Object.assign(
