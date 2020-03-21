@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const { resolve } = require('path');
+const { resolve, join } = require('path');
 const { existsSync } = require('fs');
 const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const merge = require('webpack-merge');
@@ -15,8 +15,7 @@ const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const { normalizePath } = require('../../util');
-const SWBuilderPlugin = require('./sw-plugin');
+const { normalizePath, warn } = require('../../util');
 
 const cleanFilename = name =>
 	name.replace(
@@ -132,7 +131,7 @@ function getBabelEsmPlugin(config) {
 					? '[name].[chunkhash:5].esm.js'
 					: '[name].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
-				excludedPlugins: ['BabelEsmPlugin', 'SWBuilderPlugin'],
+				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest'],
 				beforeStartExecution: (plugins, newConfig) => {
 					const babelPlugins = newConfig.plugins;
 					newConfig.plugins = babelPlugins.filter(plugin => {
@@ -172,7 +171,14 @@ function getBabelEsmPlugin(config) {
 
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
-
+	const { src } = config;
+	let swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
+	const userSwPath = join(src, 'sw.js');
+	if (existsSync(userSwPath)) {
+		swPath = userSwPath;
+	} else {
+		warn(`Could not find sw.js in ${src}. Using the default service worker.`);
+	}
 	const prodConfig = {
 		performance: Object.assign(
 			{
@@ -226,61 +232,36 @@ function isProd(config) {
 		},
 	};
 
-	if (config.esm) {
+	if (config.esm && config.sw) {
 		prodConfig.plugins.push(
-			new BabelEsmPlugin({
-				filename: '[name].[chunkhash:5].esm.js',
-				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
-				excludedPlugins: ['BabelEsmPlugin', 'SWBuilderPlugin'],
-				beforeStartExecution: (plugins, newConfig) => {
-					const babelPlugins = newConfig.plugins;
-					newConfig.plugins = babelPlugins.filter(plugin => {
-						if (
-							Array.isArray(plugin) &&
-							plugin[0].indexOf('fast-async') !== -1
-						) {
-							return false;
-						}
-						return true;
-					});
-					plugins.forEach(plugin => {
-						if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							plugin.definitions
-						) {
-							for (const definition in plugin.definitions) {
-								if (definition === 'process.env.ES_BUILD') {
-									plugin.definitions[definition] = true;
-								}
-							}
-						} else if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							!plugin.definitions
-						) {
-							throw new Error(
-								'WebpackDefinePlugin found but not `process.env.ES_BUILD`.'
-							);
-						}
-					});
-				},
+			new InjectManifest({
+				swSrc: swPath,
+				swDest: 'sw-esm.js',
+				include: [
+					/^\/?index\.html$/,
+					/\.esm.js$/,
+					/\.css$/,
+					/\.(png|jpg|svg|gif|webp)$/,
+				],
+				webpackCompilationPlugins: [
+					new webpack.DefinePlugin({
+						'process.env.ESM': true,
+					}),
+				],
 			})
 		);
-		config.sw &&
-			prodConfig.plugins.push(
-				new InjectManifest({
-					swSrc: 'sw-esm.js',
-					include: [/^\/?index\.html$/, /\.esm.js$/, /\.css$/, /\.(png|jpg)$/],
-					precacheManifestFilename: 'precache-manifest.[manifestHash].esm.js',
-				})
-			);
 	}
 
 	if (config.sw) {
-		prodConfig.plugins.push(new SWBuilderPlugin(config));
 		prodConfig.plugins.push(
 			new InjectManifest({
-				swSrc: 'sw.js',
-				include: [/index\.html$/, /\.js$/, /\.css$/, /\.(png|jpg)$/],
+				swSrc: swPath,
+				include: [
+					/index\.html$/,
+					/\.js$/,
+					/\.css$/,
+					/\.(png|jpg|svg|gif|webp)$/,
+				],
 				exclude: [/\.esm\.js$/],
 			})
 		);
