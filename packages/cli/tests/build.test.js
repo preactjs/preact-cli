@@ -2,7 +2,7 @@ const { join } = require('path');
 const { readFile } = require('../lib/fs');
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
-const { snapshot, isMatch } = require('./lib/utils');
+const { snapshot, hasKey, isWithin } = require('./lib/utils');
 const { existsSync } = require('fs');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
@@ -37,6 +37,16 @@ function getRegExpFromMarkup(markup) {
 	return new RegExp(minifiedMarkup);
 }
 
+function testMatch(src, tar) {
+	let k, tmp;
+	let keys = Object.keys(tar);
+	expect(keys).toHaveLength(Object.keys(src).length);
+	for (k in src) {
+		expect(hasKey(k, keys)).toBeTruthy();
+		if (!isWithin(src[k], tar[tmp])) return false;
+	}
+}
+
 describe('preact build', () => {
 	ours.forEach(key => {
 		it(`builds the '${key}' output`, async () => {
@@ -46,7 +56,7 @@ describe('preact build', () => {
 			dir = join(dir, 'build');
 
 			let output = await snapshot(dir);
-			expect(isMatch(output, images[key])).toBeTruthy();
+			testMatch(output, images[key]);
 		});
 
 		it(`builds the '${key}' output with esm`, async () => {
@@ -56,7 +66,7 @@ describe('preact build', () => {
 			dir = join(dir, 'build');
 
 			let output = await snapshot(dir);
-			expect(isMatch(output, images[key + '-esm'])).toBeTruthy();
+			testMatch(output, images[key + '-esm']);
 		});
 	});
 
