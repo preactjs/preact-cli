@@ -38,17 +38,6 @@ const hasKey = (key, arr) => arr.find(k => minimatch(key, k)) || false;
 const isWithin = (val, tar) =>
 	val == tar || (val > (1 - PER) * tar && val < (1 + PER) * tar);
 
-function isMatch(src, tar) {
-	let k, tmp;
-	let keys = Object.keys(tar);
-	for (k in src) {
-		tmp = hasKey(k, keys);
-		if (!tmp) return false;
-		if (!isWithin(src[k], tar[tmp])) return false;
-	}
-	return keys.length === Object.keys(src).length;
-}
-
 async function log(fn, msg) {
 	logger('info', `${msg} - started...`);
 	try {
@@ -70,4 +59,13 @@ function waitUntil(action, errorMessage) {
 
 const sleep = promisify(setTimeout);
 
-module.exports = { expand, bytes, snapshot, isMatch, log, waitUntil, sleep };
+module.exports = {
+	expand,
+	bytes,
+	snapshot,
+	log,
+	waitUntil,
+	sleep,
+	hasKey,
+	isWithin,
+};
