@@ -80,7 +80,7 @@
     "@babel/preset-typescript": "^7.9.0",
     "@preact/async-loader": "^3.0.0-rc.9",
     "autoprefixer": "^9.6.0",
-    "babel-esm-plugin": "^0.7.0",
+    "babel-esm-plugin": "^0.8.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-macros": "^2.5.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
