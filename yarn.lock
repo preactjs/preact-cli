@@ -4449,8 +4449,8 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 ejs-loader@^0.3.3:
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/ejs-loader/-/ejs-loader-0.3.5.tgz#1105ac1a262e3f36079e8b2bd6ec6058434f60e7"
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/ejs-loader/-/ejs-loader-0.3.6.tgz#e6ce60ce8234bd1ce8e69ea59fab0d3b350d4935"
   dependencies:
     loader-utils "^0.2.7"
     lodash "^4.17.15"
