@@ -183,7 +183,7 @@ module.exports = function (env) {
 								options: {
 									sourceMap: true,
 									lessOptions: {
-										paths: [nodeModules],
+										paths: [...nodeModules],
 									},
 								},
 							},
