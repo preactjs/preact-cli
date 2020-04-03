@@ -1073,20 +1073,20 @@
     source-map "^0.6.1"
     write-file-atomic "2.4.1"
 
-"@jest/transform@^25.2.4":
-  version "25.2.4"
-  resolved "https://registry.yarnpkg.com/@jest/transform/-/transform-25.2.4.tgz#34336f37f13f62f7d1f5b93d5d150ba9eb3e11b9"
+"@jest/transform@^25.2.4", "@jest/transform@^25.2.6":
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/@jest/transform/-/transform-25.2.6.tgz#007fd946dedf12d2a9eb5d4154faf1991d5f61ff"
   dependencies:
     "@babel/core" "^7.1.0"
-    "@jest/types" "^25.2.3"
+    "@jest/types" "^25.2.6"
     babel-plugin-istanbul "^6.0.0"
     chalk "^3.0.0"
     convert-source-map "^1.4.0"
     fast-json-stable-stringify "^2.0.0"
     graceful-fs "^4.2.3"
-    jest-haste-map "^25.2.3"
-    jest-regex-util "^25.2.1"
-    jest-util "^25.2.3"
+    jest-haste-map "^25.2.6"
+    jest-regex-util "^25.2.6"
+    jest-util "^25.2.6"
     micromatch "^4.0.2"
     pirates "^4.0.1"
     realpath-native "^2.0.0"
@@ -1102,9 +1102,9 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@jest/types@^25.2.3":
-  version "25.2.3"
-  resolved "https://registry.yarnpkg.com/@jest/types/-/types-25.2.3.tgz#035c4fb94e2da472f359ff9a211915d59987f6b6"
+"@jest/types@^25.2.3", "@jest/types@^25.2.6":
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/@jest/types/-/types-25.2.6.tgz#c12f44af9bed444438091e4b59e7ed05f8659cb6"
   dependencies:
     "@types/istanbul-lib-coverage" "^2.0.0"
     "@types/istanbul-reports" "^1.1.1"
@@ -2593,14 +2593,14 @@ babel-extract-comments@^1.0.0:
     babylon "^6.18.0"
 
 babel-jest@^25.1.0, babel-jest@^25.2.4:
-  version "25.2.4"
-  resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-25.2.4.tgz#b21b68d3af8f161c3e6e501e91f0dea8e652e344"
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-25.2.6.tgz#fe67ff4d0db3626ca8082da8881dd5e84e07ae75"
   dependencies:
-    "@jest/transform" "^25.2.4"
-    "@jest/types" "^25.2.3"
+    "@jest/transform" "^25.2.6"
+    "@jest/types" "^25.2.6"
     "@types/babel__core" "^7.1.0"
     babel-plugin-istanbul "^6.0.0"
-    babel-preset-jest "^25.2.1"
+    babel-preset-jest "^25.2.6"
     chalk "^3.0.0"
     slash "^3.0.0"
 
@@ -2639,9 +2639,9 @@ babel-plugin-istanbul@^6.0.0:
     istanbul-lib-instrument "^4.0.0"
     test-exclude "^6.0.0"
 
-babel-plugin-jest-hoist@^25.2.1:
-  version "25.2.1"
-  resolved "https://registry.yarnpkg.com/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-25.2.1.tgz#d0003a1f3d5caa281e1107fe03bbf16b799f9955"
+babel-plugin-jest-hoist@^25.2.6:
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-25.2.6.tgz#2af07632b8ac7aad7d414c1e58425d5fc8e84909"
   dependencies:
     "@types/babel__traverse" "^7.0.6"
 
@@ -2668,13 +2668,13 @@ babel-plugin-transform-react-remove-prop-types@^0.4.24:
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-react-remove-prop-types/-/babel-plugin-transform-react-remove-prop-types-0.4.24.tgz#f2edaf9b4c6a5fbe5c1d678bfb531078c1555f3a"
 
-babel-preset-jest@^25.2.1:
-  version "25.2.1"
-  resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-25.2.1.tgz#4ccd0e577f69aa11b71806edfe8b25a5c3ac93a2"
+babel-preset-jest@^25.2.6:
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-25.2.6.tgz#5d3f7c99e2a8508d61775c9d68506d143b7f71b5"
   dependencies:
     "@babel/plugin-syntax-bigint" "^7.0.0"
     "@babel/plugin-syntax-object-rest-spread" "^7.0.0"
-    babel-plugin-jest-hoist "^25.2.1"
+    babel-plugin-jest-hoist "^25.2.6"
 
 babel-runtime@^6.26.0:
   version "6.26.0"
@@ -6746,6 +6746,24 @@ jest-haste-map@^25.2.3:
   optionalDependencies:
     fsevents "^2.1.2"
 
+jest-haste-map@^25.2.6:
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/jest-haste-map/-/jest-haste-map-25.2.6.tgz#4aa6bcfa15310afccdb9ca77af58a98add8cedb8"
+  dependencies:
+    "@jest/types" "^25.2.6"
+    anymatch "^3.0.3"
+    fb-watchman "^2.0.0"
+    graceful-fs "^4.2.3"
+    jest-serializer "^25.2.6"
+    jest-util "^25.2.6"
+    jest-worker "^25.2.6"
+    micromatch "^4.0.2"
+    sane "^4.0.3"
+    walker "^1.0.7"
+    which "^2.0.2"
+  optionalDependencies:
+    fsevents "^2.1.2"
+
 jest-jasmine2@^25.2.4:
   version "25.2.4"
   resolved "https://registry.yarnpkg.com/jest-jasmine2/-/jest-jasmine2-25.2.4.tgz#5f77de83e1027f0c7588137055a80da773872374"
@@ -6834,6 +6852,10 @@ jest-regex-util@^25.2.1:
   version "25.2.1"
   resolved "https://registry.yarnpkg.com/jest-regex-util/-/jest-regex-util-25.2.1.tgz#db64b0d15cd3642c93b7b9627801d7c518600584"
 
+jest-regex-util@^25.2.6:
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/jest-regex-util/-/jest-regex-util-25.2.6.tgz#d847d38ba15d2118d3b06390056028d0f2fd3964"
+
 jest-resolve-dependencies@^25.2.4:
   version "25.2.4"
   resolved "https://registry.yarnpkg.com/jest-resolve-dependencies/-/jest-resolve-dependencies-25.2.4.tgz#2d904400387d74a366dff54badb40a2b3210e733"
@@ -6915,6 +6937,10 @@ jest-serializer@^25.2.1:
   version "25.2.1"
   resolved "https://registry.yarnpkg.com/jest-serializer/-/jest-serializer-25.2.1.tgz#51727a5fc04256f461abe0fa024a022ba165877a"
 
+jest-serializer@^25.2.6:
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/jest-serializer/-/jest-serializer-25.2.6.tgz#3bb4cc14fe0d8358489dbbefbb8a4e708ce039b7"
+
 jest-snapshot@^25.2.4:
   version "25.2.4"
   resolved "https://registry.yarnpkg.com/jest-snapshot/-/jest-snapshot-25.2.4.tgz#08d4517579c864df4280bcc948ceea34327a4ded"
@@ -6960,6 +6986,15 @@ jest-util@^25.2.3:
     is-ci "^2.0.0"
     make-dir "^3.0.0"
 
+jest-util@^25.2.6:
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/jest-util/-/jest-util-25.2.6.tgz#3c1c95cdfd653126728b0ed861a86610e30d569c"
+  dependencies:
+    "@jest/types" "^25.2.6"
+    chalk "^3.0.0"
+    is-ci "^2.0.0"
+    make-dir "^3.0.0"
+
 jest-validate@^25.2.3:
   version "25.2.3"
   resolved "https://registry.yarnpkg.com/jest-validate/-/jest-validate-25.2.3.tgz#ecb0f093cf8ae71d15075fb48439b6f78f1fcb5a"
@@ -6999,6 +7034,13 @@ jest-worker@^25.1.0:
 jest-worker@^25.2.1:
   version "25.2.1"
   resolved "https://registry.yarnpkg.com/jest-worker/-/jest-worker-25.2.1.tgz#209617015c768652646aa33a7828cc2ab472a18a"
+  dependencies:
+    merge-stream "^2.0.0"
+    supports-color "^7.0.0"
+
+jest-worker@^25.2.6:
+  version "25.2.6"
+  resolved "https://registry.yarnpkg.com/jest-worker/-/jest-worker-25.2.6.tgz#d1292625326794ce187c38f51109faced3846c58"
   dependencies:
     merge-stream "^2.0.0"
     supports-color "^7.0.0"
