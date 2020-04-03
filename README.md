@@ -32,7 +32,7 @@
 - **100/100 Lighthouse score**, right out of the box ([proof])
 - Fully **automatic code splitting** for routes
 - Transparently code-split any component with an [`async!`] prefix
-- Auto-generated [Service Workers] for offline caching powered by [sw-precache]
+- Auto-generated [Service Workers] for offline caching powered by [Workbox]
 - [PRPL] pattern support for efficient loading
 - Zero-configuration pre-rendering / server-side rendering hydration
 - Support for CSS Modules, LESS, Sass, Stylus; with Autoprefixer
@@ -347,7 +347,7 @@ The default templates comes with a `.css` file for each component. You can start
 [`"browserslist"`]: https://github.com/ai/browserslist
 [```.babelrc```]: https://babeljs.io/docs/usage/babelrc
 [default]: https://github.com/preactjs-templates/default
-[sw-precache]: https://github.com/GoogleChrome/sw-precache
+[Workbox]: https://developers.google.com/web/tools/workbox
 [preact-router]: https://github.com/preactjs/preact-router
 [material]: https://github.com/preactjs-templates/material
 [netlify]: https://github.com/preactjs-templates/netlify
