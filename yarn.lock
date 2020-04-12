@@ -9813,8 +9813,8 @@ preact-render-to-string@^3.8.2:
     pretty-format "^3.5.1"
 
 preact-render-to-string@^5.0.6:
-  version "5.1.4"
-  resolved "https://registry.yarnpkg.com/preact-render-to-string/-/preact-render-to-string-5.1.4.tgz#f26171f58f0e93b36236e4b0bee62ce561120b7c"
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/preact-render-to-string/-/preact-render-to-string-5.1.6.tgz#6e8f6c7d657743d8bb27c8ea3d5ac218354c87a4"
   dependencies:
     pretty-format "^3.8.0"
 
