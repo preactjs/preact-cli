@@ -216,7 +216,7 @@ module.exports = function(env) {
 								loader: 'stylus-loader',
 								options: {
 									sourceMap: true,
-									paths: [nodeModules],
+									paths: nodeModules,
 								},
 							},
 						},
