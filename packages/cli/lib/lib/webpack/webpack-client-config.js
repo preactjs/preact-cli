@@ -316,7 +316,7 @@ function isDev(config) {
 			contentBase: src,
 			https: config.https,
 			port: process.env.PORT || config.port || 8080,
-			host: process.env.HOST || config.host || '0.0.0.0',
+			host: process.env.HOST || config.host || '127.0.0.1',
 			// setup(app) {
 			// 	app.use(middleware);
 			// },
