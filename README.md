@@ -348,7 +348,7 @@ The default templates comes with a `.css` file for each component. You can start
 [`"browserslist"`]: https://github.com/ai/browserslist
 [```.babelrc```]: https://babeljs.io/docs/usage/babelrc
 [default]: https://github.com/preactjs-templates/default
-[workbox]: https://developers.google.com/web/tools/workbox
+[Workbox]: https://developers.google.com/web/tools/workbox
 [preact-router]: https://github.com/preactjs/preact-router
 [material]: https://github.com/preactjs-templates/material
 [netlify]: https://github.com/preactjs-templates/netlify
