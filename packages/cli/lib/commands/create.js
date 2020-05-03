@@ -372,7 +372,7 @@ module.exports = async function(repo, dest, argv) {
 			${green('cd ' + dest)}
 
 		To start a development live-reload server:
-			${green(pfx + ' start')}
+			${green(pfx + ' dev')}
 
 		To create a production build (in ./build):
 			${green(pfx + ' build')}
