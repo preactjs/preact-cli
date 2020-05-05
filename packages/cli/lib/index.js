@@ -24,7 +24,7 @@ const commands = require('./commands');
 // installHooks();
 notifier({ pkg }).notify();
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
 	error(err.stack || err.message);
 });
 
@@ -40,6 +40,11 @@ prog
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--template', 'Path to custom HTML template')
 	.option('--preload', 'Adds preload tags to the document its assets', false)
+	.option(
+		'--refresh',
+		'Enables experimental preact-refresh functionality',
+		false
+	)
 	.option(
 		'--analyze',
 		'Launch interactive Analyzer to inspect production bundle(s)'
@@ -69,10 +74,7 @@ prog
 	.option('-v, --verbose', 'Verbose output', false)
 	.action(commands.create);
 
-prog
-	.command('list')
-	.describe('List official templates')
-	.action(commands.list);
+prog.command('list').describe('List official templates').action(commands.list);
 
 prog
 	.command('watch [src]')
@@ -119,7 +121,7 @@ prog
 				],
 				npmGlobalPackages: ['preact-cli'],
 			})
-			.then(info => process.stdout.write(`${info}\n`));
+			.then((info) => process.stdout.write(`${info}\n`));
 	});
 
 prog.parse(process.argv);
