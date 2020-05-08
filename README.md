@@ -151,6 +151,7 @@ $ preact watch
     --cacert        Path to optional CA certificate override
     --prerender     Pre-render static content on first run
     --template      Path to custom HTML template
+    --refresh       Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
     -c, --config    Path to custom CLI config  (default preact.config.js)
     -H, --host      Set server hostname  (default 0.0.0.0)
     -p, --port      Set server port  (default 8080)
@@ -238,7 +239,7 @@ export default {
 	plugins: [
 		// either a function
 		// (you'd probably import this because you can use the `webpack` function instead of an inline plugin)
-		function() {},
+		function () {},
 		// strings also work (they get imported by preact-cli), useful for the json config
 		'plugin-name',
 		// with options
