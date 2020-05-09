@@ -35,7 +35,6 @@ let app = interopDefault(require('preact-cli-entrypoint'));
 if (typeof app === 'function') {
 	let root =
 		document.getElementById('preact_root') || document.body;
-
 	let init = () => {
 		let app = interopDefault(require('preact-cli-entrypoint'));
 		let preRenderData = {};
