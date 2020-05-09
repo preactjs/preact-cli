@@ -1,9 +1,11 @@
 const ora = require('ora');
 const { promisify } = require('util');
+const fetch = require('isomorphic-unfetch');
 const glob = promisify(require('glob').glob);
 const gittar = require('gittar');
 const mkdirp = require('mkdirp');
 const fs = require('../fs');
+const os = require('os');
 const { green } = require('kleur');
 const { resolve, join } = require('path');
 const { prompt } = require('prompts');
@@ -16,7 +18,15 @@ const {
 	trim,
 	warn,
 	dirExists,
+	normalizeTemplatesResponse,
 } = require('../util');
+const {
+	CUSTOM_TEMPLATE,
+	TEMPLATES_REPO_URL,
+	TEMPLATES_CACHE_FOLDER,
+	TEMPLATES_CACHE_FILENAME,
+	FALLBACK_TEMPLATE_OPTIONS,
+} = require('../constants');
 const { addScripts, install, initGit } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';
@@ -25,7 +35,7 @@ const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
 // Formulate Questions if `create` args are missing
-function requestParams(argv) {
+function requestParams(argv, templates) {
 	const cwd = resolve(argv.cwd);
 
 	return [
@@ -34,39 +44,7 @@ function requestParams(argv) {
 			type: argv.template ? null : 'select',
 			name: 'template',
 			message: 'Pick a template',
-			choices: [
-				{
-					value: 'preactjs-templates/default',
-					title: 'Default (JavaScript)',
-					description: 'Default template with all features',
-				},
-				{
-					value: 'preactjs-templates/typescript',
-					title: 'Default (TypeScript)',
-					description: 'Default template with all features',
-				},
-				{
-					value: 'preactjs-templates/material',
-					title: 'Material',
-					description: 'Material template using preact-material-components',
-				},
-				{
-					value: 'preactjs-templates/simple',
-					title: 'Simple',
-					description: 'The simplest possible preact setup in a single file',
-				},
-				{
-					value: 'preactjs-templates/widget',
-					title: 'Widget',
-					description:
-						'Template for a widget to be embedded in another website',
-				},
-				{
-					value: 'custom',
-					title: 'Custom',
-					description: 'Use your own template',
-				},
-			],
+			choices: templates,
 			initial: 0,
 		},
 		{
@@ -119,10 +97,77 @@ function requestParams(argv) {
 	];
 }
 
+async function updateTemplatesCache() {
+	const cacheFilePath = join(
+		os.homedir(),
+		TEMPLATES_CACHE_FOLDER,
+		TEMPLATES_CACHE_FILENAME
+	);
+
+	try {
+		const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+		await fs.writeFile(cacheFilePath, JSON.stringify(repos, null, 2), 'utf-8');
+	} catch (err) {
+		error(`\nFailed to update template cache\n ${err}`);
+	}
+}
+
+async function fetchTemplates() {
+	let templates = [];
+	const cacheFolder = join(os.homedir(), TEMPLATES_CACHE_FOLDER);
+	const cacheFilePath = join(
+		os.homedir(),
+		TEMPLATES_CACHE_FOLDER,
+		TEMPLATES_CACHE_FILENAME
+	);
+
+	try {
+		// fetch the repos list from the github API
+		info('Fetching official templates:\n');
+
+		// check if `.cache` folder exists or not, and create if does not exists
+		if (!fs.existsSync(cacheFolder)) {
+			await fs.mkdir(cacheFolder);
+		}
+
+		// If cache file doesn't exist, then hit the API and fetch the data
+		if (!fs.existsSync(cacheFilePath)) {
+			const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+			await fs.writeFile(
+				cacheFilePath,
+				JSON.stringify(repos, null, 2),
+				'utf-8'
+			);
+		}
+
+		// update the cache file without blocking the rest of the tasks.
+		updateTemplatesCache();
+
+		// fetch the API response from cache file
+		const templatesFromCache = await fs.readFile(cacheFilePath, 'utf-8');
+		const parsedTemplates = JSON.parse(templatesFromCache);
+		const officialTemplates = normalizeTemplatesResponse(parsedTemplates || []);
+
+		templates = officialTemplates.concat(CUSTOM_TEMPLATE);
+	} catch (e) {
+		// in case github API fails to fetch the data, fallback to the hard coded listings
+		templates = FALLBACK_TEMPLATE_OPTIONS.concat(CUSTOM_TEMPLATE);
+	}
+
+	return templates;
+}
+
+async function copyFileToDestination(srcPath, destPath, force = false) {
+	if (!fs.existsSync(destPath) || force) {
+		await fs.copyFile(srcPath, destPath);
+	}
+}
+
 module.exports = async function(repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
-		const questions = requestParams(argv);
+		const templates = await fetchTemplates();
+		const questions = requestParams(argv, templates);
 		const onCancel = () => {
 			info('Aborting execution');
 			process.exit();
@@ -292,20 +337,20 @@ module.exports = async function(repo, dest, argv) {
 		await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 	}
 
+	const sourceDirectory = join(resolve(cwd, dest), 'src');
+
 	// Copy over template.html
 	const templateSrc = resolve(
 		__dirname,
 		join('..', 'resources', 'template.html')
 	);
-	await fs.copyFile(
-		templateSrc,
-		join(resolve(cwd, dest), 'src', 'template.html')
-	);
+	const templateDest = join(sourceDirectory, 'template.html');
+	copyFileToDestination(templateSrc, templateDest);
 
-	// Do not copy the service worker file until we have a preact API for the same.
-	// Copy over service worker
-	// const serviceWorkerSrc = resolve(__dirname, join('..', 'lib', 'sw.js'));
-	// await fs.copyFile(serviceWorkerSrc, join(resolve(cwd, dest), 'src', 'sw.js'));
+	// Copy over sw.js
+	const serviceWorkerSrc = resolve(__dirname, join('..', '..', 'sw', 'sw.js'));
+	const serviceWorkerDest = join(sourceDirectory, 'sw.js');
+	copyFileToDestination(serviceWorkerSrc, serviceWorkerDest);
 
 	if (argv.install) {
 		spinner.text = 'Installing dependencies:\n';
@@ -327,7 +372,7 @@ module.exports = async function(repo, dest, argv) {
 			${green('cd ' + dest)}
 
 		To start a development live-reload server:
-			${green(pfx + ' start')}
+			${green(pfx + ' dev')}
 
 		To create a production build (in ./build):
 			${green(pfx + ' build')}

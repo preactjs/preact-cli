@@ -1,4 +1,4 @@
-# preact-cli [![Build Status](https://img.shields.io/travis/preactjs/preact-cli/master.svg)](https://travis-ci.org/preactjs/preact-cli) [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg)](https://www.npmjs.com/package/preact-cli)
+# preact-cli [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg)](https://www.npmjs.com/package/preact-cli)
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
 
@@ -32,7 +32,7 @@
 - **100/100 Lighthouse score**, right out of the box ([proof])
 - Fully **automatic code splitting** for routes
 - Transparently code-split any component with an [`async!`] prefix
-- Auto-generated [Service Workers] for offline caching powered by [sw-precache]
+- Auto-generated [Service Workers] for offline caching powered by [Workbox]
 - [PRPL] pattern support for efficient loading
 - Zero-configuration pre-rendering / server-side rendering hydration
 - Support for CSS Modules, LESS, Sass, Stylus; with Autoprefixer
@@ -151,6 +151,7 @@ $ preact watch
     --cacert        Path to optional CA certificate override
     --prerender     Pre-render static content on first run
     --template      Path to custom HTML template
+    --refresh       Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
     -c, --config    Path to custom CLI config  (default preact.config.js)
     -H, --host      Set server hostname  (default 0.0.0.0)
     -p, --port      Set server port  (default 8080)
@@ -238,7 +239,7 @@ export default {
 	plugins: [
 		// either a function
 		// (you'd probably import this because you can use the `webpack` function instead of an inline plugin)
-		function() {},
+		function () {},
 		// strings also work (they get imported by preact-cli), useful for the json config
 		'plugin-name',
 		// with options
@@ -347,7 +348,7 @@ The default templates comes with a `.css` file for each component. You can start
 [`"browserslist"`]: https://github.com/ai/browserslist
 [```.babelrc```]: https://babeljs.io/docs/usage/babelrc
 [default]: https://github.com/preactjs-templates/default
-[sw-precache]: https://github.com/GoogleChrome/sw-precache
+[Workbox]: https://developers.google.com/web/tools/workbox
 [preact-router]: https://github.com/preactjs/preact-router
 [material]: https://github.com/preactjs-templates/material
 [netlify]: https://github.com/preactjs-templates/netlify

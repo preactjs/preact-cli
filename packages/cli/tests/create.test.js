@@ -1,4 +1,5 @@
-const { relative } = require('path');
+const fs = require('fs');
+const { relative, resolve } = require('path');
 const { create } = require('./lib/cli');
 const { expand } = require('./lib/utils');
 const snapshots = require('./images/create');
@@ -17,6 +18,24 @@ describe('preact create', () => {
 
 			expect(output.sort()).toEqual(snapshots[key]);
 		});
+	});
+
+	it(`should use template.html from the github repo`, async () => {
+		let dir = await create('netlify');
+
+		const templateFilePath = resolve(__dirname, dir, 'src', 'template.html');
+		const template = fs.readFileSync(templateFilePath).toString('utf8');
+
+		expect(template.includes('twitter:card')).toEqual(true);
+	});
+
+	it(`should have 'apple-touch-icon' meta tag`, async () => {
+		let dir = await create('simple');
+
+		const templateFilePath = resolve(__dirname, dir, 'src', 'template.html');
+		const template = fs.readFileSync(templateFilePath).toString('utf8');
+
+		expect(template.includes('apple-touch-icon')).toEqual(true);
 	});
 
 	// it('should fail given an invalid name', async () => {

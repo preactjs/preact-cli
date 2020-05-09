@@ -38,6 +38,7 @@ if (typeof window !== 'undefined') {
 	});
 
 	setTimeout(() => {
+		// eslint-disable-next-line
 		console.log('BOOTED');
 		window.booted = true;
 	}, 10);

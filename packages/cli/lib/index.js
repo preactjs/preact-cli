@@ -24,7 +24,7 @@ const commands = require('./commands');
 // installHooks();
 notifier({ pkg }).notify();
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
 	error(err.stack || err.message);
 });
 
@@ -41,6 +41,11 @@ prog
 	.option('--template', 'Path to custom HTML template')
 	.option('--preload', 'Adds preload tags to the document its assets', false)
 	.option(
+		'--refresh',
+		'Enables experimental preact-refresh functionality',
+		false
+	)
+	.option(
 		'--analyze',
 		'Launch interactive Analyzer to inspect production bundle(s)'
 	)
@@ -51,7 +56,7 @@ prog
 	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
-	.option('--brotli', 'Adds brotli redirects to the service worker.', false)
+	.option('--brotli', 'Builds brotli compressed bundles of javascript.', false)
 	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
 	.option('-v, --verbose', 'Verbose output')
 	.action(commands.build);
@@ -69,10 +74,7 @@ prog
 	.option('-v, --verbose', 'Verbose output', false)
 	.action(commands.create);
 
-prog
-	.command('list')
-	.describe('List official templates')
-	.action(commands.list);
+prog.command('list').describe('List official templates').action(commands.list);
 
 prog
 	.command('watch [src]')
@@ -104,8 +106,7 @@ prog
 	.command('info')
 	.describe('Print out debugging information about the local environment')
 	.action(() => {
-		console.log();
-		console.log('Environment Info:');
+		process.stdout.write('\nEnvironment Info:');
 		envinfo
 			.run({
 				System: ['OS', 'CPU'],
@@ -120,7 +121,7 @@ prog
 				],
 				npmGlobalPackages: ['preact-cli'],
 			})
-			.then(console.log);
+			.then((info) => process.stdout.write(`${info}\n`));
 	});
 
 prog.parse(process.argv);

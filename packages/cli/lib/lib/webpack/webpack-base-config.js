@@ -140,6 +140,7 @@ module.exports = function(env) {
 				{
 					style: source('style'),
 					'preact-cli-entrypoint': source('index'),
+					url: 'native-url',
 					// preact-compat aliases for supporting React dependencies:
 					react: compat,
 					'react-dom': compat,
@@ -215,7 +216,7 @@ module.exports = function(env) {
 								loader: 'stylus-loader',
 								options: {
 									sourceMap: true,
-									paths: [nodeModules],
+									paths: nodeModules,
 								},
 							},
 						},
