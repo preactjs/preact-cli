@@ -34,7 +34,7 @@ let app = interopDefault(require('preact-cli-entrypoint'));
 
 if (typeof app === 'function') {
 	let root =
-		document.getElementById('preact_root') || document.body.firstElementChild;
+		document.getElementById('preact_root') || document.body;
 
 	let init = () => {
 		let app = interopDefault(require('preact-cli-entrypoint'));
@@ -56,7 +56,7 @@ if (typeof app === 'function') {
 			!hydrate
 				? render
 				: hydrate;
-		root = doRender(h(app, { CLI_DATA }), document.body, root);
+		root = doRender(h(app, { CLI_DATA }),root);
 	};
 
 	if (module.hot) module.hot.accept('preact-cli-entrypoint', init);
