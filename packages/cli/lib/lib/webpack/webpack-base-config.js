@@ -73,13 +73,14 @@ function getSassConfiguration(...includePaths) {
 
 module.exports = function(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
+	const babelConfigFile = env.babelConfig || '.babelrc';
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	// Apply base-level `env` values
 	env.dest = resolve(cwd, env.dest || 'build');
 	env.manifest = readJson(source('manifest.json')) || {};
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
-	let babelrc = readJson(resolve(cwd, 'old')) || {};
+	let babelrc = readJson(resolve(cwd, babelConfigFile)) || {};
 
 	// use browserslist config environment, config default, or default browsers
 	// default browsers are > 0.25% global market share or Internet Explorer >= 9
