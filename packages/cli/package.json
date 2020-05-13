@@ -44,6 +44,7 @@
   "bugs": "https://github.com/developit/preact-cli/issues",
   "homepage": "https://github.com/developit/preact-cli",
   "devDependencies": {
+    "@prefresh/webpack": "0.6.0",
     "eslint": "^6.1.0",
     "html-looks-like": "^1.0.2",
     "jest": "^25.1.0",
@@ -57,10 +58,10 @@
     "polka": "^0.5.2",
     "preact": "^10.0.0",
     "preact-compat": "^3.18.5",
-    "preact-refresh": "0.3.1",
     "preact-render-to-string": "^5.0.6",
     "preact-router": "^3.0.1",
     "puppeteer": "^2.1.1",
+    "react-refresh": "0.8.2",
     "sass-loader": "^8.0.2",
     "shelljs": "^0.8.3",
     "sirv": "^1.0.0-next.2"

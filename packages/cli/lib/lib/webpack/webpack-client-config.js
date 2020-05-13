@@ -15,7 +15,7 @@ const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const RefreshPlugin = require('preact-refresh');
+const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
 
 const cleanFilename = (name) =>
