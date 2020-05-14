@@ -60,7 +60,7 @@
     "preact-compat": "^3.18.5",
     "preact-render-to-string": "^5.0.6",
     "preact-router": "^3.0.1",
-    "puppeteer": "^2.1.1",
+    "puppeteer": "^3.0.4",
     "react-refresh": "0.8.2",
     "sass-loader": "^8.0.2",
     "shelljs": "^0.8.3",
