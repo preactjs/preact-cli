@@ -29,6 +29,7 @@
     "node": ">=8"
   },
   "files": [
+    "sw",
     "lib",
     "babel"
   ],
