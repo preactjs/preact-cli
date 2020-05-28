@@ -71,7 +71,7 @@ function getSassConfiguration(...includePaths) {
 	return config;
 }
 
-module.exports = function(env) {
+module.exports = function (env) {
 	const { cwd, isProd, isWatch, src, source } = env;
 	const babelConfigFile = env.babelConfig || '.babelrc';
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
@@ -100,12 +100,6 @@ module.exports = function(env) {
 		requireRelative.resolve('preact/compat', cwd);
 		compat = 'preact/compat';
 	} catch (e) {}
-
-	let babelConfig = Object.assign(
-		{ babelrc: false },
-		createBabelConfig(env, { browsers }),
-		babelrc // intentionally overwrite our settings
-	);
 
 	let tsconfig = resolveTsconfig(cwd, isProd);
 
@@ -170,7 +164,11 @@ module.exports = function(env) {
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: 'babel-loader',
-					options: babelConfig,
+					options: Object.assign(
+						{ babelrc: false },
+						createBabelConfig(env, { browsers }),
+						babelrc // intentionally overwrite our settings
+					),
 				},
 				{
 					// LESS
@@ -332,7 +330,7 @@ module.exports = function(env) {
 							patterns: [
 								{
 									regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-									value: s => `return;${Array(s.length - 7).join(' ')}(`,
+									value: (s) => `return;${Array(s.length - 7).join(' ')}(`,
 								},
 							],
 						}),

@@ -4,12 +4,6 @@ module.exports = function (env, options = {}) {
 	return {
 		presets: [
 			[
-				require.resolve('@babel/preset-typescript'),
-				{
-					jsxPragma: 'h',
-				},
-			],
-			[
 				require.resolve('@babel/preset-env'),
 				{
 					loose: true,
@@ -22,7 +16,6 @@ module.exports = function (env, options = {}) {
 			],
 		],
 		plugins: [
-			!isProd && refresh && require.resolve('react-refresh/babel'),
 			require.resolve('@babel/plugin-syntax-dynamic-import'),
 			require.resolve('@babel/plugin-transform-object-assign'),
 			[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
@@ -33,13 +26,25 @@ module.exports = function (env, options = {}) {
 			require.resolve('@babel/plugin-proposal-object-rest-spread'),
 			isProd &&
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
+			[require.resolve('fast-async'), { spec: true }],
+			require.resolve('babel-plugin-macros'),
 			[
 				require.resolve('@babel/plugin-transform-react-jsx'),
 				{ pragma: 'h', pragmaFrag: 'Fragment' },
 			],
-			[require.resolve('fast-async'), { spec: true }],
-			require.resolve('babel-plugin-macros'),
-			!isProd && isRHLEnabled && require.resolve('react-hot-loader/babel'),
 		].filter(Boolean),
+		overrides: [
+			// Transforms to apply only to first-party code:
+			{
+				exclude: /(^|\/|\\)node_modules(\/|\/)/,
+				presets: [
+					[require.resolve('@babel/preset-typescript'), { jsxPragma: 'h' }],
+				],
+				plugins: [
+					!isProd && refresh && require.resolve('react-refresh/babel'),
+					!isProd && isRHLEnabled && require.resolve('react-hot-loader/babel'),
+				].filter(Boolean),
+			},
+		],
 	};
 };
