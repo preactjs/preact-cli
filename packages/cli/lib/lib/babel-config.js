@@ -32,26 +32,19 @@ module.exports = function (env, options = {}) {
 		overrides: [
 			// Transforms to apply only to first-party code:
 			{
-				exclude: /(^|\/|\\)node_modules(\/|\\/)/,
+				exclude: /(^|\/|\\)node_modules(\/|\/)/,
 				presets: [
-					[
-						require.resolve('@babel/preset-typescript'),
-						{ jsxPragma: 'h' },
-					]
+					[require.resolve('@babel/preset-typescript'), { jsxPragma: 'h' }],
 				],
 				plugins: [
 					[
 						require.resolve('@babel/plugin-transform-react-jsx'),
 						{ pragma: 'h', pragmaFrag: 'Fragment' },
 					],
-					!isProd &&
-						refresh &&
-						require.resolve('react-refresh/babel'),
-					!isProd &&
-						isRHLEnabled &&
-						require.resolve('react-hot-loader/babel'),
-				].filter(Boolean)
-			}
-		]
+					!isProd && refresh && require.resolve('react-refresh/babel'),
+					!isProd && isRHLEnabled && require.resolve('react-hot-loader/babel'),
+				].filter(Boolean),
+			},
+		],
 	};
 };
