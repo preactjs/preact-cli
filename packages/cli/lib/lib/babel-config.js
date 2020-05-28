@@ -1,4 +1,4 @@
-module.exports = function (env, options = {}) {
+module.exports = function (env, options = {}, isNodeModules) {
 	const { production: isProd, rhl: isRHLEnabled, refresh } = env || {};
 
 	return {
@@ -22,7 +22,10 @@ module.exports = function (env, options = {}) {
 			],
 		],
 		plugins: [
-			!isProd && refresh && require.resolve('react-refresh/babel'),
+			!isProd &&
+				!isNodeModules &&
+				refresh &&
+				require.resolve('react-refresh/babel'),
 			require.resolve('@babel/plugin-syntax-dynamic-import'),
 			require.resolve('@babel/plugin-transform-object-assign'),
 			[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
