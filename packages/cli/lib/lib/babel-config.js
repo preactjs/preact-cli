@@ -28,6 +28,10 @@ module.exports = function (env, options = {}) {
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
 			[require.resolve('fast-async'), { spec: true }],
 			require.resolve('babel-plugin-macros'),
+			[
+				require.resolve('@babel/plugin-transform-react-jsx'),
+				{ pragma: 'h', pragmaFrag: 'Fragment' },
+			],
 		].filter(Boolean),
 		overrides: [
 			// Transforms to apply only to first-party code:
@@ -37,10 +41,6 @@ module.exports = function (env, options = {}) {
 					[require.resolve('@babel/preset-typescript'), { jsxPragma: 'h' }],
 				],
 				plugins: [
-					[
-						require.resolve('@babel/plugin-transform-react-jsx'),
-						{ pragma: 'h', pragmaFrag: 'Fragment' },
-					],
 					!isProd && refresh && require.resolve('react-refresh/babel'),
 					!isProd && isRHLEnabled && require.resolve('react-hot-loader/babel'),
 				].filter(Boolean),
