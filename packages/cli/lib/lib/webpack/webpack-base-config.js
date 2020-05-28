@@ -164,24 +164,9 @@ module.exports = function (env) {
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: 'babel-loader',
-					include: /node_modules/,
 					options: Object.assign(
 						{ babelrc: false },
-						createBabelConfig(env, { browsers }, true),
-						babelrc // intentionally overwrite our settings
-					),
-				},
-				{
-					// ES2015
-					enforce: 'pre',
-					test: /\.m?[jt]sx?$/,
-					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
-					type: 'javascript/auto',
-					loader: 'babel-loader',
-					exclude: /node_modules/,
-					options: Object.assign(
-						{ babelrc: false },
-						createBabelConfig(env, { browsers }, false),
+						createBabelConfig(env, { browsers }),
 						babelrc // intentionally overwrite our settings
 					),
 				},
