@@ -96,8 +96,10 @@ module.exports = function (env) {
 	let nodeModules = [...new Set([...userNodeModules, ...cliNodeModules])];
 
 	let compat = 'preact-compat';
+	let isPreactX = false;
 	try {
 		requireRelative.resolve('preact/compat', cwd);
+		isPreactX = true;
 		compat = 'preact/compat';
 	} catch (e) {}
 
@@ -286,6 +288,7 @@ module.exports = function (env) {
 				'process.env.NODE_ENV': JSON.stringify(
 					isProd ? 'production' : 'development'
 				),
+				IS_PREACT_X: isPreactX + '',
 			}),
 			new webpack.ProvidePlugin({
 				h: ['preact', 'h'],

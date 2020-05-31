@@ -1,11 +1,11 @@
-/* global __webpack_public_path__ */
+/* global __webpack_public_path__, IS_PREACT_X */
 
 import * as Preact from 'preact';
 const { h, render, hydrate } = Preact;
 
-const interopDefault = m => (m && m.default ? m.default : m);
+const interopDefault = (m) => (m && m.default ? m.default : m);
 
-const normalizeURL = url => (url[url.length - 1] === '/' ? url : url + '/');
+const normalizeURL = (url) => (url[url.length - 1] === '/' ? url : url + '/');
 
 if (process.env.NODE_ENV === 'development') {
 	// enable preact devtools
@@ -35,8 +35,7 @@ if (process.env.NODE_ENV === 'development') {
 let app = interopDefault(require('preact-cli-entrypoint'));
 
 if (typeof app === 'function') {
-	let root =
-		document.getElementById('preact_root') || document.body.firstElementChild;
+	let root;
 
 	let init = () => {
 		let app = interopDefault(require('preact-cli-entrypoint'));
@@ -59,8 +58,17 @@ if (typeof app === 'function') {
 			process.env.NODE_ENV === 'production' &&
 			hydrate &&
 			currentURL === location.pathname;
-		const doRender = canHydrate ? hydrate : render;
-		root = doRender(h(app, { CLI_DATA }), document.body, root);
+		let doRender = canHydrate ? hydrate : render;
+		if (IS_PREACT_X) {
+			doRender(h(app, { CLI_DATA }), document.body);
+			doRender = render;
+		} else {
+			root = doRender(
+				h(app, { CLI_DATA }),
+				document.body,
+				root || document.body.firstElementChild
+			);
+		}
 	};
 
 	if (module.hot) module.hot.accept('preact-cli-entrypoint', init);
