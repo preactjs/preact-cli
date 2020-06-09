@@ -1,4 +1,5 @@
 const { resolve, join } = require('path');
+const devalue = require('devalue');
 const os = require('os');
 const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
@@ -58,6 +59,9 @@ module.exports = async function(config) {
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
 			template: `!!ejs-loader!${template}`,
+			templateParameters: {
+				devalue,
+			},
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
