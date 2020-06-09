@@ -2708,9 +2708,10 @@ babel-eslint@^10.0.1:
     eslint-visitor-keys "^1.0.0"
     resolve "^1.12.0"
 
-babel-esm-plugin@^0.8.0:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/babel-esm-plugin/-/babel-esm-plugin-0.8.1.tgz#57856418bcd24661618d976d13f9f1b9e91a31da"
+babel-esm-plugin@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/babel-esm-plugin/-/babel-esm-plugin-0.9.0.tgz#4d7245965fb914fb8341089825da9c0267cc9ec9"
+  integrity sha512-OyPyLI6LUuUqNm3HNUldAkynWrLzXkhcZo4fGTsieCgHqvbCoCIMMOwJmfG9Lmp91S7WDIuUr0mvOeI8pAb/pw==
   dependencies:
     chalk "2.4.1"
     deepcopy "1.0.0"
