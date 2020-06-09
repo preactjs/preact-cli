@@ -182,7 +182,9 @@ module.exports = function (env) {
 								loader: 'less-loader',
 								options: {
 									sourceMap: true,
-									paths: [nodeModules],
+									lessOptions: {
+										paths: [nodeModules],
+									},
 								},
 							},
 						},
