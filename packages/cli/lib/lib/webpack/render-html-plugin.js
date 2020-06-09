@@ -1,5 +1,5 @@
 const { resolve, join } = require('path');
-const devalue = require('devalue');
+const serialize = require('serialize-javascript');
 const os = require('os');
 const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
@@ -59,9 +59,6 @@ module.exports = async function(config) {
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
 			template: `!!ejs-loader!${template}`,
-			templateParameters: {
-				devalue,
-			},
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
@@ -97,7 +94,8 @@ module.exports = async function(config) {
 				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
 			},
 			scriptLoading: 'defer',
-			CLI_DATA: { preRenderData: { url, ...routeData } },
+			CLI_DATA: serialize({ preRenderData: { url, ...routeData } }),
+			UNSAFE_CLI_DATA: { preRenderData: { url, ...routeData } }
 		});
 	};
 
@@ -152,9 +150,9 @@ module.exports = async function(config) {
 // Adds a preact_prerender_data in every folder so that the data could be fetched separately.
 class PrerenderDataExtractPlugin {
 	constructor(page) {
-		const { url } = page.CLI_DATA.preRenderData;
+		const { url } = page.UNSAFE_CLI_DATA.preRenderData;
 		this.location_ = url.endsWith('/') ? url : url + '/';
-		this.data_ = JSON.stringify(page.CLI_DATA.preRenderData || {});
+		this.data_ = JSON.stringify(page.UNSAFE_CLI_DATA.preRenderData || {});
 	}
 	apply(compiler) {
 		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', compilation => {
