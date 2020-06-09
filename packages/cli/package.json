@@ -47,7 +47,7 @@
   "devDependencies": {
     "eslint": "^7.1.0",
     "html-looks-like": "^1.0.2",
-    "jest": "^25.1.0",
+    "jest": "^26.0.1",
     "lerna": "^3.16.4",
     "lint-staged": "^10.0.7",
     "mkdirp": "^1.0.3",
