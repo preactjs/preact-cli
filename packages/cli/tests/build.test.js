@@ -131,7 +131,7 @@ describe('preact build', () => {
 	});
 
 	prerenderUrlFiles.forEach((prerenderUrls) => {
-		it.only(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
+		it(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
 			let dir = await subject('multiple-prerendering-with-provider');
 			await build(dir, { prerenderUrls });
 
