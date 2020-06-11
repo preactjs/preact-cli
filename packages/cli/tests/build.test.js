@@ -19,7 +19,7 @@ const prerenderUrlFiles = [
 	'prerender-urls.promise.js',
 ];
 
-async function getIndex(dir, file = 'index.html') {
+async function getBody(dir, file = 'index.html') {
 	file = join(dir, `build/${file}`);
 	let html = await readFile(file, 'utf-8');
 	return html.match(/<body>.*<\/body>/)[0];
@@ -76,7 +76,7 @@ describe('preact build', () => {
 		let dir = await subject('sass');
 		await build(dir);
 
-		let body = await getIndex(dir);
+		let body = await getBody(dir);
 		looksLike(body, images.sass);
 	});
 
@@ -100,13 +100,13 @@ describe('preact build', () => {
 			let dir = await subject('multiple-prerendering');
 			await build(dir, { prerenderUrls });
 
-			const body1 = await getIndex(dir);
+			const body1 = await getBody(dir);
 			looksLike(body1, images.prerender.home);
 
-			const body2 = await getIndex(dir, 'route66/index.html');
+			const body2 = await getBody(dir, 'route66/index.html');
 			looksLike(body2, images.prerender.route);
 
-			const body3 = await getIndex(dir, 'custom/index.html');
+			const body3 = await getBody(dir, 'custom/index.html');
 			looksLike(body3, images.prerender.custom);
 
 			const head1 = await getHead(dir);
@@ -131,21 +131,24 @@ describe('preact build', () => {
 	});
 
 	prerenderUrlFiles.forEach((prerenderUrls) => {
-		it(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
+		it.only(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
 			let dir = await subject('multiple-prerendering-with-provider');
 			await build(dir, { prerenderUrls });
 
-			const body1 = await getIndex(dir);
+			const body1 = await getBody(dir);
 			looksLike(body1, images.prerender.home);
 
-			const body2 = await getIndex(dir, 'route66/index.html');
+			const body2 = await getBody(dir, 'route66/index.html');
 			looksLike(body2, images.prerender.route);
 
-			const body3 = await getIndex(dir, 'custom/index.html');
+			const body3 = await getBody(dir, 'custom/index.html');
 			looksLike(body3, images.prerender.custom);
 
-			const body4 = await getIndex(dir, 'customhook/index.html');
+			const body4 = await getBody(dir, 'customhook/index.html');
 			looksLike(body4, images.prerender.customhook);
+
+			const body5 = await getBody(dir, 'htmlsafe/index.html');
+			looksLike(body5, images.prerender.htmlSafe);
 
 			const head1 = await getHead(dir);
 			expect(head1).toEqual(
