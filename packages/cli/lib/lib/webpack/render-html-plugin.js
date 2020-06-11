@@ -1,5 +1,4 @@
 const { resolve, join } = require('path');
-const serialize = require('serialize-javascript');
 const os = require('os');
 const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
@@ -94,7 +93,7 @@ module.exports = async function(config) {
 				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
 			},
 			scriptLoading: 'defer',
-			CLI_DATA: serialize({ preRenderData: { url, ...routeData } })
+			CLI_DATA: { preRenderData: { url, ...routeData } }
 		});
 	};
 
@@ -149,7 +148,7 @@ module.exports = async function(config) {
 // Adds a preact_prerender_data in every folder so that the data could be fetched separately.
 class PrerenderDataExtractPlugin {
 	constructor(page) {
-		const cliData = eval('(' + page.CLI_DATA + ')');
+		const cliData = page.CLI_DATA || {};
 		const { url } = cliData.preRenderData;
 		this.location_ = url.endsWith('/') ? url : url + '/';
 		this.data_ = JSON.stringify(cliData.preRenderData || {});

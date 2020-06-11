@@ -123,7 +123,6 @@
     "require-relative": "^0.8.7",
     "rimraf": "^3.0.2",
     "sade": "^1.4.1",
-    "serialize-javascript": "^4.0.0",
     "size-plugin": "^2.0.1",
     "source-map": "^0.7.2",
     "stack-trace": "0.0.10",
