@@ -71,15 +71,16 @@ function getSassConfiguration(...includePaths) {
 	return config;
 }
 
-module.exports = function(env) {
+module.exports = function (env) {
 	const { cwd, isProd, isWatch, src, source } = env;
+	const babelConfigFile = env.babelConfig || '.babelrc';
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	// Apply base-level `env` values
 	env.dest = resolve(cwd, env.dest || 'build');
 	env.manifest = readJson(source('manifest.json')) || {};
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
-	let babelrc = readJson(resolve(cwd, 'old')) || {};
+	let babelrc = readJson(resolve(cwd, babelConfigFile)) || {};
 
 	// use browserslist config environment, config default, or default browsers
 	// default browsers are > 0.25% global market share or Internet Explorer >= 9
@@ -99,12 +100,6 @@ module.exports = function(env) {
 		requireRelative.resolve('preact/compat', cwd);
 		compat = 'preact/compat';
 	} catch (e) {}
-
-	let babelConfig = Object.assign(
-		{ babelrc: false },
-		createBabelConfig(env, { browsers }),
-		babelrc // intentionally overwrite our settings
-	);
 
 	let tsconfig = resolveTsconfig(cwd, isProd);
 
@@ -169,7 +164,11 @@ module.exports = function(env) {
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: 'babel-loader',
-					options: babelConfig,
+					options: Object.assign(
+						{ babelrc: false },
+						createBabelConfig(env, { browsers }),
+						babelrc // intentionally overwrite our settings
+					),
 				},
 				{
 					// LESS
@@ -183,7 +182,9 @@ module.exports = function(env) {
 								loader: 'less-loader',
 								options: {
 									sourceMap: true,
-									paths: [nodeModules],
+									lessOptions: {
+										paths: [nodeModules],
+									},
 								},
 							},
 						},
@@ -216,7 +217,7 @@ module.exports = function(env) {
 								loader: 'stylus-loader',
 								options: {
 									sourceMap: true,
-									paths: [nodeModules],
+									paths: nodeModules,
 								},
 							},
 						},
@@ -331,7 +332,7 @@ module.exports = function(env) {
 							patterns: [
 								{
 									regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-									value: s => `return;${Array(s.length - 7).join(' ')}(`,
+									value: (s) => `return;${Array(s.length - 7).join(' ')}(`,
 								},
 							],
 						}),

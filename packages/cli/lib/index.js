@@ -24,7 +24,7 @@ const commands = require('./commands');
 // installHooks();
 notifier({ pkg }).notify();
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
 	error(err.stack || err.message);
 });
 
@@ -41,6 +41,11 @@ prog
 	.option('--template', 'Path to custom HTML template')
 	.option('--preload', 'Adds preload tags to the document its assets', false)
 	.option(
+		'--refresh',
+		'Enables experimental preact-refresh functionality',
+		false
+	)
+	.option(
 		'--analyze',
 		'Launch interactive Analyzer to inspect production bundle(s)'
 	)
@@ -50,6 +55,7 @@ prog
 		'prerender-urls.json'
 	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
+	.option('--babelConfig', 'Specify the babel config file', '.babelrc')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
 	.option('--brotli', 'Builds brotli compressed bundles of javascript.', false)
 	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
@@ -69,10 +75,7 @@ prog
 	.option('-v, --verbose', 'Verbose output', false)
 	.action(commands.create);
 
-prog
-	.command('list')
-	.describe('List official templates')
-	.action(commands.list);
+prog.command('list').describe('List official templates').action(commands.list);
 
 prog
 	.command('watch [src]')
@@ -82,6 +85,7 @@ prog
 	.option('--esm', 'Builds ES-2015 bundles for your code.', false)
 	.option('--clear', 'Clear the console', true)
 	.option('--sw', 'Generate and attach a Service Worker', undefined)
+	.option('--babelConfig', 'Specify the babel config file', '.babelrc')
 	.option('--rhl', 'Enable react hot loader', false)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--https', 'Run server with HTTPS protocol')
@@ -119,7 +123,7 @@ prog
 				],
 				npmGlobalPackages: ['preact-cli'],
 			})
-			.then(info => process.stdout.write(`${info}\n`));
+			.then((info) => process.stdout.write(`${info}\n`));
 	});
 
 prog.parse(process.argv);

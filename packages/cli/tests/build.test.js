@@ -6,6 +6,8 @@ const { snapshot, hasKey, isWithin } = require('./lib/utils');
 const { existsSync } = require('fs');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
+const { promisify } = require('util');
+const glob = promisify(require('glob').glob);
 
 // TODO
 // const ours = ['empty', 'full', 'simple', 'root'];
@@ -48,7 +50,7 @@ function testMatch(src, tar) {
 }
 
 describe('preact build', () => {
-	ours.forEach(key => {
+	ours.forEach((key) => {
 		it(`builds the '${key}' output`, async () => {
 			let dir = await create(key);
 
@@ -81,11 +83,19 @@ describe('preact build', () => {
 	it('should use custom `.babelrc`', async () => {
 		// app with custom .babelrc enabling async functions
 		let app = await subject('custom-babelrc');
-		// UglifyJS throws error when generator is encountered
-		expect(async () => await build(app)).not;
+
+		await build(app);
+
+		const bundleFiles = await glob(`${app}/build/bundle.*.js`);
+		const transpiledChunk = await readFile(bundleFiles[0], 'utf8');
+
+		// when tragetting only last 1 chrome version, babel preserves
+		// arrow function. So checking for the delay function code from delay function in
+		// https://github.com/preactjs/preact-cli/blob/master/packages/cli/tests/subjects/custom-babelrc/index.js
+		expect(transpiledChunk.includes('=>setTimeout')).toBe(true);
 	});
 
-	prerenderUrlFiles.forEach(prerenderUrls => {
+	prerenderUrlFiles.forEach((prerenderUrls) => {
 		it(`should prerender the routes provided with '${prerenderUrls}'`, async () => {
 			let dir = await subject('multiple-prerendering');
 			await build(dir, { prerenderUrls });
@@ -120,7 +130,7 @@ describe('preact build', () => {
 		});
 	});
 
-	prerenderUrlFiles.forEach(prerenderUrls => {
+	prerenderUrlFiles.forEach((prerenderUrls) => {
 		it(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
 			let dir = await subject('multiple-prerendering-with-provider');
 			await build(dir, { prerenderUrls });

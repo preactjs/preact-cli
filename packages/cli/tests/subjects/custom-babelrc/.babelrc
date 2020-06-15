@@ -1,11 +1,11 @@
 {
-  "plugins": [
-    "transform-regenerator",
-    ["transform-react-jsx", { "pragma": "h" }],
-    ["transform-runtime", {
-      "helpers": false,
-      "polyfill": false,
-      "regenerator": true
-    }]
-  ]
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				"bugfixes": true,
+				"targets": "last 1 Chrome versions"
+			}
+		]
+	]
 }
