@@ -46,7 +46,7 @@ if (typeof app === 'function') {
 		);
 		if (inlineDataElement) {
 			preRenderData =
-				JSON.parse(inlineDataElement.innerHTML).preRenderData || preRenderData;
+			JSON.parse(decodeURI(inlineDataElement.innerHTML)).preRenderData || preRenderData;
 		}
 		/* An object named CLI_DATA is passed as a prop,
 		 * this keeps us future proof if in case we decide,

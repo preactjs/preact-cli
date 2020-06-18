@@ -93,7 +93,7 @@ module.exports = async function(config) {
 				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
 			},
 			scriptLoading: 'defer',
-			CLI_DATA: { preRenderData: { url, ...routeData } },
+			CLI_DATA: { preRenderData: { url, ...routeData } }
 		});
 	};
 
@@ -148,9 +148,10 @@ module.exports = async function(config) {
 // Adds a preact_prerender_data in every folder so that the data could be fetched separately.
 class PrerenderDataExtractPlugin {
 	constructor(page) {
-		const { url } = page.CLI_DATA.preRenderData;
+		const cliData = page.CLI_DATA || {};
+		const { url } = cliData.preRenderData || {};
 		this.location_ = url.endsWith('/') ? url : url + '/';
-		this.data_ = JSON.stringify(page.CLI_DATA.preRenderData || {});
+		this.data_ = JSON.stringify(cliData.preRenderData || {});
 	}
 	apply(compiler) {
 		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', compilation => {
