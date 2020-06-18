@@ -166,6 +166,15 @@ exports.prerender.customhook = `
 </body>
 `;
 
+exports.prerender.htmlSafe = `
+<body>
+	<div id="app">
+		<div>&lt;script&gt;It is HTML safe&lt;/script&gt;</div>
+	</div>
+	{{ ... }}
+</body>
+`;
+
 exports.webpack = `
 <!DOCTYPE html>
 <html lang="en">
