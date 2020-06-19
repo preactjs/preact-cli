@@ -30,7 +30,7 @@
 ### Features
 
 - **100/100 Lighthouse score**, right out of the box ([proof])
-- Fully **automatic code splitting** for routes
+- Fully **automatic code splitting** for routes (see caveat in [Route automatic code splitting](#route-automatic-code-splitting) section)
 - Transparently code-split any component with an [`async!`] prefix
 - Auto-generated [Service Workers] for offline caching powered by [Workbox]
 - [PRPL] pattern support for efficient loading
@@ -367,3 +367,15 @@ The default templates comes with a `.css` file for each component. You can start
 [`async!`]: https://github.com/preactjs/preact-cli/blob/1.4.1/examples/full/src/components/app.js#L7
 [sass]: https://sass-lang.com
 [less]: http://lesscss.org
+
+### Route automatic code splitting
+
+Route code splitting works with the [async-loader](https://github.com/preactjs/preact-cli/tree/master/packages/async-loader).
+This feature will be automatically enabled for files located in:
+- `src/routes/{*,*/index}.{js,jsx,ts,tsx}`
+- `src/components/routes/{*,*/index}.{js,jsx,ts,tsx}`
+- `src/components/async/{*,*/index}.{js,jsx,ts,tsx}`
+
+**Caveat**:
+The async loader can only work with default exports.
+Make sure to have your component exported as default or you module import will be broken at runtime (Imported component will be undefined).
