@@ -377,5 +377,7 @@ This feature will be automatically enabled for files located in:
 - `src/components/async/{*,*/index}.{js,jsx,ts,tsx}`
 
 **Caveat**:
+
 The async loader can only work with default exports.
-Make sure to have your component exported as default or you module import will be broken at runtime (Imported component will be undefined).
+Make sure to have your component exported as default or you module import will be broken at runtime (Imported component will be undefined).\
+If you wish to disable this behavior, rename your folder to avoid matching the above paths.
