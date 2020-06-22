@@ -1,5 +1,5 @@
 module.exports = function (env, options = {}) {
-	const { production: isProd, rhl: isRHLEnabled, refresh } = env || {};
+	const { production: isProd, refresh } = env || {};
 
 	return {
 		presets: [
@@ -42,7 +42,6 @@ module.exports = function (env, options = {}) {
 				],
 				plugins: [
 					!isProd && refresh && require.resolve('react-refresh/babel'),
-					!isProd && isRHLEnabled && require.resolve('react-hot-loader/babel'),
 				].filter(Boolean),
 			},
 		],

@@ -86,7 +86,7 @@ prog
 	.option('--clear', 'Clear the console', true)
 	.option('--sw', 'Generate and attach a Service Worker', undefined)
 	.option('--babelConfig', 'Specify the babel config file', '.babelrc')
-	.option('--rhl', 'Enable react hot loader', false)
+	.option('--rhl', '(Deprecated) use --refresh instead', false)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--https', 'Run server with HTTPS protocol')
 	.option('--key', 'Path to PEM key for custom SSL certificate')
