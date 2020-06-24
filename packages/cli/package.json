@@ -118,7 +118,6 @@
     "promise-polyfill": "^8.1.0",
     "prompts": "^2.2.1",
     "raw-loader": "^4.0.0",
-    "react-hot-loader": "^4.12.9",
     "react-refresh": "0.8.2",
     "require-relative": "^0.8.7",
     "rimraf": "^3.0.2",

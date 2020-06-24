@@ -3,18 +3,14 @@
 import * as Preact from 'preact';
 const { h, render, hydrate } = Preact;
 
-const interopDefault = m => (m && m.default ? m.default : m);
+const interopDefault = (m) => (m && m.default ? m.default : m);
 
-const normalizeURL = url => (url[url.length - 1] === '/' ? url : url + '/');
+const normalizeURL = (url) => (url[url.length - 1] === '/' ? url : url + '/');
 
 if (process.env.NODE_ENV === 'development') {
 	// enable preact devtools
 	require('preact/debug');
-	if (process.env.RHL) {
-		// enable hot loader
-		const hotLoader = interopDefault(require('react-hot-loader'));
-		hotLoader.preact(interopDefault(require('preact')));
-	}
+
 	// only add a debug sw if webpack service worker is not requested.
 	if (process.env.ADD_SW === undefined && 'serviceWorker' in navigator) {
 		// eslint-disable-next-line no-undef
@@ -46,7 +42,8 @@ if (typeof app === 'function') {
 		);
 		if (inlineDataElement) {
 			preRenderData =
-			JSON.parse(decodeURI(inlineDataElement.innerHTML)).preRenderData || preRenderData;
+				JSON.parse(decodeURI(inlineDataElement.innerHTML)).preRenderData ||
+				preRenderData;
 		}
 		/* An object named CLI_DATA is passed as a prop,
 		 * this keeps us future proof if in case we decide,
