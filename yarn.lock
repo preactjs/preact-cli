@@ -1823,22 +1823,23 @@
   version "1.0.0-next.11"
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.11.tgz#aeb16f50649a91af79dbe36574b66d0f9e4d9f71"
 
-"@prefresh/core@0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@prefresh/core/-/core-0.6.0.tgz#b7801ad3d16de9d21ed0824db6c85707f93cf93c"
-
-"@prefresh/utils@0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@prefresh/utils/-/utils-0.1.2.tgz#4fd698cf3b191667cc03406841cdeca0441f4b3a"
-  integrity sha512-uIXXKHoNPKCyJRvJId06VBSaNJKn1ifVACatJkcfJw4i9e3A89q7aOM91CUAyvgbY8QzPyiqG1EeIbsjgcFgKA==
-
-"@prefresh/webpack@0.7.1":
+"@prefresh/core@^0.7.0":
   version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@prefresh/webpack/-/webpack-0.7.1.tgz#e5cd6eb27ba1686acc5bc84154959ec74c0190f1"
-  integrity sha512-3EFUh8mPAv0xO9C1mDWkyoUtNTIIN2J1f/D1DabLvKlj/wwwVMWprdfexWrhNSFs+hJHRx/dqJzTitPvoa63Yg==
+  resolved "https://registry.yarnpkg.com/@prefresh/core/-/core-0.7.1.tgz#75c73975dbbf66d70fc698eda26aeae1767d3c07"
+  integrity sha512-wa7M0cTV7DcBu3vw4MEtVXWFxsdHXbky8qzhBFJ/HEp7fdEmvOateYmGOjSeOn+QaKeAqUBGTMnTyVER0lamNA==
+
+"@prefresh/utils@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@prefresh/utils/-/utils-0.2.0.tgz#1d269210758346e8e1f8a6410b61ba3e4fb982f9"
+  integrity sha512-mxJraGQLPmvAuI8Br0y/pvJWI2sy5IHU5veZ5GglP1gnb4dpp5rjIVjHdlVvrXUKGtFIpB3zxrqS+vYn1cQ01A==
+
+"@prefresh/webpack@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@prefresh/webpack/-/webpack-0.8.1.tgz#b858f5c06ae4532703f79757a96e8ece2a6fffd9"
+  integrity sha512-/35IQeMpKJDJyd6FGgaPB9dHMv0WqKUZYVyKa84PgNFoDNf8EHA0DqCqA4ZtWercK3WRtVJuHoucXzuAxSSb6g==
   dependencies:
-    "@prefresh/core" "0.6.0"
-    "@prefresh/utils" "0.1.2"
+    "@prefresh/core" "^0.7.0"
+    "@prefresh/utils" "^0.2.0"
 
 "@rollup/plugin-node-resolve@^7.1.1":
   version "7.1.3"
