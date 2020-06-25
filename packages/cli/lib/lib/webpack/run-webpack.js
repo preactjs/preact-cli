@@ -16,6 +16,17 @@ async function devBuild(env) {
 
 	await transformConfig(env, config);
 
+	const shouldRunDevServer = env.devServer;
+
+	if (!shouldRunDevServer && env.prerender) {
+		let ssrConfig = serverConfig(env);
+		await transformConfig(env, ssrConfig, true);
+		let serverCompiler = webpack(ssrConfig);
+		await runWatch(serverCompiler, {
+			ignored: env.source(env.ignore),
+		});
+	}
+
 	let userPort =
 		parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
 	let port = await getPort({ port: userPort });
@@ -39,6 +50,8 @@ async function devBuild(env) {
 		});
 
 		compiler.hooks.done.tap('CliDevPlugin', (stats) => {
+			if (!shouldRunDevServer) return;
+
 			let devServer = config.devServer;
 			let protocol = process.env.HTTPS || devServer.https ? 'https' : 'http';
 			let host = process.env.HOST || devServer.host || 'localhost';
@@ -70,6 +83,13 @@ async function devBuild(env) {
 		});
 
 		compiler.hooks.failed.tap('CliDevPlugin', rej);
+
+		if (!shouldRunDevServer)
+			return res(
+				runWatch(compiler, {
+					ignored: env.source(env.ignore),
+				})
+			);
 
 		let c = Object.assign({}, config.devServer, {
 			stats: { colors: true },
@@ -111,6 +131,20 @@ async function prodBuild(env) {
 function runCompiler(compiler) {
 	return new Promise((res, rej) => {
 		compiler.run((err, stats) => {
+			showStats(stats, true);
+
+			if (err || (stats && stats.hasErrors())) {
+				rej(`${red('\n\nBuild failed! \n\n')} ${err || ''}`);
+			}
+
+			res(stats);
+		});
+	});
+}
+
+function runWatch(compiler, options = {}) {
+	return new Promise((res, rej) => {
+		compiler.watch(options, (err, stats) => {
 			showStats(stats, true);
 
 			if (err || (stats && stats.hasErrors())) {
