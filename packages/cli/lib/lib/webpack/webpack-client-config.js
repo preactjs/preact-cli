@@ -26,7 +26,7 @@ const cleanFilename = (name) =>
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src, cwd /*, port? */ } = env;
+	const { isProd, source, src, cwd, devServer /*, port? */ } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
 		? require.resolve('@preact/async-loader')
