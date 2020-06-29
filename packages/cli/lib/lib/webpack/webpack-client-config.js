@@ -279,7 +279,7 @@ function isProd(config) {
 	if (config['inline-css']) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
-				preload: 'swap',
+				preload: 'media',
 				pruneSource: false,
 				logLevel: 'silent',
 				additionalStylesheets: ['*.css'],
