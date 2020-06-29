@@ -143,7 +143,6 @@ $ preact watch
     --cwd           A directory to use instead of $PWD  (default .)
     --esm           Builds ES-2015 bundles for your code.  (default true)
     --sw            Generate and attach a Service Worker  (default false)
-    --rhl           Enable react hot loader  (default false)
     --json          Generate build stats for bundle analysis
     --https         Run server with HTTPS protocol
     --key           Path to PEM key for custom SSL certificate
@@ -151,6 +150,7 @@ $ preact watch
     --cacert        Path to optional CA certificate override
     --prerender     Pre-render static content on first run
     --template      Path to custom HTML template
+    --refresh       Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
     -c, --config    Path to custom CLI config  (default preact.config.js)
     -H, --host      Set server hostname  (default 0.0.0.0)
     -p, --port      Set server port  (default 8080)
@@ -238,7 +238,7 @@ export default {
 	plugins: [
 		// either a function
 		// (you'd probably import this because you can use the `webpack` function instead of an inline plugin)
-		function() {},
+		function () {},
 		// strings also work (they get imported by preact-cli), useful for the json config
 		'plugin-name',
 		// with options
@@ -347,7 +347,7 @@ The default templates comes with a `.css` file for each component. You can start
 [`"browserslist"`]: https://github.com/ai/browserslist
 [```.babelrc```]: https://babeljs.io/docs/usage/babelrc
 [default]: https://github.com/preactjs-templates/default
-[Workbox]: https://developers.google.com/web/tools/workbox
+[workbox]: https://developers.google.com/web/tools/workbox
 [preact-router]: https://github.com/preactjs/preact-router
 [material]: https://github.com/preactjs-templates/material
 [netlify]: https://github.com/preactjs-templates/netlify

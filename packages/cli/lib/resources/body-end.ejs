@@ -1,6 +1,6 @@
 <%= htmlWebpackPlugin.options.ssr() %>
 <script type="__PREACT_CLI_DATA__">
-	<%= JSON.stringify(htmlWebpackPlugin.options.CLI_DATA) %>
+	<%= encodeURI(JSON.stringify(htmlWebpackPlugin.options.CLI_DATA)) %>
 </script>
 <% if (webpack.assets.filter(entry => entry.name.match(/bundle(\.\w{5})?.esm.js$/)).length > 0) { %>
 	<% /* Fix for safari < 11 nomodule bug. TODO: Do the following only for safari. */ %>

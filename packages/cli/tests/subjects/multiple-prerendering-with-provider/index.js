@@ -5,6 +5,7 @@ import Home from './routes/home';
 import Route66 from './routes/route66';
 import Custom from './routes/custom';
 import CustomWithHook from './routes/custom-with-hook';
+import HtmlSafe from './routes/html-safe';
 import './style.css';
 
 export default class App extends Component {
@@ -21,6 +22,7 @@ export default class App extends Component {
 						<Route66 path="/route66" />
 						<Custom path="/custom" />
 						<CustomWithHook path="/customhook" />
+						<HtmlSafe path='/htmlsafe' />
 					</Router>
 				</div>
 			</Provider>

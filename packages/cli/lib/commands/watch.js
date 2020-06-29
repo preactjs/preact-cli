@@ -1,7 +1,11 @@
 const runWebpack = require('../lib/webpack/run-webpack');
 const { warn } = require('../util');
 
-module.exports = async function(src, argv) {
+module.exports = async function (src, argv) {
+	if (argv.rhl) {
+		delete argv.rhl;
+		argv.refresh = argv.rhl;
+	}
 	argv.src = src || argv.src;
 	argv.production = false;
 

@@ -15,24 +15,27 @@ const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
 
-const cleanFilename = name =>
+const cleanFilename = (name) =>
 	name.replace(
 		/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g,
 		''
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src, cwd /*, port? */ } = env;
+	const { isProd, source, src, refresh, cwd /*, port? */ } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
 		? require.resolve('@preact/async-loader')
 		: require.resolve('@preact/async-loader/legacy');
+
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
 		polyfills: resolve(__dirname, './polyfills'),
 	};
+
 	if (!isProd) {
 		entry.bundle = [
 			entry.bundle,
@@ -87,6 +90,9 @@ async function clientConfig(env) {
 		},
 
 		plugins: [
+			...(!isProd && refresh
+				? [new webpack.HotModuleReplacementPlugin(), new RefreshPlugin()]
+				: []),
 			new PushManifestPlugin(env),
 			...(await renderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
@@ -134,7 +140,7 @@ function getBabelEsmPlugin(config) {
 				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest'],
 				beforeStartExecution: (plugins, newConfig) => {
 					const babelPlugins = newConfig.plugins;
-					newConfig.plugins = babelPlugins.filter(plugin => {
+					newConfig.plugins = babelPlugins.filter((plugin) => {
 						if (
 							Array.isArray(plugin) &&
 							plugin[0].indexOf('fast-async') !== -1
@@ -143,7 +149,7 @@ function getBabelEsmPlugin(config) {
 						}
 						return true;
 					});
-					plugins.forEach(plugin => {
+					plugins.forEach((plugin) => {
 						if (
 							plugin.constructor.name === 'DefinePlugin' &&
 							plugin.definitions
@@ -171,13 +177,16 @@ function getBabelEsmPlugin(config) {
 
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
-	const { src } = config;
-	let swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
-	const userSwPath = join(src, 'sw.js');
-	if (existsSync(userSwPath)) {
-		swPath = userSwPath;
-	} else {
-		warn(`Could not find sw.js in ${src}. Using the default service worker.`);
+	const { src, sw } = config;
+	let swPath;
+	if (sw) {
+		swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
+		const userSwPath = join(src, 'sw.js');
+		if (existsSync(userSwPath)) {
+			swPath = userSwPath;
+		} else {
+			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
+		}
 	}
 	const prodConfig = {
 		performance: Object.assign(
@@ -270,6 +279,7 @@ function isProd(config) {
 	if (config['inline-css']) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
+				preload: 'media',
 				pruneSource: false,
 				logLevel: 'silent',
 				additionalStylesheets: ['*.css'],
@@ -303,7 +313,6 @@ function isDev(config) {
 			new webpack.HotModuleReplacementPlugin(),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
-				'process.env.RHL': config.rhl,
 				'process.env.PRERENDER': config.prerender,
 			}),
 		],
@@ -333,7 +342,7 @@ function isDev(config) {
 	};
 }
 
-module.exports = async function(env) {
+module.exports = async function (env) {
 	return merge(
 		baseConfig(env),
 		await clientConfig(env),
