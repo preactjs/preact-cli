@@ -137,6 +137,9 @@ $ preact watch
 
     --src              Specify source directory  (default src)
     --cwd              A directory to use instead of $PWD  (default .)
+    --devServer        Determine if dev server should be enabled  (default true)
+    --dest             Specify output directory if dev server is disabled  (default build)
+    --ignore           Path relative to src to be ignored during watch if dev server is disabled
     --esm              Builds ES-2015 bundles for your code  (default false)
     --clear            Clear the console (default true)
     --sw               Generate and attach a Service Worker  (default false)
