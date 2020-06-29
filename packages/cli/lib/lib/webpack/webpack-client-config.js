@@ -177,13 +177,16 @@ function getBabelEsmPlugin(config) {
 
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
-	const { src } = config;
-	let swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
-	const userSwPath = join(src, 'sw.js');
-	if (existsSync(userSwPath)) {
-		swPath = userSwPath;
-	} else {
-		warn(`Could not find sw.js in ${src}. Using the default service worker.`);
+	const { src, sw } = config;
+	let swPath;
+	if (sw) {
+		swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
+		const userSwPath = join(src, 'sw.js');
+		if (existsSync(userSwPath)) {
+			swPath = userSwPath;
+		} else {
+			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
+		}
 	}
 	const prodConfig = {
 		performance: Object.assign(
