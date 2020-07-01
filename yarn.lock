@@ -11117,8 +11117,9 @@ simple-swizzle@^0.2.2:
     is-arrayish "^0.3.1"
 
 sirv@^1.0.0-next.2:
-  version "1.0.0-next.4"
-  resolved "https://registry.yarnpkg.com/sirv/-/sirv-1.0.0-next.4.tgz#80ed871f8cbc23bca2da987f5ffa2fd17e181977"
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/sirv/-/sirv-1.0.1.tgz#db8272c8940289c594e1371925b3a2da95872113"
+  integrity sha512-5prQxJFybxXkI6fGffgiJgnbMmcdGWd2K5NH+yw4zF5GIZCb2PdCb9+1qr1Y+ntNJsIRvJ6hnR+NlI9vdrRL2Q==
   dependencies:
     "@polka/url" "^1.0.0-next.9"
     mime "^2.3.1"
