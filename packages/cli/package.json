@@ -92,7 +92,7 @@
     "critters-webpack-plugin": "^2.5.0",
     "cross-spawn-promise": "^0.10.1",
     "css-loader": "^3.1.0",
-    "ejs-loader": "^0.3.3",
+    "ejs-loader": "^0.5.0",
     "envinfo": "^7.3.1",
     "esm": "^3.2.25",
     "fast-async": "^6.3.7",
