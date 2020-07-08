@@ -29,7 +29,8 @@ exports.pitch = function (req, mode) {
 
 		function load(cb) {
 			require.ensure([], function (require) {
-				cb( require(${stringifyRequest(this, '!!' + req)}) );
+				var result = require(${stringifyRequest(this, '!!' + req)});
+				typeof cb === 'function' && cb(result);
 			}${name ? ', ' + JSON.stringify(name) : ''});
 		}
 
