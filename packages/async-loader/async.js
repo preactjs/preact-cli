@@ -1,8 +1,29 @@
-import { h, Component } from 'preact';
+import { Component, options, h } from 'preact';
 
 const PENDING = {};
 
 export default function async(load) {
+	let dom;
+	let old = options.vnode;
+
+	// get access to the current DOM node from vnode.
+	options._diff = (vnode) => {
+		if (!component && vnode._children) {
+			let prev;
+			for (let i = 0; i < vnode._children.length; i++) {
+				let c = vnode._children[i];
+				if (c) {
+					prev = c._dom || c.__e || prev;
+
+					if (c.type === AsyncComponent) {
+						dom = prev.nextSibling;
+					}
+				}
+			}
+		}
+		if (old) old(vnode);
+	};
+
 	let component;
 	function AsyncComponent() {
 		Component.call(this);
@@ -23,7 +44,7 @@ export default function async(load) {
 				return h(component, props);
 			}
 
-			const me = (this.__P || this._parentDom).lastChild;
+			const me = dom;
 
 			return (
 				me &&
