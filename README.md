@@ -367,7 +367,7 @@ The default templates comes with a `.css` file for each component. You can start
 [sass]: https://sass-lang.com
 [less]: http://lesscss.org
 
-### Route automatic code splitting
+### Route-Based Code Splitting
 
 Route code splitting works with the [async-loader](https://github.com/preactjs/preact-cli/tree/master/packages/async-loader).
 This feature will be automatically enabled for files located in:
