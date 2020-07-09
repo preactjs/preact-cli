@@ -397,8 +397,12 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 </td></tr>
 </tbody></table>
 
-**Caveat**:
-
-The async loader can only work with default exports.
-Make sure to have your component exported as default or you module import will be broken at runtime (Imported component will be undefined).\
-If you wish to disable this behavior, rename your folder to avoid matching the above paths.
+> **Note**:  
+> Automatic code splitting **only** supports default exports, not named exports:
+>
+> ```diff
+> - import { Profile } from './routes/profile';
+> + import Profile from './routes/profile';
+> ```
+>
+> This is an intentional limitation that ensures effective code splitting. For components that need named exports, place them in a directory that doesn't trigger automatic code splitting. You can then manually code-split the default export by re-exporting it from `routes/` or importing it with the `"async!"` prefix.
