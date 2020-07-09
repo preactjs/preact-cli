@@ -369,11 +369,33 @@ The default templates comes with a `.css` file for each component. You can start
 
 ### Route-Based Code Splitting
 
-Route code splitting works with the [async-loader](https://github.com/preactjs/preact-cli/tree/master/packages/async-loader).
-This feature will be automatically enabled for files located in:
-- `src/routes/{*,*/index}.{js,jsx,ts,tsx}`
-- `src/components/routes/{*,*/index}.{js,jsx,ts,tsx}`
-- `src/components/async/{*,*/index}.{js,jsx,ts,tsx}`
+"Route" components are automatically code-splitted at build time to create smaller bundles and avoid loading more code than is needed by each page. This works by intercepting imports for route components with an [async loader](https://github.com/preactjs/preact-cli/tree/master/packages/async-loader), which returns a lightweight wrapper component that handles code splitting seamlessly.
+
+Automatic code splitting is applied to all JavaScript and TypeScript files in the following locations:
+
+
+<table>
+<thead><tr><th>Pattern</th><th>Examples</th></tr></thead>
+<tbody>
+<tr><td>
+<pre>src/<b>routes</b>/<kbd>NAME</kbd></pre>
+</td><td>
+<code>src/routes/home.js</code><br>
+<code>src/routes/about/index.tsx</code>
+</td></tr>
+<tr><td>
+<pre>src/components/<b>routes</b>/<kbd>NAME</kbd></pre>
+</td><td>
+<code>src/components/routes/profile.ts</code><br>
+<code>src/components/routes/profile/index.js</code>
+</td></tr>
+<tr><td>
+<pre>src/components/<b>async</b>/<kbd>NAME</kbd></pre>
+</td><td>
+<code>src/components/async/profile.ts</code><br>
+<code>src/components/async/profile/index.js</code>
+</td></tr>
+</tbody></table>
 
 **Caveat**:
 
