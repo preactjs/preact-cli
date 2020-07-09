@@ -30,7 +30,7 @@
 ### Features
 
 - **100/100 Lighthouse score**, right out of the box ([proof])
-- Fully **automatic code splitting** for routes (see caveat in [Route automatic code splitting](#route-automatic-code-splitting) section)
+- Fully **automatic code splitting** for routes _(see [Route-Based Code Splitting](#route-based-code-splitting))_
 - Transparently code-split any component with an [`async!`] prefix
 - Auto-generated [Service Workers] for offline caching powered by [Workbox]
 - [PRPL] pattern support for efficient loading
