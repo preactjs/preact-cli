@@ -61,31 +61,33 @@ async function handlePrerenderError(err, env, stack, entry) {
 				column: stack.getColumnNumber(),
 			});
 		});
+		
+		if (position.source) {
+			position.source = position.source
+				.replace('webpack://', '.')
+				.replace(/^.*~\/((?:@[^/]+\/)?[^/]+)/, (s, name) =>
+					require
+						.resolve(name)
+						.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
+				);
 
-		position.source = position.source
-			.replace('webpack://', '.')
-			.replace(/^.*~\/((?:@[^/]+\/)?[^/]+)/, (s, name) =>
-				require
-					.resolve(name)
-					.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
-			);
-
-		sourcePath = resolve(env.src, position.source);
-		sourceLines;
-		try {
-			sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
-		} catch (err) {
+			sourcePath = resolve(env.src, position.source);
+			sourceLines;
 			try {
-				sourceLines = readFileSync(
-					require.resolve(position.source),
-					'utf-8'
-				).split('\n');
+				sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
 			} catch (err) {
-				process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
+				try {
+					sourceLines = readFileSync(
+						require.resolve(position.source),
+						'utf-8'
+					).split('\n');
+				} catch (err) {
+					process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
+				}
+				// process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
 			}
-			// process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
+			sourceCodeHighlight = '';
 		}
-		sourceCodeHighlight = '';
 
 		if (sourceLines) {
 			for (var i = -4; i <= 4; i++) {

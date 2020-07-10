@@ -2,8 +2,7 @@ const path = require('path');
 const { getOptions, stringifyRequest } = require('loader-utils');
 const PREACT_LEGACY_MODE = 'PREACT_LEGACY_MODE';
 
-exports.pitch = function(req) {
-	//, mode) {
+exports.pitch = function (req, mode) {
 	this.cacheable && this.cacheable();
 	let name;
 	let query = getOptions(this) || {};
@@ -24,15 +23,14 @@ exports.pitch = function(req) {
 			this,
 			path.resolve(
 				__dirname,
-				'async-legacy.js'
-				// to be re-enabled when we fix fix for preact X hydration.
-				//mode === PREACT_LEGACY_MODE ? 'async-legacy.js' : 'async.js'
+				mode === PREACT_LEGACY_MODE ? 'async-legacy.js' : 'async.js'
 			) // explicit value check because webpack sends 2nd argument values but we dont use it
 		)};
 
 		function load(cb) {
 			require.ensure([], function (require) {
-				cb( require(${stringifyRequest(this, '!!' + req)}) );
+				var result = require(${stringifyRequest(this, '!!' + req)});
+				typeof cb === 'function' && cb(result);
 			}${name ? ', ' + JSON.stringify(name) : ''});
 		}
 

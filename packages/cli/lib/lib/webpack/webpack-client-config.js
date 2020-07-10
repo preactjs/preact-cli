@@ -15,7 +15,7 @@ const baseConfig = require('./webpack-base-config');
 const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const RefreshPlugin = require('preact-refresh');
+const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
 
 const cleanFilename = (name) =>
@@ -177,13 +177,16 @@ function getBabelEsmPlugin(config) {
 
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
-	const { src } = config;
-	let swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
-	const userSwPath = join(src, 'sw.js');
-	if (existsSync(userSwPath)) {
-		swPath = userSwPath;
-	} else {
-		warn(`Could not find sw.js in ${src}. Using the default service worker.`);
+	const { src, sw } = config;
+	let swPath;
+	if (sw) {
+		swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
+		const userSwPath = join(src, 'sw.js');
+		if (existsSync(userSwPath)) {
+			swPath = userSwPath;
+		} else {
+			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
+		}
 	}
 	const prodConfig = {
 		performance: Object.assign(
@@ -276,6 +279,7 @@ function isProd(config) {
 	if (config['inline-css']) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
+				preload: 'media',
 				pruneSource: false,
 				logLevel: 'silent',
 				additionalStylesheets: ['*.css'],
@@ -309,7 +313,6 @@ function isDev(config) {
 			new webpack.HotModuleReplacementPlugin(),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
-				'process.env.RHL': config.rhl,
 				'process.env.PRERENDER': config.prerender,
 			}),
 		],

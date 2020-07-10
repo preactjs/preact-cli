@@ -6,6 +6,8 @@ const { snapshot, hasKey, isWithin } = require('./lib/utils');
 const { existsSync } = require('fs');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
+const { promisify } = require('util');
+const glob = promisify(require('glob').glob);
 
 // TODO
 // const ours = ['empty', 'full', 'simple', 'root'];
@@ -17,7 +19,7 @@ const prerenderUrlFiles = [
 	'prerender-urls.promise.js',
 ];
 
-async function getIndex(dir, file = 'index.html') {
+async function getBody(dir, file = 'index.html') {
 	file = join(dir, `build/${file}`);
 	let html = await readFile(file, 'utf-8');
 	return html.match(/<body>.*<\/body>/)[0];
@@ -48,7 +50,7 @@ function testMatch(src, tar) {
 }
 
 describe('preact build', () => {
-	ours.forEach(key => {
+	ours.forEach((key) => {
 		it(`builds the '${key}' output`, async () => {
 			let dir = await create(key);
 
@@ -74,29 +76,37 @@ describe('preact build', () => {
 		let dir = await subject('sass');
 		await build(dir);
 
-		let body = await getIndex(dir);
+		let body = await getBody(dir);
 		looksLike(body, images.sass);
 	});
 
 	it('should use custom `.babelrc`', async () => {
 		// app with custom .babelrc enabling async functions
 		let app = await subject('custom-babelrc');
-		// UglifyJS throws error when generator is encountered
-		expect(async () => await build(app)).not;
+
+		await build(app);
+
+		const bundleFiles = await glob(`${app}/build/bundle.*.js`);
+		const transpiledChunk = await readFile(bundleFiles[0], 'utf8');
+
+		// when tragetting only last 1 chrome version, babel preserves
+		// arrow function. So checking for the delay function code from delay function in
+		// https://github.com/preactjs/preact-cli/blob/master/packages/cli/tests/subjects/custom-babelrc/index.js
+		expect(transpiledChunk.includes('=>setTimeout')).toBe(true);
 	});
 
-	prerenderUrlFiles.forEach(prerenderUrls => {
+	prerenderUrlFiles.forEach((prerenderUrls) => {
 		it(`should prerender the routes provided with '${prerenderUrls}'`, async () => {
 			let dir = await subject('multiple-prerendering');
 			await build(dir, { prerenderUrls });
 
-			const body1 = await getIndex(dir);
+			const body1 = await getBody(dir);
 			looksLike(body1, images.prerender.home);
 
-			const body2 = await getIndex(dir, 'route66/index.html');
+			const body2 = await getBody(dir, 'route66/index.html');
 			looksLike(body2, images.prerender.route);
 
-			const body3 = await getIndex(dir, 'custom/index.html');
+			const body3 = await getBody(dir, 'custom/index.html');
 			looksLike(body3, images.prerender.custom);
 
 			const head1 = await getHead(dir);
@@ -120,22 +130,25 @@ describe('preact build', () => {
 		});
 	});
 
-	prerenderUrlFiles.forEach(prerenderUrls => {
+	prerenderUrlFiles.forEach((prerenderUrls) => {
 		it(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
 			let dir = await subject('multiple-prerendering-with-provider');
 			await build(dir, { prerenderUrls });
 
-			const body1 = await getIndex(dir);
+			const body1 = await getBody(dir);
 			looksLike(body1, images.prerender.home);
 
-			const body2 = await getIndex(dir, 'route66/index.html');
+			const body2 = await getBody(dir, 'route66/index.html');
 			looksLike(body2, images.prerender.route);
 
-			const body3 = await getIndex(dir, 'custom/index.html');
+			const body3 = await getBody(dir, 'custom/index.html');
 			looksLike(body3, images.prerender.custom);
 
-			const body4 = await getIndex(dir, 'customhook/index.html');
+			const body4 = await getBody(dir, 'customhook/index.html');
 			looksLike(body4, images.prerender.customhook);
+
+			const body5 = await getBody(dir, 'htmlsafe/index.html');
+			looksLike(body5, images.prerender.htmlSafe);
 
 			const head1 = await getHead(dir);
 			expect(head1).toEqual(

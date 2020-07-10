@@ -30,7 +30,7 @@
 ### Features
 
 - **100/100 Lighthouse score**, right out of the box ([proof])
-- Fully **automatic code splitting** for routes
+- Fully **automatic code splitting** for routes _(see [Route-Based Code Splitting](#route-based-code-splitting))_
 - Transparently code-split any component with an [`async!`] prefix
 - Auto-generated [Service Workers] for offline caching powered by [Workbox]
 - [PRPL] pattern support for efficient loading
@@ -143,7 +143,6 @@ $ preact watch
     --cwd           A directory to use instead of $PWD  (default .)
     --esm           Builds ES-2015 bundles for your code.  (default true)
     --sw            Generate and attach a Service Worker  (default false)
-    --rhl           Enable react hot loader  (default false)
     --json          Generate build stats for bundle analysis
     --https         Run server with HTTPS protocol
     --key           Path to PEM key for custom SSL certificate
@@ -348,7 +347,7 @@ The default templates comes with a `.css` file for each component. You can start
 [`"browserslist"`]: https://github.com/ai/browserslist
 [```.babelrc```]: https://babeljs.io/docs/usage/babelrc
 [default]: https://github.com/preactjs-templates/default
-[Workbox]: https://developers.google.com/web/tools/workbox
+[workbox]: https://developers.google.com/web/tools/workbox
 [preact-router]: https://github.com/preactjs/preact-router
 [material]: https://github.com/preactjs-templates/material
 [netlify]: https://github.com/preactjs-templates/netlify
@@ -367,3 +366,43 @@ The default templates comes with a `.css` file for each component. You can start
 [`async!`]: https://github.com/preactjs/preact-cli/blob/1.4.1/examples/full/src/components/app.js#L7
 [sass]: https://sass-lang.com
 [less]: http://lesscss.org
+
+### Route-Based Code Splitting
+
+"Route" components are automatically code-splitted at build time to create smaller bundles and avoid loading more code than is needed by each page. This works by intercepting imports for route components with an [async loader](https://github.com/preactjs/preact-cli/tree/master/packages/async-loader), which returns a lightweight wrapper component that handles code splitting seamlessly.
+
+Automatic code splitting is applied to all JavaScript and TypeScript files in the following locations:
+
+
+<table>
+<thead><tr><th>Pattern</th><th>Examples</th></tr></thead>
+<tbody>
+<tr><td>
+<pre>src/<b>routes</b>/<kbd>NAME</kbd></pre>
+</td><td>
+<code>src/routes/home.js</code><br>
+<code>src/routes/about/index.tsx</code>
+</td></tr>
+<tr><td>
+<pre>src/components/<b>routes</b>/<kbd>NAME</kbd></pre>
+</td><td>
+<code>src/components/routes/profile.ts</code><br>
+<code>src/components/routes/profile/index.js</code>
+</td></tr>
+<tr><td>
+<pre>src/components/<b>async</b>/<kbd>NAME</kbd></pre>
+</td><td>
+<code>src/components/async/profile.ts</code><br>
+<code>src/components/async/profile/index.js</code>
+</td></tr>
+</tbody></table>
+
+> **Note**:  
+> Automatic code splitting **only** supports default exports, not named exports:
+>
+> ```diff
+> - import { Profile } from './routes/profile';
+> + import Profile from './routes/profile';
+> ```
+>
+> This is an intentional limitation that ensures effective code splitting. For components that need named exports, place them in a directory that doesn't trigger automatic code splitting. You can then manually code-split the default export by re-exporting it from `routes/` or importing it with the `"async!"` prefix.
