@@ -95,7 +95,7 @@ prog
 	.option('--prerender', 'Pre-render static content on first run')
 	.option('--template', 'Path to custom HTML template')
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
-	.option('-H, --host', 'Set server hostname', '0.0.0.0')
+	.option('-H, --host', 'Set server hostname', '127.0.0.1')
 	.option('-p, --port', 'Set server port', 8080)
 	.option(
 		'--prerenderUrls',
