@@ -86,6 +86,7 @@ prog
 	.option('--esm', 'Builds ES-2015 bundles for your code.', false)
 	.option('--clear', 'Clear the console', true)
 	.option('--sw', 'Generate and attach a Service Worker', undefined)
+	.option('--swPath', 'Specify service worker file location, default is root', '/')
 	.option('--babelConfig', 'Specify the babel config file', '.babelrc')
 	.option('--rhl', '(Deprecated) use --refresh instead', false)
 	.option('--json', 'Generate build stats for bundle analysis')
