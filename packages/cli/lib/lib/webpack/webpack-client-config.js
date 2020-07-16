@@ -204,6 +204,7 @@ function isProd(config) {
 				'process.env.ES_BUILD': false,
 				'process.env.ESM': config.esm,
 				'process.env.PRERENDER': config.prerender,
+				'process.env.SW_PATH': JSON.stringify(config.swPath),
 			}),
 		],
 
@@ -314,6 +315,7 @@ function isDev(config) {
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
 				'process.env.PRERENDER': config.prerender,
+				'process.env.SW_PATH': JSON.stringify(config.swPath),
 			}),
 		],
 

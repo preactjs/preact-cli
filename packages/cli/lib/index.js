@@ -37,6 +37,7 @@ prog
 	.option('--dest', 'Specify output directory', 'build')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
 	.option('--sw', 'Generate and attach a Service Worker', true)
+	.option('--swPath', 'Specify service worker file location, default is root', '/')
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--template', 'Path to custom HTML template')
 	.option('--preload', 'Adds preload tags to the document its assets', false)
