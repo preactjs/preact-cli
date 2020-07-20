@@ -1,8 +1,8 @@
 {
   "name": "preact-cli",
-  "version": "3.0.0-rc.18",
+  "version": "3.0.0",
   "description": "Start building a Preact Progressive Web App in seconds.",
-  "repository": "developit/preact-cli",
+  "repository": "preactjs/preact-cli",
   "main": "lib/index.js",
   "bin": {
     "preact": "lib/index.js"
@@ -42,8 +42,8 @@
   ],
   "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
   "license": "MIT",
-  "bugs": "https://github.com/developit/preact-cli/issues",
-  "homepage": "https://github.com/developit/preact-cli",
+  "bugs": "https://github.com/preactjs/preact-cli/issues",
+  "homepage": "https://github.com/preactjs/preact-cli",
   "devDependencies": {
     "eslint": "^7.1.0",
     "html-looks-like": "^1.0.2",
@@ -55,10 +55,10 @@
     "node-sass": "^4.12.0",
     "p-retry": "^4.1.0",
     "polka": "^0.5.2",
-    "preact": "^10.4.0",
-    "preact-compat": "^3.19.0",
-    "preact-render-to-string": "^5.1.0",
-    "preact-router": "^3.2.0",
+    "preact": "^10.0.0",
+    "preact-compat": "^3.18.5",
+    "preact-render-to-string": "^5.0.6",
+    "preact-router": "^3.0.1",
     "puppeteer": "^5.0.0",
     "sass-loader": "^9.0.2",
     "shelljs": "^0.8.3",
