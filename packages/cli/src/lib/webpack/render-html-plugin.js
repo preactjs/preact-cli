@@ -1,8 +1,8 @@
 const { resolve, join } = require('path');
-const os = require('os');
 const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const tempy = require('tempy');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const { esmImport, tryResolveConfig, warn } = require('../../util');
@@ -45,11 +45,8 @@ module.exports = async function (config) {
 
 		// Unfortunately html-webpack-plugin expects a true file,
 		// so we'll create a temporary one.
-		const tmpDir = join(os.tmpdir(), 'preact-cli');
-		if (!existsSync(tmpDir)) {
-			mkdirSync(tmpDir);
-		}
-		template = resolve(tmpDir, 'template.tmp.ejs');
+		
+		template = tempy.file({name: 'template.tmp.ejs'});
 		writeFileSync(template, content);
 	}
 
