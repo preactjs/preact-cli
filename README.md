@@ -51,6 +51,14 @@
 $ npm install -g preact-cli
 ```
 
+> **Note**:  
+> If you are installing as root, you will need to add the `unsafe-perm` flag to your install command:
+>
+> ```sh
+> $ sudo npm install -g --unsafe-perm preact-cli
+> ```
+>
+
 ### Usage
 
 ```sh
