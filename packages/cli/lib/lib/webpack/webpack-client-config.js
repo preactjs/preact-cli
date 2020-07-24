@@ -229,6 +229,7 @@ function isProd(config) {
 							],
 						},
 					},
+					extractComments: false,
 					sourceMap: true,
 				}),
 				new OptimizeCssAssetsPlugin({
