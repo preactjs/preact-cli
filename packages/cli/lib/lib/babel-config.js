@@ -11,7 +11,6 @@ module.exports = function (env, options = {}) {
 					targets: {
 						browsers: options.browsers,
 					},
-					exclude: ['transform-regenerator', 'transform-async-to-generator'],
 				},
 			],
 		],
@@ -26,7 +25,6 @@ module.exports = function (env, options = {}) {
 			require.resolve('@babel/plugin-proposal-object-rest-spread'),
 			isProd &&
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
-			[require.resolve('fast-async'), { spec: true }],
 			require.resolve('babel-plugin-macros'),
 			[
 				require.resolve('@babel/plugin-transform-react-jsx'),
