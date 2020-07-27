@@ -45,7 +45,7 @@
 
 ### Installation
 
-> **Important**: [Node.js](https://nodejs.org/en/) > V6.x is a minimum requirement.
+> **Important**: [Node.js](https://nodejs.org/en/) > V8.x is a minimum requirement.
 
 ```sh
 $ npm install -g preact-cli
@@ -372,7 +372,6 @@ The default templates comes with a `.css` file for each component. You can start
 "Route" components are automatically code-splitted at build time to create smaller bundles and avoid loading more code than is needed by each page. This works by intercepting imports for route components with an [async loader](https://github.com/preactjs/preact-cli/tree/master/packages/async-loader), which returns a lightweight wrapper component that handles code splitting seamlessly.
 
 Automatic code splitting is applied to all JavaScript and TypeScript files in the following locations:
-
 
 <table>
 <thead><tr><th>Pattern</th><th>Examples</th></tr></thead>
