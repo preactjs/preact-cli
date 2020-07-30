@@ -119,7 +119,6 @@ $ preact build
     --dest             Specify output directory  (default build)
     --cwd              A directory to use instead of $PWD  (default .)
     --sw               Generate and attach a Service Worker  (default true)
-		--swPath           Specify service worker file location (default is '/)
     --json             Generate build stats for bundle analysis
     --template         Path to custom HTML template
     --preload          Adds preload tags to the document its assets  (default false)
@@ -144,7 +143,6 @@ $ preact watch
     --cwd           A directory to use instead of $PWD  (default .)
     --esm           Builds ES-2015 bundles for your code.  (default true)
     --sw            Generate and attach a Service Worker  (default false)
-		--swPath           Specify service worker file location (default is '/)
     --json          Generate build stats for bundle analysis
     --https         Run server with HTTPS protocol
     --key           Path to PEM key for custom SSL certificate
