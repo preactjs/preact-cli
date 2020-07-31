@@ -56,7 +56,7 @@ $ npx preact-cli create <template-name> <project-name>
 Example:
 
 ```sh
-$ npx preact create default my-project
+$ npx preact-cli create default my-project
 ```
 
 The above command pulls the template from [preactjs-templates/default], prompts for some information, and generates the project at `./my-project/`.
