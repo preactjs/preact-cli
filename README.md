@@ -50,7 +50,7 @@
 ### Usage
 
 ```sh
-$ npx preact create <template-name> <project-name>
+$ npx preact-cli create <template-name> <project-name>
 ```
 
 Example:
