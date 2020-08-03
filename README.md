@@ -142,7 +142,7 @@ $ preact watch
 
     --src           Specify source directory  (default src)
     --cwd           A directory to use instead of $PWD  (default .)
-    --esm           Builds ES-2015 bundles for your code.  (default true)
+    --esm           Builds ES-2015 bundles for your code.  (default false)
     --sw            Generate and attach a Service Worker  (default false)
     --babelConfig   Path to custom Babel config (default .babelrc)
     --json          Generate build stats for bundle analysis
