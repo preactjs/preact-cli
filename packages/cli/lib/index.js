@@ -32,7 +32,9 @@ let prog = sade('preact').version(pkg.version);
 
 prog
 	.command('build [src]')
-	.describe('Create a production build')
+	.describe(
+		'Create a production build. You can disable "default: true" flags by prefixing them with --no-<option>'
+	)
 	.option('--src', 'Specify source directory', 'src')
 	.option('--dest', 'Specify output directory', 'build')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
