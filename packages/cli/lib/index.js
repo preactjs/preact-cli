@@ -43,11 +43,6 @@ prog
 	.option('--template', 'Path to custom HTML template')
 	.option('--preload', 'Adds preload tags to the document its assets', false)
 	.option(
-		'--refresh',
-		'Enables experimental preact-refresh functionality',
-		false
-	)
-	.option(
 		'--analyze',
 		'Launch interactive Analyzer to inspect production bundle(s)'
 	)
@@ -94,7 +89,11 @@ prog
 	.option('--cacert', 'Path to optional CA certificate override')
 	.option('--prerender', 'Pre-render static content on first run')
 	.option('--template', 'Path to custom HTML template')
-	.option('--refresh', 'Will use Preact-Refresh to do hot-reloading', false)
+	.option(
+		'--refresh',
+		'Enables experimental preact-refresh functionality',
+		false
+	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port', 8080)
