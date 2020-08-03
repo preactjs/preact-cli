@@ -151,6 +151,7 @@ $ preact watch
     --cert          Path to custom SSL certificate
     --cacert        Path to optional CA certificate override
     --prerender     Pre-render static content on first run
+    --prerenderUrls Path to pre-rendered routes config  (default prerender-urls.json)
     --template      Path to custom HTML template
     --refresh       Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
     -c, --config    Path to custom CLI config  (default preact.config.js)
