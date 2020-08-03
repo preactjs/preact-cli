@@ -125,6 +125,7 @@ $ preact build
     --analyze          Launch interactive Analyzer to inspect production bundle(s)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
     -c, --config       Path to custom CLI config  (default preact.config.js)
+    --babelConfig      Path to custom Babel config (default .babelrc)
     --esm              Builds ES-2015 bundles for your code.  (default true)
     --brotli           Adds brotli redirects to the service worker.  (default false)
     --inline-css       Adds critical css to the prerendered markup.  (default true)
@@ -143,6 +144,7 @@ $ preact watch
     --cwd           A directory to use instead of $PWD  (default .)
     --esm           Builds ES-2015 bundles for your code.  (default true)
     --sw            Generate and attach a Service Worker  (default false)
+    --babelConfig   Path to custom Babel config (default .babelrc)
     --json          Generate build stats for bundle analysis
     --https         Run server with HTTPS protocol
     --key           Path to PEM key for custom SSL certificate

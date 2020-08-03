@@ -55,7 +55,7 @@ prog
 		'prerender-urls.json'
 	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
-	.option('--babelConfig', 'Specify the babel config file', '.babelrc')
+	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
 	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
 	.option('--brotli', 'Builds brotli compressed bundles of javascript.', false)
 	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
@@ -85,7 +85,7 @@ prog
 	.option('--esm', 'Builds ES-2015 bundles for your code.', false)
 	.option('--clear', 'Clear the console', true)
 	.option('--sw', 'Generate and attach a Service Worker', undefined)
-	.option('--babelConfig', 'Specify the babel config file', '.babelrc')
+	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
 	.option('--rhl', '(Deprecated) use --refresh instead', false)
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--https', 'Run server with HTTPS protocol')
