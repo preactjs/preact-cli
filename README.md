@@ -118,17 +118,17 @@ $ preact build
     --src              Specify source directory  (default src)
     --dest             Specify output directory  (default build)
     --cwd              A directory to use instead of $PWD  (default .)
+    --esm              Builds ES-2015 bundles for your code.  (default true)
     --sw               Generate and attach a Service Worker  (default true)
+    --babelConfig      Path to custom Babel config (default .babelrc)
     --json             Generate build stats for bundle analysis
     --template         Path to custom HTML template
     --preload          Adds preload tags to the document its assets  (default false)
     --analyze          Launch interactive Analyzer to inspect production bundle(s)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
-    -c, --config       Path to custom CLI config  (default preact.config.js)
-    --babelConfig      Path to custom Babel config (default .babelrc)
-    --esm              Builds ES-2015 bundles for your code.  (default true)
     --brotli           Adds brotli redirects to the service worker.  (default false)
     --inline-css       Adds critical css to the prerendered markup.  (default true)
+    -c, --config       Path to custom CLI config  (default preact.config.js)
     -v, --verbose      Verbose output
     -h, --help         Displays this message
 ```

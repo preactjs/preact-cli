@@ -36,7 +36,9 @@ prog
 	.option('--src', 'Specify source directory', 'src')
 	.option('--dest', 'Specify output directory', 'build')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
 	.option('--sw', 'Generate and attach a Service Worker', true)
+	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
 	.option('--json', 'Generate build stats for bundle analysis')
 	.option('--template', 'Path to custom HTML template')
 	.option('--preload', 'Adds preload tags to the document its assets', false)
@@ -54,11 +56,9 @@ prog
 		'Path to pre-rendered routes config',
 		'prerender-urls.json'
 	)
-	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
-	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
-	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
 	.option('--brotli', 'Builds brotli compressed bundles of javascript.', false)
 	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
+	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-v, --verbose', 'Verbose output')
 	.action(commands.build);
 
