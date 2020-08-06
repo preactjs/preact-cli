@@ -43,24 +43,20 @@
   - [preact-router]
   - 1.5kb of conditionally-loaded polyfills for [fetch] & [Promise]
 
-### Installation
+### Requirements
 
-> **Important**: [Node.js](https://nodejs.org/en/) > V8.x is a minimum requirement.
-
-```sh
-$ npm install -g preact-cli
-```
+> **Important**: [Node.js](https://nodejs.org/en/) > V8.x and npm 5.2+ is a minimum requirement.
 
 ### Usage
 
 ```sh
-$ preact create <template-name> <project-name>
+$ npx preact-cli create <template-name> <project-name>
 ```
 
 Example:
 
 ```sh
-$ preact create default my-project
+$ npx preact-cli create default my-project
 ```
 
 The above command pulls the template from [preactjs-templates/default], prompts for some information, and generates the project at `./my-project/`.
