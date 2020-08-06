@@ -98,18 +98,7 @@ async function clientConfig(env) {
 			...getBabelEsmPlugin(env),
 			new CopyWebpackPlugin(
 				[
-					...(existsSync(source('manifest.json'))
-						? [{ from: 'manifest.json' }]
-						: [
-								{
-									from: resolve(__dirname, '../../resources/manifest.json'),
-									to: 'manifest.json',
-								},
-								{
-									from: resolve(__dirname, '../../resources/icon.png'),
-									to: 'assets/icon.png',
-								},
-						  ]),
+					existsSync(source('manifest.json')) && { from: 'manifest.json' },
 					// copy any static files
 					existsSync(source('assets')) && { from: 'assets', to: 'assets' },
 					// copy sw-debug
