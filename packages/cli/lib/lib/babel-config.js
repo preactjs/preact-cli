@@ -16,7 +16,6 @@ module.exports = function (env, options = {}) {
 			],
 		],
 		plugins: [
-			require.resolve('babel-plugin-transform-async-to-promises'),
 			require.resolve('@babel/plugin-syntax-dynamic-import'),
 			require.resolve('@babel/plugin-transform-object-assign'),
 			[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
