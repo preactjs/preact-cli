@@ -36,14 +36,6 @@ async function clientConfig(env) {
 		polyfills: resolve(__dirname, './polyfills'),
 	};
 
-	if (!isProd) {
-		entry.bundle = [
-			entry.bundle,
-			'webpack-dev-server/client',
-			'webpack/hot/dev-server',
-		];
-	}
-
 	return {
 		entry: entry,
 		output: {
