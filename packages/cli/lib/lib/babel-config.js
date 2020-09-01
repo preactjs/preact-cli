@@ -36,7 +36,7 @@ module.exports = function (env, options = {}) {
 		overrides: [
 			// Transforms to apply only to first-party code:
 			{
-				exclude: /(^|\/|\\)node_modules(\/|\/)/,
+				exclude: /node_modules/,
 				presets: [
 					[require.resolve('@babel/preset-typescript'), { jsxPragma: 'h' }],
 				],

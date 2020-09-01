@@ -25,7 +25,7 @@ const cleanFilename = (name) =>
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src, refresh, cwd /*, port? */ } = env;
+	const { isProd, source, src, cwd /*, port? */ } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
 		? require.resolve('@preact/async-loader')
@@ -35,14 +35,6 @@ async function clientConfig(env) {
 		bundle: resolve(__dirname, './../entry'),
 		polyfills: resolve(__dirname, './polyfills'),
 	};
-
-	if (!isProd) {
-		entry.bundle = [
-			entry.bundle,
-			'webpack-dev-server/client',
-			'webpack/hot/dev-server',
-		];
-	}
 
 	return {
 		entry: entry,
@@ -90,9 +82,6 @@ async function clientConfig(env) {
 		},
 
 		plugins: [
-			...(!isProd && refresh
-				? [new webpack.HotModuleReplacementPlugin(), new RefreshPlugin()]
-				: []),
 			new PushManifestPlugin(env),
 			...(await renderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
@@ -295,12 +284,13 @@ function isProd(config) {
 }
 
 function isDev(config) {
-	const { cwd, src } = config;
+	const { cwd, src, refresh } = config;
 
 	return {
 		plugins: [
 			new webpack.NamedModulesPlugin(),
 			new webpack.HotModuleReplacementPlugin(),
+			...(refresh ? [new RefreshPlugin()] : []),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
 				'process.env.PRERENDER': config.prerender,
@@ -316,9 +306,6 @@ function isDev(config) {
 			https: config.https,
 			port: process.env.PORT || config.port || 8080,
 			host: process.env.HOST || config.host || '0.0.0.0',
-			// setup(app) {
-			// 	app.use(middleware);
-			// },
 			disableHostCheck: true,
 			historyApiFallback: true,
 			quiet: true,
