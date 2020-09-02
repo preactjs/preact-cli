@@ -73,7 +73,6 @@ async function devBuild(env) {
 
 		let c = Object.assign({}, config.devServer, {
 			stats: { colors: true },
-			hot: !env.refresh,
 		});
 
 		let server = new DevServer(compiler, c);
