@@ -25,7 +25,7 @@ const cleanFilename = (name) =>
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src, refresh, cwd /*, port? */ } = env;
+	const { isProd, source, src, refresh, cwd, devServer /*, port? */ } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
 		? require.resolve('@preact/async-loader')
@@ -36,7 +36,7 @@ async function clientConfig(env) {
 		polyfills: resolve(__dirname, './polyfills'),
 	};
 
-	if (!isProd) {
+	if (!isProd && devServer) {
 		entry.bundle = [
 			entry.bundle,
 			'webpack-dev-server/client',
