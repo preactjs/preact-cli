@@ -1,12 +1,16 @@
 {
   "name": "@preact/async-loader",
-  "version": "3.0.0-rc.12",
+  "version": "3.0.1",
   "description": "Preact's async component loader for Webpack",
   "files": [
     "*.js"
   ],
+  "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
+  "license": "MIT",
+  "bugs": "https://github.com/preactjs/preact-cli/issues",
+  "homepage": "https://github.com/preactjs/preact-cli",
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "dependencies": {
     "kleur": "^4.0.2",
