@@ -5,7 +5,6 @@
 ### Contents
 
 - [Features](#features)
-- [Installation](#installation)
 - [Usage](#usage)
 - [Official Templates](#official-templates)
 - [CLI Options](#cli-options)
