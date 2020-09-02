@@ -113,16 +113,17 @@ $ preact build
     --src              Specify source directory  (default src)
     --dest             Specify output directory  (default build)
     --cwd              A directory to use instead of $PWD  (default .)
+    --esm              Builds ES-2015 bundles for your code  (default true)
     --sw               Generate and attach a Service Worker  (default true)
+    --babelConfig      Path to custom Babel config (default .babelrc)
     --json             Generate build stats for bundle analysis
     --template         Path to custom HTML template
     --preload          Adds preload tags to the document its assets  (default false)
     --analyze          Launch interactive Analyzer to inspect production bundle(s)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
+    --brotli           Adds brotli redirects to the service worker  (default false)
+    --inline-css       Adds critical css to the prerendered markup  (default true)
     -c, --config       Path to custom CLI config  (default preact.config.js)
-    --esm              Builds ES-2015 bundles for your code.  (default true)
-    --brotli           Adds brotli redirects to the service worker.  (default false)
-    --inline-css       Adds critical css to the prerendered markup.  (default true)
     -v, --verbose      Verbose output
     -h, --help         Displays this message
 ```
@@ -134,22 +135,25 @@ Spin up a development server with multiple features like `hot-module-replacement
 ```
 $ preact watch
 
-    --src           Specify source directory  (default src)
-    --cwd           A directory to use instead of $PWD  (default .)
-    --esm           Builds ES-2015 bundles for your code.  (default true)
-    --sw            Generate and attach a Service Worker  (default false)
-    --json          Generate build stats for bundle analysis
-    --https         Run server with HTTPS protocol
-    --key           Path to PEM key for custom SSL certificate
-    --cert          Path to custom SSL certificate
-    --cacert        Path to optional CA certificate override
-    --prerender     Pre-render static content on first run
-    --template      Path to custom HTML template
-    --refresh       Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
-    -c, --config    Path to custom CLI config  (default preact.config.js)
-    -H, --host      Set server hostname  (default 0.0.0.0)
-    -p, --port      Set server port  (default 8080)
-    -h, --help      Displays this message
+    --src              Specify source directory  (default src)
+    --cwd              A directory to use instead of $PWD  (default .)
+    --esm              Builds ES-2015 bundles for your code  (default false)
+    --clear            Clear the console (default true)
+    --sw               Generate and attach a Service Worker  (default false)
+    --babelConfig      Path to custom Babel config (default .babelrc)
+    --json             Generate build stats for bundle analysis
+    --https            Run server with HTTPS protocol
+    --key              Path to PEM key for custom SSL certificate
+    --cert             Path to custom SSL certificate
+    --cacert           Path to optional CA certificate override
+    --prerender        Pre-render static content on first run
+    --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
+    --template         Path to custom HTML template
+    --refresh          Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
+    -c, --config       Path to custom CLI config  (default preact.config.js)
+    -H, --host         Set server hostname  (default 0.0.0.0)
+    -p, --port         Set server port  (default 8080)
+    -h, --help         Displays this message
 ```
 
 Note:
