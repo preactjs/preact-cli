@@ -97,7 +97,7 @@
     "esm": "^3.2.25",
     "fast-async": "^6.3.7",
     "file-loader": "^6.0.0",
-    "fork-ts-checker-webpack-plugin": "^4.0.4",
+    "fork-ts-checker-webpack-plugin": "^5.1.0",
     "get-port": "^5.0.0",
     "gittar": "^0.1.0",
     "glob": "^7.1.4",
