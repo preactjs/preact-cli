@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
-const { resolve } = require('path');
+const { resolve, dirname } = require('path');
 const { readFileSync, existsSync } = require('fs');
 const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const autoprefixer = require('autoprefixer');
@@ -96,9 +96,16 @@ module.exports = function (env) {
 
 	let compat = 'preact-compat';
 	try {
-		requireRelative.resolve('preact/compat', cwd);
-		compat = 'preact/compat';
-	} catch (e) {}
+		compat = dirname(
+			requireRelative.resolve('preact/compat/package.json', cwd)
+		);
+	} catch (e) {
+		try {
+			compat = dirname(
+				requireRelative.resolve('preact-compat/package.json', cwd)
+			);
+		} catch (e) {}
+	}
 
 	let tsconfig = resolveTsconfig(cwd, isProd);
 
@@ -138,21 +145,19 @@ module.exports = function (env) {
 				'.css',
 				'.wasm',
 			],
-			alias: Object.assign(
-				{
-					style: source('style'),
-					'preact-cli-entrypoint': source('index'),
-					url: 'native-url',
-					// preact-compat aliases for supporting React dependencies:
-					react: compat,
-					'react-dom': compat,
-					'react-addons-css-transition-group': 'preact-css-transition-group',
-					'preact-cli/async-component': IS_SOURCE_PREACT_X_OR_ABOVE
-						? require.resolve('@preact/async-loader/async')
-						: require.resolve('@preact/async-loader/async-legacy'),
-				},
-				compat !== 'preact-compat' ? { 'preact-compat': compat } : {}
-			),
+			alias: {
+				style: source('style'),
+				'preact-cli-entrypoint': source('index'),
+				url: dirname(require.resolve('native-url/package.json')),
+				// preact-compat aliases for supporting React dependencies:
+				react: compat,
+				'react-dom': compat,
+				'preact-compat': compat,
+				'react-addons-css-transition-group': 'preact-css-transition-group',
+				'preact-cli/async-component': IS_SOURCE_PREACT_X_OR_ABOVE
+					? require.resolve('@preact/async-loader/async')
+					: require.resolve('@preact/async-loader/async-legacy'),
+			},
 		},
 
 		resolveLoader: {
