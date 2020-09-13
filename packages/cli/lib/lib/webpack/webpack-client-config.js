@@ -4,6 +4,7 @@ const { existsSync } = require('fs');
 const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const merge = require('webpack-merge');
 const { filter } = require('minimatch');
+const SizePlugin = require('size-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -183,6 +184,7 @@ function isProd(config) {
 				'process.env.ESM': config.esm,
 				'process.env.PRERENDER': config.prerender,
 			}),
+			new SizePlugin()
 		],
 
 		optimization: {

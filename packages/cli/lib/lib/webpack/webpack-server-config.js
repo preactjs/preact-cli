@@ -1,4 +1,5 @@
 const { resolve } = require('path');
+const SizePlugin = require('size-plugin');
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack-base-config');
 
@@ -23,6 +24,9 @@ function serverConfig(env) {
 				async: resolve(__dirname, './dummy-loader'),
 			},
 		},
+		plugins: [
+			new SizePlugin({ filename: 'size-plugin-ssr.json' }),
+		]
 	};
 }
 
