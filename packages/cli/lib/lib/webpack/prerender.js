@@ -4,6 +4,7 @@ const { readFileSync } = require('fs');
 const stackTrace = require('stack-trace');
 const URL = require('url');
 const { SourceMapConsumer } = require('source-map');
+const requireRelative = require('require-relative');
 
 module.exports = function (env, params) {
 	params = params || {};
@@ -26,11 +27,8 @@ module.exports = function (env, params) {
 			return '';
 		}
 		const { cwd } = env;
-
-		const preact = require(require.resolve(`${cwd}/node_modules/preact`));
-		const renderToString = require(require.resolve(
-			`${cwd}/node_modules/preact-render-to-string`
-		));
+		const preact = require(requireRelative.resolve('preact', cwd));
+		const renderToString = require(requireRelative.resolve('preact-render-to-string', cwd));
 		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
 		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
