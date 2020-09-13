@@ -12,6 +12,7 @@ const ReplacePlugin = require('webpack-plugin-replace');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const createBabelConfig = require('../babel-config');
 const loadPostcssConfig = require('postcss-load-config');
+const PnpWebpackPlugin = require(`pnp-webpack-plugin`);
 
 function readJson(file) {
 	try {
@@ -157,6 +158,10 @@ module.exports = function (env) {
 					? require.resolve('@preact/async-loader/async')
 					: require.resolve('@preact/async-loader/async-legacy'),
 			},
+			plugins: [
+				// TODO: Remove when upgrading to webpack 5
+				PnpWebpackPlugin,
+			],
 		},
 
 		resolveLoader: {

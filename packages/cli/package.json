@@ -123,6 +123,7 @@
 		"native-url": "0.3.4",
 		"optimize-css-assets-webpack-plugin": "^5.0.1",
 		"ora": "^4.0.3",
+		"pnp-webpack-plugin": "^1.6.4",
 		"postcss-load-config": "^2.1.0",
 		"postcss-loader": "^3.0.0",
 		"progress-bar-webpack-plugin": "^2.1.0",
