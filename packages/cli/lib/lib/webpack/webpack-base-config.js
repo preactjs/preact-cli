@@ -3,7 +3,6 @@ const path = require('path');
 const { resolve } = require('path');
 const { readFileSync, existsSync } = require('fs');
 const { isInstalledVersionPreactXOrAbove } = require('./utils');
-const SizePlugin = require('size-plugin');
 const autoprefixer = require('autoprefixer');
 const browserslist = require('browserslist');
 const requireRelative = require('require-relative');
@@ -309,7 +308,6 @@ module.exports = function (env) {
 				summary: false,
 				clear: true,
 			}),
-			new SizePlugin(),
 			...(tsconfig
 				? [
 						new ForkTsCheckerWebpackPlugin({
