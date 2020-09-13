@@ -47,6 +47,7 @@
 	"devDependencies": {
 		"html-looks-like": "^1.0.2",
 		"jest": "^26.0.1",
+		"less-loader": "^7.0.1",
 		"ncp": "^2.0.0",
 		"node-sass": "^4.12.0",
 		"p-retry": "^4.1.0",
@@ -57,11 +58,26 @@
 		"puppeteer": "^5.3.1",
 		"sass-loader": "^10.0.4",
 		"shelljs": "^0.8.3",
-		"sirv": "^1.0.0-next.2"
+		"sirv": "^1.0.0-next.2",
+		"stylus-loader": "^3.0.2"
 	},
 	"peerDependencies": {
+		"less-loader": "^7.0.1",
 		"preact": "*",
-		"preact-render-to-string": "*"
+		"preact-render-to-string": "*",
+		"sass-loader": "^10.0.0 || ^9.0.2",
+		"stylus-loader": "^3.0.2"
+	},
+	"peerDependenciesMeta": {
+		"less-loader": {
+			"optional": true
+		},
+		"sass-loader": {
+			"optional": true
+		},
+		"stylus-loader": {
+			"optional": true
+		}
 	},
 	"dependencies": {
 		"@babel/core": "^7.9.0",

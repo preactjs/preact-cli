@@ -110,6 +110,14 @@ module.exports = function (env) {
 		postcssPlugins = [autoprefixer({ overrideBrowserslist: browsers })];
 	}
 
+	function tryResolveOptionalLoader(name) {
+		try {
+			return require.resolve(name);
+		} catch (e) {
+			return name;
+		}
+	}
+
 	return {
 		context: src,
 
@@ -162,7 +170,7 @@ module.exports = function (env) {
 					test: /\.m?[jt]sx?$/,
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
-					loader: 'babel-loader',
+					loader: require.resolve('babel-loader'),
 					options: Object.assign(
 						{ babelrc: false },
 						createBabelConfig(env, { browsers }),
@@ -175,10 +183,10 @@ module.exports = function (env) {
 					test: /\.less$/,
 					use: [
 						{
-							loader: 'proxy-loader',
+							loader: require.resolve('./proxy-loader'),
 							options: {
 								cwd,
-								loader: 'less-loader',
+								loader: tryResolveOptionalLoader('less-loader'),
 								options: {
 									sourceMap: true,
 									lessOptions: {
@@ -195,10 +203,10 @@ module.exports = function (env) {
 					test: /\.s[ac]ss$/,
 					use: [
 						{
-							loader: 'proxy-loader',
+							loader: require.resolve('./proxy-loader'),
 							options: {
 								cwd,
-								loader: 'sass-loader',
+								loader: tryResolveOptionalLoader('sass-loader'),
 								options: getSassConfiguration(...nodeModules),
 							},
 						},
@@ -210,10 +218,10 @@ module.exports = function (env) {
 					test: /\.styl$/,
 					use: [
 						{
-							loader: 'proxy-loader',
+							loader: require.resolve('./proxy-loader'),
 							options: {
 								cwd,
-								loader: 'stylus-loader',
+								loader: tryResolveOptionalLoader('stylus-loader'),
 								options: {
 									sourceMap: true,
 									paths: nodeModules,
@@ -227,9 +235,11 @@ module.exports = function (env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					include: [source('components'), source('routes')],
 					use: [
-						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
+						isWatch
+							? require.resolve('style-loader')
+							: MiniCssExtractPlugin.loader,
 						{
-							loader: 'css-loader',
+							loader: require.resolve('css-loader'),
 							options: {
 								modules: {
 									localIdentName: '[local]__[hash:base64:5]',
@@ -239,7 +249,7 @@ module.exports = function (env) {
 							},
 						},
 						{
-							loader: 'postcss-loader',
+							loader: require.resolve('postcss-loader'),
 							options: {
 								ident: 'postcss',
 								sourceMap: true,
@@ -253,15 +263,17 @@ module.exports = function (env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					exclude: [source('components'), source('routes')],
 					use: [
-						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
+						isWatch
+							? require.resolve('style-loader')
+							: MiniCssExtractPlugin.loader,
 						{
-							loader: 'css-loader',
+							loader: require.resolve('css-loader'),
 							options: {
 								sourceMap: true,
 							},
 						},
 						{
-							loader: 'postcss-loader',
+							loader: require.resolve('postcss-loader'),
 							options: {
 								ident: 'postcss',
 								sourceMap: true,
@@ -277,11 +289,13 @@ module.exports = function (env) {
 				},
 				{
 					test: /\.(xml|html|txt|md)$/,
-					loader: 'raw-loader',
+					loader: require.resolve('raw-loader'),
 				},
 				{
 					test: /\.(svg|woff2?|ttf|eot|jpe?g|png|webp|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
-					loader: isProd ? 'file-loader' : 'url-loader',
+					loader: isProd
+						? require.resolve('file-loader')
+						: require.resolve('url-loader'),
 				},
 			],
 		},
