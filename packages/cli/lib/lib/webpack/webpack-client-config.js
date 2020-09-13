@@ -21,7 +21,7 @@ const { normalizePath, warn } = require('../../util');
 
 const cleanFilename = (name) =>
 	name.replace(
-		/(^\/(routes|components\/(routes|async))\/|(\/index)?\.(j|t)sx?$)/g,
+		/(^\/(routes|components\/(routes|async))\/|(\/index)?\.[jt]sx?$)/g,
 		''
 	);
 
