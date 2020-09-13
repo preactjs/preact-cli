@@ -14,6 +14,7 @@
     "release": "changeset publish"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.2.7",
     "@changesets/cli": "^2.10.2",
     "babel-eslint": "^10.0.1",
     "eslint": "^7.1.0",
