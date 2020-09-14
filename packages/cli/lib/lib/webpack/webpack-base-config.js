@@ -247,6 +247,7 @@ module.exports = function (env) {
 							},
 						},
 					],
+					sideEffects: true,
 				},
 				{
 					// External / `node_module` styles
@@ -269,6 +270,7 @@ module.exports = function (env) {
 							},
 						},
 					],
+					sideEffects: true,
 				},
 				{
 					test: /\.(xml|html|txt|md)$/,
