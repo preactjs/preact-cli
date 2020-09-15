@@ -247,7 +247,6 @@ module.exports = function (env) {
 							},
 						},
 					],
-					sideEffects: true,
 				},
 				{
 					// External / `node_module` styles
