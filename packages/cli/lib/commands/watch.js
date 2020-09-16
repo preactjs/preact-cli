@@ -4,7 +4,7 @@ const { promisify } = require('util');
 const { warn } = require('../util');
 const runWebpack = require('../lib/webpack/run-webpack');
 
-const toBool = (val) => val === void 0 || (val === 'false' ? false : val);
+const toBool = (val) => val !== void 0 || (val === 'false' ? false : val);
 
 module.exports = async function (src, argv) {
 	if (argv.rhl) {
