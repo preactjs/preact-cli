@@ -1,5 +1,8 @@
-const runWebpack = require('../lib/webpack/run-webpack');
+const rimraf = require('rimraf');
+const { resolve } = require('path');
+const { promisify } = require('util');
 const { warn } = require('../util');
+const runWebpack = require('../lib/webpack/run-webpack');
 
 const toBool = (val) => val === void 0 || (val === 'false' ? false : val);
 
@@ -20,6 +23,11 @@ module.exports = async function (src, argv) {
 		} else {
 			warn('Reverting to `webpack-dev-server` internal certificate.');
 		}
+	}
+
+	if (argv.clean === void 0) {
+		let dest = resolve(argv.cwd, argv.dest);
+		await promisify(rimraf)(dest);
 	}
 
 	return runWebpack(argv, true);
