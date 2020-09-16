@@ -20,7 +20,7 @@ const argv = {
 	'inline-css': true,
 };
 
-exports.create = async function(template, name) {
+exports.create = async function (template, name) {
 	let dest = tmpDir();
 	name = name || `test-${template}`;
 
@@ -35,7 +35,7 @@ exports.create = async function(template, name) {
 	return dest;
 };
 
-exports.build = function(cwd, options, installNodeModules = false) {
+exports.build = function (cwd, options, installNodeModules = false) {
 	if (!installNodeModules) {
 		mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
 		linkPackage('preact', root, cwd);
@@ -48,7 +48,10 @@ exports.build = function(cwd, options, installNodeModules = false) {
 	return cmd.build(argv.src, Object.assign({}, opts, options));
 };
 
-exports.watch = function(cwd, port, host = '127.0.0.1') {
-	let opts = Object.assign({ cwd, host, port, https: false }, argv);
+exports.watch = function (cwd, port, host = '127.0.0.1') {
+	let opts = Object.assign(
+		{ cwd, host, port, https: false, devServer: true },
+		argv
+	);
 	return cmd.watch(argv.src, opts);
 };
