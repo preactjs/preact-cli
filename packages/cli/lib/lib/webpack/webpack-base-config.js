@@ -71,7 +71,7 @@ function getSassConfiguration(...includePaths) {
 }
 
 module.exports = function (env) {
-	const { cwd, isProd, isWatch, src, source } = env;
+	const { cwd, isProd, isWatch, devServer, src, source } = env;
 	const babelConfigFile = env.babelConfig || '.babelrc';
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	// Apply base-level `env` values
@@ -227,7 +227,7 @@ module.exports = function (env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					include: [source('components'), source('routes')],
 					use: [
-						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
+						devServer ? 'style-loader' : MiniCssExtractPlugin.loader,
 						{
 							loader: 'css-loader',
 							options: {
@@ -253,7 +253,7 @@ module.exports = function (env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					exclude: [source('components'), source('routes')],
 					use: [
-						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
+						devServer ? 'style-loader' : MiniCssExtractPlugin.loader,
 						{
 							loader: 'css-loader',
 							options: {
