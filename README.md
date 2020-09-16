@@ -152,7 +152,6 @@ $ preact watch
     --template         Path to custom HTML template
     --refresh          Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
     --devServer        Determine if dev server should be enabled  (default true)
-    --ignore           Path relative to src to be ignored during watch if dev server is disabled
     -c, --config       Path to custom CLI config  (default preact.config.js)
     -H, --host         Set server hostname  (default 0.0.0.0)
     -p, --port         Set server port  (default 8080)
