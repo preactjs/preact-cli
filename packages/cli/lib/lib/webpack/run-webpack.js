@@ -136,7 +136,7 @@ function runCompiler(compiler) {
 function runWatch(compiler, options = {}) {
 	return new Promise((res, rej) => {
 		compiler.watch(options, (err, stats) => {
-			showStats(stats, true);
+			showStats(stats, false);
 
 			if (err || (stats && stats.hasErrors())) {
 				rej(`${red('\n\nBuild failed! \n\n')} ${err || ''}`);
