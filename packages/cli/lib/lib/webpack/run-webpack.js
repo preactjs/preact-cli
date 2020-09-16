@@ -22,9 +22,7 @@ async function devBuild(env) {
 		let ssrConfig = serverConfig(env);
 		await transformConfig(env, ssrConfig, true);
 		let serverCompiler = webpack(ssrConfig);
-		await runWatch(serverCompiler, {
-			ignored: env.source(env.ignore),
-		});
+		await runWatch(serverCompiler);
 	}
 
 	let userPort =
@@ -84,12 +82,7 @@ async function devBuild(env) {
 
 		compiler.hooks.failed.tap('CliDevPlugin', rej);
 
-		if (!shouldRunDevServer)
-			return res(
-				runWatch(compiler, {
-					ignored: env.source(env.ignore),
-				})
-			);
+		if (!shouldRunDevServer) return res(runWatch(compiler));
 
 		let c = Object.assign({}, config.devServer, {
 			stats: { colors: true },

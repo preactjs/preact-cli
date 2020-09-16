@@ -108,11 +108,6 @@ prog
 		false
 	)
 	.option('--devServer', 'Determine if dev server should be enabled', true)
-	.option(
-		'--ignore',
-		'Path relative to src to be ignored during watch if dev server is disabled',
-		''
-	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port', 8080)
