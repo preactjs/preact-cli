@@ -12,9 +12,9 @@ module.exports = async function (src, argv) {
 		argv.refresh = argv.rhl;
 	}
 
-	argv.prerender = toBool(argv.prerender);
 	argv.src = src || argv.src;
 	argv.production = false;
+	argv.prerender = toBool(argv.prerender);
 
 	if (argv.https || process.env.HTTPS) {
 		let { key, cert, cacert } = argv;

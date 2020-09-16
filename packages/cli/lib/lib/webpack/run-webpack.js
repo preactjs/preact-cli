@@ -13,7 +13,6 @@ const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
 	let config = await clientConfig(env);
-
 	await transformConfig(env, config);
 
 	const shouldRunDevServer = env.devServer;
