@@ -78,19 +78,13 @@ prog
 	.command('watch [src]')
 	.describe('Start a live-reload server for development')
 	.option('--src', 'Specify source directory', 'src')
-	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--esm', 'Builds ES-2015 bundles for your code', false)
-	.option('--devServer', 'Determine if dev server should be enabled', true)
 	.option(
 		'--dest',
 		'Specify output directory if dev server is disabled',
 		'build'
 	)
-	.option(
-		'--ignore',
-		'Path relative to src to be ignored during watch if dev server is disabled',
-		''
-	)
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--esm', 'Builds ES-2015 bundles for your code', false)
 	.option('--esm', 'Builds ES-2015 bundles for your code.', false)
 	.option('--clear', 'Clear the console', true)
 	.option('--sw', 'Generate and attach a Service Worker', undefined)
@@ -112,6 +106,12 @@ prog
 		'--refresh',
 		'Enables experimental preact-refresh functionality',
 		false
+	)
+	.option('--devServer', 'Determine if dev server should be enabled', true)
+	.option(
+		'--ignore',
+		'Path relative to src to be ignored during watch if dev server is disabled',
+		''
 	)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')

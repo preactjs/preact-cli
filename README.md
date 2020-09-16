@@ -136,10 +136,8 @@ Spin up a development server with multiple features like `hot-module-replacement
 $ preact watch
 
     --src              Specify source directory  (default src)
-    --cwd              A directory to use instead of $PWD  (default .)
-    --devServer        Determine if dev server should be enabled  (default true)
     --dest             Specify output directory if dev server is disabled  (default build)
-    --ignore           Path relative to src to be ignored during watch if dev server is disabled
+    --cwd              A directory to use instead of $PWD  (default .)
     --esm              Builds ES-2015 bundles for your code  (default false)
     --clear            Clear the console (default true)
     --sw               Generate and attach a Service Worker  (default false)
@@ -153,6 +151,8 @@ $ preact watch
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
     --template         Path to custom HTML template
     --refresh          Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
+    --devServer        Determine if dev server should be enabled  (default true)
+    --ignore           Path relative to src to be ignored during watch if dev server is disabled
     -c, --config       Path to custom CLI config  (default preact.config.js)
     -H, --host         Set server hostname  (default 0.0.0.0)
     -p, --port         Set server port  (default 8080)
