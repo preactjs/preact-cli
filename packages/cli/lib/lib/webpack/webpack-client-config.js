@@ -26,7 +26,7 @@ const cleanFilename = (name) =>
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src, cwd, devServer /*, port? */ } = env;
+	const { isProd, source, src, cwd /*, port? */ } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
 		? require.resolve('@preact/async-loader')
@@ -184,7 +184,7 @@ function isProd(config) {
 				'process.env.ESM': config.esm,
 				'process.env.PRERENDER': config.prerender,
 			}),
-			new SizePlugin()
+			new SizePlugin(),
 		],
 
 		optimization: {
