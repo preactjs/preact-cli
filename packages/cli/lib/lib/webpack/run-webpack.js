@@ -81,11 +81,11 @@ async function devBuild(env) {
 
 		compiler.hooks.failed.tap('CliDevPlugin', rej);
 
-		if (!shouldRunDevServer) return res(runWatch(compiler));
-
 		let c = Object.assign({}, config.devServer, {
 			stats: { colors: true },
 		});
+
+		if (!shouldRunDevServer) return res(runWatch(compiler, c));
 
 		let server = new DevServer(compiler, c);
 		server.listen(port);
