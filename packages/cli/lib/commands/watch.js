@@ -4,7 +4,7 @@ const { promisify } = require('util');
 const { warn } = require('../util');
 const runWebpack = require('../lib/webpack/run-webpack');
 
-const toBool = (val) => val !== void 0 || (val === 'false' ? false : val);
+const toBool = (val) => val === void 0 || (val === 'false' ? false : val);
 
 module.exports = async function (src, argv) {
 	if (argv.rhl) {
@@ -14,7 +14,8 @@ module.exports = async function (src, argv) {
 
 	argv.src = src || argv.src;
 	argv.production = false;
-	argv.prerender = toBool(argv.prerender);
+	argv.devServer = toBool(argv.devServer);
+	if (!argv.devServer) argv.prerender = true;
 
 	if (argv.https || process.env.HTTPS) {
 		let { key, cert, cacert } = argv;
