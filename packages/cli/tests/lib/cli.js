@@ -48,10 +48,12 @@ exports.build = function (cwd, options, installNodeModules = false) {
 	return cmd.build(argv.src, Object.assign({}, opts, options));
 };
 
-exports.watch = function (cwd, port, host = '127.0.0.1') {
-	let opts = Object.assign(
-		{ cwd, host, port, https: false, devServer: true },
-		argv
-	);
+exports.watch = function (cwd, port, host = '127.0.0.1', devServer = true) {
+	if (!devServer) {
+		mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
+		linkPackage('preact', root, cwd);
+		linkPackage('preact-render-to-string', root, cwd);
+	}
+	let opts = Object.assign({ cwd, host, port, https: false, devServer }, argv);
 	return cmd.watch(argv.src, opts);
 };
