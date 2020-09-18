@@ -38,89 +38,83 @@ describe('preact', () => {
 		server.close();
 	});
 
-	describe('fast-refresh', () => {
-		const getText = async el => el ? el.evaluate(el => el.textContent) : null;
+	const getText = async el => el ? el.evaluate(el => el.textContent) : null;
 
-		it('should create development server with fast-refresh.', async () => {
-			let app = await create('default');
-			server = await watch(app, 8084, '127.0.0.1', true);
+	it('should create development server with fast-refresh.', async () => {
+		let app = await create('default');
+		server = await watch(app, 8084, '127.0.0.1', true);
 
-			let page = await loadPage(chrome, 'http://127.0.0.1:8084/');
-			page.on('console', msg => {
-				console.log('[BROWSER LOG]: ', msg);
-			});
+		let page = await loadPage(chrome, 'http://127.0.0.1:8084/');
 
-			let header = resolve(app, './src/components/header/index.js');
-			let original = await fs.readFile(header, 'utf8');
-			let update = original.replace('<h1>Preact App</h1>', '<h1 className="test">Test App</h1>');
-			await fs.writeFile(header, update);
-			await wait(2000);
+		let header = resolve(app, './src/components/header/index.js');
+		let original = await fs.readFile(header, 'utf8');
+		let update = original.replace('<h1>Preact App</h1>', '<h1 className="test">Test App</h1>');
+		await fs.writeFile(header, update);
+		await wait(2000);
 
-			const title = await page.$('.test');
-			expect(await getText(title)).toEqual('Test App');
+		const title = await page.$('.test');
+		expect(await getText(title)).toEqual('Test App');
 
-			server.close();
+		server.close();
+	});
+
+	it('should keep state around with fast-refresh', async () => {
+		let app = await create('default');
+		server = await watch(app, 8085, '127.0.0.1', true);
+
+		let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
+		page.on('console', msg => {
+			console.log('[BROWSER LOG]: ', msg);
 		});
+		let header = resolve(app, './src/components/header/index.js');
+		const newHeader = `
+			import { h } from 'preact';
+			import { useState } from 'preact/hooks';
+			import { Link } from 'preact-router/match';
+			import style from './style.css';
 
-		it('should keep state around', async () => {
-			let app = await create('default');
-			server = await watch(app, 8085, '127.0.0.1', true);
+			const Header = () => {
+				const [count, setCount] = useState(0);
+				return (
+					<header class={style.header}>
+						<h1>Preact App</h1>
+						<nav>
+							<Link activeClassName={style.active} href="/">Home</Link>
+							<Link activeClassName={style.active} href="/profile">Me</Link>
+							<Link activeClassName={style.active} href="/profile/john">John</Link>
+						</nav>
+						<button className="increment" onClick={() => setCount(count + 1)}>Increment</button>
+						<p className="count">{count}</p>
+					</header>
+				)
+			}
 
-			let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
-			page.on('console', msg => {
-				console.log('[BROWSER LOG]: ', msg);
-			});
+			export default Header;
+		`;
+		await fs.writeFile(header, newHeader);
 
-			let header = resolve(app, './src/components/header/index.js');
-			const newHeader = `
-				import { h } from 'preact';
-				import { useState } from 'preact/hooks';
-				import { Link } from 'preact-router/match';
-				import style from './style.css';
+		await wait(2000);
 
-				const Header = () => {
-					const [count, setCount] = useState(0);
-					return (
-						<header class={style.header}>
-							<h1>Preact App</h1>
-							<nav>
-								<Link activeClassName={style.active} href="/">Home</Link>
-								<Link activeClassName={style.active} href="/profile">Me</Link>
-								<Link activeClassName={style.active} href="/profile/john">John</Link>
-							</nav>
-							<button className="increment" onClick={() => setCount(count + 1)}>Increment</button>
-							<p className="count">{count}</p>
-						</header>
-					)
-				}
+		const button = await page.$('.increment');
+		const count = await page.$('.count');
+		expect(await getText(count)).toEqual('0');
+		await button.click();
+		expect(await getText(count)).toEqual('1');
 
-				export default Header;
-			`;
-			await fs.writeFile(header, newHeader);
+		let original = await fs.readFile(header, 'utf8');
+		let update = original.replace('setCount(count + 1)', 'setCount(count + 2)');
+		await fs.writeFile(header, update);
+		await wait(2000);
 
-			await wait(2000);
+		await button.click();
+		expect(await getText(count)).toEqual('3');
 
-			const button = await page.$('.increment');
-			const count = await page.$('.count');
-			expect(await getText(count)).toEqual('0');
-			await button.click();
-			expect(await getText(count)).toEqual('1');
+		update = original.replace('useState(0)', 'useState(20)');
+		await fs.writeFile(header, update);
+		await wait(2000);
 
-			let original = await fs.readFile(header, 'utf8');
-			let update = original.replace('setCount(count + 1)', 'setCount(count + 2)');
-			await fs.writeFile(header, update);
-			await wait(2000);
+		expect(await getText(count)).toEqual('20');
 
-			await button.click();
-			expect(await getText(count)).toEqual('3');
-
-			update = original.replace('useState(0)', 'useState(20)');
-			await fs.writeFile(header, update);
-			await wait(2000);
-
-			expect(await getText(count)).toEqual('20');
-
-			server.close();
-		});
+		server.close();
 	});
 });
