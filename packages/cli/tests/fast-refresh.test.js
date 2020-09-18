@@ -1,5 +1,5 @@
 const fs = require('../lib/fs');
-const { resolve } = require('path');
+const { resolve, join } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');
 
@@ -30,69 +30,42 @@ describe('preact', () => {
 		await chrome.close();
 	});
 
+	async function updateFile(base, file, replacer) {
+		const compPath = join(base, file);
+		const content = await fs.readFile(compPath, 'utf-8');
+		await fs.writeFile(compPath, replacer(content));
+	}
+
 	jest.setTimeout(100000);
 
 	const getText = async el => el ? el.evaluate(el => el.textContent) : null;
 
 	it('should create development server with fast-refresh.', async () => {
 		let app = await create('default');
-		server = await watch(app, 8084, '127.0.0.1', true);
+		server = await watch(app, 8085, '127.0.0.1', true);
 
-		let page = await loadPage(chrome, 'http://127.0.0.1:8084/');
+		let page = await loadPage(chrome, 'http://127.0.0.1:8085/profile');
 		const titles = await page.$$('h1');
 		expect(await getText(titles[0])).toEqual('Preact App');
 
-		let home = resolve(app, './src/routes/home/index.js');
-		let header = resolve(app, './src/components/header/index.js');
-		let original = await fs.readFile(header, 'utf8');
-		let update = original.replace('<h1>Preact App</h1>', '<h1 className="test">Test App</h1>');
-		await fs.writeFile(header, update);
-
+		await updateFile(app, './src/components/header/index.js', (content) => content.replace('<h1>Preact App</h1>', '<h1 className="test">Test App</h1>'))
 		await expectByPolling(async () => getText(await page.$('.test')), 'Test App');
 
-		let counter = resolve(app, './src/components/counter.js');
-		const newCounter = `
-			import { h } from 'preact';
-			import { useState } from 'preact/hooks';
-
-			const Counter = () => {
-				const [count, setCount] = useState(0);
-				return (
-					<div class={style.header}>
-						<button className="increment" onClick={() => setCount(count + 1)}>Increment</button>
-						<p className="count">{count}</p>
-					</div>
-				)
-			}
-
-			export default Counter;
-		`;
-		await fs.writeFile(counter, newCounter);
-		original = await fs.readFile(home, 'utf8');
-		update = original.replace('<h1>Home</h1>', '<Counter />');
-		update = 'import Counter from "../../components/Counter";\n' + update;
-		await fs.writeFile(home, update);
-		await wait(2000);
-
-		const button = await page.$('.increment');
-		const count = await page.$('.count');
+		const [button] = await page.$$('button');
+		const [,count] = await page.$$('p');
 		await button.click();
-		await expectByPolling(() => getText(count), '1');
+		await expectByPolling(() => getText(count), '11');
 
-		original = await fs.readFile(counter, 'utf8');
-		update = original.replace('setCount(count + 1)', 'setCount(count + 2)');
-		await fs.writeFile(counter, update);
+		await updateFile(app, './src/routes/profile/index.js', (content) => content.replace('setCount((count) => count + 1)', 'setCount((count) => count + 2)'))
 		await wait(2000);
 
 		await button.click();
-		expect(await getText(count)).toEqual('3');
+		await expectByPolling(() => getText(count), '13');
 
-		update = update.replace('useState(0)', 'useState(20)');
-		await fs.writeFile(counter, update);
+		await updateFile(app, './src/routes/profile/index.js', (content) => content.replace('useState(10)', 'useState(20)'))
 		await wait(2000);
 
-		expect(await getText(count)).toEqual('20');
-
+		await expectByPolling(() => getText(count), '20');
 		server.close();
 	});
 });
