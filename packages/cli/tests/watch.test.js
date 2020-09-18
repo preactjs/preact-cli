@@ -63,9 +63,6 @@ describe('preact', () => {
 		server = await watch(app, 8085, '127.0.0.1', true);
 
 		let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
-		page.on('console', msg => {
-			console.log('[BROWSER LOG]: ', msg);
-		});
 		let header = resolve(app, './src/components/header/index.js');
 		const newHeader = `
 			import { h } from 'preact';
