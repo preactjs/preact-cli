@@ -12,6 +12,10 @@
 		"test": "jest --forceExit"
 	},
 	"jest": {
+    "moduleNameMapper": {
+      "@prefresh/webpack": "<rootDir>/../../node_modules/@prefresh/webpack",
+      "preact": "<rootDir>/../../node_modules/preact"
+    },
 		"setupFilesAfterEnv": [
 			"<rootDir>/tests/setup.js"
 		],
