@@ -44,6 +44,9 @@ describe('preact', () => {
 			server = await watch(app, 8084, '127.0.0.1', true);
 
 			let page = await loadPage(chrome, 'http://127.0.0.1:8084/');
+			page.on('console', msg => {
+				console.log('[BROWSER LOG]: ', msg);
+			});
 
 			let header = resolve(app, './src/components/header/index.js');
 			let original = await fs.readFile(header, 'utf8');
@@ -56,11 +59,15 @@ describe('preact', () => {
 
 			server.close();
 		});
+
 		it('should keep state around', async () => {
 			let app = await create('default');
 			server = await watch(app, 8085, '127.0.0.1', true);
 
 			let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
+			page.on('console', msg => {
+				console.log('[BROWSER LOG]: ', msg);
+			});
 
 			let header = resolve(app, './src/components/header/index.js');
 			const newHeader = `
