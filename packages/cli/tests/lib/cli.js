@@ -48,7 +48,7 @@ exports.build = function(cwd, options, installNodeModules = false) {
 	return cmd.build(argv.src, Object.assign({}, opts, options));
 };
 
-exports.watch = function(cwd, port, host = '127.0.0.1') {
-	let opts = Object.assign({ cwd, host, port, https: false }, argv);
+exports.watch = function(cwd, port, host = '127.0.0.1', refresh) {
+	let opts = Object.assign({ cwd, host, port, https: false, refresh }, argv);
 	return cmd.watch(argv.src, opts);
 };

@@ -12,3 +12,4 @@ tmp-*.json
 
 # auto generated while running tests
 packages/cli/size-plugin.json
+packages/cli/size-plugin-ssr.json
