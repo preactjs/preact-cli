@@ -97,7 +97,8 @@ describe('preact', () => {
 			await button.click();
 			expect(await getText(count)).toEqual('1');
 
-			update = original.replace('setCount(count + 1)', 'setCount(count + 2)');
+			let original = await fs.readFile(header, 'utf8');
+			let update = original.replace('setCount(count + 1)', 'setCount(count + 2)');
 			await fs.writeFile(header, update);
 			await wait(2000);
 
