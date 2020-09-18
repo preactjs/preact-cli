@@ -41,9 +41,9 @@ describe('preact', () => {
 
 		it('should create development server with fast-refresh.', async () => {
 			let app = await create('default');
-			server = await watch(app, 8083, '127.0.0.1', true);
+			server = await watch(app, 8084, '127.0.0.1', true);
 
-			let page = await loadPage(chrome, 'http://127.0.0.1:8083/');
+			let page = await loadPage(chrome, 'http://127.0.0.1:8084/');
 
 			let header = resolve(app, './src/components/header/index.js');
 			let original = await fs.readFile(header, 'utf8');
@@ -60,9 +60,9 @@ describe('preact', () => {
 
 		it('should keep state around', async () => {
 			let app = await create('default');
-			server = await watch(app, 8083, '127.0.0.1', true);
+			server = await watch(app, 8085, '127.0.0.1', true);
 
-			let page = await loadPage(chrome, 'http://127.0.0.1:8083/');
+			let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
 
 			let header = resolve(app, './src/components/header/index.js');
 			const newHeader = `
