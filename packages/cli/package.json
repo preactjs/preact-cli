@@ -12,10 +12,6 @@
 		"test": "jest --forceExit"
 	},
 	"jest": {
-    "moduleNameMapper": {
-      "@prefresh/webpack": "<rootDir>/../../node_modules/@prefresh/webpack",
-      "preact": "<rootDir>/../../node_modules/preact"
-    },
 		"setupFilesAfterEnv": [
 			"<rootDir>/tests/setup.js"
 		],
@@ -84,7 +80,7 @@
 		"@babel/preset-typescript": "^7.9.0",
 		"@preact/async-loader": "^3.0.1",
 		"@prefresh/babel-plugin": "^0.1.0",
-		"@prefresh/webpack": "^1.0.2",
+		"@prefresh/webpack": "^1.1.0",
 		"autoprefixer": "^9.6.0",
 		"babel-esm-plugin": "^0.9.0",
 		"babel-loader": "^8.0.6",
