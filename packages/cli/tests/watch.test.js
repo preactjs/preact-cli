@@ -45,6 +45,7 @@ describe('preact', () => {
 		server = await watch(app, 8084, '127.0.0.1', true);
 
 		let page = await loadPage(chrome, 'http://127.0.0.1:8084/');
+		const title = await page.$('.test');
 		expect(await getText(title)).toEqual('Preact App');
 
 		let header = resolve(app, './src/components/header/index.js');
@@ -53,7 +54,6 @@ describe('preact', () => {
 		await fs.writeFile(header, update);
 		await wait(2000);
 
-		const title = await page.$('.test');
 		expect(await getText(title)).toEqual('Test App');
 
 		server.close();
@@ -64,6 +64,7 @@ describe('preact', () => {
 		server = await watch(app, 8085, '127.0.0.1', true);
 
 		let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
+		const title = await page.$('.test');
 		expect(await getText(title)).toEqual('Preact App');
 		let header = resolve(app, './src/components/header/index.js');
 		const newHeader = `
