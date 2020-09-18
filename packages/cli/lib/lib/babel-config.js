@@ -41,7 +41,7 @@ module.exports = function (env, options = {}) {
 					[require.resolve('@babel/preset-typescript'), { jsxPragma: 'h' }],
 				],
 				plugins: [
-					!isProd && refresh && require.resolve('@prefresh/babel-plugin'),
+					!isProd && refresh && [require.resolve('@prefresh/babel-plugin'), { skipEnvCheck: true }],
 				].filter(Boolean),
 			},
 		],
