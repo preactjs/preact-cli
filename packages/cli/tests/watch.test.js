@@ -6,8 +6,6 @@ const { create, watch } = require('./lib/cli');
 const { loadPage, waitUntilExpression } = startChrome;
 let chrome, server;
 
-const wait = (timeout) => new Promise((res) => setTimeout(res, timeout));
-
 describe('preact', () => {
 	beforeAll(async () => {
 		chrome = await startChrome();

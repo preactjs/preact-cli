@@ -3,7 +3,7 @@ const { resolve } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');
 
-const { loadPage, waitUntilExpression } = startChrome;
+const { loadPage } = startChrome;
 let chrome, server;
 
 const wait = (t) => new Promise(res => setTimeout(res, t));
