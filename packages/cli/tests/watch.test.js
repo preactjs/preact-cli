@@ -45,6 +45,7 @@ describe('preact', () => {
 		server = await watch(app, 8084, '127.0.0.1', true);
 
 		let page = await loadPage(chrome, 'http://127.0.0.1:8084/');
+		expect(await getText(title)).toEqual('Preact App');
 
 		let header = resolve(app, './src/components/header/index.js');
 		let original = await fs.readFile(header, 'utf8');
@@ -63,6 +64,7 @@ describe('preact', () => {
 		server = await watch(app, 8085, '127.0.0.1', true);
 
 		let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
+		expect(await getText(title)).toEqual('Preact App');
 		let header = resolve(app, './src/components/header/index.js');
 		const newHeader = `
 			import { h } from 'preact';
