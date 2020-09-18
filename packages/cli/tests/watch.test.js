@@ -17,6 +17,8 @@ describe('preact', () => {
 		await chrome.close();
 	});
 
+	jest.setTimeout(100000);
+
 	it('should create development server with hot reloading.', async () => {
 		let app = await create('default');
 		server = await watch(app, 8083);
