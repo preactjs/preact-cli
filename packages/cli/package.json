@@ -12,6 +12,13 @@
 		"test": "jest --forceExit"
 	},
 	"jest": {
+    "moduleNameMapper": {
+      "^@prefresh/core": "<rootDir>/../../node_modules/@prefresh/core",
+      "^@prefresh/plugin-babel": "<rootDir>/../../node_modules/@prefresh/plugin-babel",
+      "^@prefresh/utils": "<rootDir>/../../node_modules/@prefresh/utils",
+      "^@prefresh/webpack": "<rootDir>/../../node_modules/@prefresh/webpack",
+      "^preact": "<rootDir>/../../node_modules/preact"
+    },
 		"setupFilesAfterEnv": [
 			"<rootDir>/tests/setup.js"
 		],
