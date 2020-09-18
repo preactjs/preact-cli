@@ -47,17 +47,15 @@ describe('preact', () => {
 
 			let header = resolve(app, './src/components/header/index.js');
 			let original = await fs.readFile(header, 'utf8');
-			let update = original.replace('<h1>Preact App</h1>', '<h1>Test App</h1>');
+			let update = original.replace('<h1>Preact App</h1>', '<h1 className="test">Test App</h1>');
 			await fs.writeFile(header, update);
+			await wait(2000);
 
-			await waitUntilExpression(
-				page,
-				`document.querySelector('header > h1').innerText === 'Test App'`
-			);
+			const title = await page.$('.test');
+			expect(await getText(title)).toEqual('Test App');
 
 			server.close();
 		});
-
 		it('should keep state around', async () => {
 			let app = await create('default');
 			server = await watch(app, 8085, '127.0.0.1', true);
@@ -91,7 +89,7 @@ describe('preact', () => {
 			`;
 			await fs.writeFile(header, newHeader);
 
-			await wait(1000);
+			await wait(2000);
 
 			const button = await page.$('.increment');
 			const count = await page.$('.count');
@@ -99,26 +97,17 @@ describe('preact', () => {
 			await button.click();
 			expect(await getText(count)).toEqual('1');
 
-			let original = await fs.readFile(header, 'utf8');
-			let update = original.replace('<h1>Preact App</h1>', '<h1>Test App</h1>');
-			await fs.writeFile(header, update);
-			await waitUntilExpression(
-				page,
-				`document.querySelector('header > h1').innerText === 'Test App'`
-			);
-			expect(await getText(count)).toEqual('1');
-
-
 			update = original.replace('setCount(count + 1)', 'setCount(count + 2)');
 			await fs.writeFile(header, update);
-			await wait(1000);
+			await wait(2000);
 
 			await button.click();
 			expect(await getText(count)).toEqual('3');
 
 			update = original.replace('useState(0)', 'useState(20)');
 			await fs.writeFile(header, update);
-			await wait(1000);
+			await wait(2000);
+
 			expect(await getText(count)).toEqual('20');
 
 			server.close();
