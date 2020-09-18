@@ -37,10 +37,7 @@ describe('preact', () => {
 	});
 
 	describe('fast-refresh', () => {
-		const getText = async selectorOrEl => {
-			const el = await getEl(selectorOrEl);
-			return el ? el.evaluate(el => el.textContent) : null;
-		};
+		const getText = async el => el ? el.evaluate(el => el.textContent) : null;
 
 		it('should create development server with fast-refresh.', async () => {
 			let app = await create('default');
@@ -126,5 +123,5 @@ describe('preact', () => {
 
 			server.close();
 		});
-	})
+	});
 });
