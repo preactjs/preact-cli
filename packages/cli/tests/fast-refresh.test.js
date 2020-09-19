@@ -41,7 +41,7 @@ describe('preact', () => {
 
 	it('should create development server with fast-refresh.', async () => {
 		let app = await create('default');
-		const port = await getPort()
+		const port = await getPort();
 		server = await watch(app, port, '127.0.0.1', true);
 
 		let page = await loadPage(chrome, `http://127.0.0.1:${port}/profile`);
