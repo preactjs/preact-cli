@@ -1,5 +1,5 @@
 const fs = require('../lib/fs');
-const { resolve, join } = require('path');
+const { join } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');
 
@@ -48,7 +48,7 @@ describe('preact', () => {
 		const titles = await page.$$('h1');
 		expect(await getText(titles[0])).toEqual('Preact App');
 
-		await updateFile(app, './src/components/header/index.js', (content) => content.replace('<h1>Preact App</h1>', '<h1 className="test">Test App</h1>'))
+		await updateFile(app, './src/components/header/index.js', (content) => content.replace('<h1>Preact App</h1>', '<h1 className="test">Test App</h1>'));
 		await expectByPolling(async () => getText(await page.$('.test')), 'Test App');
 
 		const [button] = await page.$$('button');
@@ -56,13 +56,13 @@ describe('preact', () => {
 		await button.click();
 		await expectByPolling(() => getText(count), '11');
 
-		await updateFile(app, './src/routes/profile/index.js', (content) => content.replace('setCount((count) => count + 1)', 'setCount((count) => count + 2)'))
+		await updateFile(app, './src/routes/profile/index.js', (content) => content.replace('setCount((count) => count + 1)', 'setCount((count) => count + 2)'));
 		await wait(2000);
 
 		await button.click();
 		await expectByPolling(() => getText(count), '13');
 
-		await updateFile(app, './src/routes/profile/index.js', (content) => content.replace('useState(10)', 'useState(20)'))
+		await updateFile(app, './src/routes/profile/index.js', (content) => content.replace('useState(10)', 'useState(20)'));
 		await wait(2000);
 
 		await expectByPolling(() => getText(count), '20');
