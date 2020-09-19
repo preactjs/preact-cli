@@ -2,6 +2,7 @@ const fs = require('../lib/fs');
 const { join } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');
+const getPort = require('get-port');
 
 const { loadPage } = startChrome;
 let chrome, server;
@@ -36,15 +37,14 @@ describe('preact', () => {
 		await fs.writeFile(compPath, replacer(content));
 	}
 
-	jest.setTimeout(100000);
-
 	const getText = async el => el ? el.evaluate(el => el.textContent) : null;
 
 	it('should create development server with fast-refresh.', async () => {
 		let app = await create('default');
-		server = await watch(app, 8085, '127.0.0.1', true);
+		const port = await getPort()
+		server = await watch(app, port, '127.0.0.1', true);
 
-		let page = await loadPage(chrome, 'http://127.0.0.1:8085/profile');
+		let page = await loadPage(chrome, `http://127.0.0.1:${port}/profile`);
 		const titles = await page.$$('h1');
 		expect(await getText(titles[0])).toEqual('Preact App');
 
