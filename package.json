@@ -8,8 +8,6 @@
     "test": "lerna run test --stream",
     "prettier": "prettier --write **/*.{js,ts,tsx,json,css,scss,md,yml}",
     "lint": "eslint .",
-    "prepack": "ncp README.md packages/cli/",
-    "postpack": "rimraf packages/cli/README.md",
     "changeset": "changeset",
     "release": "changeset publish"
   },

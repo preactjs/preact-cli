@@ -9,7 +9,9 @@
 	},
 	"scripts": {
 		"pretest": "rimraf ./tests/output",
-		"test": "jest --forceExit"
+		"test": "jest --forceExit",
+		"prepack": "ncp ../../README.md README.md",
+		"postpack": "rimraf README.md"
 	},
 	"jest": {
 		"setupFilesAfterEnv": [
