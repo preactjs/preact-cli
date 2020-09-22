@@ -42,7 +42,7 @@ function getRegExpFromMarkup(markup) {
 function testMatch(src, tar) {
 	let k, tmp;
 	let keys = Object.keys(tar);
-	expect(keys).toHaveLength(Object.keys(src).length);
+	expect(Object.keys(src)).toHaveLength(keys.length);
 	for (k in src) {
 		expect(hasKey(k, keys)).toBeTruthy();
 		if (!isWithin(src[k], tar[tmp])) return false;
