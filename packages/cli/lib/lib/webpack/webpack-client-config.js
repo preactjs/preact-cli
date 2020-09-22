@@ -7,7 +7,7 @@ const { filter } = require('minimatch');
 const SizePlugin = require('size-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CrittersPlugin = require('critters-webpack-plugin');
 const renderHTMLPlugin = require('./render-html-plugin');
@@ -184,7 +184,7 @@ function isProd(config) {
 				'process.env.ESM': config.esm,
 				'process.env.PRERENDER': config.prerender,
 			}),
-			new SizePlugin()
+			new SizePlugin(),
 		],
 
 		optimization: {
@@ -212,12 +212,7 @@ function isProd(config) {
 					extractComments: false,
 					sourceMap: true,
 				}),
-				new OptimizeCssAssetsPlugin({
-					cssProcessorOptions: {
-						// Fix keyframes in different CSS chunks minifying to colliding names:
-						reduceIdents: false,
-					},
-				}),
+				new CssMinimizerPlugin(),
 			],
 		},
 	};
