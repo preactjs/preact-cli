@@ -49,7 +49,7 @@ export default function async(load) {
 			const me = prev && prev.nextSibling || (this.__P || this._parentDom).firstChild;
 
 			return (
-				me &&
+				me && me.localName &&
 				h(me.localName, {
 					dangerouslySetInnerHTML: PENDING,
 				})
