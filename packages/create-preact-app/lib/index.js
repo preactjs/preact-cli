@@ -30,7 +30,7 @@ process.on('unhandledRejection', (err) => {
 let prog = sade('create-preact-app').version(pkg.version);
 
 prog
-	.command('create [template] [dest]')
+	.command('create [template] [dest]', '', { default: true })
 	.describe('Create a new application')
 	.option('--name', 'The application name')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
