@@ -27,7 +27,7 @@ const {
 	TEMPLATES_CACHE_FILENAME,
 	FALLBACK_TEMPLATE_OPTIONS,
 } = require('../constants');
-const { addScripts, install, initGit } = require('../lib/setup');
+const { addScripts, install, initGit } = require('../setup');
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
@@ -350,7 +350,7 @@ module.exports = async function (repo, dest, argv) {
 	copyFileToDestination(templateSrc, templateDest);
 
 	// Copy over sw.js
-	const serviceWorkerSrc = resolve(__dirname, join('..', '..', 'sw', 'sw.js'));
+	const serviceWorkerSrc = resolve(__dirname, join('..', 'resources', 'sw.js'));
 	const serviceWorkerDest = join(sourceDirectory, 'sw.js');
 	copyFileToDestination(serviceWorkerSrc, serviceWorkerDest);
 
