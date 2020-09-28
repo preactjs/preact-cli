@@ -48,12 +48,11 @@ export default function async(load) {
 			const prev = getPreviousSibling(this.__v);
 			const me = prev && prev.nextSibling || (this.__P || this._parentDom).firstChild;
 
-			return (
-				me && me.localName &&
-				h(me.localName, {
-					dangerouslySetInnerHTML: PENDING,
-				})
-			);
+			if (!me) return;
+			if (me.nodeType === 3) return me.data;
+			return h(me.localName, {
+				dangerouslySetInnerHTML: PENDING,
+			});
 		};
 	}
 
