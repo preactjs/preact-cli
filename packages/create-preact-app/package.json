@@ -26,6 +26,7 @@
 	"engines": {
 		"node": ">=8"
 	},
+	"license": "MIT",
 	"devDependencies": {
 		"mkdirp": "^1.0.4"
 	},
