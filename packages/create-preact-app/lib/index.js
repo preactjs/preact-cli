@@ -12,7 +12,7 @@ if (
 		.localeCompare(min.match(/\d+/g).join('.'), 'en', { numeric: true }) === -1
 ) {
 	return error(
-		`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!`,
+		`You are using Node ${ver} but create-preact-app requires Node ${min}. Please upgrade Node to continue!`,
 		1
 	);
 }
@@ -27,7 +27,7 @@ process.on('unhandledRejection', (err) => {
 	error(err.stack || err.message);
 });
 
-let prog = sade('preact').version(pkg.version);
+let prog = sade('create-preact-app').version(pkg.version);
 
 prog
 	.command('create [template] [dest]')

@@ -181,7 +181,9 @@ module.exports = async function (repo, dest, argv) {
 
 	if (!repo || !dest) {
 		warn('Insufficient arguments!');
-		info('Alternatively, run `preact create --help` for usage info.');
+		info(
+			'Alternatively, run `create-preact-app create --help` for usage info.'
+		);
 		return;
 	}
 

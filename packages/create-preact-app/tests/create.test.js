@@ -7,7 +7,7 @@ const snapshots = require('./images/create');
 // TODO: Move all `examples/` to `preactjs-templates`
 const ours = ['default'];
 
-describe('preact create', () => {
+describe('create-preact-app', () => {
 	ours.forEach((key) => {
 		it(`scaffolds the '${key}' official template`, async () => {
 			let dir = await create(key);
