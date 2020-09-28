@@ -31,8 +31,8 @@ const { addScripts, install, initGit } = require('../lib/setup');
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
-const isMedia = str => RGX.test(str);
-const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
+const isMedia = (str) => RGX.test(str);
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.substring(1);
 
 // Formulate Questions if `create` args are missing
 function requestParams(argv, templates) {
@@ -48,7 +48,7 @@ function requestParams(argv, templates) {
 			initial: 0,
 		},
 		{
-			type: prev => (prev === 'custom' ? 'text' : null),
+			type: (prev) => (prev === 'custom' ? 'text' : null),
 			name: 'template',
 			message: 'Remote template to clone (user/repo#tag)',
 		},
@@ -58,11 +58,11 @@ function requestParams(argv, templates) {
 			message: 'Directory to create the app',
 		},
 		{
-			type: prev => (!dirExists(cwd, prev || argv.dest) ? null : 'confirm'),
+			type: (prev) => (!dirExists(cwd, prev || argv.dest) ? null : 'confirm'),
 			name: 'force',
 			message: 'The destination directory exists. Overwrite?',
 			initial: false,
-			onState: state => {
+			onState: (state) => {
 				if (state.aborted || !state.value) {
 					process.stdout.write('\n');
 					warn('Aborting due to existing directory');
@@ -83,7 +83,7 @@ function requestParams(argv, templates) {
 			initial: true,
 		},
 		{
-			type: prev => (!argv.yarn && prev ? 'confirm' : null),
+			type: (prev) => (!argv.yarn && prev ? 'confirm' : null),
 			name: 'yarn',
 			message: 'Install with `yarn` instead of `npm`',
 			initial: false,
@@ -105,7 +105,7 @@ async function updateTemplatesCache() {
 	);
 
 	try {
-		const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+		const repos = await fetch(TEMPLATES_REPO_URL).then((r) => r.json());
 		await fs.writeFile(cacheFilePath, JSON.stringify(repos, null, 2), 'utf-8');
 	} catch (err) {
 		error(`\nFailed to update template cache\n ${err}`);
@@ -132,7 +132,7 @@ async function fetchTemplates() {
 
 		// If cache file doesn't exist, then hit the API and fetch the data
 		if (!fs.existsSync(cacheFilePath)) {
-			const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
+			const repos = await fetch(TEMPLATES_REPO_URL).then((r) => r.json());
 			await fs.writeFile(
 				cacheFilePath,
 				JSON.stringify(repos, null, 2),
@@ -163,7 +163,7 @@ async function copyFileToDestination(srcPath, destPath, force = false) {
 	}
 }
 
-module.exports = async function(repo, dest, argv) {
+module.exports = async function (repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
 		const templates = await fetchTemplates();
@@ -231,7 +231,7 @@ module.exports = async function(repo, dest, argv) {
 	}
 
 	// Attempt to fetch the `template`
-	let archive = await gittar.fetch(repo).catch(err => {
+	let archive = await gittar.fetch(repo).catch((err) => {
 		err = err || { message: 'An error occured while fetching template.' };
 
 		return error(
@@ -267,7 +267,7 @@ module.exports = async function(repo, dest, argv) {
 	if (keeps.length) {
 		// eslint-disable-next-line
 		const dict = new Map();
-		const templateVar = str => new RegExp(`{{\\s?${str}\\s}}`, 'g');
+		const templateVar = (str) => new RegExp(`{{\\s?${str}\\s}}`, 'g');
 
 		dict.set(templateVar('pkg-install'), isYarn ? 'yarn' : 'npm install');
 		dict.set(templateVar('pkg-run'), isYarn ? 'yarn' : 'npm run');
@@ -276,7 +276,7 @@ module.exports = async function(repo, dest, argv) {
 		dict.set(templateVar('license'), argv.license || 'MIT');
 
 		// TODO: concat author-driven patterns
-		['name'].forEach(str => {
+		['name'].forEach((str) => {
 			// if value is defined
 			if (argv[str] !== void 0) {
 				dict.set(templateVar(str), argv[str]);

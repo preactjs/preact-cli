@@ -1,0 +1,45 @@
+{
+	"name": "create-preact-app",
+	"version": "0.0.0",
+	"description": "Start building a Preact Progressive Web App in seconds.",
+	"repository": "preactjs/preact-cli",
+	"main": "lib/index.js",
+	"bin": {
+		"create-preact-app": "lib/index.js"
+	},
+	"scripts": {
+		"pretest": "rimraf ./tests/output",
+		"test": "jest --forceExit"
+	},
+	"jest": {
+		"setupFilesAfterEnv": [
+			"<rootDir>/tests/setup.js"
+		],
+		"testEnvironment": "node",
+		"testPathIgnorePatterns": [
+			"<rootDir>/tests/output"
+		],
+		"modulePathIgnorePatterns": [
+			"<rootDir>/tests/output"
+		]
+	},
+	"engines": {
+		"node": ">=8"
+	},
+	"devDependencies": {
+		"mkdirp": "^1.0.4"
+	},
+	"dependencies": {
+		"cross-spawn-promise": "^0.10.2",
+		"isomorphic-unfetch": "^3.0.0",
+		"gittar": "^0.1.1",
+		"glob": "^7.1.6",
+		"kleur": "^4.0.2",
+		"ora": "^4.0.3",
+		"prompts": "^2.3.2",
+		"sade": "^1.4.1",
+		"update-notifier": "^4.1.0",
+		"validate-npm-package-name": "^3.0.0",
+		"which": "^2.0.2"
+	}
+}

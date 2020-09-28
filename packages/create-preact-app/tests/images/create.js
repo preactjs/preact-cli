@@ -29,5 +29,5 @@ exports.default = [
 	'tests/__mocks__/setupTests.js',
 	'tests/header.test.js',
 ]
-	.map(s => s.replace(/\//g, path.sep))
+	.map((s) => s.replace(/\//g, path.sep))
 	.sort();

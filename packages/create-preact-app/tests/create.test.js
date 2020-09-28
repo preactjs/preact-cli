@@ -8,12 +8,12 @@ const snapshots = require('./images/create');
 const ours = ['default'];
 
 describe('preact create', () => {
-	ours.forEach(key => {
+	ours.forEach((key) => {
 		it(`scaffolds the '${key}' official template`, async () => {
 			let dir = await create(key);
 
-			let output = await expand(dir).then(arr => {
-				return arr.map(x => relative(dir, x));
+			let output = await expand(dir).then((arr) => {
+				return arr.map((x) => relative(dir, x));
 			});
 
 			expect(output.sort()).toEqual(snapshots[key]);
