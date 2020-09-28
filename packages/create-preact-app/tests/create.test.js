@@ -37,10 +37,4 @@ describe('create-preact-app', () => {
 
 		expect(template.includes('apple-touch-icon')).toEqual(true);
 	});
-
-	// it('should fail given an invalid name', async () => {
-	// 	const exit = jest.spyOn(process, 'exit');
-	// 	await create('default', '*()@!#!$-invalid-name');
-	// 	expect(exit).toHaveBeenCalledWith(1);
-	// });
 });
