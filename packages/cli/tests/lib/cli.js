@@ -1,6 +1,7 @@
 const { join } = require('path');
 const { existsSync, unlinkSync, symlinkSync } = require('fs');
 const cmd = require('../../lib/commands');
+const create = require('../../../create-preact-app/lib/commands').create;
 const { tmpDir } = require('./output');
 const mkdirp = require('mkdirp');
 const shell = require('shelljs');
@@ -20,11 +21,11 @@ const argv = {
 	'inline-css': true,
 };
 
-exports.create = async function(template, name) {
+exports.create = async function (template, name) {
 	let dest = tmpDir();
 	name = name || `test-${template}`;
 
-	await cmd.create(template, dest, { name, cwd: '.' });
+	await create(template, dest, { name, cwd: '.' });
 
 	// TODO: temporary – will resolve after 2.x->3.x release
 	// Templates are using 2.x, which needs `.babelrc` for TEST modification.
@@ -35,7 +36,7 @@ exports.create = async function(template, name) {
 	return dest;
 };
 
-exports.build = function(cwd, options, installNodeModules = false) {
+exports.build = function (cwd, options, installNodeModules = false) {
 	if (!installNodeModules) {
 		mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
 		linkPackage('preact', root, cwd);
@@ -48,7 +49,7 @@ exports.build = function(cwd, options, installNodeModules = false) {
 	return cmd.build(argv.src, Object.assign({}, opts, options));
 };
 
-exports.watch = function(cwd, port, host = '127.0.0.1') {
+exports.watch = function (cwd, port, host = '127.0.0.1') {
 	let opts = Object.assign({ cwd, host, port, https: false }, argv);
 	return cmd.watch(argv.src, opts);
 };
