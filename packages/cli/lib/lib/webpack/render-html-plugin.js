@@ -9,13 +9,15 @@ const { warn } = require('../../util');
 const { info } = require('../../util');
 const { PRERENDER_DATA_FILE_NAME } = require('../constants');
 
+const PREACT_FALLBACK_URL = '/PREACT_FALLBACK';
+
 let defaultTemplate = resolve(__dirname, '../../resources/template.html');
 
 function read(path) {
 	return readFileSync(resolve(__dirname, path), 'utf-8');
 }
 
-module.exports = async function(config) {
+module.exports = async function (config) {
 	const { cwd, dest, isProd, src } = config;
 	const inProjectTemplatePath = resolve(src, 'template.html');
 	let template = defaultTemplate;
@@ -53,7 +55,7 @@ module.exports = async function(config) {
 		writeFileSync(template, content);
 	}
 
-	const htmlWebpackConfig = values => {
+	const htmlWebpackConfig = (values) => {
 		const { url, title, ...routeData } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
@@ -90,10 +92,12 @@ module.exports = async function(config) {
 			config,
 			url,
 			ssr() {
-				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
+				return config.prerender && url !== PREACT_FALLBACK_URL
+					? prerender({ cwd, dest, src }, values)
+					: '';
 			},
 			scriptLoading: 'defer',
-			CLI_DATA: { preRenderData: { url, ...routeData } }
+			CLI_DATA: { preRenderData: { url, ...routeData } },
 		});
 	};
 
@@ -137,12 +141,20 @@ module.exports = async function(config) {
 			);
 		}
 	}
+	/**
+	 * We cache a non SSRed page in service worker so that there is
+	 * no flash of content when user lands on routes other than `/`.
+	 * And we dont have to cache every single html file.
+	 * Go easy on network usage of clients.
+	 */
+	pages.push({ url: PREACT_FALLBACK_URL });
 
-	return pages
+	const resultPages = pages
 		.map(htmlWebpackConfig)
-		.map(conf => new HtmlWebpackPlugin(conf))
+		.map((conf) => new HtmlWebpackPlugin(conf))
 		.concat([new HtmlWebpackExcludeAssetsPlugin()])
-		.concat([...pages.map(page => new PrerenderDataExtractPlugin(page))]);
+		.concat([...pages.map((page) => new PrerenderDataExtractPlugin(page))]);
+	return resultPages;
 };
 
 // Adds a preact_prerender_data in every folder so that the data could be fetched separately.
@@ -154,7 +166,7 @@ class PrerenderDataExtractPlugin {
 		this.data_ = JSON.stringify(cliData.preRenderData || {});
 	}
 	apply(compiler) {
-		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', compilation => {
+		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', (compilation) => {
 			let path = this.location_ + PRERENDER_DATA_FILE_NAME;
 			if (path.startsWith('/')) {
 				path = path.substr(1);
@@ -166,3 +178,5 @@ class PrerenderDataExtractPlugin {
 		});
 	}
 }
+
+exports.PREACT_FALLBACK_URL = PREACT_FALLBACK_URL;

@@ -184,7 +184,7 @@ function isProd(config) {
 				'process.env.ESM': config.esm,
 				'process.env.PRERENDER': config.prerender,
 			}),
-			new SizePlugin()
+			new SizePlugin(),
 		],
 
 		optimization: {
@@ -228,7 +228,7 @@ function isProd(config) {
 				swSrc: swPath,
 				swDest: 'sw-esm.js',
 				include: [
-					/^\/?index\.html$/,
+					/^\/?PREACT_FALLBACK\/index\.html$/,
 					/\.esm.js$/,
 					/\.css$/,
 					/\.(png|jpg|svg|gif|webp)$/,
