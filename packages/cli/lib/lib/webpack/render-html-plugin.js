@@ -9,7 +9,7 @@ const { warn } = require('../../util');
 const { info } = require('../../util');
 const { PRERENDER_DATA_FILE_NAME } = require('../constants');
 
-const PREACT_FALLBACK_URL = '/PREACT_FALLBACK';
+const PREACT_FALLBACK_URL = '/200.html';
 
 let defaultTemplate = resolve(__dirname, '../../resources/template.html');
 
@@ -57,8 +57,12 @@ module.exports = async function (config) {
 
 	const htmlWebpackConfig = (values) => {
 		const { url, title, ...routeData } = values;
+		// Do not create a folder if the url is for a specific file.
+		const filename = url.endsWith('.html')
+			? resolve(dest, url.substring(1))
+			: resolve(dest, url.substring(1), 'index.html');
 		return Object.assign(values, {
-			filename: resolve(dest, url.substring(1), 'index.html'),
+			filename,
 			template: `!!ejs-loader!${template}`,
 			minify: isProd && {
 				collapseWhitespace: true,
@@ -147,7 +151,8 @@ module.exports = async function (config) {
 	 * And we dont have to cache every single html file.
 	 * Go easy on network usage of clients.
 	 */
-	pages.push({ url: PREACT_FALLBACK_URL });
+	!pages.map((page) => page.url).includes(PREACT_FALLBACK_URL) &&
+		pages.push({ url: PREACT_FALLBACK_URL });
 
 	const resultPages = pages
 		.map(htmlWebpackConfig)
@@ -167,6 +172,10 @@ class PrerenderDataExtractPlugin {
 	}
 	apply(compiler) {
 		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', (compilation) => {
+			if (this.location_ === `${PREACT_FALLBACK_URL}/`) {
+				// We dont build prerender data for `200.html`. It can re-use the one for homepage.
+				return;
+			}
 			let path = this.location_ + PRERENDER_DATA_FILE_NAME;
 			if (path.startsWith('/')) {
 				path = path.substr(1);
