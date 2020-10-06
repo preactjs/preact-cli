@@ -37,7 +37,7 @@ describe('preact service worker tests', () => {
 		const offlineContent = await page.content();
 		await page.waitForSelector('h1');
 		expect(
-			await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
+			await page.$$eval('h1', (nodes) => nodes.map((n) => n.innerText))
 		).toEqual(['Preact App', 'Home']);
 		expect(offlineContent).toEqual(initialContent);
 	});
@@ -63,5 +63,24 @@ describe('preact service worker tests', () => {
 		const refreshedContent = await page.content();
 		expect(initialContent).not.toEqual(refreshedContent);
 		expect(refreshedContent.includes(NEW_TITLE)).toEqual(true);
+	});
+	it('should respond with 200.html when offline', async () => {
+		const page = await browser.newPage();
+		await page.setCacheEnabled(false);
+		await page.goto('http://localhost:3000', {
+			waitUntil: 'networkidle0',
+		});
+		const initialContent = await page.content();
+		await sleep(2000); // wait for service worker installation.
+		await page.setOfflineMode(true);
+		await page.reload();
+		const offlineContent = await page.content();
+		await page.waitForSelector('h1');
+		expect(
+			await page.$$eval('srcipt[type=__PREACT_CLI_DATA__]', (nodes) =>
+				nodes.map((n) => n.innerText)
+			)
+		).toEqual(['abc']);
+		expect(offlineContent).toEqual(initialContent);
 	});
 });
