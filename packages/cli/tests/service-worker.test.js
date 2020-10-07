@@ -77,10 +77,10 @@ describe('preact service worker tests', () => {
 		const offlineContent = await page.content();
 		await page.waitForSelector('h1');
 		expect(
-			await page.$$eval('srcipt[type=__PREACT_CLI_DATA__]', (nodes) =>
+			await page.$$eval('script[type=__PREACT_CLI_DATA__]', (nodes) =>
 				nodes.map((n) => n.innerText)
 			)
-		).toEqual(['abc']);
+		).toEqual(['%7B%22preRenderData%22:%7B%22url%22:%22/200.html%22%7D%7D']);
 		expect(offlineContent).toEqual(initialContent);
 	});
 });

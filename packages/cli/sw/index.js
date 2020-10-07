@@ -2,7 +2,6 @@ import { registerRoute, setCatchHandler } from 'workbox-routing';
 import { precacheAndRoute, getCacheKeyForURL } from 'workbox-precaching';
 import { isNav } from './utils';
 import { NETWORK_HANDLER, PRECACHING_OPTIONS } from './contants';
-import { PREACT_FALLBACK_URL } from '../lib/lib/webpack/render-html-plugin';
 
 export function getFiles() {
 	return self.__WB_MANIFEST;
@@ -21,7 +20,7 @@ export function setupRouting() {
 
 	setCatchHandler(({ event }) => {
 		if (isNav(event)) {
-			return caches.match(getCacheKeyForURL(PREACT_FALLBACK_URL));
+			return caches.match(getCacheKeyForURL('/200.html'));
 		}
 		return Response.error();
 	});
