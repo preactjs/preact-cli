@@ -23,9 +23,9 @@ function checkProps(props) {
 
 function getUrlFromProps(props) {
 	let url = props.path;
-	Object.entries(props.matches).forEach(([key, path], i) => {
+	Object.entries(props.matches).forEach(([key, path]) => {
 		url = url.replace(`:${key}`, path);
-	})
+	});
 	return url;
 }
 
