@@ -31,7 +31,7 @@ function invokeHooks(text) {
 	return text;
 }
 
-module.exports = function() {
+module.exports = function () {
 	let out = wrap(process.stdout, invokeHooks),
 		err = wrap(process.stderr, invokeHooks);
 	return () => {

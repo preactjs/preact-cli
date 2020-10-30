@@ -3,12 +3,12 @@ const { hasCommand, warn } = require('../util');
 
 const stdio = 'ignore';
 
-exports.install = function(cwd, isYarn) {
+exports.install = function (cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
 	return spawn(cmd, ['install'], { cwd, stdio: 'inherit' });
 };
 
-exports.addScripts = async function(obj, cwd, isYarn) {
+exports.addScripts = async function (obj, cwd, isYarn) {
 	let cmd = isYarn ? 'yarn' : 'npm';
 	let args = isYarn ? ['add', '--dev'] : ['install', '--save-dev'];
 
@@ -25,7 +25,7 @@ exports.addScripts = async function(obj, cwd, isYarn) {
 
 // Initializes the folder using `git init` and a proper `.gitignore` file
 // if `git` is present in the $PATH.
-exports.initGit = async function(target) {
+exports.initGit = async function (target) {
 	let git = hasCommand('git');
 
 	if (git) {

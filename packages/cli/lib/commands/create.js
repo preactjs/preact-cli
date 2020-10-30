@@ -163,7 +163,7 @@ async function copyFileToDestination(srcPath, destPath, force = false) {
 	}
 }
 
-module.exports = async function(repo, dest, argv) {
+module.exports = async function (repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
 		const templates = await fetchTemplates();

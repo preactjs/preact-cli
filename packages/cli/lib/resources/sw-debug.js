@@ -1,7 +1,7 @@
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', function (event) {
 	var isPostRequest = event.request.method === 'POST';
 	event.respondWith(
-		fetch(event.request).catch(function(err) {
+		fetch(event.request).catch(function (err) {
 			if (err instanceof TypeError) {
 				if (isPostRequest) {
 					// eslint-disable-next-line

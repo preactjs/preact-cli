@@ -24,7 +24,7 @@ const commands = require('./commands');
 // installHooks();
 notifier({ pkg }).notify();
 
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', err => {
 	error(err.stack || err.message);
 });
 
@@ -125,7 +125,7 @@ prog
 				],
 				npmGlobalPackages: ['preact-cli'],
 			})
-			.then((info) => process.stdout.write(`${info}\n`));
+			.then(info => process.stdout.write(`${info}\n`));
 	});
 
 prog.parse(process.argv);

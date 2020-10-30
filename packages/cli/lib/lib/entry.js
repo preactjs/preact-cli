@@ -3,9 +3,9 @@
 import * as Preact from 'preact';
 const { h, render, hydrate } = Preact;
 
-const interopDefault = (m) => (m && m.default ? m.default : m);
+const interopDefault = m => (m && m.default ? m.default : m);
 
-const normalizeURL = (url) => (url[url.length - 1] === '/' ? url : url + '/');
+const normalizeURL = url => (url[url.length - 1] === '/' ? url : url + '/');
 
 if (process.env.NODE_ENV === 'development') {
 	// enable preact devtools

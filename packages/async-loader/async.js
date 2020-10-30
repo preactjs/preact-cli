@@ -14,9 +14,9 @@ function getPreviousSibling(vnode, inner) {
 		// only search previous children
 		let end = children.indexOf(vnode);
 		if (end === -1) end = children.length;
-		for (let i=end; i--; ) {
+		for (let i = end; i--; ) {
 			const child = children[i];
-			const dom = child && child.__e || getPreviousSibling(child, true);
+			const dom = (child && child.__e) || getPreviousSibling(child, true);
 			if (dom) return dom;
 		}
 	}
@@ -31,7 +31,7 @@ export default function async(load) {
 
 		if (!component) {
 			this.componentWillMount = () => {
-				load((mod) => {
+				load(mod => {
 					component = (mod && mod.default) || mod;
 					this.setState({});
 				});
@@ -40,13 +40,14 @@ export default function async(load) {
 			this.shouldComponentUpdate = () => component != null;
 		}
 
-		this.render = (props) => {
+		this.render = props => {
 			if (component) {
 				return h(component, props);
 			}
 
 			const prev = getPreviousSibling(this.__v);
-			const me = prev && prev.nextSibling || (this.__P || this._parentDom).firstChild;
+			const me =
+				(prev && prev.nextSibling) || (this.__P || this._parentDom).firstChild;
 
 			return (
 				me &&

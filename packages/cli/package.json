@@ -45,11 +45,11 @@
 	"bugs": "https://github.com/preactjs/preact-cli/issues",
 	"homepage": "https://github.com/preactjs/preact-cli",
 	"devDependencies": {
-		"eslint": "^7.1.0",
+		"eslint": "^7.12.1",
 		"html-looks-like": "^1.0.2",
 		"jest": "^26.0.1",
 		"lerna": "^3.16.4",
-		"lint-staged": "^10.0.7",
+		"lint-staged": "^10.5.0",
 		"mkdirp": "^1.0.3",
 		"ncp": "^2.0.0",
 		"node-sass": "^4.12.0",

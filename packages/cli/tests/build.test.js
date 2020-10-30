@@ -50,7 +50,7 @@ function testMatch(src, tar) {
 }
 
 describe('preact build', () => {
-	ours.forEach((key) => {
+	ours.forEach(key => {
 		it(`builds the '${key}' output`, async () => {
 			let dir = await create(key);
 
@@ -95,7 +95,7 @@ describe('preact build', () => {
 		expect(transpiledChunk.includes('=>setTimeout')).toBe(true);
 	});
 
-	prerenderUrlFiles.forEach((prerenderUrls) => {
+	prerenderUrlFiles.forEach(prerenderUrls => {
 		it(`should prerender the routes provided with '${prerenderUrls}'`, async () => {
 			let dir = await subject('multiple-prerendering');
 			await build(dir, { prerenderUrls });
@@ -130,7 +130,7 @@ describe('preact build', () => {
 		});
 	});
 
-	prerenderUrlFiles.forEach((prerenderUrls) => {
+	prerenderUrlFiles.forEach(prerenderUrls => {
 		it(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
 			let dir = await subject('multiple-prerendering-with-provider');
 			await build(dir, { prerenderUrls });
