@@ -288,7 +288,7 @@ class WebpackConfigHelpers {
 		} catch (e) {}
 
 		let templatePath = isPath
-			? `!!ejs-loader!${resolve(this._cwd, template)}`
+			? `!!ejs-loader?esModule=false!${resolve(this._cwd, template)}`
 			: template;
 		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(
 			config,

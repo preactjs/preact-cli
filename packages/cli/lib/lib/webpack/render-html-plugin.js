@@ -57,7 +57,7 @@ module.exports = async function (config) {
 		const { url, title, ...routeData } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
-			template: `!!ejs-loader!${template}`,
+			template: `!!ejs-loader?esModule=false!${template}`,
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
