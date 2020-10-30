@@ -56,7 +56,6 @@
 		"p-retry": "^4.1.0",
 		"polka": "^0.5.2",
 		"preact": "^10.0.0",
-		"preact-compat": "^3.18.5",
 		"preact-render-to-string": "^5.0.6",
 		"preact-router": "^3.0.1",
 		"puppeteer": "^5.0.0",
