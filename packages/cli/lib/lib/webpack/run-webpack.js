@@ -29,7 +29,7 @@ async function devBuild(env) {
 			// ...tell webpack to watch node_modules recursively until they appear.
 			if (
 				Array.from(missingDeps).some(
-					(file) => file.indexOf(nodeModulesPath) !== -1
+					file => file.indexOf(nodeModulesPath) !== -1
 				)
 			) {
 				compilation.contextDependencies.push(nodeModulesPath);
@@ -38,7 +38,7 @@ async function devBuild(env) {
 			callback();
 		});
 
-		compiler.hooks.done.tap('CliDevPlugin', (stats) => {
+		compiler.hooks.done.tap('CliDevPlugin', stats => {
 			let devServer = config.devServer;
 			let protocol = process.env.HTTPS || devServer.https ? 'https' : 'http';
 			let host = process.env.HOST || devServer.host || 'localhost';
@@ -98,7 +98,7 @@ async function prodBuild(env) {
 		let stats = await runCompiler(clientCompiler);
 
 		// Timeout for plugins that work on `after-emit` event of webpack
-		await new Promise((r) => setTimeout(r, 20));
+		await new Promise(r => setTimeout(r, 20));
 
 		return showStats(stats, true);
 	} catch (err) {
@@ -126,13 +126,13 @@ function showStats(stats, isProd) {
 		if (stats.hasErrors()) {
 			allFields(stats, 'errors')
 				.map(stripLoaderPrefix)
-				.forEach((msg) => error(msg, isProd ? 1 : 0));
+				.forEach(msg => error(msg, isProd ? 1 : 0));
 		}
 
 		if (stats.hasWarnings()) {
 			allFields(stats, 'warnings')
 				.map(stripLoaderPrefix)
-				.forEach((msg) => {
+				.forEach(msg => {
 					if (
 						msg.match(
 							/Conflict: Multiple assets emit different content to the same filename .*\.(css|map)/
@@ -162,7 +162,7 @@ function writeJsonStats(stats) {
 
 	function strip(stats) {
 		stats.modules.forEach(stripLoaderFromModuleNames);
-		stats.chunks.forEach((c) => {
+		stats.chunks.forEach(c => {
 			(
 				c.modules ||
 				(c.mapModules != null ? c.mapModules(Object) : c.getModules())
@@ -189,7 +189,7 @@ function allFields(stats, field, fields = [], name = null) {
 		warnings: false,
 		errorDetails: false,
 	});
-	const addCompilerPrefix = (msg) =>
+	const addCompilerPrefix = msg =>
 		name ? bold(magenta(name + ': ')) + msg : msg;
 	if (field === 'errors' && stats.hasErrors()) {
 		fields = fields.concat(info.errors.map(addCompilerPrefix));
@@ -271,7 +271,7 @@ module.exports = function (env, watch = false) {
 	env.src = isDir(src) ? src : env.cwd;
 
 	// attach sourcing helper
-	env.source = (dir) => resolve(env.src, dir);
+	env.source = dir => resolve(env.src, dir);
 
 	// determine build-type to run
 	return (watch ? devBuild : prodBuild)(env);

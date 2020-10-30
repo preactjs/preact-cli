@@ -330,7 +330,7 @@ module.exports = function (env) {
 							patterns: [
 								{
 									regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-									value: (s) => `return;${Array(s.length - 7).join(' ')}(`,
+									value: s => `return;${Array(s.length - 7).join(' ')}(`,
 								},
 							],
 						}),

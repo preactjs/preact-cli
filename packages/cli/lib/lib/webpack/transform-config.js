@@ -90,7 +90,7 @@ function parseConfig(config) {
 	return transformers;
 }
 
-module.exports = async function(env, webpackConfig, isServer = false) {
+module.exports = async function (env, webpackConfig, isServer = false) {
 	const { configFile, isDefault } =
 		env.config !== 'preact.config.js'
 			? { configFile: env.config, isDefault: false }

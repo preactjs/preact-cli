@@ -26,6 +26,6 @@ function serverConfig(env) {
 	};
 }
 
-module.exports = function(env) {
+module.exports = function (env) {
 	return merge(baseConfig(env), serverConfig(env));
 };

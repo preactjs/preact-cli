@@ -5,7 +5,7 @@ const stackTrace = require('stack-trace');
 const URL = require('url');
 const { SourceMapConsumer } = require('source-map');
 
-module.exports = function(env, params) {
+module.exports = function (env, params) {
 	params = params || {};
 
 	let entry = resolve(env.dest, './ssr-build/ssr-bundle.js');
@@ -61,7 +61,7 @@ async function handlePrerenderError(err, env, stack, entry) {
 				column: stack.getColumnNumber(),
 			});
 		});
-		
+
 		if (position.source) {
 			position.source = position.source
 				.replace('webpack://', '.')
