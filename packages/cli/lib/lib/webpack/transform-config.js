@@ -52,7 +52,7 @@ function parseConfig(config) {
 
 					// Detect webpack plugins and return wrapper transforms that inject them
 					if (typeof fn.prototype.apply === 'function') {
-						return config => {
+						return (config) => {
 							config.plugins.push(new fn(opts));
 						};
 					}
@@ -206,7 +206,7 @@ class WebpackConfigHelpers {
 	getRulesByMatchingFile(config, file) {
 		let filePath = resolve(this._cwd, file);
 		return this.getRules(config).filter(
-			w => w.rule.test && w.rule.test.exec(filePath)
+			(w) => w.rule.test && w.rule.test.exec(filePath)
 		);
 	}
 
@@ -252,7 +252,7 @@ class WebpackConfigHelpers {
 	 */
 	getPluginsByName(config, name) {
 		return this.getPlugins(config).filter(
-			w =>
+			(w) =>
 				w.plugin && w.plugin.constructor && w.plugin.constructor.name === name
 		);
 	}
@@ -269,7 +269,7 @@ class WebpackConfigHelpers {
 	 * @memberof WebpackConfigHelpers
 	 */
 	getPluginsByType(config, type) {
-		return this.getPlugins(config).filter(w => w.plugin instanceof type);
+		return this.getPlugins(config).filter((w) => w.plugin instanceof type);
 	}
 
 	/**
@@ -288,7 +288,7 @@ class WebpackConfigHelpers {
 		} catch (e) {}
 
 		let templatePath = isPath
-			? `!!ejs-loader!${resolve(this._cwd, template)}`
+			? `!!ejs-loader?esModule=false!${resolve(this._cwd, template)}`
 			: template;
 		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(
 			config,

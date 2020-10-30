@@ -53,11 +53,11 @@ module.exports = async function (config) {
 		writeFileSync(template, content);
 	}
 
-	const htmlWebpackConfig = values => {
+	const htmlWebpackConfig = (values) => {
 		const { url, title, ...routeData } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
-			template: `!!ejs-loader!${template}`,
+			template: `!!ejs-loader?esModule=false!${template}`,
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
@@ -140,9 +140,9 @@ module.exports = async function (config) {
 
 	return pages
 		.map(htmlWebpackConfig)
-		.map(conf => new HtmlWebpackPlugin(conf))
+		.map((conf) => new HtmlWebpackPlugin(conf))
 		.concat([new HtmlWebpackExcludeAssetsPlugin()])
-		.concat([...pages.map(page => new PrerenderDataExtractPlugin(page))]);
+		.concat([...pages.map((page) => new PrerenderDataExtractPlugin(page))]);
 };
 
 // Adds a preact_prerender_data in every folder so that the data could be fetched separately.
@@ -154,7 +154,7 @@ class PrerenderDataExtractPlugin {
 		this.data_ = JSON.stringify(cliData.preRenderData || {});
 	}
 	apply(compiler) {
-		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', compilation => {
+		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', (compilation) => {
 			let path = this.location_ + PRERENDER_DATA_FILE_NAME;
 			if (path.startsWith('/')) {
 				path = path.substr(1);
