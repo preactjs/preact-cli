@@ -15,7 +15,7 @@ function read(path) {
 	return readFileSync(resolve(__dirname, path), 'utf-8');
 }
 
-module.exports = async function(config) {
+module.exports = async function (config) {
 	const { cwd, dest, isProd, src } = config;
 	const inProjectTemplatePath = resolve(src, 'template.html');
 	let template = defaultTemplate;
@@ -57,7 +57,7 @@ module.exports = async function(config) {
 		const { url, title, ...routeData } = values;
 		return Object.assign(values, {
 			filename: resolve(dest, url.substring(1), 'index.html'),
-			template: `!!ejs-loader!${template}`,
+			template: `!!ejs-loader?esModule=false!${template}`,
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
@@ -93,7 +93,7 @@ module.exports = async function(config) {
 				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
 			},
 			scriptLoading: 'defer',
-			CLI_DATA: { preRenderData: { url, ...routeData } }
+			CLI_DATA: { preRenderData: { url, ...routeData } },
 		});
 	};
 

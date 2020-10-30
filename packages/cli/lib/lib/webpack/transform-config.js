@@ -90,7 +90,7 @@ function parseConfig(config) {
 	return transformers;
 }
 
-module.exports = async function(env, webpackConfig, isServer = false) {
+module.exports = async function (env, webpackConfig, isServer = false) {
 	const { configFile, isDefault } =
 		env.config !== 'preact.config.js'
 			? { configFile: env.config, isDefault: false }
@@ -288,7 +288,7 @@ class WebpackConfigHelpers {
 		} catch (e) {}
 
 		let templatePath = isPath
-			? `!!ejs-loader!${resolve(this._cwd, template)}`
+			? `!!ejs-loader?esModule=false!${resolve(this._cwd, template)}`
 			: template;
 		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(
 			config,

@@ -17,7 +17,7 @@ const color = (color, text) =>
 
 const PURPLE = 35;
 
-module.exports = function(text, useColor = true) {
+module.exports = function (text, useColor = true) {
 	let logo = LOGO;
 
 	if (text) {
