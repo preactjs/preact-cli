@@ -50,6 +50,14 @@ function testMatch(src, tar) {
 }
 
 describe('preact build', () => {
+	let mockExit;
+	beforeAll(async () => {
+		mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
+	});
+
+	afterAll(async () => {
+		mockExit.mockRestore();
+	});
 	ours.forEach(key => {
 		it(`builds the '${key}' output`, async () => {
 			let dir = await create(key);
@@ -233,5 +241,13 @@ describe('preact build', () => {
 		let html = await readFile(file, 'utf-8');
 
 		looksLike(html, images.templateReplaced);
+	});
+
+	it('should error out for invalid argument', async () => {
+		let dir = await subject('custom-template-3');
+		expect(build(dir, { 'service-worker': false })).rejects.toEqual(
+			new Error('Invalid argunment found.')
+		);
+		expect(mockExit).toHaveBeenCalledWith(1);
 	});
 });
