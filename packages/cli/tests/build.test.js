@@ -50,14 +50,6 @@ function testMatch(src, tar) {
 }
 
 describe('preact build', () => {
-	let mockExit;
-	beforeAll(async () => {
-		mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
-	});
-
-	afterAll(async () => {
-		mockExit.mockRestore();
-	});
 	ours.forEach(key => {
 		it(`builds the '${key}' output`, async () => {
 			let dir = await create(key);
@@ -245,9 +237,11 @@ describe('preact build', () => {
 
 	it('should error out for invalid argument', async () => {
 		let dir = await subject('custom-template-3');
+		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
 		expect(build(dir, { 'service-worker': false })).rejects.toEqual(
 			new Error('Invalid argunment found.')
 		);
+		mockExit.mockRestore();
 		expect(mockExit).toHaveBeenCalledWith(1);
 	});
 });
