@@ -241,7 +241,7 @@ describe('preact build', () => {
 		expect(build(dir, { 'service-worker': false })).rejects.toEqual(
 			new Error('Invalid argunment found.')
 		);
-		mockExit.mockRestore();
 		expect(mockExit).toHaveBeenCalledWith(1);
+		mockExit.mockRestore();
 	});
 });
