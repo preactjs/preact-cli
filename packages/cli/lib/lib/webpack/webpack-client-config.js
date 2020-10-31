@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const { resolve, join } = require('path');
 const { existsSync } = require('fs');
 const { isInstalledVersionPreactXOrAbove } = require('./utils');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const { filter } = require('minimatch');
 const SizePlugin = require('size-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -86,8 +86,8 @@ async function clientConfig(env) {
 			new PushManifestPlugin(env),
 			...(await renderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
-			new CopyWebpackPlugin(
-				[
+			new CopyWebpackPlugin({
+				patterns: [
 					existsSync(source('manifest.json')) && { from: 'manifest.json' },
 					// copy any static files
 					existsSync(source('assets')) && { from: 'assets', to: 'assets' },
@@ -101,8 +101,8 @@ async function clientConfig(env) {
 						from: resolve(source('static')),
 						to: '.',
 					},
-				].filter(Boolean)
-			),
+				].filter(Boolean),
+			}),
 		],
 	};
 }
@@ -321,7 +321,7 @@ function isDev(config) {
 	};
 }
 
-module.exports = async function (env) {
+module.exports = async function createClientConfig(env) {
 	return merge(
 		baseConfig(env),
 		await clientConfig(env),
