@@ -84,6 +84,7 @@ describe('preact service worker tests', () => {
 		expect(initialContent).not.toEqual(refreshedContent);
 		expect(refreshedContent.includes(NEW_TITLE)).toEqual(true);
 	});
+
 	it('should respond with 200.html when offline', async () => {
 		const swText = await fetch('http://localhost:3000/sw-esm.js').then((res) =>
 			res.text()

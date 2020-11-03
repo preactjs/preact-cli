@@ -151,7 +151,7 @@ module.exports = async function (config) {
 	 * And we dont have to cache every single html file.
 	 * Go easy on network usage of clients.
 	 */
-	!pages.map((page) => page.url).includes(PREACT_FALLBACK_URL) &&
+	!pages.find((page) => page.url === PREACT_FALLBACK_URL) &&
 		pages.push({ url: PREACT_FALLBACK_URL });
 
 	const resultPages = pages
