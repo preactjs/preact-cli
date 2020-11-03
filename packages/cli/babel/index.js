@@ -25,7 +25,7 @@ module.exports = function preactCli(ctx, userOptions = {}) {
 	};
 
 	// user specified options always the strongest
-	Object.keys(presetOptions).forEach(function(key) {
+	Object.keys(presetOptions).forEach(function (key) {
 		presetOptions[key] = userOptions[key] || presetOptions[key];
 	});
 

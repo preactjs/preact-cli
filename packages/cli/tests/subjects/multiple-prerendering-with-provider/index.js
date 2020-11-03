@@ -22,7 +22,7 @@ export default class App extends Component {
 						<Route66 path="/route66" />
 						<Custom path="/custom" />
 						<CustomWithHook path="/customhook" />
-						<HtmlSafe path='/htmlsafe' />
+						<HtmlSafe path="/htmlsafe" />
 					</Router>
 				</div>
 			</Provider>

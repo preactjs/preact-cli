@@ -6,7 +6,7 @@ const runWebpack = require('../lib/webpack/run-webpack');
 
 const toBool = val => val === void 0 || (val === 'false' ? false : val);
 
-module.exports = async function(src, argv) {
+module.exports = async function (src, argv) {
 	argv.src = src || argv.src;
 	// add `default:true`s, `--no-*` disables
 	argv.prerender = toBool(argv.prerender);

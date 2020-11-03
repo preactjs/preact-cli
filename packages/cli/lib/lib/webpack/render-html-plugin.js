@@ -63,7 +63,7 @@ module.exports = async function (config) {
 			: resolve(dest, url.substring(1), 'index.html');
 		return Object.assign(values, {
 			filename,
-			template: `!!ejs-loader!${template}`,
+			template: `!!ejs-loader?esModule=false!${template}`,
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,

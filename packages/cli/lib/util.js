@@ -4,11 +4,11 @@ const { statSync, existsSync } = require('fs');
 const symbols = require('./symbols');
 const which = require('which');
 
-exports.isDir = function(str) {
+exports.isDir = function (str) {
 	return existsSync(str) && statSync(str).isDirectory();
 };
 
-exports.dirExists = function(workingDir, destDir) {
+exports.dirExists = function (workingDir, destDir) {
 	if (workingDir && destDir) {
 		const target = resolve(workingDir, destDir);
 		return exports.isDir(target);
@@ -16,34 +16,34 @@ exports.dirExists = function(workingDir, destDir) {
 	return false;
 };
 
-exports.hasCommand = function(str) {
+exports.hasCommand = function (str) {
 	return !!which.sync(str, { nothrow: true });
 };
 
-exports.trim = function(str) {
+exports.trim = function (str) {
 	return str.trim().replace(/^\t+/gm, '');
 };
 
-exports.info = function(text, code) {
+exports.info = function (text, code) {
 	process.stderr.write(symbols.info + blue(' INFO ') + text + '\n');
 	code && process.exit(code);
 };
 
-exports.warn = function(text, code) {
+exports.warn = function (text, code) {
 	process.stdout.write(symbols.warning + yellow(' WARN ') + text + '\n');
 	code && process.exit(code);
 };
 
-exports.error = function(text, code = 1) {
+exports.error = function (text, code = 1) {
 	process.stderr.write(symbols.error + red(' ERROR ') + text + '\n');
 	code && process.exit(code);
 };
 
-exports.normalizePath = function(str) {
+exports.normalizePath = function (str) {
 	return normalize(str).replace(/\\/g, '/');
 };
 
-exports.normalizeTemplatesResponse = function(repos = []) {
+exports.normalizeTemplatesResponse = function (repos = []) {
 	return repos.map(repo => ({
 		title: repo.name || '',
 		value: repo.full_name || '',

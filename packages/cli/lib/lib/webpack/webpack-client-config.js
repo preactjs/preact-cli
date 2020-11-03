@@ -19,7 +19,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
 
-const cleanFilename = (name) =>
+const cleanFilename = name =>
 	name.replace(
 		/(^\/(routes|components\/(routes|async))\/|(\/index)?\.[jt]sx?$)/g,
 		''
@@ -119,7 +119,7 @@ function getBabelEsmPlugin(config) {
 				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest'],
 				beforeStartExecution: (plugins, newConfig) => {
 					const babelPlugins = newConfig.plugins;
-					newConfig.plugins = babelPlugins.filter((plugin) => {
+					newConfig.plugins = babelPlugins.filter(plugin => {
 						if (
 							Array.isArray(plugin) &&
 							plugin[0].indexOf('fast-async') !== -1
@@ -128,7 +128,7 @@ function getBabelEsmPlugin(config) {
 						}
 						return true;
 					});
-					plugins.forEach((plugin) => {
+					plugins.forEach(plugin => {
 						if (
 							plugin.constructor.name === 'DefinePlugin' &&
 							plugin.definitions
