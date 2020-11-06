@@ -5,12 +5,26 @@ const { sleep } = require('./lib/utils');
 const { getServer } = require('./server');
 const startChrome = require('./lib/chrome');
 
+async function enableOfflineMode(page, browser) {
+	await sleep(2000); // wait for service worker installation.
+	await page.setOfflineMode(true);
+	const targets = await browser.targets();
+	const serviceWorker = targets.find((t) => t.type() === 'service_worker');
+	const serviceWorkerConnection = await serviceWorker.createCDPSession();
+	await serviceWorkerConnection.send('Network.enable');
+	await serviceWorkerConnection.send('Network.emulateNetworkConditions', {
+		offline: true,
+		latency: 0,
+		downloadThroughput: 0,
+		uploadThroughput: 0,
+	});
+}
+
 describe('preact service worker tests', () => {
 	let server, browser, dir;
 
 	beforeAll(async () => {
 		dir = await create('default');
-		browser = await startChrome();
 		await build(dir, {
 			sw: true,
 			esm: true,
@@ -19,9 +33,16 @@ describe('preact service worker tests', () => {
 		server = getServer(dir);
 	});
 
+	beforeEach(async () => {
+		browser = await startChrome();
+	});
+
+	afterEach(async () => {
+		await browser.close();
+	});
+
 	afterAll(async () => {
 		await server.server.stop();
-		await browser.close();
 	});
 
 	it('works offline', async () => {
@@ -31,15 +52,14 @@ describe('preact service worker tests', () => {
 			waitUntil: 'networkidle0',
 		});
 		const initialContent = await page.content();
-		await sleep(2000); // wait for service worker installation.
-		await page.setOfflineMode(true);
-		await page.reload();
+		await enableOfflineMode(page, browser);
+		await page.reload({ waitUntil: 'networkidle0' });
 		const offlineContent = await page.content();
 		await page.waitForSelector('h1');
 		expect(
-			await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
+			await page.$$eval('h1', (nodes) => nodes.map((n) => n.innerText))
 		).toEqual(['Preact App', 'Home']);
-		expect(offlineContent).toEqual(initialContent);
+		expect(offlineContent).not.toEqual(initialContent);
 	});
 
 	it('should fetch navigation requests with networkFirst', async () => {
@@ -63,5 +83,27 @@ describe('preact service worker tests', () => {
 		const refreshedContent = await page.content();
 		expect(initialContent).not.toEqual(refreshedContent);
 		expect(refreshedContent.includes(NEW_TITLE)).toEqual(true);
+	});
+
+	it('should respond with 200.html when offline', async () => {
+		const swText = await fetch('http://localhost:3000/sw-esm.js').then((res) =>
+			res.text()
+		);
+		// eslint-disable-next-line no-useless-escape
+		expect(swText).toContain(
+			'caches.match((t="/200.html",ce().getCacheKeyForURL(t)))'
+		);
+		const page = await browser.newPage();
+		await page.setCacheEnabled(false);
+		await page.goto('http://localhost:3000', {
+			waitUntil: 'networkidle0',
+		});
+		await enableOfflineMode(page, browser);
+		await page.reload({ waitUntil: 'networkidle0' });
+		expect(
+			await page.$$eval('script[type=__PREACT_CLI_DATA__]', (nodes) =>
+				nodes.map((n) => n.innerText)
+			)
+		).toEqual(['%7B%22preRenderData%22:%7B%22url%22:%22/200.html%22%7D%7D']);
 	});
 });
