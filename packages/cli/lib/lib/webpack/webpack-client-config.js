@@ -228,7 +228,7 @@ function isProd(config) {
 				swSrc: swPath,
 				swDest: 'sw-esm.js',
 				include: [
-					/^\/?index\.html$/,
+					/200\.html$/,
 					/\.esm.js$/,
 					/\.css$/,
 					/\.(png|jpg|svg|gif|webp)$/,
@@ -246,12 +246,7 @@ function isProd(config) {
 		prodConfig.plugins.push(
 			new InjectManifest({
 				swSrc: swPath,
-				include: [
-					/index\.html$/,
-					/\.js$/,
-					/\.css$/,
-					/\.(png|jpg|svg|gif|webp)$/,
-				],
+				include: [/200\.html$/, /\.js$/, /\.css$/, /\.(png|jpg|svg|gif|webp)$/],
 				exclude: [/\.esm\.js$/],
 			})
 		);

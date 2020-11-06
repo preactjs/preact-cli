@@ -16,6 +16,7 @@ exports.default = exports.full = Object.assign({}, common, {
 	'bundle.7e56a.css': 901,
 	'favicon.ico': 15086,
 	'index.html': 2034,
+	'200.html': 613,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 	'push-manifest.json': 812,
