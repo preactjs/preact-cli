@@ -28,6 +28,7 @@ const {
 	FALLBACK_TEMPLATE_OPTIONS,
 } = require('../constants');
 const { addScripts, install, initGit } = require('../lib/setup');
+const { validateArgs } = require('./validate-args');
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
@@ -163,7 +164,8 @@ async function copyFileToDestination(srcPath, destPath, force = false) {
 	}
 }
 
-module.exports = async function (repo, dest, argv) {
+async function command(repo, dest, argv) {
+	validateArgs(argv, options, 'create');
 	// Prompt if incomplete data
 	if (!repo || !dest) {
 		const templates = await fetchTemplates();
@@ -381,4 +383,51 @@ module.exports = async function (repo, dest, argv) {
 			${green(pfx + ' serve')}
 	`) + '\n'
 	);
+}
+
+const options = [
+	{
+		name: '--name',
+		description: 'The application name',
+	},
+	{
+		name: '--cwd',
+		description: 'A directory to use instead of $PWD',
+		default: '.',
+	},
+	{
+		name: '--force',
+		description: 'Force destination output; will override!',
+		default: false,
+	},
+	{
+		name: '--install',
+		description: 'Install dependencies',
+		default: true,
+	},
+	{
+		name: '--yarn',
+		description: 'Use `yarn` instead of `npm`',
+		default: false,
+	},
+	{
+		name: '--git',
+		description: 'Initialize git repository',
+		default: false,
+	},
+	{
+		name: '--license',
+		description: 'License type',
+		default: 'MIT',
+	},
+	{
+		name: '-v, --verbose',
+		description: 'Verbose output',
+		default: false,
+	},
+];
+
+module.exports = {
+	command,
+	options,
 };
