@@ -5,7 +5,6 @@ const { readFileSync, existsSync } = require('fs');
 const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const autoprefixer = require('autoprefixer');
 const browserslist = require('browserslist');
-const requireRelative = require('require-relative');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
@@ -97,12 +96,12 @@ module.exports = function (env) {
 	let compat = 'preact-compat';
 	try {
 		compat = dirname(
-			requireRelative.resolve('preact/compat/package.json', cwd)
+			require.resolve('preact/compat/package.json', { paths: [cwd] })
 		);
 	} catch (e) {
 		try {
 			compat = dirname(
-				requireRelative.resolve('preact-compat/package.json', cwd)
+				require.resolve('preact-compat/package.json', { paths: [cwd] })
 			);
 		} catch (e) {}
 	}

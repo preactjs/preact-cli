@@ -130,8 +130,6 @@
 		"prompts": "^2.2.1",
 		"raw-loader": "^4.0.0",
 		"react-refresh": "0.8.3",
-		"require-relative": "^0.8.7",
-		"resolve-from": "^5.0.0",
 		"rimraf": "^3.0.2",
 		"sade": "^1.4.1",
 		"size-plugin": "^2.0.1",
