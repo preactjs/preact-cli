@@ -18,6 +18,7 @@ const { InjectManifest } = require('workbox-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
+const FileManifestPlugin = require('./file-manifest');
 
 const cleanFilename = name =>
 	name.replace(
@@ -85,6 +86,9 @@ async function clientConfig(env) {
 		plugins: [
 			new PushManifestPlugin(env),
 			...(await renderHTMLPlugin(env)),
+			new FileManifestPlugin({
+				fileName: 'file-manifest.json',
+			}),
 			...getBabelEsmPlugin(env),
 			new CopyWebpackPlugin(
 				[
