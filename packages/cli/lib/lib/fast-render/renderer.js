@@ -2,8 +2,8 @@ const { isMainThread, parentPort, workerData } = require('worker_threads');
 const { readFile } = require('../../fs');
 const { join } = require('path');
 const prerender = require('../webpack/prerender');
-
 const ejs = require('ejs');
+const { minify } = require('html-minifier');
 
 async function render(src, dest, cwd, webpack, data) {
 	const { url, title, ...routeData } = data;
@@ -47,10 +47,15 @@ async function render(src, dest, cwd, webpack, data) {
 		.replace(/<%\s+preact\.bodyEnd\s+%>/, bodyEnd);
 	parentPort.postMessage({
 		url,
-		content: ejs.render(template, {
-			options,
-			htmlWebpackPlugin,
-		}),
+		content: minify(
+			ejs.render(template, {
+				options,
+				htmlWebpackPlugin,
+			}),
+			{
+				collapseWhitespace: true,
+			}
+		),
 	});
 }
 
