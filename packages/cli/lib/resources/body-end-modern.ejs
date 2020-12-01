@@ -1,7 +1,4 @@
 <%- options.ssr() %>
-<script type="__PREACT_CLI_DATA__">
-	<%= encodeURI(JSON.stringify(options.CLI_DATA)) %>
-</script>
 <% /* Fix for safari < 11 nomodule bug. TODO: Do the following only for safari. */ %>
 <script nomodule>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()},!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script>
 <script crossorigin="anonymous" src="<%= options.webpack.publicPath %><%= options.webpack.assets.find(entry => entry.match(/bundle(\.\w{5}).esm.js$/)) %>" type="module"></script>
@@ -11,3 +8,6 @@
 %>
 <script nomodule src="<%= options.webpack.publicPath %><%= options.webpack.assets.find(entry => entry.match(/polyfills(\.\w{5}).esm.js$/)) %>"></script>
 <script nomodule defer src="<%= options.webpack.publicPath %><%= options.webpack.assets.find(entry => entry.match(/bundle(\.\w{5}).esm.js$/)) %>"></script>
+<script type="__PREACT_CLI_DATA__">
+	<%= encodeURI(JSON.stringify(options.CLI_DATA)) %>
+</script>
