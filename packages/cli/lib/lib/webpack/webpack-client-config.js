@@ -92,7 +92,7 @@ async function clientConfig(env) {
 					// copy any static files
 					existsSync(source('assets')) && { from: 'assets', to: 'assets' },
 					// copy sw-debug
-					{
+					!isProd && {
 						from: resolve(__dirname, '../../resources/sw-debug.js'),
 						to: 'sw-debug.js',
 					},
@@ -120,13 +120,9 @@ function getBabelEsmPlugin(config) {
 				beforeStartExecution: (plugins, newConfig) => {
 					const babelPlugins = newConfig.plugins;
 					newConfig.plugins = babelPlugins.filter(plugin => {
-						if (
-							Array.isArray(plugin) &&
-							plugin[0].indexOf('fast-async') !== -1
-						) {
-							return false;
-						}
-						return true;
+						return !(
+							Array.isArray(plugin) && plugin[0].indexOf('fast-async') !== -1
+						);
 					});
 					plugins.forEach(plugin => {
 						if (
