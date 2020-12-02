@@ -120,9 +120,13 @@ function getBabelEsmPlugin(config) {
 				beforeStartExecution: (plugins, newConfig) => {
 					const babelPlugins = newConfig.plugins;
 					newConfig.plugins = babelPlugins.filter(plugin => {
-						return !(
-							Array.isArray(plugin) && plugin[0].indexOf('fast-async') !== -1
-						);
+						if (
+							Array.isArray(plugin) &&
+							plugin[0].indexOf('fast-async') !== -1
+						) {
+							return false;
+						}
+						return true;
 					});
 					plugins.forEach(plugin => {
 						if (
