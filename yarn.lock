@@ -1458,6 +1458,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@kristoferbaxter/async@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@kristoferbaxter/async/-/async-1.0.0.tgz#33c8e8c6b055f15f4ee8a711b9594336a6fb1671"
+  integrity sha512-CAQQQ8mUUBKI2P7stYojHwHb+ShdFN8SrC90/96V4m2XlDSctXAA+5PD5CqCICs0o5c/83cYJCeub+FSetKLrw==
+
 "@lerna/add@3.21.0":
   version "3.21.0"
   resolved "https://registry.yarnpkg.com/@lerna/add/-/add-3.21.0.tgz#27007bde71cc7b0a2969ab3c2f0ae41578b4577b"

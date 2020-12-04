@@ -21,7 +21,13 @@ async function render(src, dest, cwd, webpack, data) {
 		url,
 		manifest,
 		ssr: () => {
-			return prerender({ cwd, dest, src }, data);
+			const params = {
+				...data,
+				CLI_DATA: {
+					preRenderData: data,
+				},
+			};
+			return prerender({ cwd, dest, src }, params);
 		},
 		CLI_DATA: { url, ...routeData },
 		webpack,
