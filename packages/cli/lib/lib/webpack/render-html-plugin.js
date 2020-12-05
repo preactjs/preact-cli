@@ -108,7 +108,7 @@ module.exports = async function (config) {
 	let pages = [{ url: '/' }];
 
 	// eslint-disable-next-line no-constant-condition
-	if (config.prerenderUrls && false) {
+	if (config.prerenderUrls && !config['experimental-fast-rendering']) {
 		if (existsSync(resolve(cwd, config.prerenderUrls))) {
 			try {
 				let result = require(resolve(cwd, config.prerenderUrls));

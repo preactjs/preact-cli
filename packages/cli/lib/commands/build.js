@@ -34,5 +34,7 @@ module.exports = async function (src, argv) {
 		await runWebpack.writeJsonStats(stats);
 	}
 
-	await fastPrerender(argv, stats);
+	if (argv['experimental-fast-rendering']) {
+		await fastPrerender(argv, stats);
+	}
 };
