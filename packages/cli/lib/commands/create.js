@@ -35,6 +35,48 @@ const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
+const options = [
+	{
+		name: '--name',
+		description: 'The application name',
+	},
+	{
+		name: '--cwd',
+		description: 'A directory to use instead of $PWD',
+		default: '.',
+	},
+	{
+		name: '--force',
+		description: 'Force destination output; will override!',
+		default: false,
+	},
+	{
+		name: '--install',
+		description: 'Install dependencies',
+		default: true,
+	},
+	{
+		name: '--yarn',
+		description: 'Use `yarn` instead of `npm`',
+		default: false,
+	},
+	{
+		name: '--git',
+		description: 'Initialize git repository',
+		default: false,
+	},
+	{
+		name: '--license',
+		description: 'License type',
+		default: 'MIT',
+	},
+	{
+		name: '-v, --verbose',
+		description: 'Verbose output',
+		default: false,
+	},
+];
+
 // Formulate Questions if `create` args are missing
 function requestParams(argv, templates) {
 	const cwd = resolve(argv.cwd);
@@ -384,48 +426,6 @@ async function command(repo, dest, argv) {
 	`) + '\n'
 	);
 }
-
-const options = [
-	{
-		name: '--name',
-		description: 'The application name',
-	},
-	{
-		name: '--cwd',
-		description: 'A directory to use instead of $PWD',
-		default: '.',
-	},
-	{
-		name: '--force',
-		description: 'Force destination output; will override!',
-		default: false,
-	},
-	{
-		name: '--install',
-		description: 'Install dependencies',
-		default: true,
-	},
-	{
-		name: '--yarn',
-		description: 'Use `yarn` instead of `npm`',
-		default: false,
-	},
-	{
-		name: '--git',
-		description: 'Initialize git repository',
-		default: false,
-	},
-	{
-		name: '--license',
-		description: 'License type',
-		default: 'MIT',
-	},
-	{
-		name: '-v, --verbose',
-		description: 'Verbose output',
-		default: false,
-	},
-];
 
 module.exports = {
 	command,
