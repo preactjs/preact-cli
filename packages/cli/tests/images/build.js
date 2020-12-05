@@ -30,7 +30,6 @@ exports.default = exports.full = Object.assign({}, common, {
 	'ssr-build/ssr-bundle.6e806.css.map': 1250,
 	'ssr-build/ssr-bundle.js': 9976,
 	'ssr-build/ssr-bundle.js.map': 30887,
-	'sw-debug.js': 775,
 });
 exports['default-esm'] = exports.full = Object.assign({}, exports.default, {
 	'bundle.*.esm.js': 21135,

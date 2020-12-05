@@ -234,4 +234,14 @@ describe('preact build', () => {
 
 		looksLike(html, images.templateReplaced);
 	});
+
+	it('should error out for invalid argument', async () => {
+		let dir = await subject('custom-template-3');
+		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
+		expect(build(dir, { 'service-worker': false })).rejects.toEqual(
+			new Error('Invalid argunment found.')
+		);
+		expect(mockExit).toHaveBeenCalledWith(1);
+		mockExit.mockRestore();
+	});
 });
