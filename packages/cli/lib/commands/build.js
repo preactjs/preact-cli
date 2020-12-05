@@ -80,6 +80,10 @@ const options = [
 		name: '-v, --verbose',
 		description: 'Verbose output',
 	},
+	{
+		name: '--experimental-fast-rendering',
+		description: 'Experimental pre-rendering. Highly unstable!',
+	},
 ];
 
 async function command(src, argv) {
