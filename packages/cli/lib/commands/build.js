@@ -7,35 +7,6 @@ const { validateArgs } = require('./validate-args');
 
 const toBool = val => val === void 0 || (val === 'false' ? false : val);
 
-async function command(src, argv) {
-	validateArgs(argv, options, 'build');
-	argv.src = src || argv.src;
-	// add `default:true`s, `--no-*` disables
-	argv.prerender = toBool(argv.prerender);
-	argv.production = toBool(argv.production);
-
-	let cwd = resolve(argv.cwd);
-	let modules = resolve(cwd, 'node_modules');
-
-	if (!isDir(modules)) {
-		return error(
-			'No `node_modules` found! Please run `npm install` before continuing.',
-			1
-		);
-	}
-
-	if (argv.clean === void 0) {
-		let dest = resolve(cwd, argv.dest);
-		await promisify(rimraf)(dest);
-	}
-
-	let stats = await runWebpack(argv, false);
-
-	if (argv.json) {
-		await runWebpack.writeJsonStats(stats);
-	}
-}
-
 const options = [
 	{
 		name: '--src',
@@ -109,6 +80,35 @@ const options = [
 		description: 'Verbose output',
 	},
 ];
+
+async function command(src, argv) {
+	validateArgs(argv, options, 'build');
+	argv.src = src || argv.src;
+	// add `default:true`s, `--no-*` disables
+	argv.prerender = toBool(argv.prerender);
+	argv.production = toBool(argv.production);
+
+	let cwd = resolve(argv.cwd);
+	let modules = resolve(cwd, 'node_modules');
+
+	if (!isDir(modules)) {
+		return error(
+			'No `node_modules` found! Please run `npm install` before continuing.',
+			1
+		);
+	}
+
+	if (argv.clean === void 0) {
+		let dest = resolve(cwd, argv.dest);
+		await promisify(rimraf)(dest);
+	}
+
+	let stats = await runWebpack(argv, false);
+
+	if (argv.json) {
+		await runWebpack.writeJsonStats(stats);
+	}
+}
 
 module.exports = {
 	command,
