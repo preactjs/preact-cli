@@ -245,7 +245,7 @@ describe('preact build', () => {
 		mockExit.mockRestore();
 	});
 
-	it.only('should build with experimental fast rendering', async () => {
+	it('should build with experimental fast rendering', async () => {
 		let dir = await subject('experimental-rendering');
 		await build(dir);
 		const buildDir = join(dir, 'build');
