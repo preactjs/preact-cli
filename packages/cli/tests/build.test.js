@@ -244,4 +244,25 @@ describe('preact build', () => {
 		expect(mockExit).toHaveBeenCalledWith(1);
 		mockExit.mockRestore();
 	});
+
+	it.only('should build with experimental fast rendering', async () => {
+		let dir = await subject('experimental-rendering');
+		await build(dir);
+		const buildDir = join(dir, 'build');
+		const prerenderedContentByHTMLWebpackPlugin = await readFile(
+			join(buildDir, 'index.html'),
+			'utf-8'
+		);
+		dir = await subject('experimental-rendering');
+		await build(dir, {
+			'experimental-fast-rendering': true,
+		});
+		const prerenderedContentByExperimentalRendered = await readFile(
+			join(buildDir, 'index.html'),
+			'utf-8'
+		);
+		expect(prerenderedContentByHTMLWebpackPlugin).toEqual(
+			prerenderedContentByExperimentalRendered
+		);
+	});
 });

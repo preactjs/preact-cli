@@ -1,0 +1,26 @@
+{
+	"name": "Experimental renderer",
+	"short_name": "Experimental renderer",
+	"start_url": "/",
+	"display": "standalone",
+	"orientation": "portrait",
+	"background_color": "#fff",
+	"theme_color": "#fff",
+	"icons": [
+		{
+			"src": "/assets/logo/android-chrome-192x192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "/assets/logo/android-chrome-512x512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		},
+		{
+			"src": "/assets/logo/apple-touch-icon.png",
+			"type": "image/png",
+			"sizes": "180x180"
+		}
+	]
+}

@@ -1,7 +1,7 @@
 const rimraf = require('rimraf');
 const { resolve } = require('path');
 const { promisify } = require('util');
-const { isDir, error } = require('../util');
+const { isDir, error, warn } = require('../util');
 const runWebpack = require('../lib/webpack/run-webpack');
 const fastPrerender = require('../lib/fast-render');
 const { validateArgs } = require('./validate-args');
@@ -115,6 +115,9 @@ async function command(src, argv) {
 	}
 
 	if (argv['experimental-fast-rendering']) {
+		warn(
+			'You have enabled experiment fast rendering. You might have to adjust template.html according to the new API.'
+		);
 		await fastPrerender(argv, stats);
 	}
 }
