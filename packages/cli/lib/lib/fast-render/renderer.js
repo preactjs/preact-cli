@@ -49,6 +49,7 @@ async function render(src, dest, cwd, webpack, data) {
 		htmlWebpackPlugin,
 	});
 	const template = templateSrc
+		.replace(/<%[=]?\s+preact\.title\s+%>/, '<%= options.title %>')
 		.replace(/<%\s+preact\.headEnd\s+%>/, headEnd)
 		.replace(/<%\s+preact\.bodyEnd\s+%>/, bodyEnd);
 	parentPort.postMessage({
