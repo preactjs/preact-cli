@@ -120,6 +120,7 @@ $ preact build
     --template         Path to custom HTML template
     --preload          Adds preload tags to the document its assets  (default false)
     --analyze          Launch interactive Analyzer to inspect production bundle(s)
+    --prerender        Renders route(s) into generated static HTML  (default true)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
     --brotli           Adds brotli redirects to the service worker  (default false)
     --inline-css       Adds critical css to the prerendered markup  (default true)
