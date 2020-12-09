@@ -56,6 +56,11 @@ const options = [
 		description: 'Launch interactive Analyzer to inspect production bundle(s)',
 	},
 	{
+		name: '--prerender',
+		description: 'Renders route(s) into generated static HTML',
+		default: true,
+	},
+	{
 		name: '--prerenderUrls',
 		description: 'Path to pre-rendered routes config',
 		default: 'prerender-urls.json',
