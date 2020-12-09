@@ -1,5 +1,11 @@
 # preact-cli
 
+## 3.0.5
+
+### Patch Changes
+
+- [`57cb566`](https://github.com/preactjs/preact-cli/commit/57cb566a697ceebcd094057b9db48827897d5b5b) [#1490](https://github.com/preactjs/preact-cli/pull/1490) Thanks [@rschristian](https://github.com/rschristian)! - Adds the 'prerender' argument to the list of arguments to be validated against
+
 ## 3.0.4
 
 ### Patch Changes
