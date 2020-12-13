@@ -9,7 +9,7 @@ async function enableOfflineMode(page, browser) {
 	await sleep(2000); // wait for service worker installation.
 	await page.setOfflineMode(true);
 	const targets = await browser.targets();
-	const serviceWorker = targets.find((t) => t.type() === 'service_worker');
+	const serviceWorker = targets.find(t => t.type() === 'service_worker');
 	const serviceWorkerConnection = await serviceWorker.createCDPSession();
 	await serviceWorkerConnection.send('Network.enable');
 	await serviceWorkerConnection.send('Network.emulateNetworkConditions', {
@@ -57,7 +57,7 @@ describe('preact service worker tests', () => {
 		const offlineContent = await page.content();
 		await page.waitForSelector('h1');
 		expect(
-			await page.$$eval('h1', (nodes) => nodes.map((n) => n.innerText))
+			await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
 		).toEqual(['Preact App', 'Home']);
 		expect(offlineContent).not.toEqual(initialContent);
 	});
@@ -86,12 +86,12 @@ describe('preact service worker tests', () => {
 	});
 
 	it('should respond with 200.html when offline', async () => {
-		const swText = await fetch('http://localhost:3000/sw-esm.js').then((res) =>
+		const swText = await fetch('http://localhost:3000/sw-esm.js').then(res =>
 			res.text()
 		);
 		// eslint-disable-next-line no-useless-escape
 		expect(swText).toContain(
-			'caches.match((t="/200.html",ce().getCacheKeyForURL(t)))'
+			'caches.match(T("/200.html"))||caches.match(T("/index.html"))'
 		);
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
@@ -101,8 +101,8 @@ describe('preact service worker tests', () => {
 		await enableOfflineMode(page, browser);
 		await page.reload({ waitUntil: 'networkidle0' });
 		expect(
-			await page.$$eval('script[type=__PREACT_CLI_DATA__]', (nodes) =>
-				nodes.map((n) => n.innerText)
+			await page.$$eval('script[type=__PREACT_CLI_DATA__]', nodes =>
+				nodes.map(n => n.innerText)
 			)
 		).toEqual(['%7B%22preRenderData%22:%7B%22url%22:%22/200.html%22%7D%7D']);
 	});
