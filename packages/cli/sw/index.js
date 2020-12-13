@@ -20,7 +20,10 @@ export function setupRouting() {
 
 	setCatchHandler(({ event }) => {
 		if (isNav(event)) {
-			return caches.match(getCacheKeyForURL('/200.html'));
+			return (
+				caches.match(getCacheKeyForURL('/200.html')) ||
+				caches.match(getCacheKeyForURL('/index.html'))
+			);
 		}
 		return Response.error();
 	});
