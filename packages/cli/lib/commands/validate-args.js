@@ -1,7 +1,7 @@
 const { error } = require('../util');
 
 function validateArgs(argv, options, command) {
-	let normalizedOptions = options.map(option => option.name.split(',')).flat(1);
+	let normalizedOptions = options.map(option => option.name.split(',')).reduce((acc, val) => acc.concat(val), []);
 	normalizedOptions = normalizedOptions.map(option => {
 		option = option.trim();
 		if (option.startsWith('--')) {
