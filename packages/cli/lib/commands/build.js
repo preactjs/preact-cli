@@ -57,6 +57,11 @@ const options = [
 		description: 'Launch interactive Analyzer to inspect production bundle(s)',
 	},
 	{
+		name: '--prerender',
+		description: 'Renders route(s) into generated static HTML',
+		default: true,
+	},
+	{
 		name: '--prerenderUrls',
 		description: 'Path to pre-rendered routes config',
 		default: 'prerender-urls.json',
@@ -116,7 +121,7 @@ async function command(src, argv) {
 
 	if (argv['experimental-fast-rendering']) {
 		warn(
-			'You have enabled experiment fast rendering. You might have to adjust template.html according to the new API.'
+			'You have enabled experimental and unstable fast rendering. You might have to adjust template.html according to the new API.'
 		);
 		await fastPrerender(argv, stats);
 	}
