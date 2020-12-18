@@ -410,20 +410,20 @@ async function command(repo, dest, argv) {
 
 	let pfx = isYarn ? 'yarn' : 'npm run';
 
-	return (
+	process.stdout.write(
 		trim(`
 		To get started, cd into the new directory:
-			${green('cd ' + dest)}
+		  ${green('cd ' + dest)}
 
 		To start a development live-reload server:
-			${green(pfx + ' dev')}
+		  ${green(pfx + ' dev')}
 
 		To create a production build (in ./build):
-			${green(pfx + ' build')}
+		  ${green(pfx + ' build')}
 
 		To start a production HTTP/2 server:
-			${green(pfx + ' serve')}
-	`) + '\n'
+		  ${green(pfx + ' serve')}
+	`) + '\n\n'
 	);
 }
 
