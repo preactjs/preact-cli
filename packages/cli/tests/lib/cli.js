@@ -1,8 +1,7 @@
 const { join } = require('path');
-const { existsSync, unlinkSync, symlinkSync } = require('fs');
+const { existsSync, mkdirSync, unlinkSync, symlinkSync } = require('fs');
 const cmd = require('../../lib/commands');
 const { tmpDir } = require('./output');
-const { mkdirSync } = require('../../lib/fs');
 const shell = require('shelljs');
 
 const root = join(__dirname, '../../../..');
