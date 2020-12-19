@@ -2,7 +2,7 @@ const { join } = require('path');
 const { existsSync, unlinkSync, symlinkSync } = require('fs');
 const cmd = require('../../lib/commands');
 const { tmpDir } = require('./output');
-const mkdirp = require('mkdirp');
+const { mkdirSync } = require('../../lib/fs');
 const shell = require('shelljs');
 
 const root = join(__dirname, '../../../..');
@@ -37,7 +37,7 @@ exports.create = async function (template, name) {
 
 exports.build = function (cwd, options, installNodeModules = false) {
 	if (!installNodeModules) {
-		mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
+		mkdirSync(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
 		linkPackage('preact', root, cwd);
 		linkPackage('preact-render-to-string', root, cwd);
 	} else {
