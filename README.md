@@ -30,7 +30,7 @@
 
 - **100/100 Lighthouse score**, right out of the box ([proof])
 - Fully **automatic code splitting** for routes _(see [Route-Based Code Splitting](#route-based-code-splitting))_
-- Transparently code-split any component with an [`async!`] prefix
+- Transparently code-split any component with an [`async!`] prefix _(pending [TypeScript](https://github.com/preactjs-templates/typescript) support, use `/async` directory instead)_
 - Auto-generated [Service Workers] for offline caching powered by [Workbox]
 - [PRPL] pattern support for efficient loading
 - Zero-configuration pre-rendering / server-side rendering hydration
@@ -76,7 +76,7 @@ Current available templates include:
 
 - [netlify] - Netlify CMS template using preact.
 
-- [typescript] - Default template implemented in TypeScript
+- [typescript] - Default template implemented in TypeScript, does not support `async!` import syntax.
 
 - [widget] - Template for a widget to be embedded in another website.
 
