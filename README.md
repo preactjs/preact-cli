@@ -30,7 +30,7 @@
 
 - **100/100 Lighthouse score**, right out of the box ([proof])
 - Fully **automatic code splitting** for routes _(see [Route-Based Code Splitting](#route-based-code-splitting))_
-- Transparently code-split any component with an [`async!`] prefix _(pending [TypeScript](https://github.com/preactjs-templates/typescript) support, use `/async` directory instead)_
+- Transparently code-split any component with an [`async!`] prefix _(pending [TypeScript](https://github.com/preactjs-templates/typescript) support, use `components/async` directory instead)_
 - Auto-generated [Service Workers] for offline caching powered by [Workbox]
 - [PRPL] pattern support for efficient loading
 - Zero-configuration pre-rendering / server-side rendering hydration
