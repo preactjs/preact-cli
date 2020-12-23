@@ -76,7 +76,7 @@ Current available templates include:
 
 - [netlify] - Netlify CMS template using preact.
 
-- [typescript] - Default template implemented in TypeScript, does not support `async!` import syntax.
+- [typescript] - Default template implemented in TypeScript. NOTE: TypeScript by default does not support `async!` import syntax.
 
 - [widget] - Template for a widget to be embedded in another website.
 
@@ -404,4 +404,4 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 > + import Profile from './routes/profile';
 > ```
 >
-> This is an intentional limitation that ensures effective code splitting. For components that need named exports, place them in a directory that doesn't trigger automatic code splitting. You can then manually code-split the default export by re-exporting it from `routes/` or importing it with the `"async!"` prefix.
+> This is an intentional limitation that ensures effective code splitting. For components that need named exports, place them in a directory that doesn't trigger automatic code splitting. You can then manually code-split the default export by re-exporting it from `routes/`, `components/async/` or importing it with the `"async!"` prefix.
