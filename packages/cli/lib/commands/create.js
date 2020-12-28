@@ -384,16 +384,23 @@ async function command(repo, dest, argv) {
 	const sourceDirectory = join(resolve(cwd, dest), 'src');
 
 	// Copy over template.html
-	const templateSrc = resolve(
-		__dirname,
-		join('..', 'resources', 'template.html')
-	);
-	const templateDest = join(sourceDirectory, 'template.html');
-	await copyFileToDestination(templateSrc, templateDest);
+	if (!repo.includes('widget')) {
+		const templateSrc = resolve(
+			__dirname,
+			join('..', 'resources', 'template.html')
+		);
+		const templateDest = join(sourceDirectory, 'template.html');
+		await copyFileToDestination(templateSrc, templateDest);
+	}
 
 	// Copy over sw.js
 	const serviceWorkerSrc = resolve(__dirname, join('..', '..', 'sw', 'sw.js'));
-	const serviceWorkerDest = join(sourceDirectory, 'sw.js');
+	const serviceWorkerDest = join(
+		repo.includes('widget')
+			? join(resolve(cwd, dest), 'demo')
+			: sourceDirectory,
+		'sw.js'
+	);
 	await copyFileToDestination(serviceWorkerSrc, serviceWorkerDest);
 
 	if (argv.install) {
