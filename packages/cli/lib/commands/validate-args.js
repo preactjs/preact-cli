@@ -1,7 +1,9 @@
 const { error } = require('../util');
 
 function validateArgs(argv, options, command) {
-	let normalizedOptions = options.map(option => option.name.split(',')).reduce((acc, val) => acc.concat(val), []);
+	let normalizedOptions = options
+		.map(option => option.name.split(','))
+		.reduce((acc, val) => acc.concat(val), []);
 	normalizedOptions = normalizedOptions.map(option => {
 		option = option.trim();
 		if (option.startsWith('--')) {
@@ -19,7 +21,7 @@ function validateArgs(argv, options, command) {
 			error(
 				`Invalid argument ${arg} passed to ${command}. Please refer to 'preact ${command} --help' for full list of options.\n\n`
 			);
-			throw new Error('Invalid argunment found.');
+			throw new Error('Invalid argument found.');
 		}
 	}
 }
