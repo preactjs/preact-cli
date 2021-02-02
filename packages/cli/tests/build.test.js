@@ -239,7 +239,7 @@ describe('preact build', () => {
 		let dir = await subject('custom-template-3');
 		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
 		expect(build(dir, { 'service-worker': false })).rejects.toEqual(
-			new Error('Invalid argunment found.')
+			new Error('Invalid argument found.')
 		);
 		expect(mockExit).toHaveBeenCalledWith(1);
 		mockExit.mockRestore();
