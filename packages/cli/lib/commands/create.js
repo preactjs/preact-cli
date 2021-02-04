@@ -78,13 +78,13 @@ const options = [
 ];
 
 // Formulate Questions if `create` args are missing
-function requestParams(argv, templates) {
+function requestParams(repo, dest, argv, templates) {
 	const cwd = resolve(argv.cwd);
 
 	return [
 		// Required data
 		{
-			type: argv.template ? null : 'select',
+			type: repo ? null : 'select',
 			name: 'template',
 			message: 'Pick a template',
 			choices: templates,
@@ -96,12 +96,12 @@ function requestParams(argv, templates) {
 			message: 'Remote template to clone (user/repo#tag)',
 		},
 		{
-			type: argv.dest ? null : 'text',
+			type: dest ? null : 'text',
 			name: 'dest',
 			message: 'Directory to create the app',
 		},
 		{
-			type: prev => (!dirExists(cwd, prev || argv.dest) ? null : 'confirm'),
+			type: prev => (!dirExists(cwd, prev || dest) ? null : 'confirm'),
 			name: 'force',
 			message: 'The destination directory exists. Overwrite?',
 			initial: false,
@@ -211,7 +211,7 @@ async function command(repo, dest, argv) {
 	// Prompt if incomplete data
 	if (!repo || !dest) {
 		const templates = await fetchTemplates();
-		const questions = requestParams(argv, templates);
+		const questions = requestParams(repo, dest, argv, templates);
 		const onCancel = () => {
 			info('Aborting execution');
 			process.exit();
