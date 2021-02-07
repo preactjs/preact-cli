@@ -290,8 +290,23 @@ function isDev(config) {
 			...(refresh ? [new RefreshPlugin()] : []),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
+				'process.env.ES_BUILD': false,
 				'process.env.PRERENDER': config.prerender,
 			}),
+			...(config.sw
+				? [
+						new InjectManifest({
+							swSrc: join(src, 'sw.js'),
+							include: [
+								/200\.html$/,
+								/\.js$/,
+								/\.css$/,
+								/\.(png|jpg|svg|gif|webp)$/,
+							],
+							exclude: [/\.esm\.js$/],
+						}),
+				  ]
+				: []),
 		],
 
 		devServer: {
