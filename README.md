@@ -211,7 +211,7 @@ By default, `preact-cli` emulates the following config:
 
 ```json
 {
-	"browserslist": ["> 1%", "IE >= 9", "last 2 versions"]
+	"browserslist": ["> 0.25%", "IE >= 9"]
 }
 ```
 
