@@ -37,6 +37,17 @@ async function clientConfig(env) {
 		polyfills: resolve(__dirname, './polyfills'),
 	};
 
+	let swPath;
+	if (env.sw) {
+		swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
+		const userSwPath = join(src, 'sw.js');
+		if (existsSync(userSwPath)) {
+			swPath = userSwPath;
+		} else {
+			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
+		}
+	}
+
 	return {
 		entry: entry,
 		output: {
@@ -83,6 +94,9 @@ async function clientConfig(env) {
 		},
 
 		plugins: [
+			new webpack.DefinePlugin({
+				'process.env.ES_BUILD': false,
+			}),
 			new PushManifestPlugin(env),
 			...(await renderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
@@ -103,6 +117,38 @@ async function clientConfig(env) {
 					},
 				].filter(Boolean)
 			),
+			...(env.sw
+				? env.esm
+					? [
+							new InjectManifest({
+								swSrc: swPath,
+								swDest: 'sw-esm.js',
+								include: [
+									/200\.html$/,
+									/\.esm.js$/,
+									/\.css$/,
+									/\.(png|jpg|svg|gif|webp)$/,
+								],
+								webpackCompilationPlugins: [
+									new webpack.DefinePlugin({
+										'process.env.ESM': true,
+									}),
+								],
+							}),
+					  ]
+					: [
+							new InjectManifest({
+								swSrc: join(src, 'sw.js'),
+								include: [
+									/200\.html$/,
+									/\.js$/,
+									/\.css$/,
+									/\.(png|jpg|svg|gif|webp)$/,
+								],
+								exclude: [/\.esm\.js$/],
+							}),
+					  ]
+				: []),
 		],
 	};
 }
@@ -156,17 +202,6 @@ function getBabelEsmPlugin(config) {
 
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
-	const { src, sw } = config;
-	let swPath;
-	if (sw) {
-		swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
-		const userSwPath = join(src, 'sw.js');
-		if (existsSync(userSwPath)) {
-			swPath = userSwPath;
-		} else {
-			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
-		}
-	}
 	const prodConfig = {
 		performance: Object.assign(
 			{
@@ -180,7 +215,6 @@ function isProd(config) {
 		plugins: [
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
-				'process.env.ES_BUILD': false,
 				'process.env.ESM': config.esm,
 				'process.env.PRERENDER': config.prerender,
 			}),
@@ -222,36 +256,6 @@ function isProd(config) {
 		},
 	};
 
-	if (config.esm && config.sw) {
-		prodConfig.plugins.push(
-			new InjectManifest({
-				swSrc: swPath,
-				swDest: 'sw-esm.js',
-				include: [
-					/200\.html$/,
-					/\.esm.js$/,
-					/\.css$/,
-					/\.(png|jpg|svg|gif|webp)$/,
-				],
-				webpackCompilationPlugins: [
-					new webpack.DefinePlugin({
-						'process.env.ESM': true,
-					}),
-				],
-			})
-		);
-	}
-
-	if (config.sw) {
-		prodConfig.plugins.push(
-			new InjectManifest({
-				swSrc: swPath,
-				include: [/200\.html$/, /\.js$/, /\.css$/, /\.(png|jpg|svg|gif|webp)$/],
-				exclude: [/\.esm\.js$/],
-			})
-		);
-	}
-
 	if (config['inline-css']) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
@@ -290,23 +294,8 @@ function isDev(config) {
 			...(refresh ? [new RefreshPlugin()] : []),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
-				'process.env.ES_BUILD': false,
 				'process.env.PRERENDER': config.prerender,
 			}),
-			...(config.sw
-				? [
-						new InjectManifest({
-							swSrc: join(src, 'sw.js'),
-							include: [
-								/200\.html$/,
-								/\.js$/,
-								/\.css$/,
-								/\.(png|jpg|svg|gif|webp)$/,
-							],
-							exclude: [/\.esm\.js$/],
-						}),
-				  ]
-				: []),
 		],
 
 		devServer: {
