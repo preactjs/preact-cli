@@ -4,7 +4,7 @@ const PENDING = {};
 
 // Given a VNode, finds its previous element sibling
 function getPreviousSibling(vnode, inner) {
-	if(!vnode) return;
+	if (!vnode) return;
 	// in an element parent with no preceeding siblings means we're the first child
 	if (typeof vnode.type === 'string') return null;
 	const parent = vnode.__;
