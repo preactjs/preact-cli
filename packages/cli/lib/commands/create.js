@@ -3,7 +3,6 @@ const { promisify } = require('util');
 const fetch = require('isomorphic-unfetch');
 const glob = promisify(require('glob').glob);
 const gittar = require('gittar');
-const mkdirp = require('mkdirp');
 const fs = require('../fs');
 const os = require('os');
 const { green } = require('kleur');
@@ -271,7 +270,7 @@ async function command(repo, dest, argv) {
 	}
 
 	if (!fs.existsSync(resolve(cwd, dest, 'src'))) {
-		mkdirp.sync(resolve(cwd, dest, 'src'));
+		fs.mkdirSync(resolve(cwd, dest, 'src'), { recursive: true });
 	}
 
 	// Attempt to fetch the `template`
