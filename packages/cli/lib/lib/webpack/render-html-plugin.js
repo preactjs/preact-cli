@@ -55,7 +55,7 @@ module.exports = async function (config) {
 		writeFileSync(template, content);
 	}
 
-	const htmlWebpackConfig = (values) => {
+	const htmlWebpackConfig = values => {
 		const { url, title, ...routeData } = values;
 		// Do not create a folder if the url is for a specific file.
 		const filename = url.endsWith('.html')
@@ -151,15 +151,20 @@ module.exports = async function (config) {
 	 * And we dont have to cache every single html file.
 	 * Go easy on network usage of clients.
 	 */
-	!pages.find((page) => page.url === PREACT_FALLBACK_URL) &&
+	!pages.find(page => page.url === PREACT_FALLBACK_URL) &&
+		config.sw &&
 		pages.push({ url: PREACT_FALLBACK_URL });
 
 	const resultPages = pages
 		.map(htmlWebpackConfig)
-		.map((conf) => new HtmlWebpackPlugin(conf))
-		.concat([new HtmlWebpackExcludeAssetsPlugin()])
-		.concat([...pages.map((page) => new PrerenderDataExtractPlugin(page))]);
-	return resultPages;
+		.map(conf => new HtmlWebpackPlugin(conf))
+		.concat([new HtmlWebpackExcludeAssetsPlugin()]);
+
+	return config.prerender
+		? resultPages.concat([
+				...pages.map(page => new PrerenderDataExtractPlugin(page)),
+		  ])
+		: resultPages;
 };
 
 // Adds a preact_prerender_data in every folder so that the data could be fetched separately.
@@ -171,7 +176,7 @@ class PrerenderDataExtractPlugin {
 		this.data_ = JSON.stringify(cliData.preRenderData || {});
 	}
 	apply(compiler) {
-		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', (compilation) => {
+		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', compilation => {
 			if (this.location_ === `${PREACT_FALLBACK_URL}/`) {
 				// We dont build prerender data for `200.html`. It can re-use the one for homepage.
 				return;
