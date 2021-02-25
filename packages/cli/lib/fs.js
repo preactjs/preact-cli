@@ -1,5 +1,6 @@
 const {
 	mkdir,
+	mkdirSync,
 	readFile,
 	writeFile,
 	copyFile,
@@ -11,6 +12,7 @@ const { promisify } = require('util');
 
 module.exports = {
 	mkdir: promisify(mkdir),
+	mkdirSync,
 	copyFile: promisify(copyFile),
 	readFile: promisify(readFile),
 	writeFile: promisify(writeFile),
