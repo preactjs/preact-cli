@@ -37,15 +37,45 @@ async function clientConfig(env) {
 		polyfills: resolve(__dirname, './polyfills'),
 	};
 
-	let swPath;
+	let swInjectManifest = [];
 	if (env.sw) {
-		swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
+		let swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
 		const userSwPath = join(src, 'sw.js');
 		if (existsSync(userSwPath)) {
 			swPath = userSwPath;
 		} else {
 			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
 		}
+		swInjectManifest = env.esm
+			? [
+					new InjectManifest({
+						swSrc: swPath,
+						swDest: 'sw-esm.js',
+						include: [
+							/200\.html$/,
+							/\.esm.js$/,
+							/\.css$/,
+							/\.(png|jpg|svg|gif|webp)$/,
+						],
+						webpackCompilationPlugins: [
+							new webpack.DefinePlugin({
+								'process.env.ESM': true,
+							}),
+						],
+					}),
+			  ]
+			: [
+					new InjectManifest({
+						swSrc: join(src, 'sw.js'),
+						include: [
+							/200\.html$/,
+							/\.js$/,
+							/\.css$/,
+							/\.(png|jpg|svg|gif|webp)$/,
+						],
+						exclude: [/\.esm\.js$/],
+					}),
+			  ];
 	}
 
 	return {
@@ -117,38 +147,7 @@ async function clientConfig(env) {
 					},
 				].filter(Boolean)
 			),
-			...(env.sw
-				? env.esm
-					? [
-							new InjectManifest({
-								swSrc: swPath,
-								swDest: 'sw-esm.js',
-								include: [
-									/200\.html$/,
-									/\.esm.js$/,
-									/\.css$/,
-									/\.(png|jpg|svg|gif|webp)$/,
-								],
-								webpackCompilationPlugins: [
-									new webpack.DefinePlugin({
-										'process.env.ESM': true,
-									}),
-								],
-							}),
-					  ]
-					: [
-							new InjectManifest({
-								swSrc: join(src, 'sw.js'),
-								include: [
-									/200\.html$/,
-									/\.js$/,
-									/\.css$/,
-									/\.(png|jpg|svg|gif|webp)$/,
-								],
-								exclude: [/\.esm\.js$/],
-							}),
-					  ]
-				: []),
+			...swInjectManifest,
 		],
 	};
 }
