@@ -1,5 +1,5 @@
 status = [
-  "cCI / Test (14.x) (push)",
+  "CI / Test (14.x) (push)",
 ]
 delete_merged_branches = true
 use_squash_merge = true
