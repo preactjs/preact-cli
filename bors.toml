@@ -1,5 +1,7 @@
 status = [
   "ci",
 ]
+required_approvals = true
+use_codeowners = true
 delete_merged_branches = true
 use_squash_merge = true
