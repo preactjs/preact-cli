@@ -12,13 +12,14 @@ const transformConfig = require('./transform-config');
 const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
+	let userPort = parseInt(process.env.PORT || env.port, 10) || 8080;
+	env.port = await getPort({ port: userPort });
+
 	let config = await clientConfig(env);
 
 	await transformConfig(env, config);
 
-	let userPort =
-		parseInt(process.env.PORT || config.devServer.port, 10) || 8080;
-	let port = await getPort({ port: userPort });
+	let port = config.devServer.port;
 
 	let compiler = webpack(config);
 	return new Promise((res, rej) => {

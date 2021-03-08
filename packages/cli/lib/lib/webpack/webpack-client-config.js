@@ -304,7 +304,7 @@ function isDev(config) {
 			publicPath: '/',
 			contentBase: src,
 			https: config.https,
-			port: process.env.PORT || config.port || 8080,
+			port: config.port,
 			host: process.env.HOST || config.host || '0.0.0.0',
 			disableHostCheck: true,
 			historyApiFallback: true,
