@@ -1,0 +1,7 @@
+status = [
+  "ci",
+]
+required_approvals = 1
+use_codeowners = true
+delete_merged_branches = true
+use_squash_merge = true

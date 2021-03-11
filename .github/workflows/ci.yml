@@ -5,6 +5,8 @@ on:
     branches:
       - master
       - next
+      - staging
+      - trying
   pull_request:
     branches:
       - master
@@ -41,3 +43,13 @@ jobs:
           WITH_LOG: true
           LIGHTHOUSE_CHROMIUM_PATH: 'which google-chrome-stable'
         run: npm run test
+
+  ci-success:
+    name: ci
+    if: ${{ success() }}
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - name: CI succeeded
+        run: exit 0
