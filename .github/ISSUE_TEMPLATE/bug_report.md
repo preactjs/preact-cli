@@ -25,4 +25,4 @@ A clear and concise description of what you expected to happen.
 **Please mention any other relevant information**
 Add any other context about the problem here.
 
-Please paste the results of `npx preact info` here.
+Please paste the results of `npx preact-cli info` here.
