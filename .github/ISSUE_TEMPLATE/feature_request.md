@@ -17,4 +17,4 @@ A clear and concise description of what you want to happen.
 
 **Please mention any other relevant information.**
 
-Please paste the results of `npx preact info` here.
+Please paste the results of `npx preact-cli info` here.
