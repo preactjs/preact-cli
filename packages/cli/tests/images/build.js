@@ -16,7 +16,6 @@ exports.default = exports.full = Object.assign({}, common, {
 	'bundle.7e56a.css': 901,
 	'favicon.ico': 15086,
 	'index.html': 2034,
-	'200.html': 613,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 	'push-manifest.json': 812,
@@ -30,7 +29,6 @@ exports.default = exports.full = Object.assign({}, common, {
 	'ssr-build/ssr-bundle.6e806.css.map': 1250,
 	'ssr-build/ssr-bundle.js': 9976,
 	'ssr-build/ssr-bundle.js.map': 30887,
-	'sw-debug.js': 775,
 });
 exports['default-esm'] = exports.full = Object.assign({}, exports.default, {
 	'bundle.*.esm.js': 21135,
@@ -53,6 +51,23 @@ exports.sass = `
 	</div>
 	{{ ... }}
 </body>
+`;
+
+exports.sideEffectCss = `
+<head>
+  <meta charset="utf-8">
+  <title>side-effect-css<\\/title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
+  <link rel="manifest" href="\\/manifest\\.json">
+  <style>h1{background:#673ab8}<\\/style>
+  <link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
+	<noscript>
+    <link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
+  </noscript>
+<\\/head>
 `;
 
 exports.prerender = {};

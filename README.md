@@ -120,6 +120,7 @@ $ preact build
     --template         Path to custom HTML template
     --preload          Adds preload tags to the document its assets  (default false)
     --analyze          Launch interactive Analyzer to inspect production bundle(s)
+    --prerender        Renders route(s) into generated static HTML  (default true)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
     --brotli           Adds brotli redirects to the service worker  (default false)
     --inline-css       Adds critical css to the prerendered markup  (default true)
@@ -210,7 +211,7 @@ By default, `preact-cli` emulates the following config:
 
 ```json
 {
-	"browserslist": ["> 1%", "IE >= 9", "last 2 versions"]
+	"browserslist": ["> 0.25%", "IE >= 9"]
 }
 ```
 
@@ -329,13 +330,29 @@ The default templates comes with a `.css` file for each component. You can start
 
 #### [SASS]
 
-- `npm install --save-dev node-sass sass-loader` (inside your preact application folder)
+- `npm install --save-dev node-sass sass-loader@10` (inside your preact application folder)
 - start replacing `.css` files with `.scss` files
 
 #### [LESS]
 
 - `npm install --save-dev less less-loader` (inside your preact application folder)
 - start replacing `.css` files with `.less` files
+
+### Using Environment Variables
+
+You can reference and use environment variables in your `preact.config.js` by using `process.env`:
+
+```js
+export default {
+	webpack(config, env, helpers, options) {
+		if (process.env.MY_VARIABLE) {
+			/** You can add a config here that will only used when your variable is truthy **/
+		}
+	},
+};
+```
+
+If you'd like to use these variables in your application, you can use the [DefinePlugin] config from our recipes wiki.
 
 [promise]: https://npm.im/promise-polyfill
 [fetch]: https://github.com/developit/unfetch
@@ -365,6 +382,7 @@ The default templates comes with a `.css` file for each component. You can start
 [`async!`]: https://github.com/preactjs/preact-cli/blob/1.4.1/examples/full/src/components/app.js#L7
 [sass]: https://sass-lang.com
 [less]: http://lesscss.org
+[defineplugin]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes#use-environment-variables-in-your-application
 
 ### Route-Based Code Splitting
 
