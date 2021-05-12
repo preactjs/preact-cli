@@ -1,5 +1,33 @@
 # preact-cli
 
+## 3.1.0
+
+### Minor Changes
+
+- [`4b81641`](https://github.com/preactjs/preact-cli/commit/4b8164172ec4e7e9a725909b58bc54eb1f82ed8a) [#1418](https://github.com/preactjs/preact-cli/pull/1418) Thanks [@merceyz](https://github.com/merceyz)! - Added monorepo and Yarn PnP support by correctly loading dependencies, removing faulty install checks, and adding undeclared dependencies
+
+### Patch Changes
+
+- [`0e4f06a`](https://github.com/preactjs/preact-cli/commit/0e4f06a60bb08869831d66844b6b92a948f33e4c) [#1503](https://github.com/preactjs/preact-cli/pull/1503) Thanks [@rschristian](https://github.com/rschristian)! - Ensures the create command returns startup instructions to users
+
+* [`df48437`](https://github.com/preactjs/preact-cli/commit/df484371553a72f3fa5a72effe9577530d95f648) [#1499](https://github.com/preactjs/preact-cli/pull/1499) Thanks [@rschristian](https://github.com/rschristian)! - CLI now only conditionally outputs 200.html & preact_prerender_data.json
+
+- [`c33f020`](https://github.com/preactjs/preact-cli/commit/c33f0207d26402f9b27827acd52303dfd6350c38) [#1435](https://github.com/preactjs/preact-cli/pull/1435) Thanks [@rschristian](https://github.com/rschristian)! - Change ensures root ReadMe is bundled with CLI package on publish
+
+* [`bf668b1`](https://github.com/preactjs/preact-cli/commit/bf668b1e9eda89e45bf6711decc6ee53d76a5880) [#1530](https://github.com/preactjs/preact-cli/pull/1530) Thanks [@rschristian](https://github.com/rschristian)! - Fixes bug causing wrong port to be given to Webpack config
+
+- [`cc2f3e7`](https://github.com/preactjs/preact-cli/commit/cc2f3e787c25696d68aaae6e17c8466b2b6675ac) [#1423](https://github.com/preactjs/preact-cli/pull/1423) Thanks [@rschristian](https://github.com/rschristian)! - Fixes bug with style loader that would strip non-module CSS files if 'sideEffects' was set to false for the package.
+
+* [`c9c48db`](https://github.com/preactjs/preact-cli/commit/c9c48db444b96201d5f478cdb73f668195dcdee2) [#1504](https://github.com/preactjs/preact-cli/pull/1504) Thanks [@rschristian](https://github.com/rschristian)! - Replacing mkdirp with native mkdir recursive
+
+- [`977d59a`](https://github.com/preactjs/preact-cli/commit/977d59a30ec5062569dea62c40359f2be3b2d87e) [#1527](https://github.com/preactjs/preact-cli/pull/1527) Thanks [@jamesgeorge007](https://github.com/jamesgeorge007)! - Do not prompt on supplying the template as an argument
+
+* [`daa51ac`](https://github.com/preactjs/preact-cli/commit/daa51ac4aa5ea10c824f7a33bfc03d71d0aaf5ae) [#1522](https://github.com/preactjs/preact-cli/pull/1522) Thanks [@jamesgeorge007](https://github.com/jamesgeorge007)! - Minor typographical fix
+
+- [`24c7473`](https://github.com/preactjs/preact-cli/commit/24c7473f27fa401449a6da82b37b897b5a45894b) [#1516](https://github.com/preactjs/preact-cli/pull/1516) Thanks [@jgoamakf](https://github.com/jgoamakf)! - Do not produce preRenderData when --no-prerender option is specified.
+
+* [`9f9277b`](https://github.com/preactjs/preact-cli/commit/9f9277be2ed50476147bae5567640b36740b4d38) [#1534](https://github.com/preactjs/preact-cli/pull/1534) Thanks [@rschristian](https://github.com/rschristian)! - Fixes SW flag in dev
+
 ## 3.0.5
 
 ### Patch Changes
