@@ -90,7 +90,7 @@ describe('preact service worker tests', () => {
 			res.text()
 		);
 		// eslint-disable-next-line no-useless-escape
-		expect(swText).toContain('caches.match(T("/200.html")||T("/index.html"))');
+		expect(swText).toContain('caches.match(j("/200.html")||j("/index.html")');
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
 		await page.goto('http://localhost:3000', {
