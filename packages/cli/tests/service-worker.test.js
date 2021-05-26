@@ -41,8 +41,8 @@ describe('preact service worker tests', () => {
 		await browser.close();
 	});
 
-	afterAll(async () => {
-		await server.server.stop();
+	afterAll(() => {
+		server.server.close();
 	});
 
 	it('works offline', async () => {
