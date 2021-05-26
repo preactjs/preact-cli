@@ -1,5 +1,11 @@
 # preact-cli
 
+## 3.2.0
+
+### Minor Changes
+
+- [#1465](https://github.com/preactjs/preact-cli/pull/1465) [`3a11043`](https://github.com/preactjs/preact-cli/commit/3a11043f89deee09bc41947677e1a3a58b4ee1bf) Thanks [@ForsakenHarmony](https://github.com/ForsakenHarmony)! - chore: update dependencies
+
 ## 3.1.0
 
 ### Minor Changes
