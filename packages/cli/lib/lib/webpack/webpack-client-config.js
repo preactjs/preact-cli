@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const { resolve, join } = require('path');
 const { existsSync } = require('fs');
 const { isInstalledVersionPreactXOrAbove } = require('./utils');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const { filter } = require('minimatch');
 const SizePlugin = require('size-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -78,6 +78,22 @@ async function clientConfig(env) {
 			  ];
 	}
 
+	let copyPatterns = [
+		existsSync(source('manifest.json')) && { from: 'manifest.json' },
+		// copy any static files
+		existsSync(source('assets')) && { from: 'assets', to: 'assets' },
+		// copy sw-debug
+		!isProd && {
+			from: resolve(__dirname, '../../resources/sw-debug.js'),
+			to: 'sw-debug.js',
+		},
+		// copy files from static to build directory
+		existsSync(source('static')) && {
+			from: resolve(source('static')),
+			to: '.',
+		},
+	].filter(Boolean);
+
 	return {
 		entry: entry,
 		output: {
@@ -130,25 +146,12 @@ async function clientConfig(env) {
 			new PushManifestPlugin(env),
 			...(await renderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
-			new CopyWebpackPlugin(
-				[
-					existsSync(source('manifest.json')) && { from: 'manifest.json' },
-					// copy any static files
-					existsSync(source('assets')) && { from: 'assets', to: 'assets' },
-					// copy sw-debug
-					!isProd && {
-						from: resolve(__dirname, '../../resources/sw-debug.js'),
-						to: 'sw-debug.js',
-					},
-					// copy files from static to build directory
-					existsSync(source('static')) && {
-						from: resolve(source('static')),
-						to: '.',
-					},
-				].filter(Boolean)
-			),
+			copyPatterns.length !== 0 &&
+				new CopyWebpackPlugin({
+					patterns: copyPatterns,
+				}),
 			...swInjectManifest,
-		],
+		].filter(Boolean),
 	};
 }
 
@@ -165,13 +168,7 @@ function getBabelEsmPlugin(config) {
 				beforeStartExecution: (plugins, newConfig) => {
 					const babelPlugins = newConfig.plugins;
 					newConfig.plugins = babelPlugins.filter(plugin => {
-						if (
-							Array.isArray(plugin) &&
-							plugin[0].indexOf('fast-async') !== -1
-						) {
-							return false;
-						}
-						return true;
+						return !(Array.isArray(plugin) && plugin[0].includes('fast-async'));
 					});
 					plugins.forEach(plugin => {
 						if (
@@ -319,7 +316,7 @@ function isDev(config) {
 	};
 }
 
-module.exports = async function (env) {
+module.exports = async function createClientConfig(env) {
 	return merge(
 		baseConfig(env),
 		await clientConfig(env),

@@ -45,7 +45,7 @@ exports['default-esm'] = exports.full = Object.assign({}, exports.default, {
 
 exports.sass = `
 <body>
-	<div class="background__21gOq">
+	<div class="background__2mKGE">
 		<h1>Header on background</h1>
 		<p>Paragraph on background</p>
 	</div>
