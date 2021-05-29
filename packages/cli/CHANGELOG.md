@@ -1,5 +1,11 @@
 # preact-cli
 
+## 3.2.2
+
+### Patch Changes
+
+- [#1568](https://github.com/preactjs/preact-cli/pull/1568) [`bc6d5f6`](https://github.com/preactjs/preact-cli/commit/bc6d5f6e87e9cd5dc652d7e294fff150b7068c4d) Thanks [@rschristian](https://github.com/rschristian)! - Fixes breaking change to the getLoadersByName config helper
+
 ## 3.2.1
 
 ### Patch Changes
