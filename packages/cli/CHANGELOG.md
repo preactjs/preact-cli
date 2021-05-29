@@ -1,5 +1,11 @@
 # preact-cli
 
+## 3.2.1
+
+### Patch Changes
+
+- [#1567](https://github.com/preactjs/preact-cli/pull/1567) [`971e633`](https://github.com/preactjs/preact-cli/commit/971e6335ddd20e8cc0233607c47942831e31f4cb) Thanks [@rschristian](https://github.com/rschristian)! - Reverts update to fork-ts-checker-webpack-plugin
+
 ## 3.2.0
 
 ### Minor Changes
