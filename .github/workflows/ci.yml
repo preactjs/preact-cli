@@ -62,7 +62,7 @@ jobs:
           cd default/template
           touch yarn.lock
           echo $(cat package.json | jq '.name = "pnp-test"') > package.json
-          yarn set version 2
+          yarn set version from sources
           yarn config set pnpFallbackMode none
           yarn config set compressionLevel 0
           yarn link -A -p ../..
