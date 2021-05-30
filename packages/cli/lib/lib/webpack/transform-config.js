@@ -1,6 +1,7 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
-const fs = require('../../fs');
+const { statSync } = require('fs');
+const { stat } = require('fs').promises;
 const { error } = require('../../util');
 
 const FILE = 'preact.config';
@@ -12,7 +13,7 @@ async function findConfig(env) {
 		let config = `${FILE}.${EXTENSIONS[idx]}`;
 		let path = resolve(env.cwd, config);
 		try {
-			await fs.stat(path);
+			await stat(path);
 			return { configFile: config, isDefault: true };
 		} catch (e) {}
 	}
@@ -99,7 +100,7 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 	let myConfig = resolve(env.cwd, env.config);
 
 	try {
-		await fs.stat(myConfig);
+		await stat(myConfig);
 	} catch (e) {
 		if (isDefault) return;
 		throw new Error(
@@ -283,7 +284,7 @@ class WebpackConfigHelpers {
 	setHtmlTemplate(config, template) {
 		let isPath;
 		try {
-			fs.statSync(template);
+			statSync(template);
 			isPath = true;
 		} catch (e) {}
 
