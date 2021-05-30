@@ -1,5 +1,23 @@
 # preact-cli
 
+## 3.2.2
+
+### Patch Changes
+
+- [#1568](https://github.com/preactjs/preact-cli/pull/1568) [`bc6d5f6`](https://github.com/preactjs/preact-cli/commit/bc6d5f6e87e9cd5dc652d7e294fff150b7068c4d) Thanks [@rschristian](https://github.com/rschristian)! - Fixes breaking change to the getLoadersByName config helper
+
+## 3.2.1
+
+### Patch Changes
+
+- [#1567](https://github.com/preactjs/preact-cli/pull/1567) [`971e633`](https://github.com/preactjs/preact-cli/commit/971e6335ddd20e8cc0233607c47942831e31f4cb) Thanks [@rschristian](https://github.com/rschristian)! - Reverts update to fork-ts-checker-webpack-plugin
+
+## 3.2.0
+
+### Minor Changes
+
+- [#1465](https://github.com/preactjs/preact-cli/pull/1465) [`3a11043`](https://github.com/preactjs/preact-cli/commit/3a11043f89deee09bc41947677e1a3a58b4ee1bf) Thanks [@ForsakenHarmony](https://github.com/ForsakenHarmony)! - chore: update dependencies
+
 ## 3.1.0
 
 ### Minor Changes

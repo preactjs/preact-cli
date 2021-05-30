@@ -13,7 +13,7 @@
     "node": ">=8"
   },
   "dependencies": {
-    "kleur": "^4.0.2",
+    "kleur": "^4.1.4",
     "loader-utils": "^2.0.0"
   },
   "peerDependencies": {

@@ -2,3 +2,4 @@
 **/tests/output
 **/package.json
 **/*.ejs
+.changeset/*.md

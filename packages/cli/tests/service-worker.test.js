@@ -41,8 +41,8 @@ describe('preact service worker tests', () => {
 		await browser.close();
 	});
 
-	afterAll(async () => {
-		await server.server.stop();
+	afterAll(() => {
+		server.server.close();
 	});
 
 	it('works offline', async () => {
@@ -90,7 +90,9 @@ describe('preact service worker tests', () => {
 			res.text()
 		);
 		// eslint-disable-next-line no-useless-escape
-		expect(swText).toContain('caches.match(T("/200.html")||T("/index.html"))');
+		expect(swText).toMatch(
+			/caches.match\(\w\("\/200.html"\)\|\|\w\("\/index.html"\)/
+		);
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
 		await page.goto('http://localhost:3000', {

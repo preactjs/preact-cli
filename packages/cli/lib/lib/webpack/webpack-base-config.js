@@ -70,7 +70,7 @@ function getSassConfiguration(...includePaths) {
 	return config;
 }
 
-module.exports = function (env) {
+module.exports = function createBaseConfig(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
 	const babelConfigFile = env.babelConfig || '.babelrc';
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
@@ -260,9 +260,10 @@ module.exports = function (env) {
 						{
 							loader: require.resolve('postcss-loader'),
 							options: {
-								ident: 'postcss',
 								sourceMap: true,
-								plugins: postcssPlugins,
+								postcssOptions: {
+									plugins: postcssPlugins,
+								},
 							},
 						},
 					],
@@ -284,9 +285,10 @@ module.exports = function (env) {
 						{
 							loader: require.resolve('postcss-loader'),
 							options: {
-								ident: 'postcss',
 								sourceMap: true,
-								plugins: postcssPlugins,
+								postcssOptions: {
+									plugins: postcssPlugins,
+								},
 							},
 						},
 					],
