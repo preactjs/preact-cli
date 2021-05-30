@@ -236,7 +236,9 @@ class WebpackConfigHelpers {
 			)
 			.reduce((arr, loaders) => arr.concat(loaders), [])
 			.filter(
-				({ loader }) => loader === name || (loader && loader.loader === name)
+				({ loader }) =>
+					(typeof loader === 'string' && loader.includes(name)) ||
+					(typeof loader.loader === 'string' && loader.loader.includes(name))
 			);
 	}
 
