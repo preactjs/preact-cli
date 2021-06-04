@@ -85,7 +85,6 @@
     "babel-loader": "^8.2.2",
     "babel-plugin-macros": "^3.1.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-    "browserlist": "^1.0.1",
     "browserslist": "^4.16.4",
     "compression-webpack-plugin": "^6.0.4",
     "console-clear": "^1.0.0",
