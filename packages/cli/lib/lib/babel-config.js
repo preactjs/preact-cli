@@ -6,7 +6,6 @@ module.exports = function (env, options = {}) {
 			[
 				require.resolve('@babel/preset-env'),
 				{
-					loose: true,
 					modules: options.modules || false,
 					targets: {
 						browsers: options.browsers,
