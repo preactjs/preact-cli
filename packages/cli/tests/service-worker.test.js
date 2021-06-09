@@ -91,7 +91,7 @@ describe('preact service worker tests', () => {
 		);
 		// eslint-disable-next-line no-useless-escape
 		expect(swText).toMatch(
-			/caches.match\(\w\("\/200.html"\)\|\|\w\("\/index.html"\)/
+			/caches.match\(\w+\("\/200.html"\)\|\|\w+\("\/index.html"\)/
 		);
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
