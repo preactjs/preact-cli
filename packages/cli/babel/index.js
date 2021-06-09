@@ -11,7 +11,7 @@ var defaultBrowserList = ['> 0.25%', 'IE >= 9'];
 
 // default supported browsers for all dev bundles (module/nomodule is not used):
 // see https://github.com/babel/babel/blob/master/packages/babel-compat-data/data/native-modules.json
-var defaultBrowserList = [
+var defaultBrowserListDev = [
 	'chrome >= 61',
 	'and_chr >= 61',
 	'android >= 61',
@@ -36,7 +36,7 @@ module.exports = function preactCli(ctx, userOptions = {}) {
 	var presetOptions = {
 		env: isProd ? 'production' : 'development',
 		modules: isTest ? 'commonjs' : false,
-		browsers: defaultBrowserList,
+		browsers: isProd ? defaultBrowserList : defaultBrowserListDev,
 	};
 
 	// user specified options always the strongest
