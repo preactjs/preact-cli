@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const { relative, resolve } = require('path');
-const { stat } = require('../../lib/fs');
+const { stat } = require('fs').promises;
 const minimatch = require('minimatch');
 const pRetry = require('p-retry');
 const { promisify } = require('util');
