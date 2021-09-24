@@ -70,8 +70,6 @@ Current available templates include:
 
 - [default] - Default template with all features.
 
-- [material] - material template using preact-material-components
-
 - [simple] - The simplest possible preact setup in a single file
 
 - [netlify] - Netlify CMS template using preact.

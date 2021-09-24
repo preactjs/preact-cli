@@ -1,6 +1,6 @@
 const { join } = require('path');
+const { readFile, writeFile } = require('fs').promises;
 const { create, build } = require('./lib/cli');
-const { readFile, writeFile } = require('../lib/fs');
 const { sleep } = require('./lib/utils');
 const { getServer } = require('./server');
 const startChrome = require('./lib/chrome');
@@ -91,7 +91,7 @@ describe('preact service worker tests', () => {
 		);
 		// eslint-disable-next-line no-useless-escape
 		expect(swText).toMatch(
-			/caches.match\(\w\("\/200.html"\)\|\|\w\("\/index.html"\)/
+			/caches.match\(\w+\("\/200.html"\)\|\|\w+\("\/index.html"\)/
 		);
 		const page = await browser.newPage();
 		await page.setCacheEnabled(false);
