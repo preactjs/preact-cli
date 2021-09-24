@@ -3,8 +3,8 @@ const { promisify } = require('util');
 const fetch = require('isomorphic-unfetch');
 const glob = promisify(require('glob').glob);
 const gittar = require('gittar');
-const mkdirp = require('mkdirp');
-const fs = require('../fs');
+const { existsSync, mkdirSync } = require('fs');
+const { copyFile, mkdir, readFile, writeFile } = require('fs').promises;
 const os = require('os');
 const { green } = require('kleur');
 const { resolve, join } = require('path');
@@ -28,20 +28,63 @@ const {
 	FALLBACK_TEMPLATE_OPTIONS,
 } = require('../constants');
 const { addScripts, install, initGit } = require('../lib/setup');
+const { validateArgs } = require('./validate-args');
 
 const ORG = 'preactjs-templates';
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
+const options = [
+	{
+		name: '--name',
+		description: 'The application name',
+	},
+	{
+		name: '--cwd',
+		description: 'A directory to use instead of $PWD',
+		default: '.',
+	},
+	{
+		name: '--force',
+		description: 'Force destination output; will override!',
+		default: false,
+	},
+	{
+		name: '--install',
+		description: 'Install dependencies',
+		default: true,
+	},
+	{
+		name: '--yarn',
+		description: 'Use `yarn` instead of `npm`',
+		default: false,
+	},
+	{
+		name: '--git',
+		description: 'Initialize git repository',
+		default: false,
+	},
+	{
+		name: '--license',
+		description: 'License type',
+		default: 'MIT',
+	},
+	{
+		name: '-v, --verbose',
+		description: 'Verbose output',
+		default: false,
+	},
+];
+
 // Formulate Questions if `create` args are missing
-function requestParams(argv, templates) {
+function requestParams(repo, dest, argv, templates) {
 	const cwd = resolve(argv.cwd);
 
 	return [
 		// Required data
 		{
-			type: argv.template ? null : 'select',
+			type: repo ? null : 'select',
 			name: 'template',
 			message: 'Pick a template',
 			choices: templates,
@@ -53,12 +96,12 @@ function requestParams(argv, templates) {
 			message: 'Remote template to clone (user/repo#tag)',
 		},
 		{
-			type: argv.dest ? null : 'text',
+			type: dest ? null : 'text',
 			name: 'dest',
 			message: 'Directory to create the app',
 		},
 		{
-			type: prev => (!dirExists(cwd, prev || argv.dest) ? null : 'confirm'),
+			type: prev => (!dirExists(cwd, prev || dest) ? null : 'confirm'),
 			name: 'force',
 			message: 'The destination directory exists. Overwrite?',
 			initial: false,
@@ -106,7 +149,7 @@ async function updateTemplatesCache() {
 
 	try {
 		const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
-		await fs.writeFile(cacheFilePath, JSON.stringify(repos, null, 2), 'utf-8');
+		await writeFile(cacheFilePath, JSON.stringify(repos, null, 2), 'utf-8');
 	} catch (err) {
 		error(`\nFailed to update template cache\n ${err}`);
 	}
@@ -126,14 +169,14 @@ async function fetchTemplates() {
 		info('Fetching official templates:\n');
 
 		// check if `.cache` folder exists or not, and create if does not exists
-		if (!fs.existsSync(cacheFolder)) {
-			await fs.mkdir(cacheFolder);
+		if (!existsSync(cacheFolder)) {
+			await mkdir(cacheFolder);
 		}
 
 		// If cache file doesn't exist, then hit the API and fetch the data
-		if (!fs.existsSync(cacheFilePath)) {
+		if (!existsSync(cacheFilePath)) {
 			const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
-			await fs.writeFile(
+			await writeFile(
 				cacheFilePath,
 				JSON.stringify(repos, null, 2),
 				'utf-8'
@@ -144,7 +187,7 @@ async function fetchTemplates() {
 		updateTemplatesCache();
 
 		// fetch the API response from cache file
-		const templatesFromCache = await fs.readFile(cacheFilePath, 'utf-8');
+		const templatesFromCache = await readFile(cacheFilePath, 'utf-8');
 		const parsedTemplates = JSON.parse(templatesFromCache);
 		const officialTemplates = normalizeTemplatesResponse(parsedTemplates || []);
 
@@ -158,16 +201,17 @@ async function fetchTemplates() {
 }
 
 async function copyFileToDestination(srcPath, destPath, force = false) {
-	if (!fs.existsSync(destPath) || force) {
-		await fs.copyFile(srcPath, destPath);
+	if (!existsSync(destPath) || force) {
+		await copyFile(srcPath, destPath);
 	}
 }
 
-module.exports = async function(repo, dest, argv) {
+async function command(repo, dest, argv) {
+	validateArgs(argv, options, 'create');
 	// Prompt if incomplete data
 	if (!repo || !dest) {
 		const templates = await fetchTemplates();
-		const questions = requestParams(argv, templates);
+		const questions = requestParams(repo, dest, argv, templates);
 		const onCancel = () => {
 			info('Aborting execution');
 			process.exit();
@@ -226,8 +270,8 @@ module.exports = async function(repo, dest, argv) {
 		info(`Assuming you meant ${repo}...`);
 	}
 
-	if (!fs.existsSync(resolve(cwd, dest, 'src'))) {
-		mkdirp.sync(resolve(cwd, dest, 'src'));
+	if (!existsSync(resolve(cwd, dest, 'src'))) {
+		mkdirSync(resolve(cwd, dest, 'src'), { recursive: true });
 	}
 
 	// Attempt to fetch the `template`
@@ -287,11 +331,11 @@ module.exports = async function(repo, dest, argv) {
 			entry,
 			enc = 'utf8';
 		for (entry of keeps) {
-			buf = await fs.readFile(entry, enc);
+			buf = await readFile(entry, enc);
 			dict.forEach((v, k) => {
 				buf = buf.replace(k, v);
 			});
-			await fs.writeFile(entry, buf, enc);
+			await writeFile(entry, buf, enc);
 		}
 	} else {
 		return error(`No \`template\` directory found within ${repo}!`, 1);
@@ -304,7 +348,7 @@ module.exports = async function(repo, dest, argv) {
 		pkgFile = resolve(target, 'package.json');
 
 	if (pkgFile) {
-		pkgData = JSON.parse(await fs.readFile(pkgFile));
+		pkgData = JSON.parse(await readFile(pkgFile));
 		// Write default "scripts" if none found
 		pkgData.scripts =
 			pkgData.scripts || (await addScripts(pkgData, target, isYarn));
@@ -319,12 +363,12 @@ module.exports = async function(repo, dest, argv) {
 	}
 	// Find a `manifest.json`; use the first match, if any
 	let files = await glob(target + '/**/manifest.json');
-	let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
+	let manifest = files[0] && JSON.parse(await readFile(files[0]));
 	if (manifest) {
 		spinner.text = 'Updating `name` within `manifest.json` file';
 		manifest.name = manifest.short_name = argv.name;
 		// Write changes to `manifest.json`
-		await fs.writeFile(files[0], JSON.stringify(manifest, null, 2));
+		await writeFile(files[0], JSON.stringify(manifest, null, 2));
 		if (argv.name.length > 12) {
 			// @see https://developer.chrome.com/extensions/manifest/name#short_name
 			process.stdout.write('\n');
@@ -334,7 +378,7 @@ module.exports = async function(repo, dest, argv) {
 
 	if (pkgData) {
 		// Assume changes were made ¯\_(ツ)_/¯
-		await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
+		await writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 	}
 
 	const sourceDirectory = join(resolve(cwd, dest), 'src');
@@ -345,12 +389,12 @@ module.exports = async function(repo, dest, argv) {
 		join('..', 'resources', 'template.html')
 	);
 	const templateDest = join(sourceDirectory, 'template.html');
-	copyFileToDestination(templateSrc, templateDest);
+	await copyFileToDestination(templateSrc, templateDest);
 
 	// Copy over sw.js
 	const serviceWorkerSrc = resolve(__dirname, join('..', '..', 'sw', 'sw.js'));
 	const serviceWorkerDest = join(sourceDirectory, 'sw.js');
-	copyFileToDestination(serviceWorkerSrc, serviceWorkerDest);
+	await copyFileToDestination(serviceWorkerSrc, serviceWorkerDest);
 
 	if (argv.install) {
 		spinner.text = 'Installing dependencies:\n';
@@ -366,19 +410,24 @@ module.exports = async function(repo, dest, argv) {
 
 	let pfx = isYarn ? 'yarn' : 'npm run';
 
-	return (
+	process.stdout.write(
 		trim(`
 		To get started, cd into the new directory:
-			${green('cd ' + dest)}
+		  ${green('cd ' + dest)}
 
 		To start a development live-reload server:
-			${green(pfx + ' dev')}
+		  ${green(pfx + ' dev')}
 
 		To create a production build (in ./build):
-			${green(pfx + ' build')}
+		  ${green(pfx + ' build')}
 
 		To start a production HTTP/2 server:
-			${green(pfx + ' serve')}
-	`) + '\n'
+		  ${green(pfx + ' serve')}
+	`) + '\n\n'
 	);
+}
+
+module.exports = {
+	command,
+	options,
 };

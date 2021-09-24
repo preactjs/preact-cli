@@ -1,8 +1,7 @@
 const { join } = require('path');
-const { existsSync, unlinkSync, symlinkSync } = require('fs');
+const { existsSync, mkdirSync, unlinkSync, symlinkSync } = require('fs');
 const cmd = require('../../lib/commands');
 const { tmpDir } = require('./output');
-const mkdirp = require('mkdirp');
 const shell = require('shelljs');
 
 const root = join(__dirname, '../../../..');
@@ -20,7 +19,7 @@ const argv = {
 	'inline-css': true,
 };
 
-exports.create = async function(template, name) {
+exports.create = async function (template, name) {
 	let dest = tmpDir();
 	name = name || `test-${template}`;
 
@@ -35,9 +34,9 @@ exports.create = async function(template, name) {
 	return dest;
 };
 
-exports.build = function(cwd, options, installNodeModules = false) {
+exports.build = function (cwd, options, installNodeModules = false) {
 	if (!installNodeModules) {
-		mkdirp.sync(join(cwd, 'node_modules')); // ensure exists, avoid exit()
+		mkdirSync(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
 		linkPackage('preact', root, cwd);
 		linkPackage('preact-render-to-string', root, cwd);
 	} else {
@@ -48,7 +47,10 @@ exports.build = function(cwd, options, installNodeModules = false) {
 	return cmd.build(argv.src, Object.assign({}, opts, options));
 };
 
-exports.watch = function(cwd, port, host = '127.0.0.1') {
-	let opts = Object.assign({ cwd, host, port, https: false }, argv);
+exports.watch = function (cwd, port, host = '127.0.0.1') {
+	const args = { ...argv };
+	delete args.dest;
+	delete args['inline-css'];
+	let opts = Object.assign({ cwd, host, port, https: false }, args);
 	return cmd.watch(argv.src, opts);
 };

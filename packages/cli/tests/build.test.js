@@ -1,9 +1,9 @@
 const { join } = require('path');
-const { readFile } = require('../lib/fs');
+const { existsSync } = require('fs');
+const { readFile } = require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
 const { snapshot, hasKey, isWithin } = require('./lib/utils');
-const { existsSync } = require('fs');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
 const { promisify } = require('util');
@@ -42,7 +42,7 @@ function getRegExpFromMarkup(markup) {
 function testMatch(src, tar) {
 	let k, tmp;
 	let keys = Object.keys(tar);
-	expect(keys).toHaveLength(Object.keys(src).length);
+	expect(Object.keys(src)).toHaveLength(keys.length);
 	for (k in src) {
 		expect(hasKey(k, keys)).toBeTruthy();
 		if (!isWithin(src[k], tar[tmp])) return false;
@@ -50,7 +50,7 @@ function testMatch(src, tar) {
 }
 
 describe('preact build', () => {
-	ours.forEach((key) => {
+	ours.forEach(key => {
 		it(`builds the '${key}' output`, async () => {
 			let dir = await create(key);
 
@@ -95,7 +95,7 @@ describe('preact build', () => {
 		expect(transpiledChunk.includes('=>setTimeout')).toBe(true);
 	});
 
-	prerenderUrlFiles.forEach((prerenderUrls) => {
+	prerenderUrlFiles.forEach(prerenderUrls => {
 		it(`should prerender the routes provided with '${prerenderUrls}'`, async () => {
 			let dir = await subject('multiple-prerendering');
 			await build(dir, { prerenderUrls });
@@ -130,7 +130,7 @@ describe('preact build', () => {
 		});
 	});
 
-	prerenderUrlFiles.forEach((prerenderUrls) => {
+	prerenderUrlFiles.forEach(prerenderUrls => {
 		it(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
 			let dir = await subject('multiple-prerendering-with-provider');
 			await build(dir, { prerenderUrls });
@@ -208,6 +208,16 @@ describe('preact build', () => {
 		expect(() => build(dir)).not.toThrow();
 	});
 
+	it('should import non-modules CSS even when side effects are false', async () => {
+		let dir = await subject('side-effect-css');
+		await build(dir);
+
+		let head = await getHead(dir);
+		expect(head).toEqual(
+			expect.stringMatching(getRegExpFromMarkup(images.sideEffectCss))
+		);
+	});
+
 	it('should copy resources from static to build directory', async () => {
 		let dir = await subject('static-root');
 		await build(dir);
@@ -233,5 +243,15 @@ describe('preact build', () => {
 		let html = await readFile(file, 'utf-8');
 
 		looksLike(html, images.templateReplaced);
+	});
+
+	it('should error out for invalid argument', async () => {
+		let dir = await subject('custom-template-3');
+		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
+		expect(build(dir, { 'service-worker': false })).rejects.toEqual(
+			new Error('Invalid argument found.')
+		);
+		expect(mockExit).toHaveBeenCalledWith(1);
+		mockExit.mockRestore();
 	});
 });

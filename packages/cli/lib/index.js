@@ -24,85 +24,39 @@ const commands = require('./commands');
 // installHooks();
 notifier({ pkg }).notify();
 
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', err => {
 	error(err.stack || err.message);
 });
 
 let prog = sade('preact').version(pkg.version);
 
-prog
+const buildCommand = prog
 	.command('build [src]')
-	.describe('Create a production build')
-	.option('--src', 'Specify source directory', 'src')
-	.option('--dest', 'Specify output directory', 'build')
-	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--sw', 'Generate and attach a Service Worker', true)
-	.option('--json', 'Generate build stats for bundle analysis')
-	.option('--template', 'Path to custom HTML template')
-	.option('--preload', 'Adds preload tags to the document its assets', false)
-	.option(
-		'--refresh',
-		'Enables experimental preact-refresh functionality',
-		false
-	)
-	.option(
-		'--analyze',
-		'Launch interactive Analyzer to inspect production bundle(s)'
-	)
-	.option(
-		'--prerenderUrls',
-		'Path to pre-rendered routes config',
-		'prerender-urls.json'
-	)
-	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
-	.option('--babelConfig', 'Specify the babel config file', '.babelrc')
-	.option('--esm', 'Builds ES-2015 bundles for your code.', true)
-	.option('--brotli', 'Builds brotli compressed bundles of javascript.', false)
-	.option('--inline-css', 'Adds critical css to the prerendered markup.', true)
-	.option('-v, --verbose', 'Verbose output')
-	.action(commands.build);
+	.describe(
+		'Create a production build. You can disable "default: true" flags by prefixing them with --no-<option>'
+	);
+commands.buildOptions.forEach(option => {
+	buildCommand.option(option.name, option.description, option.default);
+});
+buildCommand.action(commands.build);
 
-prog
+const createCommand = prog
 	.command('create [template] [dest]')
-	.describe('Create a new application')
-	.option('--name', 'The application name')
-	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--force', 'Force destination output; will override!', false)
-	.option('--install', 'Install dependencies', true)
-	.option('--yarn', 'Use `yarn` instead of `npm`', false)
-	.option('--git', 'Initialize git repository', false)
-	.option('--license', 'License type', 'MIT')
-	.option('-v, --verbose', 'Verbose output', false)
-	.action(commands.create);
+	.describe('Create a new application');
+commands.createOptions.forEach(option => {
+	createCommand.option(option.name, option.description, option.default);
+});
+createCommand.action(commands.create);
+
+const watchCommand = prog
+	.command('watch [src]')
+	.describe('Start a live-reload server for development');
+commands.watchOptions.forEach(option => {
+	watchCommand.option(option.name, option.description, option.default);
+});
+watchCommand.action(commands.watch);
 
 prog.command('list').describe('List official templates').action(commands.list);
-
-prog
-	.command('watch [src]')
-	.describe('Start a live-reload server for development')
-	.option('--src', 'Specify source directory', 'src')
-	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--esm', 'Builds ES-2015 bundles for your code.', false)
-	.option('--clear', 'Clear the console', true)
-	.option('--sw', 'Generate and attach a Service Worker', undefined)
-	.option('--babelConfig', 'Specify the babel config file', '.babelrc')
-	.option('--rhl', '(Deprecated) use --refresh instead', false)
-	.option('--json', 'Generate build stats for bundle analysis')
-	.option('--https', 'Run server with HTTPS protocol')
-	.option('--key', 'Path to PEM key for custom SSL certificate')
-	.option('--cert', 'Path to custom SSL certificate')
-	.option('--cacert', 'Path to optional CA certificate override')
-	.option('--prerender', 'Pre-render static content on first run')
-	.option('--template', 'Path to custom HTML template')
-	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
-	.option('-H, --host', 'Set server hostname', '0.0.0.0')
-	.option('-p, --port', 'Set server port', 8080)
-	.option(
-		'--prerenderUrls',
-		'Path to pre-rendered routes config',
-		'prerender-urls.json'
-	)
-	.action(commands.watch);
 
 prog
 	.command('info')
@@ -123,7 +77,7 @@ prog
 				],
 				npmGlobalPackages: ['preact-cli'],
 			})
-			.then((info) => process.stdout.write(`${info}\n`));
+			.then(info => process.stdout.write(`${info}\n`));
 	});
 
 prog.parse(process.argv);

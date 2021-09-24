@@ -1,5 +1,4 @@
 var utils = require('loader-utils');
-var requireRelative = require('require-relative');
 
 function proxyLoader(source, map) {
 	var options = utils.getOptions(this);
@@ -17,7 +16,9 @@ function proxyLoader(source, map) {
 
 	var loader;
 	try {
-		loader = requireRelative(proxyOptions.loader, proxyOptions.cwd);
+		loader = require(require.resolve(proxyOptions.loader, {
+			paths: [proxyOptions.cwd],
+		}));
 	} catch (e) {
 		loader = require(proxyOptions.loader);
 	}

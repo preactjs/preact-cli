@@ -2,8 +2,9 @@ const webpack = require('webpack');
 const { resolve, join } = require('path');
 const { existsSync } = require('fs');
 const { isInstalledVersionPreactXOrAbove } = require('./utils');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const { filter } = require('minimatch');
+const SizePlugin = require('size-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -18,14 +19,14 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
 
-const cleanFilename = (name) =>
+const cleanFilename = name =>
 	name.replace(
-		/(^\/(routes|components\/(routes|async))\/|(\/index)?\.js$)/g,
+		/(^\/(routes|components\/(routes|async))\/|(\/index)?\.[jt]sx?$)/g,
 		''
 	);
 
 async function clientConfig(env) {
-	const { isProd, source, src, refresh, cwd /*, port? */ } = env;
+	const { isProd, source, src, cwd /*, port? */ } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
 		? require.resolve('@preact/async-loader')
@@ -36,13 +37,62 @@ async function clientConfig(env) {
 		polyfills: resolve(__dirname, './polyfills'),
 	};
 
-	if (!isProd) {
-		entry.bundle = [
-			entry.bundle,
-			'webpack-dev-server/client',
-			'webpack/hot/dev-server',
-		];
+	let swInjectManifest = [];
+	if (env.sw) {
+		let swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
+		const userSwPath = join(src, 'sw.js');
+		if (existsSync(userSwPath)) {
+			swPath = userSwPath;
+		} else {
+			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
+		}
+		swInjectManifest = env.esm
+			? [
+					new InjectManifest({
+						swSrc: swPath,
+						swDest: 'sw-esm.js',
+						include: [
+							/200\.html$/,
+							/\.esm.js$/,
+							/\.css$/,
+							/\.(png|jpg|svg|gif|webp)$/,
+						],
+						webpackCompilationPlugins: [
+							new webpack.DefinePlugin({
+								'process.env.ESM': true,
+							}),
+						],
+					}),
+			  ]
+			: [
+					new InjectManifest({
+						swSrc: join(src, 'sw.js'),
+						include: [
+							/200\.html$/,
+							/\.js$/,
+							/\.css$/,
+							/\.(png|jpg|svg|gif|webp)$/,
+						],
+						exclude: [/\.esm\.js$/],
+					}),
+			  ];
 	}
+
+	let copyPatterns = [
+		existsSync(source('manifest.json')) && { from: 'manifest.json' },
+		// copy any static files
+		existsSync(source('assets')) && { from: 'assets', to: 'assets' },
+		// copy sw-debug
+		!isProd && {
+			from: resolve(__dirname, '../../resources/sw-debug.js'),
+			to: 'sw-debug.js',
+		},
+		// copy files from static to build directory
+		existsSync(source('static')) && {
+			from: resolve(source('static')),
+			to: '.',
+		},
+	].filter(Boolean);
 
 	return {
 		entry: entry,
@@ -90,30 +140,18 @@ async function clientConfig(env) {
 		},
 
 		plugins: [
-			...(!isProd && refresh
-				? [new webpack.HotModuleReplacementPlugin(), new RefreshPlugin()]
-				: []),
+			new webpack.DefinePlugin({
+				'process.env.ES_BUILD': false,
+			}),
 			new PushManifestPlugin(env),
 			...(await renderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
-			new CopyWebpackPlugin(
-				[
-					existsSync(source('manifest.json')) && { from: 'manifest.json' },
-					// copy any static files
-					existsSync(source('assets')) && { from: 'assets', to: 'assets' },
-					// copy sw-debug
-					{
-						from: resolve(__dirname, '../../resources/sw-debug.js'),
-						to: 'sw-debug.js',
-					},
-					// copy files from static to build directory
-					existsSync(source('static')) && {
-						from: resolve(source('static')),
-						to: '.',
-					},
-				].filter(Boolean)
-			),
-		],
+			copyPatterns.length !== 0 &&
+				new CopyWebpackPlugin({
+					patterns: copyPatterns,
+				}),
+			...swInjectManifest,
+		].filter(Boolean),
 	};
 }
 
@@ -156,17 +194,6 @@ function getBabelEsmPlugin(config) {
 
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
-	const { src, sw } = config;
-	let swPath;
-	if (sw) {
-		swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
-		const userSwPath = join(src, 'sw.js');
-		if (existsSync(userSwPath)) {
-			swPath = userSwPath;
-		} else {
-			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
-		}
-	}
 	const prodConfig = {
 		performance: Object.assign(
 			{
@@ -180,10 +207,10 @@ function isProd(config) {
 		plugins: [
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
-				'process.env.ES_BUILD': false,
 				'process.env.ESM': config.esm,
 				'process.env.PRERENDER': config.prerender,
 			}),
+			new SizePlugin(),
 		],
 
 		optimization: {
@@ -221,41 +248,6 @@ function isProd(config) {
 		},
 	};
 
-	if (config.esm && config.sw) {
-		prodConfig.plugins.push(
-			new InjectManifest({
-				swSrc: swPath,
-				swDest: 'sw-esm.js',
-				include: [
-					/^\/?index\.html$/,
-					/\.esm.js$/,
-					/\.css$/,
-					/\.(png|jpg|svg|gif|webp)$/,
-				],
-				webpackCompilationPlugins: [
-					new webpack.DefinePlugin({
-						'process.env.ESM': true,
-					}),
-				],
-			})
-		);
-	}
-
-	if (config.sw) {
-		prodConfig.plugins.push(
-			new InjectManifest({
-				swSrc: swPath,
-				include: [
-					/index\.html$/,
-					/\.js$/,
-					/\.css$/,
-					/\.(png|jpg|svg|gif|webp)$/,
-				],
-				exclude: [/\.esm\.js$/],
-			})
-		);
-	}
-
 	if (config['inline-css']) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
@@ -285,12 +277,13 @@ function isProd(config) {
 }
 
 function isDev(config) {
-	const { cwd, src } = config;
+	const { cwd, src, refresh } = config;
 
 	return {
 		plugins: [
 			new webpack.NamedModulesPlugin(),
 			new webpack.HotModuleReplacementPlugin(),
+			...(refresh ? [new RefreshPlugin()] : []),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
 				'process.env.PRERENDER': config.prerender,
@@ -304,11 +297,8 @@ function isDev(config) {
 			publicPath: '/',
 			contentBase: src,
 			https: config.https,
-			port: process.env.PORT || config.port || 8080,
+			port: config.port,
 			host: process.env.HOST || config.host || '0.0.0.0',
-			// setup(app) {
-			// 	app.use(middleware);
-			// },
 			disableHostCheck: true,
 			historyApiFallback: true,
 			quiet: true,
@@ -322,7 +312,7 @@ function isDev(config) {
 	};
 }
 
-module.exports = async function (env) {
+module.exports = async function createClientConfig(env) {
 	return merge(
 		baseConfig(env),
 		await clientConfig(env),

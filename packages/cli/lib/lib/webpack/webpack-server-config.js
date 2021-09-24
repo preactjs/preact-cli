@@ -1,5 +1,5 @@
 const { resolve } = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const baseConfig = require('./webpack-base-config');
 
 function serverConfig(env) {
@@ -26,6 +26,6 @@ function serverConfig(env) {
 	};
 }
 
-module.exports = function(env) {
+module.exports = function createServerConfig(env) {
 	return merge(baseConfig(env), serverConfig(env));
 };

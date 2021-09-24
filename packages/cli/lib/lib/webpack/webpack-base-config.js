@@ -1,12 +1,10 @@
 const webpack = require('webpack');
 const path = require('path');
-const { resolve } = require('path');
+const { resolve, dirname } = require('path');
 const { readFileSync, existsSync } = require('fs');
 const { isInstalledVersionPreactXOrAbove } = require('./utils');
-const SizePlugin = require('size-plugin');
 const autoprefixer = require('autoprefixer');
 const browserslist = require('browserslist');
-const requireRelative = require('require-relative');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
@@ -14,6 +12,7 @@ const ReplacePlugin = require('webpack-plugin-replace');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const createBabelConfig = require('../babel-config');
 const loadPostcssConfig = require('postcss-load-config');
+const PnpWebpackPlugin = require(`pnp-webpack-plugin`);
 
 function readJson(file) {
 	try {
@@ -71,7 +70,7 @@ function getSassConfiguration(...includePaths) {
 	return config;
 }
 
-module.exports = function (env) {
+module.exports = function createBaseConfig(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
 	const babelConfigFile = env.babelConfig || '.babelrc';
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
@@ -97,9 +96,16 @@ module.exports = function (env) {
 
 	let compat = 'preact-compat';
 	try {
-		requireRelative.resolve('preact/compat', cwd);
-		compat = 'preact/compat';
-	} catch (e) {}
+		compat = dirname(
+			require.resolve('preact/compat/package.json', { paths: [cwd] })
+		);
+	} catch (e) {
+		try {
+			compat = dirname(
+				require.resolve('preact-compat/package.json', { paths: [cwd] })
+			);
+		} catch (e) {}
+	}
 
 	let tsconfig = resolveTsconfig(cwd, isProd);
 
@@ -109,6 +115,14 @@ module.exports = function (env) {
 		postcssPlugins = loadPostcssConfig.sync(cwd).plugins;
 	} catch (error) {
 		postcssPlugins = [autoprefixer({ overrideBrowserslist: browsers })];
+	}
+
+	function tryResolveOptionalLoader(name) {
+		try {
+			return require.resolve(name);
+		} catch (e) {
+			return name;
+		}
 	}
 
 	return {
@@ -131,21 +145,23 @@ module.exports = function (env) {
 				'.css',
 				'.wasm',
 			],
-			alias: Object.assign(
-				{
-					style: source('style'),
-					'preact-cli-entrypoint': source('index'),
-					url: 'native-url',
-					// preact-compat aliases for supporting React dependencies:
-					react: compat,
-					'react-dom': compat,
-					'react-addons-css-transition-group': 'preact-css-transition-group',
-					'preact-cli/async-component': IS_SOURCE_PREACT_X_OR_ABOVE
-						? require.resolve('@preact/async-loader/async')
-						: require.resolve('@preact/async-loader/async-legacy'),
-				},
-				compat !== 'preact-compat' ? { 'preact-compat': compat } : {}
-			),
+			alias: {
+				style: source('style'),
+				'preact-cli-entrypoint': source('index'),
+				url: dirname(require.resolve('native-url/package.json')),
+				// preact-compat aliases for supporting React dependencies:
+				react: compat,
+				'react-dom': compat,
+				'preact-compat': compat,
+				'react-addons-css-transition-group': 'preact-css-transition-group',
+				'preact-cli/async-component': IS_SOURCE_PREACT_X_OR_ABOVE
+					? require.resolve('@preact/async-loader/async')
+					: require.resolve('@preact/async-loader/async-legacy'),
+			},
+			plugins: [
+				// TODO: Remove when upgrading to webpack 5
+				PnpWebpackPlugin,
+			],
 		},
 
 		resolveLoader: {
@@ -163,7 +179,7 @@ module.exports = function (env) {
 					test: /\.m?[jt]sx?$/,
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
-					loader: 'babel-loader',
+					loader: require.resolve('babel-loader'),
 					options: Object.assign(
 						{ babelrc: false },
 						createBabelConfig(env, { browsers }),
@@ -176,10 +192,10 @@ module.exports = function (env) {
 					test: /\.less$/,
 					use: [
 						{
-							loader: 'proxy-loader',
+							loader: require.resolve('./proxy-loader'),
 							options: {
 								cwd,
-								loader: 'less-loader',
+								loader: tryResolveOptionalLoader('less-loader'),
 								options: {
 									sourceMap: true,
 									lessOptions: {
@@ -196,10 +212,10 @@ module.exports = function (env) {
 					test: /\.s[ac]ss$/,
 					use: [
 						{
-							loader: 'proxy-loader',
+							loader: require.resolve('./proxy-loader'),
 							options: {
 								cwd,
-								loader: 'sass-loader',
+								loader: tryResolveOptionalLoader('sass-loader'),
 								options: getSassConfiguration(...nodeModules),
 							},
 						},
@@ -211,10 +227,10 @@ module.exports = function (env) {
 					test: /\.styl$/,
 					use: [
 						{
-							loader: 'proxy-loader',
+							loader: require.resolve('./proxy-loader'),
 							options: {
 								cwd,
-								loader: 'stylus-loader',
+								loader: tryResolveOptionalLoader('stylus-loader'),
 								options: {
 									sourceMap: true,
 									paths: nodeModules,
@@ -228,9 +244,11 @@ module.exports = function (env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					include: [source('components'), source('routes')],
 					use: [
-						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
+						isWatch
+							? require.resolve('style-loader')
+							: MiniCssExtractPlugin.loader,
 						{
-							loader: 'css-loader',
+							loader: require.resolve('css-loader'),
 							options: {
 								modules: {
 									localIdentName: '[local]__[hash:base64:5]',
@@ -240,11 +258,12 @@ module.exports = function (env) {
 							},
 						},
 						{
-							loader: 'postcss-loader',
+							loader: require.resolve('postcss-loader'),
 							options: {
-								ident: 'postcss',
 								sourceMap: true,
-								plugins: postcssPlugins,
+								postcssOptions: {
+									plugins: postcssPlugins,
+								},
 							},
 						},
 					],
@@ -254,30 +273,40 @@ module.exports = function (env) {
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
 					exclude: [source('components'), source('routes')],
 					use: [
-						isWatch ? 'style-loader' : MiniCssExtractPlugin.loader,
+						isWatch
+							? require.resolve('style-loader')
+							: MiniCssExtractPlugin.loader,
 						{
-							loader: 'css-loader',
+							loader: require.resolve('css-loader'),
 							options: {
 								sourceMap: true,
 							},
 						},
 						{
-							loader: 'postcss-loader',
+							loader: require.resolve('postcss-loader'),
 							options: {
-								ident: 'postcss',
 								sourceMap: true,
-								plugins: postcssPlugins,
+								postcssOptions: {
+									plugins: postcssPlugins,
+								},
 							},
 						},
 					],
+					// Don't consider CSS imports dead code even if the
+					// containing package claims to have no side effects.
+					// Remove this when webpack adds a warning or an error for this.
+					// See https://github.com/webpack/webpack/issues/6571
+					sideEffects: true,
 				},
 				{
 					test: /\.(xml|html|txt|md)$/,
-					loader: 'raw-loader',
+					loader: require.resolve('raw-loader'),
 				},
 				{
 					test: /\.(svg|woff2?|ttf|eot|jpe?g|png|webp|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
-					loader: isProd ? 'file-loader' : 'url-loader',
+					loader: isProd
+						? require.resolve('file-loader')
+						: require.resolve('url-loader'),
 				},
 			],
 		},
@@ -309,7 +338,6 @@ module.exports = function (env) {
 				summary: false,
 				clear: true,
 			}),
-			new SizePlugin(),
 			...(tsconfig
 				? [
 						new ForkTsCheckerWebpackPlugin({
@@ -332,7 +360,7 @@ module.exports = function (env) {
 							patterns: [
 								{
 									regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-									value: (s) => `return;${Array(s.length - 7).join(' ')}(`,
+									value: s => `return;${Array(s.length - 7).join(' ')}(`,
 								},
 							],
 						}),

@@ -9,13 +9,15 @@ const { warn } = require('../../util');
 const { info } = require('../../util');
 const { PRERENDER_DATA_FILE_NAME } = require('../constants');
 
+const PREACT_FALLBACK_URL = '/200.html';
+
 let defaultTemplate = resolve(__dirname, '../../resources/template.html');
 
 function read(path) {
 	return readFileSync(resolve(__dirname, path), 'utf-8');
 }
 
-module.exports = async function(config) {
+module.exports = async function (config) {
 	const { cwd, dest, isProd, src } = config;
 	const inProjectTemplatePath = resolve(src, 'template.html');
 	let template = defaultTemplate;
@@ -55,9 +57,13 @@ module.exports = async function(config) {
 
 	const htmlWebpackConfig = values => {
 		const { url, title, ...routeData } = values;
+		// Do not create a folder if the url is for a specific file.
+		const filename = url.endsWith('.html')
+			? resolve(dest, url.substring(1))
+			: resolve(dest, url.substring(1), 'index.html');
 		return Object.assign(values, {
-			filename: resolve(dest, url.substring(1), 'index.html'),
-			template: `!!ejs-loader!${template}`,
+			filename,
+			template: `!!${require.resolve('ejs-loader')}?esModule=false!${template}`,
 			minify: isProd && {
 				collapseWhitespace: true,
 				removeScriptTypeAttributes: true,
@@ -90,10 +96,12 @@ module.exports = async function(config) {
 			config,
 			url,
 			ssr() {
-				return config.prerender ? prerender({ cwd, dest, src }, values) : '';
+				return config.prerender && url !== PREACT_FALLBACK_URL
+					? prerender({ cwd, dest, src }, values)
+					: '';
 			},
 			scriptLoading: 'defer',
-			CLI_DATA: { preRenderData: { url, ...routeData } }
+			CLI_DATA: { preRenderData: { url, ...routeData } },
 		});
 	};
 
@@ -137,12 +145,26 @@ module.exports = async function(config) {
 			);
 		}
 	}
+	/**
+	 * We cache a non SSRed page in service worker so that there is
+	 * no flash of content when user lands on routes other than `/`.
+	 * And we dont have to cache every single html file.
+	 * Go easy on network usage of clients.
+	 */
+	!pages.find(page => page.url === PREACT_FALLBACK_URL) &&
+		config.sw &&
+		pages.push({ url: PREACT_FALLBACK_URL });
 
-	return pages
+	const resultPages = pages
 		.map(htmlWebpackConfig)
 		.map(conf => new HtmlWebpackPlugin(conf))
-		.concat([new HtmlWebpackExcludeAssetsPlugin()])
-		.concat([...pages.map(page => new PrerenderDataExtractPlugin(page))]);
+		.concat([new HtmlWebpackExcludeAssetsPlugin()]);
+
+	return config.prerender
+		? resultPages.concat([
+				...pages.map(page => new PrerenderDataExtractPlugin(page)),
+		  ])
+		: resultPages;
 };
 
 // Adds a preact_prerender_data in every folder so that the data could be fetched separately.
@@ -155,6 +177,10 @@ class PrerenderDataExtractPlugin {
 	}
 	apply(compiler) {
 		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', compilation => {
+			if (this.location_ === `${PREACT_FALLBACK_URL}/`) {
+				// We dont build prerender data for `200.html`. It can re-use the one for homepage.
+				return;
+			}
 			let path = this.location_ + PRERENDER_DATA_FILE_NAME;
 			if (path.startsWith('/')) {
 				path = path.substr(1);
@@ -166,3 +192,5 @@ class PrerenderDataExtractPlugin {
 		});
 	}
 }
+
+exports.PREACT_FALLBACK_URL = PREACT_FALLBACK_URL;

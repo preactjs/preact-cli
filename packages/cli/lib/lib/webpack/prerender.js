@@ -5,7 +5,7 @@ const stackTrace = require('stack-trace');
 const URL = require('url');
 const { SourceMapConsumer } = require('source-map');
 
-module.exports = function(env, params) {
+module.exports = function (env, params) {
 	params = params || {};
 
 	let entry = resolve(env.dest, './ssr-build/ssr-bundle.js');
@@ -26,11 +26,10 @@ module.exports = function(env, params) {
 			return '';
 		}
 		const { cwd } = env;
-
-		const preact = require(require.resolve(`${cwd}/node_modules/preact`));
-		const renderToString = require(require.resolve(
-			`${cwd}/node_modules/preact-render-to-string`
-		));
+		const preact = require(require.resolve('preact', { paths: [cwd] }));
+		const renderToString = require(require.resolve('preact-render-to-string', {
+			paths: [cwd],
+		}));
 		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
 		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
@@ -61,7 +60,7 @@ async function handlePrerenderError(err, env, stack, entry) {
 				column: stack.getColumnNumber(),
 			});
 		});
-		
+
 		if (position.source) {
 			position.source = position.source
 				.replace('webpack://', '.')

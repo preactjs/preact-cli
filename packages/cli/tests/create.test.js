@@ -1,4 +1,4 @@
-const fs = require('fs');
+const { readFileSync } = require('fs');
 const { relative, resolve } = require('path');
 const { create } = require('./lib/cli');
 const { expand } = require('./lib/utils');
@@ -24,7 +24,7 @@ describe('preact create', () => {
 		let dir = await create('netlify');
 
 		const templateFilePath = resolve(__dirname, dir, 'src', 'template.html');
-		const template = fs.readFileSync(templateFilePath).toString('utf8');
+		const template = readFileSync(templateFilePath).toString('utf8');
 
 		expect(template.includes('twitter:card')).toEqual(true);
 	});
@@ -33,7 +33,7 @@ describe('preact create', () => {
 		let dir = await create('simple');
 
 		const templateFilePath = resolve(__dirname, dir, 'src', 'template.html');
-		const template = fs.readFileSync(templateFilePath).toString('utf8');
+		const template = readFileSync(templateFilePath).toString('utf8');
 
 		expect(template.includes('apple-touch-icon')).toEqual(true);
 	});

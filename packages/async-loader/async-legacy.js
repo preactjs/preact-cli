@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 
-export default function(req) {
+export default function (req) {
 	function Async() {
 		Component.call(this);
 

@@ -5,7 +5,6 @@
 ### Contents
 
 - [Features](#features)
-- [Installation](#installation)
 - [Usage](#usage)
 - [Official Templates](#official-templates)
 - [CLI Options](#cli-options)
@@ -71,8 +70,6 @@ Current available templates include:
 
 - [default] - Default template with all features.
 
-- [material] - material template using preact-material-components
-
 - [simple] - The simplest possible preact setup in a single file
 
 - [netlify] - Netlify CMS template using preact.
@@ -114,16 +111,18 @@ $ preact build
     --src              Specify source directory  (default src)
     --dest             Specify output directory  (default build)
     --cwd              A directory to use instead of $PWD  (default .)
+    --esm              Builds ES-2015 bundles for your code  (default true)
     --sw               Generate and attach a Service Worker  (default true)
+    --babelConfig      Path to custom Babel config (default .babelrc)
     --json             Generate build stats for bundle analysis
     --template         Path to custom HTML template
     --preload          Adds preload tags to the document its assets  (default false)
     --analyze          Launch interactive Analyzer to inspect production bundle(s)
+    --prerender        Renders route(s) into generated static HTML  (default true)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
+    --brotli           Adds brotli redirects to the service worker  (default false)
+    --inline-css       Adds critical css to the prerendered markup  (default true)
     -c, --config       Path to custom CLI config  (default preact.config.js)
-    --esm              Builds ES-2015 bundles for your code.  (default true)
-    --brotli           Adds brotli redirects to the service worker.  (default false)
-    --inline-css       Adds critical css to the prerendered markup.  (default true)
     -v, --verbose      Verbose output
     -h, --help         Displays this message
 ```
@@ -135,22 +134,25 @@ Spin up a development server with multiple features like `hot-module-replacement
 ```
 $ preact watch
 
-    --src           Specify source directory  (default src)
-    --cwd           A directory to use instead of $PWD  (default .)
-    --esm           Builds ES-2015 bundles for your code.  (default true)
-    --sw            Generate and attach a Service Worker  (default false)
-    --json          Generate build stats for bundle analysis
-    --https         Run server with HTTPS protocol
-    --key           Path to PEM key for custom SSL certificate
-    --cert          Path to custom SSL certificate
-    --cacert        Path to optional CA certificate override
-    --prerender     Pre-render static content on first run
-    --template      Path to custom HTML template
-    --refresh       Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
-    -c, --config    Path to custom CLI config  (default preact.config.js)
-    -H, --host      Set server hostname  (default 0.0.0.0)
-    -p, --port      Set server port  (default 8080)
-    -h, --help      Displays this message
+    --src              Specify source directory  (default src)
+    --cwd              A directory to use instead of $PWD  (default .)
+    --esm              Builds ES-2015 bundles for your code  (default false)
+    --clear            Clear the console (default true)
+    --sw               Generate and attach a Service Worker  (default false)
+    --babelConfig      Path to custom Babel config (default .babelrc)
+    --json             Generate build stats for bundle analysis
+    --https            Run server with HTTPS protocol
+    --key              Path to PEM key for custom SSL certificate
+    --cert             Path to custom SSL certificate
+    --cacert           Path to optional CA certificate override
+    --prerender        Pre-render static content on first run
+    --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
+    --template         Path to custom HTML template
+    --refresh          Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
+    -c, --config       Path to custom CLI config  (default preact.config.js)
+    -H, --host         Set server hostname  (default 0.0.0.0)
+    -p, --port         Set server port  (default 8080)
+    -h, --help         Displays this message
 ```
 
 Note:
@@ -207,7 +209,7 @@ By default, `preact-cli` emulates the following config:
 
 ```json
 {
-	"browserslist": ["> 1%", "IE >= 9", "last 2 versions"]
+	"browserslist": ["> 0.25%", "IE >= 9"]
 }
 ```
 
@@ -326,13 +328,29 @@ The default templates comes with a `.css` file for each component. You can start
 
 #### [SASS]
 
-- `npm install --save-dev node-sass sass-loader` (inside your preact application folder)
+- `npm install --save-dev node-sass sass-loader@10` (inside your preact application folder)
 - start replacing `.css` files with `.scss` files
 
 #### [LESS]
 
 - `npm install --save-dev less less-loader` (inside your preact application folder)
 - start replacing `.css` files with `.less` files
+
+### Using Environment Variables
+
+You can reference and use environment variables in your `preact.config.js` by using `process.env`:
+
+```js
+export default {
+	webpack(config, env, helpers, options) {
+		if (process.env.MY_VARIABLE) {
+			/** You can add a config here that will only used when your variable is truthy **/
+		}
+	},
+};
+```
+
+If you'd like to use these variables in your application, you can use the [DefinePlugin] config from our recipes wiki.
 
 [promise]: https://npm.im/promise-polyfill
 [fetch]: https://github.com/developit/unfetch
@@ -362,6 +380,7 @@ The default templates comes with a `.css` file for each component. You can start
 [`async!`]: https://github.com/preactjs/preact-cli/blob/1.4.1/examples/full/src/components/app.js#L7
 [sass]: https://sass-lang.com
 [less]: http://lesscss.org
+[defineplugin]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes#use-environment-variables-in-your-application
 
 ### Route-Based Code Splitting
 
