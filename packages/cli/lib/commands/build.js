@@ -2,9 +2,8 @@ const rimraf = require('rimraf');
 const { resolve } = require('path');
 const { promisify } = require('util');
 const runWebpack = require('../lib/webpack/run-webpack');
+const { toBool } = require('../util');
 const { validateArgs } = require('./validate-args');
-
-const toBool = val => val === void 0 || (val === 'false' ? false : val);
 
 const options = [
 	{
