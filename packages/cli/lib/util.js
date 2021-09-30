@@ -50,3 +50,7 @@ exports.normalizeTemplatesResponse = function (repos = []) {
 		description: repo.description || '',
 	}));
 };
+
+exports.toBool = function (val) {
+	return val === void 0 || (val === 'false' ? false : val);
+};

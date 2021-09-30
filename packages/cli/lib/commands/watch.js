@@ -1,5 +1,5 @@
 const runWebpack = require('../lib/webpack/run-webpack');
-const { warn } = require('../util');
+const { toBool, warn } = require('../util');
 const { validateArgs } = require('./validate-args');
 
 const options = [
@@ -101,6 +101,7 @@ async function command(src, argv) {
 	}
 	argv.src = src || argv.src;
 	argv.production = false;
+	argv.sw = toBool(argv.sw);
 
 	if (argv.https || process.env.HTTPS) {
 		let { key, cert, cacert } = argv;
