@@ -165,12 +165,8 @@ function getBabelEsmPlugin(config) {
 					: '[name].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
 				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest'],
-				beforeStartExecution: (plugins, newConfig) => {
-					const babelPlugins = newConfig.plugins;
-					newConfig.plugins = babelPlugins.filter(plugin => {
-						return !(Array.isArray(plugin) && plugin[0].includes('fast-async'));
-					});
-					plugins.forEach(plugin => {
+				beforeStartExecution: (plugins) => {
+					plugins.forEach((plugin) => {
 						if (
 							plugin.constructor.name === 'DefinePlugin' &&
 							plugin.definitions
