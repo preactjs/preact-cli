@@ -1,5 +1,21 @@
 # preact-cli
 
+## 3.3.0
+
+### Minor Changes
+
+- [#1580](https://github.com/preactjs/preact-cli/pull/1580) [`95198f3`](https://github.com/preactjs/preact-cli/commit/95198f36fa608f6edddfe527517b42fc48b2588d) Thanks [@developit](https://github.com/developit)! - Generate modern (approximately ES2017) code in development mode to better match production output.
+
+* [#1574](https://github.com/preactjs/preact-cli/pull/1574) [`5117f46`](https://github.com/preactjs/preact-cli/commit/5117f46a289fa8ec91e3c67e4344f9d2ecc0385e) Thanks [@rschristian](https://github.com/rschristian)! - Removes Safari nomodule polyfill from template
+
+- [#1347](https://github.com/preactjs/preact-cli/pull/1347) [`1276aa3`](https://github.com/preactjs/preact-cli/commit/1276aa330cf95ae25fc70d6b621d43065c0556a4) Thanks [@teodragovic](https://github.com/teodragovic)! - Remove fast-async
+
+### Patch Changes
+
+- [#1595](https://github.com/preactjs/preact-cli/pull/1595) [`6d100d0`](https://github.com/preactjs/preact-cli/commit/6d100d0876939b3b71e5419c58872aa014773f60) Thanks [@rschristian](https://github.com/rschristian)! - Ensuring the sw flag is a boolean in watch mode
+
+* [#1573](https://github.com/preactjs/preact-cli/pull/1573) [`022d9a8`](https://github.com/preactjs/preact-cli/commit/022d9a8119ea9a4e09963ffbe5ee9adbc9fb0d92) Thanks [@rschristian](https://github.com/rschristian)! - Uses native FS promise API rather than promisifying manually
+
 ## 3.2.2
 
 ### Patch Changes
