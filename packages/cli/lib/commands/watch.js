@@ -101,7 +101,9 @@ async function command(src, argv) {
 	}
 	argv.src = src || argv.src;
 	argv.production = false;
-	argv.sw = toBool(argv.sw);
+	if (argv.sw) {
+		argv.sw = toBool(argv.sw);
+	}
 
 	if (argv.https || process.env.HTTPS) {
 		let { key, cert, cacert } = argv;
