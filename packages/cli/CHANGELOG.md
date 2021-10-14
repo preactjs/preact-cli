@@ -1,5 +1,11 @@
 # preact-cli
 
+## 3.3.1
+
+### Patch Changes
+
+- [#1599](https://github.com/preactjs/preact-cli/pull/1599) [`e42a61c`](https://github.com/preactjs/preact-cli/commit/e42a61c1f6c97b1a4cce16e3e45d2b13a094d623) Thanks [@rschristian](https://github.com/rschristian)! - Reverts automatic conversion of `--sw` flag in dev to a boolean, which stopped the debug service worker from attaching.
+
 ## 3.3.0
 
 ### Minor Changes
