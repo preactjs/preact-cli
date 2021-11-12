@@ -34,7 +34,7 @@ async function snapshot(dir) {
 	return out;
 }
 
-const hasKey = (key, arr) => arr.find(k => minimatch(key, k)) || false;
+const findMatchingKey = (key, arr) => arr.find(k => minimatch(k, key));
 const isWithin = (val, tar) =>
 	val == tar || (val > (1 - PER) * tar && val < (1 + PER) * tar);
 
@@ -66,6 +66,6 @@ module.exports = {
 	log,
 	waitUntil,
 	sleep,
-	hasKey,
+	findMatchingKey,
 	isWithin,
 };

@@ -3,7 +3,7 @@ const { existsSync } = require('fs');
 const { readFile } = require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
-const { snapshot } = require('./lib/utils');
+const { snapshot, findMatchingKey } = require('./lib/utils');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
 const { promisify } = require('util');
@@ -40,8 +40,9 @@ function testMatch(received, expected) {
 	let expectedKeys = Object.keys(expected);
 	expect(receivedKeys).toHaveLength(expectedKeys.length);
 	for (let k in expected) {
-		expect(receivedKeys).toContain(k);
-		expect(received[k]).toBeCloseTo(expected[k]);
+		let recievedKey = findMatchingKey(k, receivedKeys);
+		expect(recievedKey).toBeTruthy();
+		expect(received[recievedKey]).toBeCloseTo(expected[k]);
 	}
 }
 
