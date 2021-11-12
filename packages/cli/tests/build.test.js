@@ -3,7 +3,7 @@ const { existsSync } = require('fs');
 const { readFile } = require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
-const { snapshot, hasKey, isWithin } = require('./lib/utils');
+const { snapshot } = require('./lib/utils');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
 const { promisify } = require('util');
@@ -35,13 +35,13 @@ function getRegExpFromMarkup(markup) {
 	return new RegExp(minifiedMarkup);
 }
 
-function testMatch(src, tar) {
-	let k, tmp;
-	let keys = Object.keys(tar);
-	expect(Object.keys(src)).toHaveLength(keys.length);
-	for (k in src) {
-		expect(hasKey(k, keys)).toBeTruthy();
-		if (!isWithin(src[k], tar[tmp])) return false;
+function testMatch(received, expected) {
+	let receivedKeys = Object.keys(received);
+	let expectedKeys = Object.keys(expected);
+	expect(receivedKeys).toHaveLength(expectedKeys.length);
+	for (let k in expected) {
+		expect(receivedKeys).toContain(k);
+		expect(received[k]).toBeCloseTo(expected[k]);
 	}
 }
 
