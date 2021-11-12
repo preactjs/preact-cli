@@ -252,7 +252,7 @@ function isProd(config) {
 				preload: 'media',
 				pruneSource: false,
 				logLevel: 'silent',
-				additionalStylesheets: ['*.css'],
+				additionalStylesheets: ['route-*.css'],
 			})
 		);
 	}
