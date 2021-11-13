@@ -3,6 +3,7 @@ const { normalize, resolve } = require('path');
 const { statSync, existsSync } = require('fs');
 const symbols = require('./symbols');
 const which = require('which');
+const net = require('net');
 
 exports.isDir = function (str) {
 	return existsSync(str) && statSync(str).isDirectory();
@@ -53,4 +54,27 @@ exports.normalizeTemplatesResponse = function (repos = []) {
 
 exports.toBool = function (val) {
 	return val === void 0 || (val === 'false' ? false : val);
+};
+
+/**
+ * Taken from: https://github.com/preactjs/wmr/blob/3401a9bfa6491d25108ad68688c067a7e17d0de5/packages/wmr/src/lib/net-utils.js#L4-Ll4
+ * Check if a port is free
+ * @param {number} port
+ * @returns {Promise<boolean>}
+ */
+exports.isPortFree = async function (port) {
+	try {
+		await new Promise((resolve, reject) => {
+			const server = net.createServer();
+			server.unref();
+			server.on('error', reject);
+			server.listen({ port }, () => {
+				server.close(resolve);
+			});
+		});
+		return true;
+	} catch (err) {
+		if (err.code !== 'EADDRINUSE') throw err;
+		return false;
+	}
 };
