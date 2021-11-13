@@ -44,7 +44,7 @@
 
 ### Requirements
 
-> **Important**: [Node.js](https://nodejs.org/en/) > V8.x and npm 5.2+ is a minimum requirement.
+> **Important**: [Node.js](https://nodejs.org/en/) >= v12 is required.
 
 ### Usage
 

@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { existsSync, mkdirSync, unlinkSync, symlinkSync } = require('fs');
+const { mkdirSync, symlinkSync } = require('fs');
 const cmd = require('../../lib/commands');
 const { tmpDir } = require('./output');
 const shell = require('shelljs');
@@ -24,12 +24,6 @@ exports.create = async function (template, name) {
 	name = name || `test-${template}`;
 
 	await cmd.create(template, dest, { name, cwd: '.' });
-
-	// TODO: temporary – will resolve after 2.x->3.x release
-	// Templates are using 2.x, which needs `.babelrc` for TEST modification.
-	// The 3.x templates won't need `.babelrc` for { modules: commonjs }
-	let babelrc = join(dest, '.babelrc');
-	existsSync(babelrc) && unlinkSync(babelrc);
 
 	return dest;
 };
