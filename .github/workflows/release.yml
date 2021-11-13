@@ -24,7 +24,11 @@ jobs:
       - name: Install Dependencies
         run: yarn
 
-      - name: Create Release Pull Request
+      - name: Create Release Pull Request or Publish to npm
         uses: changesets/action@master
+        with:
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
+          publish: yarn release
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_SCOPED_TOKEN }}
+          NPM_TOKEN: ${{ secrets.PREACT_NPM_TOKEN }}

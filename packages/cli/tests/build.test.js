@@ -1,9 +1,9 @@
 const { join } = require('path');
-const { readFile } = require('../lib/fs');
+const { existsSync } = require('fs');
+const { readFile } = require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
 const { snapshot, hasKey, isWithin } = require('./lib/utils');
-const { existsSync } = require('fs');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
 const { promisify } = require('util');

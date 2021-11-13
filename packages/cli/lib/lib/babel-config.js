@@ -6,12 +6,12 @@ module.exports = function (env, options = {}) {
 			[
 				require.resolve('@babel/preset-env'),
 				{
-					loose: true,
+					bugfixes: true,
 					modules: options.modules || false,
 					targets: {
 						browsers: options.browsers,
 					},
-					exclude: ['transform-regenerator', 'transform-async-to-generator'],
+					exclude: ['transform-regenerator'],
 				},
 			],
 		],
@@ -19,14 +19,10 @@ module.exports = function (env, options = {}) {
 			require.resolve('@babel/plugin-syntax-dynamic-import'),
 			require.resolve('@babel/plugin-transform-object-assign'),
 			[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-			[
-				require.resolve('@babel/plugin-proposal-class-properties'),
-				{ loose: true },
-			],
+			require.resolve('@babel/plugin-proposal-class-properties'),
 			require.resolve('@babel/plugin-proposal-object-rest-spread'),
 			isProd &&
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
-			[require.resolve('fast-async'), { spec: true }],
 			require.resolve('babel-plugin-macros'),
 			[
 				require.resolve('@babel/plugin-transform-react-jsx'),

@@ -3,7 +3,8 @@ const { promisify } = require('util');
 const fetch = require('isomorphic-unfetch');
 const glob = promisify(require('glob').glob);
 const gittar = require('gittar');
-const fs = require('../fs');
+const { existsSync, mkdirSync } = require('fs');
+const { copyFile, mkdir, readFile, writeFile } = require('fs').promises;
 const os = require('os');
 const { green } = require('kleur');
 const { resolve, join } = require('path');
@@ -148,7 +149,7 @@ async function updateTemplatesCache() {
 
 	try {
 		const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
-		await fs.writeFile(cacheFilePath, JSON.stringify(repos, null, 2), 'utf-8');
+		await writeFile(cacheFilePath, JSON.stringify(repos, null, 2), 'utf-8');
 	} catch (err) {
 		error(`\nFailed to update template cache\n ${err}`);
 	}
@@ -168,14 +169,14 @@ async function fetchTemplates() {
 		info('Fetching official templates:\n');
 
 		// check if `.cache` folder exists or not, and create if does not exists
-		if (!fs.existsSync(cacheFolder)) {
-			await fs.mkdir(cacheFolder);
+		if (!existsSync(cacheFolder)) {
+			await mkdir(cacheFolder);
 		}
 
 		// If cache file doesn't exist, then hit the API and fetch the data
-		if (!fs.existsSync(cacheFilePath)) {
+		if (!existsSync(cacheFilePath)) {
 			const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
-			await fs.writeFile(
+			await writeFile(
 				cacheFilePath,
 				JSON.stringify(repos, null, 2),
 				'utf-8'
@@ -186,7 +187,7 @@ async function fetchTemplates() {
 		updateTemplatesCache();
 
 		// fetch the API response from cache file
-		const templatesFromCache = await fs.readFile(cacheFilePath, 'utf-8');
+		const templatesFromCache = await readFile(cacheFilePath, 'utf-8');
 		const parsedTemplates = JSON.parse(templatesFromCache);
 		const officialTemplates = normalizeTemplatesResponse(parsedTemplates || []);
 
@@ -200,8 +201,8 @@ async function fetchTemplates() {
 }
 
 async function copyFileToDestination(srcPath, destPath, force = false) {
-	if (!fs.existsSync(destPath) || force) {
-		await fs.copyFile(srcPath, destPath);
+	if (!existsSync(destPath) || force) {
+		await copyFile(srcPath, destPath);
 	}
 }
 
@@ -269,8 +270,8 @@ async function command(repo, dest, argv) {
 		info(`Assuming you meant ${repo}...`);
 	}
 
-	if (!fs.existsSync(resolve(cwd, dest, 'src'))) {
-		fs.mkdirSync(resolve(cwd, dest, 'src'), { recursive: true });
+	if (!existsSync(resolve(cwd, dest, 'src'))) {
+		mkdirSync(resolve(cwd, dest, 'src'), { recursive: true });
 	}
 
 	// Attempt to fetch the `template`
@@ -330,11 +331,11 @@ async function command(repo, dest, argv) {
 			entry,
 			enc = 'utf8';
 		for (entry of keeps) {
-			buf = await fs.readFile(entry, enc);
+			buf = await readFile(entry, enc);
 			dict.forEach((v, k) => {
 				buf = buf.replace(k, v);
 			});
-			await fs.writeFile(entry, buf, enc);
+			await writeFile(entry, buf, enc);
 		}
 	} else {
 		return error(`No \`template\` directory found within ${repo}!`, 1);
@@ -347,7 +348,7 @@ async function command(repo, dest, argv) {
 		pkgFile = resolve(target, 'package.json');
 
 	if (pkgFile) {
-		pkgData = JSON.parse(await fs.readFile(pkgFile));
+		pkgData = JSON.parse(await readFile(pkgFile));
 		// Write default "scripts" if none found
 		pkgData.scripts =
 			pkgData.scripts || (await addScripts(pkgData, target, isYarn));
@@ -362,12 +363,12 @@ async function command(repo, dest, argv) {
 	}
 	// Find a `manifest.json`; use the first match, if any
 	let files = await glob(target + '/**/manifest.json');
-	let manifest = files[0] && JSON.parse(await fs.readFile(files[0]));
+	let manifest = files[0] && JSON.parse(await readFile(files[0]));
 	if (manifest) {
 		spinner.text = 'Updating `name` within `manifest.json` file';
 		manifest.name = manifest.short_name = argv.name;
 		// Write changes to `manifest.json`
-		await fs.writeFile(files[0], JSON.stringify(manifest, null, 2));
+		await writeFile(files[0], JSON.stringify(manifest, null, 2));
 		if (argv.name.length > 12) {
 			// @see https://developer.chrome.com/extensions/manifest/name#short_name
 			process.stdout.write('\n');
@@ -377,7 +378,7 @@ async function command(repo, dest, argv) {
 
 	if (pkgData) {
 		// Assume changes were made ¯\_(ツ)_/¯
-		await fs.writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
+		await writeFile(pkgFile, JSON.stringify(pkgData, null, 2));
 	}
 
 	const sourceDirectory = join(resolve(cwd, dest), 'src');

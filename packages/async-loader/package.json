@@ -5,6 +5,11 @@
   "files": [
     "*.js"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/preactjs/preact-cli.git",
+    "directory":"packages/async-loader"
+  },
   "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
   "license": "MIT",
   "bugs": "https://github.com/preactjs/preact-cli/issues",
@@ -13,7 +18,7 @@
     "node": ">=8"
   },
   "dependencies": {
-    "kleur": "^4.0.2",
+    "kleur": "^4.1.4",
     "loader-utils": "^2.0.0"
   },
   "peerDependencies": {

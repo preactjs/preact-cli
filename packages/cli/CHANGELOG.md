@@ -1,5 +1,45 @@
 # preact-cli
 
+## 3.3.1
+
+### Patch Changes
+
+- [#1599](https://github.com/preactjs/preact-cli/pull/1599) [`e42a61c`](https://github.com/preactjs/preact-cli/commit/e42a61c1f6c97b1a4cce16e3e45d2b13a094d623) Thanks [@rschristian](https://github.com/rschristian)! - Reverts automatic conversion of `--sw` flag in dev to a boolean, which stopped the debug service worker from attaching.
+
+## 3.3.0
+
+### Minor Changes
+
+- [#1580](https://github.com/preactjs/preact-cli/pull/1580) [`95198f3`](https://github.com/preactjs/preact-cli/commit/95198f36fa608f6edddfe527517b42fc48b2588d) Thanks [@developit](https://github.com/developit)! - Generate modern (approximately ES2017) code in development mode to better match production output.
+
+* [#1574](https://github.com/preactjs/preact-cli/pull/1574) [`5117f46`](https://github.com/preactjs/preact-cli/commit/5117f46a289fa8ec91e3c67e4344f9d2ecc0385e) Thanks [@rschristian](https://github.com/rschristian)! - Removes Safari nomodule polyfill from template
+
+- [#1347](https://github.com/preactjs/preact-cli/pull/1347) [`1276aa3`](https://github.com/preactjs/preact-cli/commit/1276aa330cf95ae25fc70d6b621d43065c0556a4) Thanks [@teodragovic](https://github.com/teodragovic)! - Remove fast-async
+
+### Patch Changes
+
+- [#1595](https://github.com/preactjs/preact-cli/pull/1595) [`6d100d0`](https://github.com/preactjs/preact-cli/commit/6d100d0876939b3b71e5419c58872aa014773f60) Thanks [@rschristian](https://github.com/rschristian)! - Ensuring the sw flag is a boolean in watch mode
+
+* [#1573](https://github.com/preactjs/preact-cli/pull/1573) [`022d9a8`](https://github.com/preactjs/preact-cli/commit/022d9a8119ea9a4e09963ffbe5ee9adbc9fb0d92) Thanks [@rschristian](https://github.com/rschristian)! - Uses native FS promise API rather than promisifying manually
+
+## 3.2.2
+
+### Patch Changes
+
+- [#1568](https://github.com/preactjs/preact-cli/pull/1568) [`bc6d5f6`](https://github.com/preactjs/preact-cli/commit/bc6d5f6e87e9cd5dc652d7e294fff150b7068c4d) Thanks [@rschristian](https://github.com/rschristian)! - Fixes breaking change to the getLoadersByName config helper
+
+## 3.2.1
+
+### Patch Changes
+
+- [#1567](https://github.com/preactjs/preact-cli/pull/1567) [`971e633`](https://github.com/preactjs/preact-cli/commit/971e6335ddd20e8cc0233607c47942831e31f4cb) Thanks [@rschristian](https://github.com/rschristian)! - Reverts update to fork-ts-checker-webpack-plugin
+
+## 3.2.0
+
+### Minor Changes
+
+- [#1465](https://github.com/preactjs/preact-cli/pull/1465) [`3a11043`](https://github.com/preactjs/preact-cli/commit/3a11043f89deee09bc41947677e1a3a58b4ee1bf) Thanks [@ForsakenHarmony](https://github.com/ForsakenHarmony)! - chore: update dependencies
+
 ## 3.1.0
 
 ### Minor Changes
