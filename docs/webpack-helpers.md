@@ -118,15 +118,6 @@ helpers.getPluginsByType(config, webpack.optimize.CommonsChunkPlugin);
 
 Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[PluginWrapper](#pluginwrapper)>**
 
-### setHtmlTemplate
-
-Sets template used by HtmlWebpackPlugin.
-
-**Parameters**
-
-- `config` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** [webpack config](https://webpack.js.org/configuration/#options).
-- `template` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** template path. See [HtmlWebpackPlugin docs](https://github.com/jantimon/html-webpack-plugin/blob/master/docs/template-option.md).
-
 ## PluginWrapper
 
 Wrapper around webpack's [plugin](https://webpack.js.org/configuration/plugins/#plugins).

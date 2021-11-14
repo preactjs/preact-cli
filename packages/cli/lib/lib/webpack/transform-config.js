@@ -1,6 +1,5 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
-const { statSync } = require('fs');
 const { stat } = require('fs').promises;
 const { error } = require('../../util');
 
@@ -273,34 +272,6 @@ class WebpackConfigHelpers {
 	 */
 	getPluginsByType(config, type) {
 		return this.getPlugins(config).filter(w => w.plugin instanceof type);
-	}
-
-	/**
-	 * Sets template used by HtmlWebpackPlugin.
-	 *
-	 * @param {object} config - [webpack config](https://webpack.js.org/configuration/#options).
-	 * @param {string} template - template path. See [HtmlWebpackPlugin docs](https://github.com/jantimon/html-webpack-plugin/blob/master/docs/template-option.md).
-	 *
-	 * @memberof WebpackConfigHelpers
-	 */
-	setHtmlTemplate(config, template) {
-		let isPath;
-		try {
-			statSync(template);
-			isPath = true;
-		} catch (e) {}
-
-		let templatePath = isPath
-			? `!!${require.resolve('ejs-loader')}?esModule=false!${resolve(
-					this._cwd,
-					template
-			  )}`
-			: template;
-		let { plugin: htmlWebpackPlugin } = this.getPluginsByName(
-			config,
-			'HtmlWebpackPlugin'
-		)[0];
-		htmlWebpackPlugin.options.template = templatePath;
 	}
 }
 
