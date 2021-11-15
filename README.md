@@ -13,7 +13,6 @@
   - [preact watch](#preact-watch)
   - [preact list](#preact-list)
   - [preact info](#preact-info)
-- [Deploying](#deploying)
 - [Pre-rendering](#pre-rendering)
 - [Custom Configuration](#custom-configuration)
   - [Plugins](#plugins)
@@ -25,6 +24,8 @@
 - [Using CSS preprocessors](#using-css-preprocessors)
   - [SASS](#sass)
   - [LESS](#less)
+- [Using Environment Variables](#using-environment-variables)
+- [Route-Based Code Splitting](#route-based-code-splitting)
 
 ### Features
 
@@ -148,7 +149,7 @@ $ preact watch
     --prerender        Pre-render static content on first run
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
     --template         Path to custom HTML template
-    --refresh          Will use [`Preact-refresh`](https://github.com/JoviDeCroock/preact-refresh) to do hot-reloading
+    --refresh          Enables experimental preact-refresh functionality
     -c, --config       Path to custom CLI config  (default preact.config.js)
     -H, --host         Set server hostname  (default 0.0.0.0)
     -p, --port         Set server port  (default 8080)
@@ -171,18 +172,6 @@ $ preact list
 #### preact info
 
 Prints debugging information concerning the local environment.
-
-### Deploying
-
-```sh
-# create a production build:
-npm run build
-
-# generate configuration in Firebase Hosting format:
-npm run serve -- --server config
-
-# Copy your static files to a server!
-```
 
 ### Pre-rendering
 
@@ -308,7 +297,7 @@ module.exports = [
 
 #### Template
 
-A template is used to render your page by [EJS](https://ejs.co/).  
+A template is used to render your page by [EJS](https://ejs.co/).
 You can uses the data of `prerenderUrls` which does not have `title`, using `htmlWebpackPlugin.options.CLI_DATA.preRenderData` in EJS.
 
 The default one is visible [here](packages/cli/lib/resources/template.html) and it's going to be enough for the majority of cases.
@@ -352,36 +341,6 @@ export default {
 
 If you'd like to use these variables in your application, you can use the [DefinePlugin] config from our recipes wiki.
 
-[promise]: https://npm.im/promise-polyfill
-[fetch]: https://github.com/developit/unfetch
-[preact]: https://github.com/preactjs/preact
-[webpackconfighelpers]: docs/webpack-helpers.md
-[`.babelrc`]: https://babeljs.io/docs/usage/babelrc
-[simple]: https://github.com/preactjs-templates/simple
-[`"browserslist"`]: https://github.com/ai/browserslist
-[```.babelrc```]: https://babeljs.io/docs/usage/babelrc
-[default]: https://github.com/preactjs-templates/default
-[workbox]: https://developers.google.com/web/tools/workbox
-[preact-router]: https://github.com/preactjs/preact-router
-[material]: https://github.com/preactjs-templates/material
-[netlify]: https://github.com/preactjs-templates/netlify
-[typescript]: https://github.com/preactjs-templates/typescript
-[widget]: https://github.com/preactjs-templates/widget
-[plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
-[preactjs-templates organization]: https://github.com/preactjs-templates
-[preactjs-templates/default]: https://github.com/preactjs-templates/default
-[recipes wiki]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes
-[prpl]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
-[`babel-preset-env`]: https://github.com/babel/babel-preset-env#targetsbrowsers
-[proof]: https://googlechrome.github.io/lighthouse/viewer/?gist=142af6838482417af741d966e7804346
-[preact cli preset]: https://github.com/preactjs/preact-cli/blob/master/packages/cli/lib/lib/babel-config.js
-[service workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
-[customize babel]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
-[`async!`]: https://github.com/preactjs/preact-cli/blob/1.4.1/examples/full/src/components/app.js#L7
-[sass]: https://sass-lang.com
-[less]: http://lesscss.org
-[defineplugin]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes#use-environment-variables-in-your-application
-
 ### Route-Based Code Splitting
 
 "Route" components are automatically code-splitted at build time to create smaller bundles and avoid loading more code than is needed by each page. This works by intercepting imports for route components with an [async loader](https://github.com/preactjs/preact-cli/tree/master/packages/async-loader), which returns a lightweight wrapper component that handles code splitting seamlessly.
@@ -411,7 +370,7 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 </td></tr>
 </tbody></table>
 
-> **Note**:  
+> **Note**:
 > Automatic code splitting **only** supports default exports, not named exports:
 >
 > ```diff
@@ -420,3 +379,32 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 > ```
 >
 > This is an intentional limitation that ensures effective code splitting. For components that need named exports, place them in a directory that doesn't trigger automatic code splitting. You can then manually code-split the default export by re-exporting it from `routes/` or importing it with the `"async!"` prefix.
+
+[promise]: https://npm.im/promise-polyfill
+[fetch]: https://github.com/developit/unfetch
+[preact]: https://github.com/preactjs/preact
+[webpackconfighelpers]: docs/webpack-helpers.md
+[`.babelrc`]: https://babeljs.io/docs/usage/babelrc
+[simple]: https://github.com/preactjs-templates/simple
+[`"browserslist"`]: https://github.com/ai/browserslist
+[```.babelrc```]: https://babeljs.io/docs/usage/babelrc
+[default]: https://github.com/preactjs-templates/default
+[workbox]: https://developers.google.com/web/tools/workbox
+[preact-router]: https://github.com/preactjs/preact-router
+[netlify]: https://github.com/preactjs-templates/netlify
+[typescript]: https://github.com/preactjs-templates/typescript
+[widget]: https://github.com/preactjs-templates/widget
+[plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
+[preactjs-templates organization]: https://github.com/preactjs-templates
+[preactjs-templates/default]: https://github.com/preactjs-templates/default
+[recipes wiki]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes
+[prpl]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
+[`babel-preset-env`]: https://github.com/babel/babel-preset-env#targetsbrowsers
+[proof]: https://googlechrome.github.io/lighthouse/viewer/?gist=142af6838482417af741d966e7804346
+[preact cli preset]: https://github.com/preactjs/preact-cli/blob/master/packages/cli/lib/lib/babel-config.js
+[service workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
+[customize babel]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
+[`async!`]: https://github.com/preactjs/preact-cli/blob/1.4.1/examples/full/src/components/app.js#L7
+[sass]: https://sass-lang.com
+[less]: http://lesscss.org
+[defineplugin]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes#use-environment-variables-in-your-application
