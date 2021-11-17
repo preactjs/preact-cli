@@ -1,6 +1,5 @@
 const ip = require('ip');
 const webpack = require('webpack');
-const getPort = require('get-port');
 const { resolve } = require('path');
 const clear = require('console-clear');
 const { writeFile } = require('fs').promises;
@@ -12,14 +11,9 @@ const transformConfig = require('./transform-config');
 const { error, isDir, warn } = require('../../util');
 
 async function devBuild(env) {
-	let userPort = parseInt(process.env.PORT || env.port, 10) || 8080;
-	env.port = await getPort({ port: userPort });
-
 	let config = await clientConfig(env);
 
 	await transformConfig(env, config);
-
-	let port = config.devServer.port;
 
 	let compiler = webpack(config);
 	return new Promise((res, rej) => {
@@ -46,9 +40,8 @@ async function devBuild(env) {
 			if (host === '0.0.0.0' && process.platform === 'win32') {
 				host = 'localhost';
 			}
-
-			let serverAddr = `${protocol}://${host}:${bold(port)}`;
-			let localIpAddr = `${protocol}://${ip.address()}:${bold(port)}`;
+			let serverAddr = `${protocol}://${host}:${bold(env.port)}`;
+			let localIpAddr = `${protocol}://${ip.address()}:${bold(env.port)}`;
 
 			if (env['clear']) clear(true);
 
@@ -56,12 +49,6 @@ async function devBuild(env) {
 				process.stdout.write(red('Build failed!\n\n'));
 			} else {
 				process.stdout.write(green('Compiled successfully!\n\n'));
-
-				if (userPort !== port) {
-					process.stdout.write(
-						`Port ${bold(userPort)} is in use, using ${bold(port)} instead\n\n`
-					);
-				}
 				process.stdout.write('You can view the application in browser.\n\n');
 				process.stdout.write(`${bold('Local:')}            ${serverAddr}\n`);
 				process.stdout.write(`${bold('On Your Network:')}  ${localIpAddr}\n`);
@@ -77,7 +64,7 @@ async function devBuild(env) {
 		});
 
 		let server = new DevServer(compiler, c);
-		server.listen(port);
+		server.listen(env.port);
 		res(server);
 	});
 }

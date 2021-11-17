@@ -1,6 +1,7 @@
 const runWebpack = require('../lib/webpack/run-webpack');
-const { toBool, warn } = require('../util');
+const { isPortFree, toBool, warn } = require('../util');
 const { validateArgs } = require('./validate-args');
+const getPort = require('get-port');
 
 const options = [
 	{
@@ -88,8 +89,7 @@ const options = [
 	},
 	{
 		name: '-p, --port',
-		description: 'Set server port',
-		default: 8080,
+		description: 'Set server port (default 8080)',
 	},
 ];
 
@@ -105,6 +105,8 @@ async function command(src, argv) {
 		argv.sw = toBool(argv.sw);
 	}
 
+	argv.port = await determinePort(argv.port);
+
 	if (argv.https || process.env.HTTPS) {
 		let { key, cert, cacert } = argv;
 		if (key && cert) {
@@ -117,7 +119,23 @@ async function command(src, argv) {
 	return runWebpack(argv, true);
 }
 
+async function determinePort(port) {
+	port = parseInt(port, 10);
+	if (port) {
+		if (!(await isPortFree(port))) {
+			throw new Error(
+				`Another process is already running on port ${port}. Please choose a different port.`
+			);
+		}
+	} else {
+		port = await getPort({ port: parseInt(process.env.PORT, 10) || 8080 });
+	}
+
+	return port;
+}
+
 module.exports = {
 	command,
 	options,
+	determinePort,
 };

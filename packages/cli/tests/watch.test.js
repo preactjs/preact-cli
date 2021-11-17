@@ -2,6 +2,7 @@ const { readFile, writeFile } = require('fs').promises;
 const { resolve } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');
+const { determinePort } = require('../lib/commands/watch');
 
 const { loadPage, waitUntilExpression } = startChrome;
 let chrome, server;
@@ -32,5 +33,61 @@ describe('preact', () => {
 		);
 
 		server.close();
+	});
+});
+
+describe('should determine the correct port', () => {
+	it('should prefer --port over $PORT', async () => {
+		process.env.PORT = '4000';
+		expect(await determinePort('3999')).toBe(3999);
+	});
+
+	it('should use $PORT in the abscence of --port', async () => {
+		process.env.PORT = '4001';
+		expect(await determinePort()).toBe(4001);
+	});
+
+	it('should use $PORT if --port is invalid', async () => {
+		process.env.PORT = '4002';
+		expect(await determinePort('invalid-port')).toBe(4002);
+	});
+
+	it('should use 8080 if $PORT and --port are invalid', async () => {
+		process.env.PORT = 'invalid-port-too';
+		expect(await determinePort('invalid-port')).toBe(8080);
+	});
+
+	it('should return an error if requested --port is taken', async () => {
+		await Promise.all([determinePort(4003), determinePort(4003)]).catch(
+			error => {
+				expect(error.message).toMatch(
+					new RegExp(
+						/^Another process is already running on port 4003. Please choose a different port./g
+					)
+				);
+			}
+		);
+	});
+
+	it('should fallback to random if $PORT or 8080 are taken and --port is not specified', async () => {
+		process.env.PORT = '4004';
+		await Promise.all([determinePort(), determinePort()]).then(values => {
+			expect(values[0]).toBe(4004);
+			expect(values[1]).toBeGreaterThanOrEqual(1024);
+			expect(values[1]).toBeLessThanOrEqual(65535);
+		});
+
+		// This is pretty awful, but would be the way to do it. get-port locks the port for ~30 seconds,
+		// so if we want to test any behavior with our default (8080) twice, we'd have to wait :/
+		//
+		//await sleep(35000);
+
+		//process.env.PORT = undefined;
+		//await Promise.all([determinePort(), determinePort()]).then(values => {
+		//	console.log(values);
+		//	expect(values[0]).toBe(8080);
+		//	expect(values[1]).toBeGreaterThanOrEqual(1024);
+		//	expect(values[1]).toBeLessThanOrEqual(65535);
+		//});
 	});
 });
