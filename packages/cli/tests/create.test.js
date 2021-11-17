@@ -4,20 +4,15 @@ const { create } = require('./lib/cli');
 const { expand } = require('./lib/utils');
 const snapshots = require('./images/create');
 
-// TODO: Move all `examples/` to `preactjs-templates`
-const ours = ['default'];
-
 describe('preact create', () => {
-	ours.forEach(key => {
-		it(`scaffolds the '${key}' official template`, async () => {
-			let dir = await create(key);
+	it(`scaffolds the 'default' official template`, async () => {
+		let dir = await create('default');
 
-			let output = await expand(dir).then(arr => {
-				return arr.map(x => relative(dir, x));
-			});
-
-			expect(output.sort()).toEqual(snapshots[key]);
+		let output = await expand(dir).then(arr => {
+			return arr.map(x => relative(dir, x));
 		});
+
+		expect(output.sort()).toEqual(snapshots.default);
 	});
 
 	it(`should use template.html from the github repo`, async () => {
@@ -38,9 +33,10 @@ describe('preact create', () => {
 		expect(template.includes('apple-touch-icon')).toEqual(true);
 	});
 
-	// it('should fail given an invalid name', async () => {
-	// 	const exit = jest.spyOn(process, 'exit');
-	// 	await create('default', '*()@!#!$-invalid-name');
-	// 	expect(exit).toHaveBeenCalledWith(1);
-	// });
+	it('should fail given an invalid name', async () => {
+		const exit = jest.spyOn(process, 'exit').mockImplementation(() => {});
+		await create('simple', '*()@!#!$-Invalid-Name');
+
+		expect(exit).toHaveBeenCalledWith(1);
+	});
 });

@@ -9,10 +9,6 @@ const images = require('./images/build');
 const { promisify } = require('util');
 const glob = promisify(require('glob').glob);
 
-// TODO
-// const ours = ['empty', 'full', 'simple', 'root'];
-const ours = ['default'];
-
 const prerenderUrlFiles = [
 	'prerender-urls.json',
 	'prerender-urls.js',
@@ -50,26 +46,24 @@ function testMatch(src, tar) {
 }
 
 describe('preact build', () => {
-	ours.forEach(key => {
-		it(`builds the '${key}' output`, async () => {
-			let dir = await create(key);
+	it(`builds the 'default' template`, async () => {
+		let dir = await create('default');
 
-			await build(dir);
-			dir = join(dir, 'build');
+		await build(dir);
+		dir = join(dir, 'build');
 
-			let output = await snapshot(dir);
-			testMatch(output, images[key]);
-		});
+		let output = await snapshot(dir);
+		testMatch(output, images.default);
+	});
 
-		it(`builds the '${key}' output with esm`, async () => {
-			let dir = await create(key);
+	it(`builds the 'default' template with esm`, async () => {
+		let dir = await create('default');
 
-			await build(dir, { esm: true });
-			dir = join(dir, 'build');
+		await build(dir, { esm: true });
+		dir = join(dir, 'build');
 
-			let output = await snapshot(dir);
-			testMatch(output, images[key + '-esm']);
-		});
+		let output = await snapshot(dir);
+		testMatch(output, images['default-esm']);
 	});
 
 	it('should use SASS styles', async () => {
