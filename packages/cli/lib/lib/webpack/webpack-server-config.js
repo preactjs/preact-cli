@@ -27,6 +27,6 @@ function serverConfig(env) {
 }
 
 module.exports = function createServerConfig(env) {
-	env = Object.assign({}, env, { browserslist: 'maintained node versions' });
+	env = Object.assign({}, env, { browserslist: 'node >= 12' });
 	return merge(baseConfig(env), serverConfig(env));
 };
