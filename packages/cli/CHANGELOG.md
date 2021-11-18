@@ -1,5 +1,15 @@
 # preact-cli
 
+## 3.3.2
+
+### Patch Changes
+
+- [#1508](https://github.com/preactjs/preact-cli/pull/1508) [`0cfee78`](https://github.com/preactjs/preact-cli/commit/0cfee78f5c695147fd610284530b01d7b2396b3d) Thanks [@rschristian](https://github.com/rschristian)! - On project create, the CLI won't copy the HTML template or the service worker when the source template is a widget
+
+* [#1612](https://github.com/preactjs/preact-cli/pull/1612) [`a4a66ce`](https://github.com/preactjs/preact-cli/commit/a4a66ce9fff3320731b8776b14abf59ad6773572) Thanks [@rschristian](https://github.com/rschristian)! - Changes port config precedence to: --port -> \$PORT -> 8080 (default)
+
+- [#1613](https://github.com/preactjs/preact-cli/pull/1613) [`3994a23`](https://github.com/preactjs/preact-cli/commit/3994a233d626bc6d28bcfac1e1d876944b0d71ad) Thanks [@rschristian](https://github.com/rschristian)! - Removing old & non-functional config helper `setHtmlTemplate`
+
 ## 3.3.1
 
 ### Patch Changes
