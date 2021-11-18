@@ -86,6 +86,7 @@ module.exports = function createBaseConfig(env) {
 	const browserslistDefaults = ['> 0.25%', 'IE >= 9'];
 	const browserlistConfig = Object(browserslist.findConfig(cwd));
 	const browsers =
+	      	env.browserslist ||
 		(isProd ? browserlistConfig.production : browserlistConfig.development) ||
 		browserlistConfig.defaults ||
 		browserslistDefaults;
