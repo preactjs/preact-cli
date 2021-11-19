@@ -66,7 +66,7 @@ async function clientConfig(env) {
 			  ]
 			: [
 					new InjectManifest({
-						swSrc: join(src, 'sw.js'),
+						swSrc: swPath,
 						include: [
 							/200\.html$/,
 							/\.js$/,
