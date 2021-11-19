@@ -174,7 +174,7 @@ module.exports = function createBaseConfig(env) {
 
 		module: {
 			rules: [
-				{
+				(info) => ({
 					// ES2015
 					enforce: 'pre',
 					test: /\.m?[jt]sx?$/,
@@ -183,10 +183,14 @@ module.exports = function createBaseConfig(env) {
 					loader: require.resolve('babel-loader'),
 					options: Object.assign(
 						{ babelrc: false },
-						createBabelConfig(env, { browsers }),
+						createBabelConfig(env, {
+							browsers: info.compiler.name === 'InjectManifest'
+								? 'supports es6-module'
+								: browsers
+						}),
 						babelrc // intentionally overwrite our settings
 					),
-				},
+				}),
 				{
 					// LESS
 					enforce: 'pre',
