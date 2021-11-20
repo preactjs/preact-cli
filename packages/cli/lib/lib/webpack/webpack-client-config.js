@@ -69,7 +69,7 @@ async function clientConfig(env) {
 
 		swInjectManifest.push(
 			new InjectManifest({
-				swSrc: join(src, 'sw.js'),
+				swSrc: swPath,
 				include: [/200\.html$/, /\.js$/, /\.css$/, /\.(png|jpg|svg|gif|webp)$/],
 				exclude: [/\.esm\.js$/],
 			})
