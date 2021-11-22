@@ -46,36 +46,34 @@ async function clientConfig(env) {
 		} else {
 			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
 		}
-		swInjectManifest = env.esm
-			? [
-					new InjectManifest({
-						swSrc: swPath,
-						swDest: 'sw-esm.js',
-						include: [
-							/200\.html$/,
-							/\.esm.js$/,
-							/\.css$/,
-							/\.(png|jpg|svg|gif|webp)$/,
-						],
-						webpackCompilationPlugins: [
-							new webpack.DefinePlugin({
-								'process.env.ESM': true,
-							}),
-						],
-					}),
-			  ]
-			: [
-					new InjectManifest({
-						swSrc: join(src, 'sw.js'),
-						include: [
-							/200\.html$/,
-							/\.js$/,
-							/\.css$/,
-							/\.(png|jpg|svg|gif|webp)$/,
-						],
-						exclude: [/\.esm\.js$/],
-					}),
-			  ];
+
+		if (env.esm) {
+			swInjectManifest.push(
+				new InjectManifest({
+					swSrc: swPath,
+					swDest: 'sw-esm.js',
+					include: [
+						/200\.html$/,
+						/\.esm.js$/,
+						/\.css$/,
+						/\.(png|jpg|svg|gif|webp)$/,
+					],
+					webpackCompilationPlugins: [
+						new webpack.DefinePlugin({
+							'process.env.ESM': true,
+						}),
+					],
+				})
+			);
+		}
+
+		swInjectManifest.push(
+			new InjectManifest({
+				swSrc: swPath,
+				include: [/200\.html$/, /\.js$/, /\.css$/, /\.(png|jpg|svg|gif|webp)$/],
+				exclude: [/\.esm\.js$/],
+			})
+		);
 	}
 
 	let copyPatterns = [
