@@ -191,21 +191,6 @@ exports.prerender.htmlSafe = `
 </body>
 `;
 
-exports.webpack = `
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>preact-webpack</title>
-	</head>
-	<body>
-		<h1>Guess what</h1>
-		<h2>This is an app with custom template</h2>
-		{{ ... }}
-	</body>
-</html>
-`;
-
 exports.template = `
 <!DOCTYPE html>
 <html lang="en">

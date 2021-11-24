@@ -107,7 +107,15 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 		);
 	}
 
-	const m = require('esm')(module)(myConfig);
+	let m = require('esm')(module)(myConfig);
+
+	// The line above results in an empty object w/ Jest,
+	// so we need to do the following in order to load it:
+	if (Object.keys(m).length === 0) {
+		try {
+			m = require(myConfig);
+		} catch {}
+	}
 
 	const transformers = parseConfig((m && m.default) || m);
 

@@ -1,3 +1,4 @@
+const { existsSync, mkdirSync } = require('fs');
 const copy = require('ncp');
 const { resolve } = require('path');
 const { promisify } = require('util');
@@ -16,6 +17,9 @@ function tmpDir() {
 async function subject(name) {
 	let src = resolve(subjects, name);
 	let dest = tmpDir();
+	if (!existsSync(dest)) {
+		mkdirSync(dest, { recursive: true });
+	}
 	await promisify(copy)(src, dest);
 	return dest;
 }

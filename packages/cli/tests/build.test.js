@@ -176,14 +176,12 @@ describe('preact build', () => {
 	});
 
 	it('should use custom `preact.config.js`', async () => {
-		// app with custom template set via preact.config.js
+		// app with stable output name via preact.config.js
 		let dir = await subject('custom-webpack');
 		await build(dir);
 
-		let file = join(dir, 'build/index.html');
-		let html = await readFile(file, 'utf-8');
-
-		looksLike(html, images.webpack);
+		let file = join(dir, 'build/bundle.js');
+		expect(existsSync(file)).toBe(true);
 	});
 
 	it('should use template from the code folder', async () => {
