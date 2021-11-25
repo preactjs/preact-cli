@@ -9,7 +9,6 @@
   - [getLoadersByName](#getloadersbyname)
   - [getPluginsByName](#getpluginsbyname)
   - [getPluginsByType](#getpluginsbytype)
-  - [setHtmlTemplate](#sethtmltemplate)
 - [PluginWrapper](#pluginwrapper)
 - [RuleWrapper](#rulewrapper)
 - [LoaderWrapper](#loaderwrapper)
