@@ -42,7 +42,10 @@ function testMatch(received, expected) {
 	for (let k in expected) {
 		let recievedKey = findMatchingKey(k, receivedKeys);
 		expect(recievedKey).toBeTruthy();
-		expect(received[recievedKey]).toBeCloseTo(expected[k]);
+
+		// Ensures received is within +/- 1% of expected
+		expect(received[recievedKey]).toBeGreaterThan(expected[k] * 0.99);
+		expect(received[recievedKey]).toBeLessThan(expected[k] * 1.01);
 	}
 }
 
