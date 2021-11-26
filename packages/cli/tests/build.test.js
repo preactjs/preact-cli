@@ -40,12 +40,12 @@ function testMatch(received, expected) {
 	let expectedKeys = Object.keys(expected);
 	expect(receivedKeys).toHaveLength(expectedKeys.length);
 	for (let k in expected) {
-		let recievedKey = findMatchingKey(k, receivedKeys);
-		expect(recievedKey).toBeTruthy();
+		let receivedKey = findMatchingKey(k, receivedKeys);
+		expect(receivedKey).toBeTruthy();
 
-		// Ensures received is within +/- 1% of expected
-		expect(received[recievedKey]).toBeGreaterThan(expected[k] * 0.99);
-		expect(received[recievedKey]).toBeLessThan(expected[k] * 1.01);
+		// Ensures received is within +/- 5% of expected
+		expect(received[receivedKey]).toBeGreaterThan(expected[k] * 0.95);
+		expect(received[receivedKey]).toBeLessThan(expected[k] * 1.05);
 	}
 }
 

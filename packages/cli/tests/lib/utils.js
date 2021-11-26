@@ -6,7 +6,6 @@ const pRetry = require('p-retry');
 const { promisify } = require('util');
 const glob = promisify(require('glob').glob);
 
-const PER = 0.05; // % diff
 const LOG = !!process.env.WITH_LOG;
 const logger = (lvl, msg) => (lvl === 'error' || LOG) && console[lvl](msg);
 
@@ -35,8 +34,6 @@ async function snapshot(dir) {
 }
 
 const findMatchingKey = (key, arr) => arr.find(k => minimatch(k, key));
-const isWithin = (val, tar) =>
-	val == tar || (val > (1 - PER) * tar && val < (1 + PER) * tar);
 
 async function log(fn, msg) {
 	logger('info', `${msg} - started...`);
@@ -67,5 +64,4 @@ module.exports = {
 	waitUntil,
 	sleep,
 	findMatchingKey,
-	isWithin,
 };
