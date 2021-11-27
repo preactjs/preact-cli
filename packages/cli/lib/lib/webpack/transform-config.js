@@ -136,15 +136,35 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 	}
 };
 
+/**
+ * WebpackConfigHelpers
+ *
+ * @class WebpackConfigHelpers
+ */
 class WebpackConfigHelpers {
 	constructor(cwd) {
 		this._cwd = cwd;
 	}
 
+	/**
+	 * Webpack module used to create config.
+	 *
+	 * @readonly
+	 * @returns {typeof webpack}
+	 * @memberof WebpackConfigHelpers
+	 */
 	get webpack() {
 		return webpack;
 	}
 
+	/**
+	 * Returns wrapper around all loaders from config.
+	 *
+	 * @param {import('../../../types.js').Config} config - [webpack config](https://webpack.js.org/configuration/#options).
+	 * @returns {import('../../../types.js').LoadersWrapper[]}
+	 *
+	 * @memberof WebpackConfigHelpers
+	 */
 	getLoaders(config) {
 		return this.getRules(config).map(({ rule, index }) => ({
 			rule: rule,
@@ -153,6 +173,14 @@ class WebpackConfigHelpers {
 		}));
 	}
 
+	/**
+	 * Returns wrapper around all rules from config.
+	 *
+	 * @param {import('../../../types.js').Config} config - [webpack config](https://webpack.js.org/configuration/#options).
+	 * @returns {import('../../../types.js').RuleWrapper[]}
+	 *
+	 * @memberof WebpackConfigHelpers
+	 */
 	getRules(config) {
 		return [
 			...(config.module.loaders || []),
@@ -160,10 +188,27 @@ class WebpackConfigHelpers {
 		].map((rule, index) => ({ index, rule }));
 	}
 
+	/**
+	 * Returns wrapper around all plugins from config.
+	 *
+	 * @param {import('../../../types.js').Config} config - [webpack config](https://webpack.js.org/configuration/#options).
+	 * @returns {import('../../../types.js').PluginWrapper[]}
+	 *
+	 * @memberof WebpackConfigHelpers
+	 */
 	getPlugins(config) {
 		return (config.plugins || []).map((plugin, index) => ({ index, plugin }));
 	}
 
+	/**
+	 * Returns wrapper around all rules that match provided file.
+	 *
+	 * @param {import('../../../types.js').Config} config - [webpack config](https://webpack.js.org/configuration/#options).
+	 * @param {string} file - path to test against loader. Resolved relatively to $PWD.
+	 * @returns {import('../../../types.js').RuleWrapper[]}
+	 *
+	 * @memberof WebpackConfigHelpers
+	 */
 	getRulesByMatchingFile(config, file) {
 		let filePath = resolve(this._cwd, file);
 		return this.getRules(config).filter(
@@ -171,6 +216,17 @@ class WebpackConfigHelpers {
 		);
 	}
 
+	/**
+	 * Returns loaders that match provided name.
+	 *
+	 * @example
+	 * helpers.getLoadersByName(config, 'less-loader')
+	 * @param {import('../../../types.js').Config} config - [webpack config](https://webpack.js.org/configuration/#options).
+	 * @param {string} name - name of loader.
+	 * @returns {import('../../../types.js').LoaderWrapper[]}
+	 *
+	 * @memberof WebpackConfigHelpers
+	 */
 	getLoadersByName(config, name) {
 		return this.getLoaders(config)
 			.map(({ rule, ruleIndex, loaders }) =>
@@ -191,6 +247,17 @@ class WebpackConfigHelpers {
 			);
 	}
 
+	/**
+	 * Returns plugins that match provided name.
+	 *
+	 * @example
+	 * helpers.getPluginsByName(config, 'HtmlWebpackPlugin')
+	 * @param {import('../../../types.js').Config} config - [webpack config](https://webpack.js.org/configuration/#options).
+	 * @param {string} name - name of loader.
+	 * @returns {import('../../../types.js').PluginWrapper[]}
+	 *
+	 * @memberof WebpackConfigHelpers
+	 */
 	getPluginsByName(config, name) {
 		return this.getPlugins(config).filter(
 			w =>
@@ -198,6 +265,17 @@ class WebpackConfigHelpers {
 		);
 	}
 
+	/**
+	 * Returns plugins that match provided type.
+	 *
+	 * @example
+	 * helpers.getPluginsByType(config, webpack.optimize.CommonsChunkPlugin)
+	 * @param {import('../../../types.js').Config} config - [webpack config](https://webpack.js.org/configuration/#options).
+	 * @param {any} type - type of plugin.
+	 * @returns {import('../../../types.js').PluginWrapper[]}
+	 *
+	 * @memberof WebpackConfigHelpers
+	 */
 	getPluginsByType(config, type) {
 		return this.getPlugins(config).filter(w => w.plugin instanceof type);
 	}
