@@ -15,13 +15,22 @@ type Loader = {
 	options: Record<string, any>;
 };
 
+type LoadersWrapper = {
+	rule: {
+		test: RegExp;
+		[key: string]: any;
+	};
+	ruleIndex: number;
+	loaders: string | (string | Loader)[];
+};
+
 type LoaderWrapper = {
 	rule: {
 		test: RegExp;
 		[key: string]: any;
 	};
 	ruleIndex: number;
-	loader: Loader;
+	loader: string | Loader;
 	loaderIndex: number;
 };
 
@@ -83,7 +92,7 @@ export type Helpers = {
 	/**
 	 * Returns wrapper around all loaders from config
 	 */
-	getLoaders(config: Config): LoaderWrapper[];
+	getLoaders(config: Config): LoadersWrapper[];
 
 	/**
 	 * Returns wrapper around all loaders that match provided name
