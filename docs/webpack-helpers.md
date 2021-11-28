@@ -139,18 +139,6 @@ Type: [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
 - `rule` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** [rule entry](https://webpack.js.org/configuration/module/#module-rules).
 - `index` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** index of rule in config.
 
-## LoadersWrapper
-
-Wrapper around webpack's [loader entry](https://webpack.js.org/configuration/module/#useentry).
-
-Type: [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
-
-**Properties**
-
-- `rule` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** [rule entry](https://webpack.js.org/configuration/module/#module-rules).
-- `ruleIndex` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** index of rule in config.
-- `loaders` **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** [loader entry](https://webpack.js.org/configuration/module/#useentry).
-
 ## LoaderWrapper
 
 Wrapper around webpack's [loader entry](https://webpack.js.org/configuration/module/#useentry).

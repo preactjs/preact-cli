@@ -15,23 +15,9 @@ type Loader = {
 	options: Record<string, any>;
 };
 
-type LoadersWrapper = {
-	rule: {
-		test: RegExp;
-		[key: string]: any;
-	};
-	ruleIndex: number;
-	loaders: string | (string | Loader)[];
-};
-
 type LoaderWrapper = {
-	rule: {
-		test: RegExp;
-		[key: string]: any;
-	};
+	rule: Rule;
 	ruleIndex: number;
-	loader: string | Loader;
-	loaderIndex: number;
 };
 
 type Plugin = Record<string, any>;
@@ -92,14 +78,19 @@ export type Helpers = {
 	/**
 	 * Returns wrapper around all loaders from config
 	 */
-	getLoaders(config: Config): LoadersWrapper[];
+	getLoaders(
+		config: Config
+	): (LoaderWrapper & { loaders: string | (string | Loader)[] })[];
 
 	/**
 	 * Returns wrapper around all loaders that match provided name
 	 *
 	 * @example helpers.getLoadersByName(config, 'babel-loader');
 	 */
-	getLoadersByName(config: Config, name: string): LoaderWrapper[];
+	getLoadersByName(
+		config: Config,
+		name: string
+	): (LoaderWrapper & { loader: string | Loader; loaderIndex: number })[];
 
 	/**
 	 * Returns wrapper around all rules from config
