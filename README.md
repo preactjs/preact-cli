@@ -233,7 +233,7 @@ export default (config, env, helpers, options) => {
 };
 ```
 
-See [WebpackConfigHelpers] docs for more info on `helpers` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki] containing examples on how to change webpack configuration.
+See [Webpack config helpers wiki] for more info on the `helpers` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki] containing examples on how to change webpack configuration.
 
 #### Prerender multiple routes
 
@@ -379,6 +379,7 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 [plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
 [preactjs-templates/default]: https://github.com/preactjs-templates/default
+[webpack config helpers wiki]: https://github.com/preactjs/preact-cli/wiki/Webpack-Config-Helpers
 [recipes wiki]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes
 [prpl]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
 [`babel-preset-env`]: https://github.com/babel/babel-preset-env#targetsbrowsers
