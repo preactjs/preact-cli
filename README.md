@@ -219,39 +219,21 @@ To customize preact-cli create a `preact.config.js` or a `preact.config.json` fi
 ```js
 // ... imports or other code up here ...
 
-// these props are both optional
-export default {
-	// you can add preact-cli plugins here
-	plugins: [
-		// either a function
-		// (you'd probably import this because you can use the `webpack` function instead of an inline plugin)
-		function () {},
-		// strings also work (they get imported by preact-cli), useful for the json config
-		'plugin-name',
-		// with options
-		[
-			'plugin-name',
-			{
-				option: true,
-			},
-		],
-	],
-	/**
-	 * Function that mutates the original webpack config.
-	 * Supports asynchronous changes when a promise is returned (or it's an async function).
-	 *
-	 * @param {object} config - original webpack config.
-	 * @param {object} env - options passed to the CLI.
-	 * @param {WebpackConfigHelpers} helpers - object with useful helpers for working with the webpack config.
-	 * @param {object} options - this is mainly relevant for plugins (will always be empty in the config), default to an empty object
-	 **/
-	webpack(config, env, helpers, options) {
-		/** you can change the config here **/
-	},
+/**
+ * Function that mutates the original webpack config.
+ * Supports asynchronous changes when a promise is returned (or it's an async function).
+ *
+ * @param {import('preact-cli').Config} config - original webpack config
+ * @param {import('preact-cli').Env} env - current environment and options pass to the CLI
+ * @param {import('preact-cli').Helpers} helpers - object with useful helpers for working with the webpack config
+ * @param {Record<string, unknown>} options - this is mainly relevant for plugins (will always be empty in the config), default to an empty object
+ */
+export default (config, env, helpers, options) => {
+	/** you can change the config here **/
 };
 ```
 
-See [WebpackConfigHelpers] docs for more info on `helpers` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki] containing examples on how to change webpack configuration.
+See [Webpack config helpers wiki] for more info on the `helpers` argument which contains methods to find various parts of configuration. Additionally see our [recipes wiki] containing examples on how to change webpack configuration.
 
 #### Prerender multiple routes
 
@@ -397,6 +379,7 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 [plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
 [preactjs-templates/default]: https://github.com/preactjs-templates/default
+[webpack config helpers wiki]: https://github.com/preactjs/preact-cli/wiki/Webpack-Config-Helpers
 [recipes wiki]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes
 [prpl]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
 [`babel-preset-env`]: https://github.com/babel/babel-preset-env#targetsbrowsers
