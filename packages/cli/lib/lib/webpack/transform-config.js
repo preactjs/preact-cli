@@ -139,6 +139,8 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 /**
  * WebpackConfigHelpers
  *
+ * @typedef {import('../../../types.js').Helpers} Helpers
+ *
  * @class WebpackConfigHelpers
  */
 class WebpackConfigHelpers {
@@ -150,7 +152,8 @@ class WebpackConfigHelpers {
 	 * Webpack module used to create config.
 	 *
 	 * @readonly
-	 * @returns {object}
+	 * @type {Helpers['webpack']}
+	 *
 	 * @memberof WebpackConfigHelpers
 	 */
 	get webpack() {
@@ -160,8 +163,7 @@ class WebpackConfigHelpers {
 	/**
 	 * Returns wrapper around all loaders from config.
 	 *
-	 * @param {object} config - [webpack config](https://webpack.js.org/configuration/#options).
-	 * @returns {LoaderWrapper[]}
+	 * @type {Helpers['getLoaders']}
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
@@ -176,8 +178,7 @@ class WebpackConfigHelpers {
 	/**
 	 * Returns wrapper around all rules from config.
 	 *
-	 * @param {object} config - [webpack config](https://webpack.js.org/configuration/#options).
-	 * @returns {RuleWrapper[]}
+	 * @type {Helpers['getRules']}
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
@@ -191,8 +192,7 @@ class WebpackConfigHelpers {
 	/**
 	 * Returns wrapper around all plugins from config.
 	 *
-	 * @param {object} config - [webpack config](https://webpack.js.org/configuration/#options).
-	 * @returns {PluginWrapper[]}
+	 * @type {Helpers['getPlugins']}
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
@@ -201,11 +201,9 @@ class WebpackConfigHelpers {
 	}
 
 	/**
+	 * Returns wrapper around all rules that match provided file.
 	 *
-	 *
-	 * @param {object} config - [webpack config](https://webpack.js.org/configuration/#options).
-	 * @param {string} file - path to test against loader. Resolved relatively to $PWD.
-	 * @returns {RuleWrapper[]}
+	 * @type {Helpers['getRulesByMatchingFile']}
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
@@ -221,9 +219,8 @@ class WebpackConfigHelpers {
 	 *
 	 * @example
 	 * helpers.getLoadersByName(config, 'less-loader')
-	 * @param {object} config - [webpack config](https://webpack.js.org/configuration/#options).
-	 * @param {string} name - name of loader.
-	 * @returns {LoaderWrapper[]}
+	 *
+	 * @type {Helpers['getLoadersByName']}
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
@@ -252,9 +249,8 @@ class WebpackConfigHelpers {
 	 *
 	 * @example
 	 * helpers.getPluginsByName(config, 'HtmlWebpackPlugin')
-	 * @param {object} config - [webpack config](https://webpack.js.org/configuration/#options).
-	 * @param {string} name - name of loader.
-	 * @returns {PluginWrapper[]}
+	 *
+	 * @type {Helpers['getPluginsByName']}
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
@@ -270,9 +266,8 @@ class WebpackConfigHelpers {
 	 *
 	 * @example
 	 * helpers.getPluginsByType(config, webpack.optimize.CommonsChunkPlugin)
-	 * @param {object} config - [webpack config](https://webpack.js.org/configuration/#options).
-	 * @param {any} type - type of plugin.
-	 * @returns {PluginWrapper[]}
+	 *
+	 * @type {Helpers['getPluginsByType']}
 	 *
 	 * @memberof WebpackConfigHelpers
 	 */
@@ -280,29 +275,3 @@ class WebpackConfigHelpers {
 		return this.getPlugins(config).filter(w => w.plugin instanceof type);
 	}
 }
-
-/**
- * Wrapper around webpack's [loader entry](https://webpack.js.org/configuration/module/#useentry).
- *
- * @typedef {object} LoaderWrapper
- * @property {object} rule - [rule entry](https://webpack.js.org/configuration/module/#module-rules).
- * @property {number} ruleIndex - index of rule in config.
- * @property {object} loader - [loader entry](https://webpack.js.org/configuration/module/#useentry).
- * @property {number} loaderIndex - index of loader in rule.
- */
-
-/**
- * Wrapper around webpack's [rule](https://webpack.js.org/configuration/module/#module-rules).
- *
- * @typedef {object} RuleWrapper
- * @property {object} rule - [rule entry](https://webpack.js.org/configuration/module/#module-rules).
- * @property {number} index - index of rule in config.
- */
-
-/**
- * Wrapper around webpack's [plugin](https://webpack.js.org/configuration/plugins/#plugins).
- *
- * @typedef {object} PluginWrapper
- * @property {object} plugin - [plugin entry](https://webpack.js.org/configuration/plugins/#plugins).
- * @property {number} index - index of plugin in config.
- */
