@@ -129,7 +129,7 @@ module.exports = function createBaseConfig(env) {
 		context: src,
 
 		resolve: {
-			modules: [...nodeModules, 'node_modules'],
+			modules: ['node_modules', ...nodeModules],
 			extensions: [
 				'.mjs',
 				'.js',
