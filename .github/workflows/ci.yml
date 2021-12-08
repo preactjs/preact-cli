@@ -65,6 +65,7 @@ jobs:
           yarn set version 2
           yarn config set pnpFallbackMode none
           yarn config set compressionLevel 0
+          yarn config set "packageExtensions.critters-webpack-plugin@*.peerDependencies.html-webpack-plugin" "*" # Remove when Critters#91 is released
           yarn link -A -p ../..
           yarn build
 
