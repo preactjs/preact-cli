@@ -1,5 +1,17 @@
 # preact-cli
 
+## 3.3.3
+
+### Patch Changes
+
+- [#1624](https://github.com/preactjs/preact-cli/pull/1624) [`0b298ae`](https://github.com/preactjs/preact-cli/commit/0b298aeb6f54bc4b7f6112222f3fe854aae3d744) Thanks [@rschristian](https://github.com/rschristian)! - Added typings for users to use in their preact.config.js files
+
+* [#1622](https://github.com/preactjs/preact-cli/pull/1622) [`39be928`](https://github.com/preactjs/preact-cli/commit/39be928638e8584528af65a1e313981255a5cc24) Thanks [@rschristian](https://github.com/rschristian)! - Corrects module resolve priority, fixing issues with duplicated dependencies being incorrectly resolved
+
+- [#1619](https://github.com/preactjs/preact-cli/pull/1619) [`9039ba2`](https://github.com/preactjs/preact-cli/commit/9039ba2e18bf1bf21b76425562617ad46e9d1d7c) Thanks [@rschristian](https://github.com/rschristian)! - Fixing legacy SW generation while ESM is enabled
+
+* [#1618](https://github.com/preactjs/preact-cli/pull/1618) [`11d5f3b`](https://github.com/preactjs/preact-cli/commit/11d5f3b67811779d9caec24d62acfdb9715b128a) Thanks [@rschristian](https://github.com/rschristian)! - Corrects error when `src/sw.js` does not exist and esm is disabled
+
 ## 3.3.2
 
 ### Patch Changes
