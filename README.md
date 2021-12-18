@@ -304,7 +304,7 @@ The default templates comes with a `.css` file for each component. You can start
 
 #### [LESS]
 
-- `npm install --save-dev less less-loader` (inside your preact application folder)
+- `npm install --save-dev less less-loader@7` (inside your preact application folder)
 - start replacing `.css` files with `.less` files
 
 ### Using Environment Variables
