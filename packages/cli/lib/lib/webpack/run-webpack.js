@@ -33,6 +33,10 @@ async function devBuild(env) {
 			callback();
 		});
 
+		compiler.hooks.beforeCompile.tap('CliDevPlugin', () => {
+			if (env['clear']) clear(true);
+		});
+
 		compiler.hooks.done.tap('CliDevPlugin', stats => {
 			let devServer = config.devServer;
 			let protocol = process.env.HTTPS || devServer.https ? 'https' : 'http';
@@ -42,8 +46,6 @@ async function devBuild(env) {
 			}
 			let serverAddr = `${protocol}://${host}:${bold(env.port)}`;
 			let localIpAddr = `${protocol}://${ip.address()}:${bold(env.port)}`;
-
-			if (env['clear']) clear(true);
 
 			if (stats.hasErrors()) {
 				process.stdout.write(red('Build failed!\n\n'));
