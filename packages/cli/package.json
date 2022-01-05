@@ -92,7 +92,7 @@
     "compression-webpack-plugin": "^6.0.4",
     "console-clear": "^1.0.0",
     "copy-webpack-plugin": "^6.2.1",
-    "critters-webpack-plugin": "^3.0.1",
+    "critters-webpack-plugin": "^3.0.2",
     "cross-spawn-promise": "^0.10.1",
     "css-loader": "^5.2.4",
     "ejs-loader": "^0.5.0",
