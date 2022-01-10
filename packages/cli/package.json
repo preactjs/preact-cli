@@ -18,7 +18,8 @@
   "files": [
     "sw",
     "lib",
-    "babel"
+    "babel",
+    "types.d.ts"
   ],
   "keywords": [
     "preact",
