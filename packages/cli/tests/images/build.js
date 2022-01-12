@@ -197,28 +197,18 @@ exports.template = `
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Custom title</title>
-	</head>
-	<body>
-		<h1>Guess what</h1>
-		<h2>This is an app with custom template</h2>
-		{{ ... }}
-	</body>
-</html>
-`;
-
-exports.templateReplaced = `
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
 		<title>preact-webpack</title>
+		<meta name="example-meta" content="Hello World">
 		<link rel="manifest" href="/manifest.json">
 	</head>
 	<body>
 		<h1>Guess what</h1>
 		<h2>This is an app with custom template</h2>
-		{{ ... }}
+		<script defer="defer" src="/bundle.\\w{5}.js"></script>
+		<h2>This is an app with custom template</h2>
+		<script type="__PREACT_CLI_DATA__">%7B%22preRenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
+		<script defer="defer" src="/bundle.\\w{5}.js"></script>
+		<script nomodule="" src="/polyfills.\\w{5}.js"></script>
 	</body>
 </html>
 `;

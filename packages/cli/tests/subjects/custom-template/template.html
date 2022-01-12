@@ -2,11 +2,16 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Custom title</title>
+		<title><% preact.title %></title>
+		<% if (cli.config.isProd) { %>
+			<meta name="example-meta" content="Hello World">
+		<% } %>
+		<% preact.headEnd %>
 	</head>
 	<body>
 		<h1>Guess what</h1>
 		<%= cli.ssr %>
 		<script defer src="<%= cli.entrypoints['bundle'] %>"></script>
+		<% preact.bodyEnd %>
 	</body>
 </html>

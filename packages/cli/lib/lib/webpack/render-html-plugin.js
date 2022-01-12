@@ -36,7 +36,7 @@ module.exports = async function renderHTMLPlugin(config) {
 	}
 
 	let content = read(template);
-	if (/preact\.headEnd|preact\.bodyEnd/.test(content)) {
+	if (/preact\.(title|headEnd|bodyEnd)/.test(content)) {
 		const headEnd = read('../../resources/head-end.ejs');
 		const bodyEnd = read('../../resources/body-end.ejs');
 		content = content
@@ -108,7 +108,7 @@ module.exports = async function renderHTMLPlugin(config) {
 					htmlWebpackPlugin: {
 						tags: assetTags,
 						files: assets,
-						options: options,
+						options,
 					},
 				};
 			},
@@ -118,7 +118,6 @@ module.exports = async function renderHTMLPlugin(config) {
 				? 'assets/favicon.ico'
 				: '',
 			excludeAssets: [/(bundle|polyfills)(\..*)?\.js$/],
-			// excludeChunks: ['bundle', 'polyfills']
 		};
 	};
 

@@ -188,15 +188,16 @@ describe('preact build', () => {
 		expect(existsSync(file)).toBe(true);
 	});
 
-	it('should use template from the code folder', async () => {
-		// app with custom template set via preact.config.js
+	it('should use custom `template.html`', async () => {
 		let dir = await subject('custom-template');
 		await build(dir);
 
 		let file = join(dir, 'build/index.html');
 		let html = await readFile(file, 'utf-8');
 
-		looksLike(html, images.template);
+		expect(html).toEqual(
+			expect.stringMatching(getRegExpFromMarkup(images.template))
+		);
 	});
 
 	it('should patch global location object', async () => {
@@ -221,28 +222,8 @@ describe('preact build', () => {
 		expect(existsSync(file)).toBe(true);
 	});
 
-	it('should inject preact.* variables into template', async () => {
-		let dir = await subject('custom-template-2');
-		await build(dir);
-
-		let file = join(dir, 'build/index.html');
-		let html = await readFile(file, 'utf-8');
-
-		looksLike(html, images.templateReplaced);
-	});
-
-	it('should replace title with <%= preact.title %>', async () => {
-		let dir = await subject('custom-template-3');
-		await build(dir);
-
-		let file = join(dir, 'build/index.html');
-		let html = await readFile(file, 'utf-8');
-
-		looksLike(html, images.templateReplaced);
-	});
-
 	it('should error out for invalid argument', async () => {
-		let dir = await subject('custom-template-3');
+		let dir = await subject('custom-template');
 		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
 		expect(build(dir, { 'service-worker': false })).rejects.toEqual(
 			new Error('Invalid argument found.')
