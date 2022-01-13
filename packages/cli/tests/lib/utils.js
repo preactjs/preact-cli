@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const { relative, resolve } = require('path');
-const { stat } = require('fs').promises;
+const { stat, readFile, writeFile } = require('fs').promises;
 const minimatch = require('minimatch');
 const pRetry = require('p-retry');
 const { promisify } = require('util');
@@ -19,6 +19,14 @@ function expand(dir, opts) {
 }
 
 async function bytes(str) {
+	// Sourcemap paths will be different in different environments,
+	// and therefore not useful to test. This strips them out before
+	// file size comparisons.
+	if (/\.map$/.test(str)) {
+		let fileContent = await readFile(str, 'utf-8');
+		fileContent = fileContent.replace(/"sources":[^\]]*]/, '');
+		await writeFile(str, fileContent);
+	}
 	return (await stat(str)).size;
 }
 
@@ -55,6 +63,35 @@ function waitUntil(action, errorMessage) {
 }
 
 const sleep = promisify(setTimeout);
+
+expect.extend({
+	toBeCloseInSize(key, receivedSize, expectedSize) {
+		const expectedMin = expectedSize * 0.95;
+		const expectedMax = expectedSize * 1.05;
+
+		const message = (comparator, val) =>
+			`expected '${key}' to be ${comparator} than ${val}, but it's ${receivedSize}`;
+
+		if (receivedSize < expectedMin) {
+			return {
+				message: () => message('greater', expectedMin),
+				pass: false,
+			};
+		}
+
+		if (receivedSize > expectedMax) {
+			return {
+				message: () => message('less', expectedMax),
+				pass: false,
+			};
+		}
+
+		return {
+			message: () => '',
+			pass: true,
+		};
+	},
+});
 
 module.exports = {
 	expand,
