@@ -378,6 +378,7 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 [netlify]: https://github.com/preactjs-templates/netlify
 [typescript]: https://github.com/preactjs-templates/typescript
 [widget]: https://github.com/preactjs-templates/widget
+[widget-typescript]: https://github.com/preactjs-templates/widget-typescript
 [plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
 [preactjs-templates/default]: https://github.com/preactjs-templates/default
