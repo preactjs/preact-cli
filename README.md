@@ -79,7 +79,7 @@ Current available templates include:
 
 - [widget] - Template for a widget to be embedded in another website
 
-- [widget-typescript] - Widget template implemented in TypeScript.
+- [widget-typescript] - Widget template implemented in TypeScript
 
 > 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `preact create <username>/<repository> <project-name>`
 
