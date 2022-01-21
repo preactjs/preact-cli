@@ -71,13 +71,15 @@ Current available templates include:
 
 - [default] - Default template with all features.
 
-- [simple] - The simplest possible preact setup in a single file
+- [simple] - The simplest possible preact setup in a single file.
 
 - [netlify] - Netlify CMS template using preact.
 
-- [typescript] - Default template implemented in TypeScript
+- [typescript] - Default template implemented in TypeScript.
 
 - [widget] - Template for a widget to be embedded in another website.
+
+- [widget-typescript] - Widget template implemented in TypeScript.
 
 > 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `preact create <username>/<repository> <project-name>`
 
