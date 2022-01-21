@@ -69,15 +69,17 @@ All official project templates are repos in the [preactjs-templates organization
 
 Current available templates include:
 
-- [default] - Default template with all features.
+- [default] - Default template with all features
 
 - [simple] - The simplest possible preact setup in a single file
 
-- [netlify] - Netlify CMS template using preact.
+- [netlify] - Netlify CMS template using preact
 
 - [typescript] - Default template implemented in TypeScript
 
-- [widget] - Template for a widget to be embedded in another website.
+- [widget] - Template for a widget to be embedded in another website
+
+- [widget-typescript] - Widget template implemented in TypeScript
 
 > 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `preact create <username>/<repository> <project-name>`
 
@@ -376,6 +378,7 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 [netlify]: https://github.com/preactjs-templates/netlify
 [typescript]: https://github.com/preactjs-templates/typescript
 [widget]: https://github.com/preactjs-templates/widget
+[widget-typescript]: https://github.com/preactjs-templates/widget-typescript
 [plugins wiki]: https://github.com/preactjs/preact-cli/wiki/Plugins
 [preactjs-templates organization]: https://github.com/preactjs-templates
 [preactjs-templates/default]: https://github.com/preactjs-templates/default
