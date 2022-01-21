@@ -75,7 +75,7 @@ Current available templates include:
 
 - [netlify] - Netlify CMS template using preact
 
-- [typescript] - Default template implemented in TypeScript.
+- [typescript] - Default template implemented in TypeScript
 
 - [widget] - Template for a widget to be embedded in another website.
 
