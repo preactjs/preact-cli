@@ -69,7 +69,7 @@ All official project templates are repos in the [preactjs-templates organization
 
 Current available templates include:
 
-- [default] - Default template with all features.
+- [default] - Default template with all features
 
 - [simple] - The simplest possible preact setup in a single file.
 
