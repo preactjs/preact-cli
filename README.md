@@ -73,7 +73,7 @@ Current available templates include:
 
 - [simple] - The simplest possible preact setup in a single file
 
-- [netlify] - Netlify CMS template using preact.
+- [netlify] - Netlify CMS template using preact
 
 - [typescript] - Default template implemented in TypeScript.
 
