@@ -9,6 +9,7 @@ const clientConfig = require('./webpack-client-config');
 const serverConfig = require('./webpack-server-config');
 const transformConfig = require('./transform-config');
 const { error, isDir, warn } = require('../../util');
+const { devServerRunning } = require('./hooks');
 
 async function devBuild(env) {
 	let config = await clientConfig(env);
@@ -57,6 +58,7 @@ async function devBuild(env) {
 			}
 
 			showStats(stats, false);
+			devServerRunning.call();
 		});
 
 		compiler.hooks.failed.tap('CliDevPlugin', rej);
