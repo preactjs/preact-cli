@@ -163,8 +163,8 @@ function getBabelEsmPlugin(config) {
 					: '[name].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
 				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest'],
-				beforeStartExecution: (plugins) => {
-					plugins.forEach((plugin) => {
+				beforeStartExecution: plugins => {
+					plugins.forEach(plugin => {
 						if (
 							plugin.constructor.name === 'DefinePlugin' &&
 							plugin.definitions
@@ -278,9 +278,11 @@ function isDev(config) {
 	const { cwd, src, refresh } = config;
 
 	return {
+		infrastructureLogging: {
+			level: 'info',
+		},
 		plugins: [
 			new webpack.NamedModulesPlugin(),
-			new webpack.HotModuleReplacementPlugin(),
 			...(refresh ? [new RefreshPlugin()] : []),
 			new webpack.DefinePlugin({
 				'process.env.ADD_SW': config.sw,
@@ -289,22 +291,26 @@ function isDev(config) {
 		],
 
 		devServer: {
-			inline: true,
 			hot: true,
 			compress: true,
-			publicPath: '/',
-			contentBase: src,
+			devMiddleware: {
+				publicPath: '/',
+				stats: 'errors-warnings',
+			},
+			static: {
+				directory: src,
+				watch: {
+					ignored: [resolve(cwd, 'build'), resolve(cwd, 'node_modules')],
+				},
+			},
 			https: config.https,
 			port: config.port,
 			host: process.env.HOST || config.host || '0.0.0.0',
-			disableHostCheck: true,
+			allowedHosts: 'all',
 			historyApiFallback: true,
-			quiet: true,
-			clientLogLevel: 'none',
-			overlay: false,
-			stats: 'minimal',
-			watchOptions: {
-				ignored: [resolve(cwd, 'build'), resolve(cwd, 'node_modules')],
+			client: {
+				logging: 'none',
+				overlay: false,
 			},
 		},
 	};
