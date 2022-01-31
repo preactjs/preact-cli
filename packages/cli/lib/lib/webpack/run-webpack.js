@@ -61,12 +61,8 @@ async function devBuild(env) {
 
 		compiler.hooks.failed.tap('CliDevPlugin', rej);
 
-		let c = Object.assign({}, config.devServer, {
-			stats: { colors: true },
-		});
-
-		let server = new DevServer(compiler, c);
-		server.listen(env.port);
+		let server = new DevServer(config.devServer, compiler);
+		server.start();
 		res(server);
 	});
 }
