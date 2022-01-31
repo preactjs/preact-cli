@@ -3,11 +3,12 @@ const { existsSync } = require('fs');
 const { readFile } = require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
-const { snapshot, findMatchingKey } = require('./lib/utils');
+const { snapshot } = require('./lib/utils');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
 const { promisify } = require('util');
 const glob = promisify(require('glob').glob);
+const minimatch = require('minimatch');
 
 const prerenderUrlFiles = [
 	'prerender-urls.json',
@@ -39,11 +40,11 @@ function testMatch(received, expected) {
 	let receivedKeys = Object.keys(received);
 	let expectedKeys = Object.keys(expected);
 	expect(receivedKeys).toHaveLength(expectedKeys.length);
-	for (let k in expected) {
-		let receivedKey = findMatchingKey(k, receivedKeys);
-		expect(receivedKey).toBeTruthy();
+	for (let key in expected) {
+		const receivedKey = receivedKeys.find(k => minimatch(k, key));
+		expect(key).toFindMatchingKey(receivedKey);
 
-		expect(receivedKey).toBeCloseInSize(received[receivedKey], expected[k]);
+		expect(receivedKey).toBeCloseInSize(received[receivedKey], expected[key]);
 	}
 }
 

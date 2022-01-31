@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 const { relative, resolve } = require('path');
 const { stat, readFile, writeFile } = require('fs').promises;
-const minimatch = require('minimatch');
 const pRetry = require('p-retry');
 const { promisify } = require('util');
 const glob = promisify(require('glob').glob);
@@ -41,8 +40,6 @@ async function snapshot(dir) {
 	return out;
 }
 
-const findMatchingKey = (key, arr) => arr.find(k => minimatch(k, key));
-
 async function log(fn, msg) {
 	logger('info', `${msg} - started...`);
 	try {
@@ -65,6 +62,18 @@ function waitUntil(action, errorMessage) {
 const sleep = promisify(setTimeout);
 
 expect.extend({
+	toFindMatchingKey(key, matchingKey) {
+		if (matchingKey) {
+			return {
+				message: () => `expected '${key}'' not to exist in received keys`,
+				pass: true,
+			};
+		}
+		return {
+			message: () => `expected '${key}' to exist in received keys`,
+			pass: false,
+		};
+	},
 	toBeCloseInSize(key, receivedSize, expectedSize) {
 		const expectedMin = expectedSize * 0.95;
 		const expectedMax = expectedSize * 1.05;
@@ -100,5 +109,4 @@ module.exports = {
 	log,
 	waitUntil,
 	sleep,
-	findMatchingKey,
 };
