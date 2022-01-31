@@ -1,6 +1,6 @@
 ---
-'preact-cli': minor
-'@preact/prerender-data-provider': patch
+'preact-cli': major
+'@preact/prerender-data-provider': major
 ---
 
 Updates to use html-webpack-plugin v4
