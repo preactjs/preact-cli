@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"moduleResolution": "Node",
+		"allowJs": true,
+		"checkJs": true,
+		"noEmit": true,
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
+		"jsx": "react",
+		"jsxFactory": "h",
+		"jsxFragmentFactory": "Fragment"
+	},
+	"include": ["packages/**/*"]
+}

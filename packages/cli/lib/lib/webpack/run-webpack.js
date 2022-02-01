@@ -17,22 +17,6 @@ async function devBuild(env) {
 
 	let compiler = webpack(config);
 	return new Promise((res, rej) => {
-		compiler.hooks.emit.tapAsync('CliDevPlugin', (compilation, callback) => {
-			let missingDeps = compilation.missingDependencies;
-			let nodeModulesPath = resolve(__dirname, '../../../node_modules');
-
-			// ...tell webpack to watch node_modules recursively until they appear.
-			if (
-				Array.from(missingDeps).some(
-					file => file.indexOf(nodeModulesPath) !== -1
-				)
-			) {
-				compilation.contextDependencies.push(nodeModulesPath);
-			}
-
-			callback();
-		});
-
 		compiler.hooks.beforeCompile.tap('CliDevPlugin', () => {
 			if (env['clear']) clear(true);
 		});

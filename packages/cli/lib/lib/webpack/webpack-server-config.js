@@ -2,6 +2,9 @@ const { resolve } = require('path');
 const { merge } = require('webpack-merge');
 const baseConfig = require('./webpack-base-config');
 
+/**
+ * @returns {import('webpack').Configuration}
+ */
 function serverConfig(env) {
 	return {
 		entry: {

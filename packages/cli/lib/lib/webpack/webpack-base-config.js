@@ -16,20 +16,9 @@ const PnpWebpackPlugin = require(`pnp-webpack-plugin`);
 
 function readJson(file) {
 	try {
-		return JSON.parse(readFileSync(file));
+		return JSON.parse(readFileSync(file, 'utf8'));
 	} catch (e) {}
 }
-
-// attempt to resolve a dependency, giving $CWD/node_modules priority:
-// function resolveDep(dep, cwd) {
-// 	try {
-// 		return requireRelative.resolve(dep, cwd || process.cwd());
-// 	} catch (e) {}
-// 	try {
-// 		return require.resolve(dep);
-// 	} catch (e) {}
-// 	return dep;
-// }
 
 function findAllNodeModules(startDir) {
 	let dir = path.resolve(startDir);
@@ -70,6 +59,9 @@ function getSassConfiguration(...includePaths) {
 	return config;
 }
 
+/**
+ * @returns {import('webpack').Configuration}
+ */
 module.exports = function createBaseConfig(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
 	const babelConfigFile = env.babelConfig || '.babelrc';
@@ -331,7 +323,7 @@ module.exports = function createBaseConfig(env) {
 					? '[name].chunk.[contenthash:5].css'
 					: '[name].chunk.css',
 			}),
-			new ProgressBarPlugin({
+			ProgressBarPlugin({
 				format:
 					'\u001b[97m\u001b[44m Build \u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
 				renderThrottle: 100,
@@ -388,5 +380,3 @@ module.exports = function createBaseConfig(env) {
 		},
 	};
 };
-
-module.exports.readJson = readJson;

@@ -3,7 +3,7 @@ const common = {
 	'polyfills.70f66.js.map': 21668,
 };
 
-exports.default = exports.full = Object.assign({}, common, {
+exports.default = Object.assign({}, common, {
 	'assets/favicon.ico': 15086,
 	'assets/icons/android-chrome-192x192.png': 14058,
 	'assets/icons/android-chrome-512x512.png': 51484,
@@ -30,7 +30,7 @@ exports.default = exports.full = Object.assign({}, common, {
 	'ssr-build/ssr-bundle.js': 11937,
 	'ssr-build/ssr-bundle.js.map': 32557,
 });
-exports['default-esm'] = exports.full = Object.assign({}, exports.default, {
+exports['default-esm'] = Object.assign({}, exports.default, {
 	'bundle.*.esm.js': 21135,
 	'bundle.*.esm.js.map': 111771,
 	'polyfills.*.esm.js': 5721,
