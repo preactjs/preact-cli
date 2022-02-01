@@ -1,12 +1,10 @@
 /* eslint-disable no-console */
 const { relative, resolve } = require('path');
-const { stat } = require('fs').promises;
-const minimatch = require('minimatch');
+const { stat, readFile, writeFile } = require('fs').promises;
 const pRetry = require('p-retry');
 const { promisify } = require('util');
 const glob = promisify(require('glob').glob);
 
-const PER = 0.05; // % diff
 const LOG = !!process.env.WITH_LOG;
 const logger = (lvl, msg) => (lvl === 'error' || LOG) && console[lvl](msg);
 
@@ -20,6 +18,14 @@ function expand(dir, opts) {
 }
 
 async function bytes(str) {
+	// Sourcemap paths will be different in different environments,
+	// and therefore not useful to test. This strips them out before
+	// file size comparisons.
+	if (/\.map$/.test(str)) {
+		let fileContent = await readFile(str, 'utf-8');
+		fileContent = fileContent.replace(/"sources":[^\]]*]/, '');
+		await writeFile(str, fileContent);
+	}
 	return (await stat(str)).size;
 }
 
@@ -33,10 +39,6 @@ async function snapshot(dir) {
 	}
 	return out;
 }
-
-const hasKey = (key, arr) => arr.find(k => minimatch(key, k)) || false;
-const isWithin = (val, tar) =>
-	val == tar || (val > (1 - PER) * tar && val < (1 + PER) * tar);
 
 async function log(fn, msg) {
 	logger('info', `${msg} - started...`);
@@ -59,6 +61,47 @@ function waitUntil(action, errorMessage) {
 
 const sleep = promisify(setTimeout);
 
+expect.extend({
+	toFindMatchingKey(key, matchingKey) {
+		if (matchingKey) {
+			return {
+				message: () => `expected '${key}'' not to exist in received keys`,
+				pass: true,
+			};
+		}
+		return {
+			message: () => `expected '${key}' to exist in received keys`,
+			pass: false,
+		};
+	},
+	toBeCloseInSize(key, receivedSize, expectedSize) {
+		const expectedMin = expectedSize * 0.95;
+		const expectedMax = expectedSize * 1.05;
+
+		const message = (comparator, val) =>
+			`expected '${key}' to be ${comparator} than ${val}, but it's ${receivedSize}`;
+
+		if (receivedSize < expectedMin) {
+			return {
+				message: () => message('greater', expectedMin),
+				pass: false,
+			};
+		}
+
+		if (receivedSize > expectedMax) {
+			return {
+				message: () => message('less', expectedMax),
+				pass: false,
+			};
+		}
+
+		return {
+			message: () => '',
+			pass: true,
+		};
+	},
+});
+
 module.exports = {
 	expand,
 	bytes,
@@ -66,6 +109,4 @@ module.exports = {
 	log,
 	waitUntil,
 	sleep,
-	hasKey,
-	isWithin,
 };
