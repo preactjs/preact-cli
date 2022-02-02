@@ -25,6 +25,9 @@ const cleanFilename = name =>
 		''
 	);
 
+/**
+ * @returns {Promise<import('webpack').Configuration>}
+ */
 async function clientConfig(env) {
 	const { isProd, source, src, cwd /*, port? */ } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
@@ -190,6 +193,9 @@ function getBabelEsmPlugin(config) {
 	return esmPlugins;
 }
 
+/**
+ * @returns {import('webpack').Configuration}
+ */
 function isProd(config) {
 	let limit = 200 * 1000; // 200kb
 	const prodConfig = {
@@ -274,6 +280,9 @@ function isProd(config) {
 	return prodConfig;
 }
 
+/**
+ * @returns {import('webpack').Configuration}
+ */
 function isDev(config) {
 	const { cwd, src, refresh } = config;
 

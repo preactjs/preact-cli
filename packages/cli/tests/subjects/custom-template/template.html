@@ -2,7 +2,11 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Custom title</title>
+		<title><% preact.title %></title>
+		<% if (htmlWebpackPlugin.options.config.isProd) { %>
+			<meta name="example-meta" content="Hello World">
+		<% } %>
+		<% preact.headEnd %>
 	</head>
 	<body>
 		<h1>Guess what</h1>
@@ -10,5 +14,6 @@
 			url: '/'
 		}) %>
 		<script defer src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
+		<% preact.bodyEnd %>
 	</body>
 </html>

@@ -3,11 +3,12 @@ const { existsSync } = require('fs');
 const { readFile } = require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
-const { snapshot, hasKey, isWithin } = require('./lib/utils');
+const { snapshot } = require('./lib/utils');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
 const { promisify } = require('util');
 const glob = promisify(require('glob').glob);
+const minimatch = require('minimatch');
 
 const prerenderUrlFiles = [
 	'prerender-urls.json',
@@ -35,13 +36,15 @@ function getRegExpFromMarkup(markup) {
 	return new RegExp(minifiedMarkup);
 }
 
-function testMatch(src, tar) {
-	let k, tmp;
-	let keys = Object.keys(tar);
-	expect(Object.keys(src)).toHaveLength(keys.length);
-	for (k in src) {
-		expect(hasKey(k, keys)).toBeTruthy();
-		if (!isWithin(src[k], tar[tmp])) return false;
+function testMatch(received, expected) {
+	let receivedKeys = Object.keys(received);
+	let expectedKeys = Object.keys(expected);
+	expect(receivedKeys).toHaveLength(expectedKeys.length);
+	for (let key in expected) {
+		const receivedKey = receivedKeys.find(k => minimatch(k, key));
+		expect(key).toFindMatchingKey(receivedKey);
+
+		expect(receivedKey).toBeCloseInSize(received[receivedKey], expected[key]);
 	}
 }
 
@@ -184,15 +187,16 @@ describe('preact build', () => {
 		expect(existsSync(file)).toBe(true);
 	});
 
-	it('should use template from the code folder', async () => {
-		// app with custom template set via preact.config.js
+	it('should use custom `template.html`', async () => {
 		let dir = await subject('custom-template');
 		await build(dir);
 
 		let file = join(dir, 'build/index.html');
 		let html = await readFile(file, 'utf-8');
 
-		looksLike(html, images.template);
+		expect(html).toEqual(
+			expect.stringMatching(getRegExpFromMarkup(images.template))
+		);
 	});
 
 	it('should patch global location object', async () => {
@@ -217,28 +221,8 @@ describe('preact build', () => {
 		expect(existsSync(file)).toBe(true);
 	});
 
-	it('should inject preact.* variables into template', async () => {
-		let dir = await subject('custom-template-2');
-		await build(dir);
-
-		let file = join(dir, 'build/index.html');
-		let html = await readFile(file, 'utf-8');
-
-		looksLike(html, images.templateReplaced);
-	});
-
-	it('should replace title with <%= preact.title %>', async () => {
-		let dir = await subject('custom-template-3');
-		await build(dir);
-
-		let file = join(dir, 'build/index.html');
-		let html = await readFile(file, 'utf-8');
-
-		looksLike(html, images.templateReplaced);
-	});
-
 	it('should error out for invalid argument', async () => {
-		let dir = await subject('custom-template-3');
+		let dir = await subject('custom-template');
 		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
 		expect(build(dir, { 'service-worker': false })).rejects.toEqual(
 			new Error('Invalid argument found.')

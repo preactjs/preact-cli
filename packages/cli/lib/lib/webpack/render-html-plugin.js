@@ -7,7 +7,6 @@ const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
 const { warn } = require('../../util');
 const { info } = require('../../util');
-const { PRERENDER_DATA_FILE_NAME } = require('../constants');
 
 const PREACT_FALLBACK_URL = '/200.html';
 
@@ -181,7 +180,7 @@ class PrerenderDataExtractPlugin {
 				// We dont build prerender data for `200.html`. It can re-use the one for homepage.
 				return;
 			}
-			let path = this.location_ + PRERENDER_DATA_FILE_NAME;
+			let path = this.location_ + 'preact_prerender_data.json';
 			if (path.startsWith('/')) {
 				path = path.substr(1);
 			}
