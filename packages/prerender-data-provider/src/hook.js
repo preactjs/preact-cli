@@ -38,8 +38,8 @@ function usePrerenderData(props, doAutomaticFetch = true) {
 		}
 	}
 
-	if (contextValue.CLI_DATA && contextValue.CLI_DATA.preRenderData) {
-		value = contextValue.CLI_DATA.preRenderData;
+	if (contextValue) {
+		value = contextValue;
 	}
 
 	const data = getPrerenderdata(state.value || value, props);

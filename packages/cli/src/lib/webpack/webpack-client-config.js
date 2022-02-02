@@ -262,7 +262,7 @@ function isProd(env) {
 				preload: 'media',
 				pruneSource: false,
 				logLevel: 'silent',
-				additionalStylesheets: ['*.css'],
+				additionalStylesheets: ['route-*.css'],
 			})
 		);
 	}
