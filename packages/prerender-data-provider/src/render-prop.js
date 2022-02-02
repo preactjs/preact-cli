@@ -49,8 +49,8 @@ class PreRenderDataSource extends Component {
 				{contextValue => {
 					let obtainedContextValue;
 					// If the data is in script tag, it will be accesible from the following chaining
-					if (contextValue.CLI_DATA && contextValue.CLI_DATA.preRenderData) {
-						obtainedContextValue = contextValue.CLI_DATA.preRenderData;
+					if (contextValue) {
+						obtainedContextValue = contextValue;
 					}
 					const preRenderDataToBePassed = getPrerenderdata(
 						value || obtainedContextValue,

@@ -3,17 +3,15 @@
 	<head>
 		<meta charset="utf-8">
 		<title><% preact.title %></title>
-		<% if (htmlWebpackPlugin.options.config.isProd) { %>
+		<% if (cli.config.isProd) { %>
 			<meta name="example-meta" content="Hello World">
 		<% } %>
 		<% preact.headEnd %>
 	</head>
 	<body>
 		<h1>Guess what</h1>
-		<%= htmlWebpackPlugin.options.ssr({
-			url: '/'
-		}) %>
-		<script defer src="<%= htmlWebpackPlugin.files.chunks['bundle'].entry %>"></script>
+		<%= cli.ssr %>
+		<script defer src="<%= cli.entrypoints['bundle'] %>"></script>
 		<% preact.bodyEnd %>
 	</body>
 </html>
