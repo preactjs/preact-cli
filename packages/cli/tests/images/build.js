@@ -19,8 +19,8 @@ exports.default = Object.assign({}, common, {
 	'ssr-build/ssr-bundle.js.map': 52686,
 	'ssr-build/asset-manifest.json': 178,
 	'bundle.4c6ac.css': 1276,
-	'bundle.c4895.js': 22529,
-	'bundle.c4895.js.map': 111801,
+	'bundle.9131e.js': 22529,
+	'bundle.9131e.js.map': 111801,
 	'favicon.ico': 15086,
 	'index.html': 4127,
 	'manifest.json': 455,
@@ -70,7 +70,7 @@ exports.prerender.heads.home = `
 	<link rel="apple-touch-icon" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
 	<link rel="manifest" href="\\/manifest\\.json">
 	<style>html{padding:0}<\\/style>
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
 	<noscript>
 		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
 	</noscript>
@@ -87,7 +87,7 @@ exports.prerender.heads.route66 = `
 	<link rel="apple-touch-icon" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
 	<link rel="manifest" href="\\/manifest\\.json">
 	<style>html{padding:0}<\\/style>
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
 	<noscript>
 		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
 	</noscript>
@@ -104,7 +104,7 @@ exports.prerender.heads.custom = `
 	<link rel="apple-touch-icon" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
 	<link rel="manifest" href="\\/manifest\\.json">
 	<style>html{padding:0}<\\/style>
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
 	<noscript>
 		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
 	</noscript>
@@ -126,7 +126,7 @@ exports.preload.true = `
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
 	<style>html{padding:0}<\\/style>
-	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
+	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
 	<noscript>
 		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
 	</noscript>
@@ -143,7 +143,7 @@ exports.preload.false = `
 	<link rel=\\"apple-touch-icon\\" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
 	<link rel=\\"manifest\\" href=\\"\\/manifest\\.json\\">
 	<style>html{padding:0}<\\/style>
-	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
+	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
 	<noscript>
 		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
 	</noscript>
@@ -209,8 +209,8 @@ exports.template = `
 		<h2>This is an app with custom template</h2>
 		<script defer="defer" src="/bundle.\\w{5}.js"></script>
 		<h2>This is an app with custom template</h2>
-		<script type="__PREACT_CLI_DATA__">%7B%22preRenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
-		<script defer="defer" src="/bundle.\\w{5}.js"></script>
+		<script type="__PREACT_CLI_DATA__">%7B%22prerenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
+		<script blocking="" src="/bundle.\\w{5}.js"></script>
 		<script nomodule="" src="/polyfills.\\w{5}.js"></script>
 	</body>
 </html>
@@ -313,12 +313,11 @@ exports.publicPath = `
 		<link rel="apple-touch-icon" href="/example-path/assets/icons/apple-touch-icon.png">
 		<link rel="manifest" href="/example-path/manifest.json">
 		<link href="/example-path/bundle.\\w{5}.css" rel="stylesheet">
-		<style></style>
 	</head>
 	<body>
 		<h1>Public path test</h1>
-		<script type="__PREACT_CLI_DATA__">%7B%22preRenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
-		<script defer="defer" src="/example-path/bundle.\\w{5}.js"></script>
+		<script type="__PREACT_CLI_DATA__">%7B%22prerenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
+		<script blocking="" src="/example-path/bundle.\\w{5}.js"></script>
 		<script nomodule="" src="/example-path/polyfills.\\w{5}.js"></script>
 	</body>
 </html>
