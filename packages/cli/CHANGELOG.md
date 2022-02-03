@@ -1,5 +1,17 @@
 # preact-cli
 
+## 3.3.4
+
+### Patch Changes
+
+- [#1646](https://github.com/preactjs/preact-cli/pull/1646) [`e98994a`](https://github.com/preactjs/preact-cli/commit/e98994aacd48f8dbd509a291b662ea900f833c87) Thanks [@rschristian](https://github.com/rschristian)! - Bumping `webpack-dev-server`
+
+* [#1635](https://github.com/preactjs/preact-cli/pull/1635) [`00bea83`](https://github.com/preactjs/preact-cli/commit/00bea83baa1d8ce8774453ee9542880da1314b7f) Thanks [@rschristian](https://github.com/rschristian)! - Ensures TS warnings/errors are not hidden by console clearing
+
+- [#1634](https://github.com/preactjs/preact-cli/pull/1634) [`8a6732b`](https://github.com/preactjs/preact-cli/commit/8a6732bcc75171035ba21911a600a2177247ddc2) Thanks [@rschristian](https://github.com/rschristian)! - Ensures types are published with package
+
+* [#1648](https://github.com/preactjs/preact-cli/pull/1648) [`e19ceb0`](https://github.com/preactjs/preact-cli/commit/e19ceb089b45e8a26c309cb533eab01d6e09bd29) Thanks [@rschristian](https://github.com/rschristian)! - Ensures the public path is normalized when registering service workers
+
 ## 3.3.3
 
 ### Patch Changes
