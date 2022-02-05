@@ -65,7 +65,7 @@ The above command pulls the template from [preactjs-templates/default], prompts 
 
 The purpose of official preact project templates are to provide opinionated development tooling setups so that users can get started with actual app code as fast as possible. However, these templates are un-opinionated in terms of how you structure your app code and what libraries you use in addition to preact.js.
 
-All official project templates are repos in the [preactjs-templates organization]. When a new template is added to the organization, you will be able to run `preact create <template-name> <project-name>` to use that template.
+All official project templates are repos in the [preactjs-templates organization]. When a new template is added to the organization, you will be able to run `npx preact-cli create <template-name> <project-name>` to use that template.
 
 Current available templates include:
 
@@ -81,7 +81,7 @@ Current available templates include:
 
 - [widget-typescript] - Widget template implemented in TypeScript
 
-> 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `preact create <username>/<repository> <project-name>`
+> 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `npx preact-cli create <username>/<repository> <project-name>`
 
 ### CLI Options
 
@@ -90,7 +90,7 @@ Current available templates include:
 Create a project to quick start development.
 
 ```
-$ preact create <template-name> <project-name>
+$ npx preact-cli create <template-name> <project-name>
 
   --name        The application name.
   --cwd         A directory to use instead of $PWD.
@@ -100,7 +100,7 @@ $ preact create <template-name> <project-name>
   --install     Installs dependencies.                                [boolean] [default: true]
 ```
 
-Note: If you don't specify enough data to the `preact create` command, it will prompt the required questions.
+Note: If you don't specify enough data to the `npx preact-cli create` command, it will prompt the required questions.
 
 #### preact build
 
@@ -118,7 +118,7 @@ $ preact build
     --sw               Generate and attach a Service Worker  (default true)
     --babelConfig      Path to custom Babel config (default .babelrc)
     --json             Generate build stats for bundle analysis
-    --template         Path to custom HTML template
+    --template         Path to custom HTML template (default 'src/template.html')
     --preload          Adds preload tags to the document its assets  (default false)
     --analyze          Launch interactive Analyzer to inspect production bundle(s)
     --prerender        Renders route(s) into generated static HTML  (default true)
@@ -150,7 +150,7 @@ $ preact watch
     --cacert           Path to optional CA certificate override
     --prerender        Pre-render static content on first run
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
-    --template         Path to custom HTML template
+    --template         Path to custom HTML template (default 'src/template.html')
     --refresh          Enables experimental preact-refresh functionality
     -c, --config       Path to custom CLI config  (default preact.config.js)
     -H, --host         Set server hostname  (default 0.0.0.0)
@@ -192,7 +192,7 @@ To make customizing your configuration easier, preact-cli supports plugins. Visi
 
 #### Browserslist
 
-You may customize your list of supported browser versions by declaring a [`"browserslist"`] key within your `package.json`. Changing these values will modify your JavaScript (via [`babel-preset-env`]) and your CSS (via [`autoprefixer`](https://github.com/postcss/autoprefixer)) output.
+You may customize your list of supported browser versions by declaring a [`"browserslist"`] key within your `package.json`. Changing these values will modify your JavaScript (via [`@babel/preset-env`]) and your CSS (via [`autoprefixer`](https://github.com/postcss/autoprefixer)) output.
 
 By default, `preact-cli` emulates the following config:
 
@@ -385,7 +385,7 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 [webpack config helpers wiki]: https://github.com/preactjs/preact-cli/wiki/Webpack-Config-Helpers
 [recipes wiki]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes
 [prpl]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
-[`babel-preset-env`]: https://github.com/babel/babel-preset-env#targetsbrowsers
+[`@babel/preset-env`]: https://babeljs.io/docs/en/babel-preset-env.html
 [proof]: https://googlechrome.github.io/lighthouse/viewer/?gist=142af6838482417af741d966e7804346
 [preact cli preset]: https://github.com/preactjs/preact-cli/blob/master/packages/cli/lib/lib/babel-config.js
 [service workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
