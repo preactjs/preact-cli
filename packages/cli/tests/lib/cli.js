@@ -1,13 +1,16 @@
 const { join } = require('path');
-const { mkdirSync, symlinkSync } = require('fs');
+const { mkdir, symlink } = require('fs').promises;
 const cmd = require('../../lib/commands');
 const { tmpDir } = require('./output');
 const shell = require('shelljs');
 
 const root = join(__dirname, '../../../..');
 
-function linkPackage(name, from, to) {
-	symlinkSync(join(from, 'node_modules', name), join(to, 'node_modules', name));
+async function linkPackage(name, from, to) {
+	await symlink(
+		join(from, 'node_modules', name),
+		join(to, 'node_modules', name)
+	);
 }
 
 const argv = {
@@ -28,17 +31,18 @@ exports.create = async function (template, name) {
 	return dest;
 };
 
-exports.build = function (cwd, options, installNodeModules = false) {
+exports.build = async function (cwd, options, installNodeModules = false) {
 	if (!installNodeModules) {
-		mkdirSync(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
-		linkPackage('preact', root, cwd);
-		linkPackage('preact-render-to-string', root, cwd);
+		await mkdir(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
+		await linkPackage('preact', root, cwd);
+		await linkPackage('preact-render-to-string', root, cwd);
 	} else {
 		shell.cd(cwd);
 		shell.exec('npm i');
 	}
-	let opts = Object.assign({ cwd }, argv);
-	return cmd.build(argv.src, Object.assign({}, opts, options));
+
+	let opts = Object.assign({}, { cwd }, argv, options);
+	return await cmd.build(argv.src, opts);
 };
 
 exports.watch = function (cwd, port, host = '127.0.0.1') {
