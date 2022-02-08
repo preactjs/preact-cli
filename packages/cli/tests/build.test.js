@@ -232,4 +232,14 @@ describe('preact build', () => {
 		expect(mockExit).toHaveBeenCalledWith(1);
 		mockExit.mockRestore();
 	});
+
+	it('should produce correct push-manifest', async () => {
+		let dir = await create('default');
+
+		await build(dir);
+		const manifest = await readFile(`${dir}/build/push-manifest.json`, 'utf8');
+		expect(manifest).toEqual(
+			expect.stringMatching(getRegExpFromMarkup(images.pushManifest))
+		);
+	});
 });

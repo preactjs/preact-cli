@@ -8,7 +8,7 @@ module.exports = (assets, isESMBuild = false, namedChunkGroups) => {
 		styles = [];
 	for (let filename in assets) {
 		if (!/\.map$/.test(filename)) {
-			if (/route-/.test(filename)) {
+			if (/^route-.*\.js$/.test(filename)) {
 				// both ESM & regular match here
 				isMatch(filename, isESMBuild) && scripts.push(filename);
 			} else if (/chunk\.(.+)\.css$/.test(filename)) {
@@ -39,8 +39,8 @@ module.exports = (assets, isESMBuild = false, namedChunkGroups) => {
 		};
 
 	let path, css, obj;
-	scripts.forEach((filename, idx) => {
-		css = styles[idx];
+	scripts.forEach(filename => {
+		css = styles.find(asset => asset.startsWith(filename.replace(/\..*/, '')));
 		obj = Object.assign({}, defaults);
 		obj[filename] = { type: 'script', weight: 0.9 };
 		if (css) obj[css] = { type: 'style', weight: 0.9 };

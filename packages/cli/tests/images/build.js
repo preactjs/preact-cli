@@ -22,7 +22,7 @@ exports.default = Object.assign({}, common, {
 	'index.html': 2034,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
-	'push-manifest.json': 812,
+	'push-manifest.json': 450,
 	'route-home.chunk.bcb8a.css': 58,
 	'route-home.chunk.3cec8.js': 327,
 	'route-home.chunk.3cec8.js.map': 483,
@@ -211,4 +211,45 @@ exports.template = `
 		<script nomodule="" src="/polyfills.\\w{5}.js"></script>
 	</body>
 </html>
+`;
+
+exports.pushManifest = `
+{
+	"/":{
+		"bundle.\\w{5}.css":{
+			"type":"style",
+			"weight":1
+		},
+		"bundle.\\w{5}.js":{
+			"type":"script",
+			"weight":1
+		},
+		"route-home.chunk.\\w{5}.js":{
+			"type":"script",
+			"weight":0.9
+		},
+		"route-home.chunk.\\w{5}.css":{
+			"type":"style",
+			"weight":0.9
+		}
+	},
+	"/profile":{
+		"bundle.\\w{5}.css":{
+			"type":"style",
+			"weight":1
+		},
+		"bundle.\\w{5}.js":{
+			"type":"script",
+			"weight":1
+		},
+		"route-profile.chunk.\\w{5}.js":{
+			"type":"script",
+			"weight":0.9
+		},
+		"route-profile.chunk.\\w{5}.css":{
+			"type":"style",
+			"weight":0.9
+		}
+	}
+}
 `;
