@@ -6,6 +6,7 @@ const { snapshot } = require('./lib/utils');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
 const minimatch = require('minimatch');
+const shell = require('shelljs');
 
 const prerenderUrlFiles = [
 	'prerender-urls.json',
@@ -64,6 +65,17 @@ describe('preact build', () => {
 
 		let output = await snapshot(dir);
 		testMatch(output, images['default-esm']);
+	});
+
+	it(`builds the 'typescript' template`, async () => {
+		let dir = await create('typescript');
+
+		// The tsconfig.json in the template covers the test directory,
+		// so TS will error out if it can't find even test-only module definitions
+		shell.cd(dir);
+		shell.exec('npm i @types/enzyme enzyme-adapter-preact-pure');
+
+		expect(() => build(dir)).not.toThrow();
 	});
 
 	it('should use SASS styles', async () => {
