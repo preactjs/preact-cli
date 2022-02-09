@@ -42,7 +42,7 @@ const options = [
 	},
 	{
 		name: '--template',
-		description: 'Path to custom HTML template',
+		description: 'Path to custom HTML template (default "src/template.html")',
 	},
 	{
 		name: '--preload',
