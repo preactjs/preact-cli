@@ -1,5 +1,13 @@
 # preact-cli
 
+## 3.3.5
+
+### Patch Changes
+
+- [#1659](https://github.com/preactjs/preact-cli/pull/1659) [`d452863`](https://github.com/preactjs/preact-cli/commit/d4528639536e72824d6559ab7cb77c0e4ad8a865) Thanks [@rschristian](https://github.com/rschristian)! - Corrects `push-manifest.json` generation in non-ESM builds
+
+* [#1658](https://github.com/preactjs/preact-cli/pull/1658) [`6af4e9d`](https://github.com/preactjs/preact-cli/commit/6af4e9de4342cf213ef9771bd22758472d4083a0) Thanks [@rschristian](https://github.com/rschristian)! - Clarifies when the `--template` flag is necessary in the CLI help information.
+
 ## 3.3.4
 
 ### Patch Changes
