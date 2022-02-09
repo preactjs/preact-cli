@@ -1,14 +1,12 @@
 const { join } = require('path');
-const { existsSync } = require('fs');
-const { readFile } = require('fs').promises;
+const { access, readdir, readFile } = require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
 const { snapshot } = require('./lib/utils');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
-const { promisify } = require('util');
-const glob = promisify(require('glob').glob);
 const minimatch = require('minimatch');
+const shell = require('shelljs');
 
 const prerenderUrlFiles = [
 	'prerender-urls.json',
@@ -69,6 +67,17 @@ describe('preact build', () => {
 		testMatch(output, images['default-esm']);
 	});
 
+	it(`builds the 'typescript' template`, async () => {
+		let dir = await create('typescript');
+
+		// The tsconfig.json in the template covers the test directory,
+		// so TS will error out if it can't find even test-only module definitions
+		shell.cd(dir);
+		shell.exec('npm i @types/enzyme enzyme-adapter-preact-pure');
+
+		expect(() => build(dir)).not.toThrow();
+	});
+
 	it('should use SASS styles', async () => {
 		let dir = await subject('sass');
 		await build(dir);
@@ -79,12 +88,17 @@ describe('preact build', () => {
 
 	it('should use custom `.babelrc`', async () => {
 		// app with custom .babelrc enabling async functions
-		let app = await subject('custom-babelrc');
+		let dir = await subject('custom-babelrc');
 
-		await build(app);
+		await build(dir);
 
-		const bundleFiles = await glob(`${app}/build/bundle.*.js`);
-		const transpiledChunk = await readFile(bundleFiles[0], 'utf8');
+		const bundleFile = (await readdir(`${dir}/build`)).find(file =>
+			/bundle\.\w{5}\.js$/.test(file)
+		);
+		const transpiledChunk = await readFile(
+			`${dir}/build/${bundleFile}`,
+			'utf8'
+		);
 
 		// when tragetting only last 1 chrome version, babel preserves
 		// arrow function. So checking for the delay function code from delay function in
@@ -183,8 +197,8 @@ describe('preact build', () => {
 		let dir = await subject('custom-webpack');
 		await build(dir);
 
-		let file = join(dir, 'build/bundle.js');
-		expect(existsSync(file)).toBe(true);
+		let stableOutput = join(dir, 'build/bundle.js');
+		expect(await access(stableOutput)).toBeUndefined();
 	});
 
 	it('should use custom `template.html`', async () => {
@@ -218,16 +232,26 @@ describe('preact build', () => {
 		let dir = await subject('static-root');
 		await build(dir);
 		let file = join(dir, 'build', '.htaccess');
-		expect(existsSync(file)).toBe(true);
+		expect(await access(file)).toBeUndefined();
 	});
 
-	it('should error out for invalid argument', async () => {
+	it('should error out for invalid CLI argument', async () => {
 		let dir = await subject('custom-template');
 		const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
-		expect(build(dir, { 'service-worker': false })).rejects.toEqual(
+		await expect(build(dir, { 'service-worker': false })).rejects.toEqual(
 			new Error('Invalid argument found.')
 		);
 		expect(mockExit).toHaveBeenCalledWith(1);
 		mockExit.mockRestore();
+	});
+
+	it('should produce correct push-manifest', async () => {
+		let dir = await create('default');
+
+		await build(dir);
+		const manifest = await readFile(`${dir}/build/push-manifest.json`, 'utf8');
+		expect(manifest).toEqual(
+			expect.stringMatching(getRegExpFromMarkup(images.pushManifest))
+		);
 	});
 });

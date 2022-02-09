@@ -29,7 +29,7 @@ const cleanFilename = name =>
  * @returns {Promise<import('webpack').Configuration>}
  */
 async function clientConfig(env) {
-	const { isProd, source, src, cwd /*, port? */ } = env;
+	const { source, src, cwd } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
 		? require.resolve('@preact/async-loader')
@@ -84,7 +84,7 @@ async function clientConfig(env) {
 		// copy any static files
 		existsSync(source('assets')) && { from: 'assets', to: 'assets' },
 		// copy sw-debug
-		!isProd && {
+		!env.isProd && {
 			from: resolve(__dirname, '../../resources/sw-debug.js'),
 			to: 'sw-debug.js',
 		},
@@ -100,7 +100,7 @@ async function clientConfig(env) {
 		output: {
 			path: env.dest,
 			publicPath: '/',
-			filename: isProd ? '[name].[chunkhash:5].js' : '[name].js',
+			filename: env.isProd ? '[name].[chunkhash:5].js' : '[name].js',
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
 		},
 
@@ -143,6 +143,8 @@ async function clientConfig(env) {
 		plugins: [
 			new webpack.DefinePlugin({
 				'process.env.ES_BUILD': false,
+				'process.env.ADD_SW': env.sw,
+				'process.env.PRERENDER': env.prerender,
 			}),
 			new PushManifestPlugin(env),
 			...(await renderHTMLPlugin(env)),
@@ -156,14 +158,12 @@ async function clientConfig(env) {
 	};
 }
 
-function getBabelEsmPlugin(config) {
+function getBabelEsmPlugin(env) {
 	const esmPlugins = [];
-	if (config.esm) {
+	if (env.esm) {
 		esmPlugins.push(
 			new BabelEsmPlugin({
-				filename: config.isProd
-					? '[name].[chunkhash:5].esm.js'
-					: '[name].esm.js',
+				filename: env.isProd ? '[name].[chunkhash:5].esm.js' : '[name].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
 				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest'],
 				beforeStartExecution: plugins => {
@@ -196,7 +196,7 @@ function getBabelEsmPlugin(config) {
 /**
  * @returns {import('webpack').Configuration}
  */
-function isProd(config) {
+function isProd(env) {
 	let limit = 200 * 1000; // 200kb
 	const prodConfig = {
 		performance: Object.assign(
@@ -205,14 +205,12 @@ function isProd(config) {
 				maxAssetSize: limit,
 				maxEntrypointSize: limit,
 			},
-			config.pkg.performance
+			env.pkg.performance
 		),
 
 		plugins: [
 			new webpack.DefinePlugin({
-				'process.env.ADD_SW': config.sw,
-				'process.env.ESM': config.esm,
-				'process.env.PRERENDER': config.prerender,
+				'process.env.ESM': env.esm,
 			}),
 			new SizePlugin(),
 		],
@@ -252,7 +250,7 @@ function isProd(config) {
 		},
 	};
 
-	if (config['inline-css']) {
+	if (env['inline-css']) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
 				preload: 'media',
@@ -263,11 +261,11 @@ function isProd(config) {
 		);
 	}
 
-	if (config.analyze) {
+	if (env.analyze) {
 		prodConfig.plugins.push(new BundleAnalyzerPlugin());
 	}
 
-	if (config.brotli) {
+	if (env.brotli) {
 		prodConfig.plugins.push(
 			new CompressionPlugin({
 				filename: '[path].br[query]',
@@ -283,8 +281,8 @@ function isProd(config) {
 /**
  * @returns {import('webpack').Configuration}
  */
-function isDev(config) {
-	const { cwd, src, refresh } = config;
+function isDev(env) {
+	const { cwd, src } = env;
 
 	return {
 		infrastructureLogging: {
@@ -292,12 +290,8 @@ function isDev(config) {
 		},
 		plugins: [
 			new webpack.NamedModulesPlugin(),
-			...(refresh ? [new RefreshPlugin()] : []),
-			new webpack.DefinePlugin({
-				'process.env.ADD_SW': config.sw,
-				'process.env.PRERENDER': config.prerender,
-			}),
-		],
+			env.refresh && new RefreshPlugin(),
+		].filter(Boolean),
 
 		devServer: {
 			hot: true,
@@ -312,9 +306,9 @@ function isDev(config) {
 					ignored: [resolve(cwd, 'build'), resolve(cwd, 'node_modules')],
 				},
 			},
-			https: config.https,
-			port: config.port,
-			host: process.env.HOST || config.host || '0.0.0.0',
+			https: env.https,
+			port: env.port,
+			host: process.env.HOST || env.host || '0.0.0.0',
 			allowedHosts: 'all',
 			historyApiFallback: true,
 			client: {
