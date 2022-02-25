@@ -98,21 +98,20 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 	env.config = configFile;
 	let myConfig = resolve(env.cwd, env.config);
 
+	let m;
 	try {
-		await stat(myConfig);
-	} catch (e) {
-		if (isDefault) return;
-		throw new Error(
-			`preact-cli config could not be loaded!\nFile ${env.config} not found.`
-		);
-	}
-
-	let m = esmImport(myConfig);
-
-	// The line above results in an empty object w/ Jest,
-	// so we need to do the following in order to load it:
-	if (Object.keys(m).length === 0) {
-		m = require(myConfig);
+		m = esmImport(myConfig);
+	} catch (err) {
+		const notFound = err.message.includes('Cannot find module');
+		if (notFound && isDefault) return;
+		if (notFound) {
+			throw new Error(
+				`Failed to load preact-cli config!\nFile ${env.config} not found.\n`
+			);
+		}
+		throw new Error(`Failed to load preact-cli config!\n${
+			env.verbose ? err.stack : err.message
+		}\n`);
 	}
 
 	const transformers = parseConfig((m && m.default) || m);

@@ -34,9 +34,9 @@
   "homepage": "https://github.com/preactjs/preact-cli",
   "devDependencies": {
     "@types/express": "^4.17.13",
-    "@types/jest": "^27.4.0",
+    "@types/jest": "^24.9.1",
     "html-looks-like": "^1.0.2",
-    "jest": "^27.0.1",
+    "jest": "^24.9.0",
     "less": "^4.1.1",
     "less-loader": "^7.3.0",
     "ncp": "^2.0.0",
