@@ -5,8 +5,7 @@ const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plug
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
-const { warn } = require('../../util');
-const { info } = require('../../util');
+const { esmImport, warn } = require('../../util');
 
 const PREACT_FALLBACK_URL = '/200.html';
 
@@ -109,19 +108,18 @@ module.exports = async function (config) {
 	if (config.prerenderUrls) {
 		if (existsSync(resolve(cwd, config.prerenderUrls))) {
 			try {
-				let result = require(resolve(cwd, config.prerenderUrls));
+				let result = esmImport(resolve(cwd, config.prerenderUrls));
+
 				if (typeof result.default !== 'undefined') {
-					result = result.default();
+					result = result.default;
 				}
 				if (typeof result === 'function') {
-					info(`Fetching URLs from ${config.prerenderUrls}`);
 					result = await result();
-					info(`Fetched URLs from ${config.prerenderUrls}`);
 				}
 				if (typeof result === 'string') {
 					result = JSON.parse(result);
 				}
-				if (result instanceof Array) {
+				if (Array.isArray(result)) {
 					pages = result;
 				}
 			} catch (error) {

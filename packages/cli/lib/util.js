@@ -56,6 +56,8 @@ exports.toBool = function (val) {
 	return val === void 0 || (val === 'false' ? false : val);
 };
 
+exports.esmImport = require('esm')(module);
+
 /**
  * Taken from: https://github.com/preactjs/wmr/blob/3401a9bfa6491d25108ad68688c067a7e17d0de5/packages/wmr/src/lib/net-utils.js#L4-Ll4
  * Check if a port is free

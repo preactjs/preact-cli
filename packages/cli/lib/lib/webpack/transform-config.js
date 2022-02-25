@@ -1,7 +1,7 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
 const { stat } = require('fs').promises;
-const { error } = require('../../util');
+const { error, esmImport } = require('../../util');
 
 const FILE = 'preact.config';
 const EXTENSIONS = ['js', 'json'];
@@ -107,7 +107,7 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 		);
 	}
 
-	let m = require('esm')(module)(myConfig);
+	let m = esmImport(myConfig);
 
 	// The line above results in an empty object w/ Jest,
 	// so we need to do the following in order to load it:
