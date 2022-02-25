@@ -102,16 +102,20 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 	try {
 		m = esmImport(myConfig);
 	} catch (err) {
-		const notFound = err.message.includes('Cannot find module');
+		const notFound =
+			err.message.includes('Cannot find module') ||
+			err.message.includes('Qualified path resolution failed');
 		if (notFound && isDefault) return;
 		if (notFound) {
 			throw new Error(
 				`Failed to load preact-cli config!\nFile ${env.config} not found.\n`
 			);
 		}
-		throw new Error(`Failed to load preact-cli config!\n${
-			env.verbose ? err.stack : err.message
-		}\n`);
+		throw new Error(
+			`Failed to load preact-cli config!\n${
+				env.verbose ? err.stack : err.message
+			}\n`
+		);
 	}
 
 	const transformers = parseConfig((m && m.default) || m);
