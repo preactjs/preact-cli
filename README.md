@@ -279,6 +279,21 @@ module.exports = [
 ];
 ```
 
+```js
+// prerender-urls.js
+export default () => {
+	return [
+		{
+			url: '/',
+			title: 'Homepage',
+		},
+		{
+			url: '/route/random',
+		},
+	];
+};
+```
+
 #### Template
 
 A template is used to render your page by [EJS](https://ejs.co/).
