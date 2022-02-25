@@ -1,3 +1,3 @@
 export default {
-	webpack (config, env, helpers) {}
+	webpack() {},
 };

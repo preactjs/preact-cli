@@ -1,8 +1,8 @@
 export default () => [
 	{
-		"url": "/"
+		url: '/',
 	},
 	{
-		"url": "/custom"
-	}
+		url: '/custom',
+	},
 ];

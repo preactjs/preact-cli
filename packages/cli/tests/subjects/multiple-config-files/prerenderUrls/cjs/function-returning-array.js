@@ -1,8 +1,8 @@
 module.exports = () => [
 	{
-		"url": "/"
+		url: '/',
 	},
 	{
-		"url": "/custom"
-	}
+		url: '/custom',
+	},
 ];

@@ -36,7 +36,7 @@ describe('config files', () => {
 					const logSpy = jest.spyOn(process.stdout, 'write');
 
 					await build(dir, {
-						prerenderUrls: `prerender/${moduleFormat}/${dataFormat}`,
+						prerenderUrls: `prerenderUrls/${moduleFormat}/${dataFormat}`,
 					});
 
 					expect(logSpy).not.toHaveBeenCalledWith(
@@ -45,22 +45,6 @@ describe('config files', () => {
 						)
 					);
 				});
-			});
-
-			it(`should fail to load malformed prerender-urls data in ${moduleFormat}`, async () => {
-				let dir = await subject('multiple-config-files');
-
-				const logSpy = jest.spyOn(process.stdout, 'write');
-
-				await build(dir, {
-					prerenderUrls: `prerender/${moduleFormat}/returns-bad-json.js`,
-				});
-
-				expect(logSpy).toHaveBeenCalledWith(
-					expect.stringContaining(
-						'Failed to load prerenderUrls file, using default!'
-					)
-				);
 			});
 		});
 	});
@@ -75,16 +59,6 @@ describe('config files', () => {
 						build(dir, { config: `preactConfig/${moduleFormat}/${dataFormat}` })
 					).resolves.not.toThrow();
 				});
-			});
-
-			it(`should fail to load malformed config data in ${moduleFormat}`, async () => {
-				let dir = await subject('multiple-config-files');
-
-				await expect(
-					build(dir, {
-						config: `preactConfig/${moduleFormat}/returns-bad-config.js`,
-					})
-				).rejects.toThrow('Failed to load preact-cli config!');
 			});
 		});
 	});

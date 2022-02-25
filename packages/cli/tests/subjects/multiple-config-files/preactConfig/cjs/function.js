@@ -1,3 +1,1 @@
-module.exports = function (config, env, helpers) {
-
-};
+module.exports = function () {};
