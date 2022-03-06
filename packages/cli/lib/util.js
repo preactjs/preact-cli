@@ -30,10 +30,10 @@ exports.info = function (text, code) {
 	code && process.exit(code);
 };
 
-exports.warn = function (text, code) {
+const warn = (exports.warn = function (text, code) {
 	process.stdout.write(symbols.warning + yellow(' WARN ') + text + '\n');
 	code && process.exit(code);
-};
+});
 
 exports.error = function (text, code = 1) {
 	process.stderr.write(symbols.error + red(' ERROR ') + text + '\n');
@@ -78,5 +78,14 @@ exports.isPortFree = async function (port) {
 	} catch (err) {
 		if (err.code !== 'EADDRINUSE') throw err;
 		return false;
+	}
+};
+
+exports.tryResolveConfig = function (cwd, file, isDefault, verbose) {
+	const path = resolve(cwd, file);
+	if (existsSync(path)) {
+		return path;
+	} else if (!isDefault || verbose) {
+		warn(`${resolve(cwd, file)} doesn't exist, using default!`);
 	}
 };

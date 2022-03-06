@@ -55,9 +55,17 @@ describe('config files', () => {
 				it(`should load the '${dataFormat}' file in ${moduleFormat}`, async () => {
 					let dir = await subject('multiple-config-files');
 
-					await expect(
-						build(dir, { config: `preactConfig/${moduleFormat}/${dataFormat}` })
-					).resolves.not.toThrow();
+					const logSpy = jest.spyOn(process.stdout, 'write');
+
+					await build(dir, {
+						config: `preactConfig/${moduleFormat}/${dataFormat}`,
+					});
+
+					expect(logSpy).not.toHaveBeenCalledWith(
+						expect.stringContaining(
+							'Failed to load preact-cli config file, using default!'
+						)
+					);
 				});
 			});
 		});
