@@ -122,8 +122,8 @@ function showStats(stats, isProd) {
 	return stats;
 }
 
-function writeJsonStats(stats) {
-	let outputPath = resolve(process.cwd(), 'stats.json');
+function writeJsonStats(cwd, stats) {
+	let outputPath = resolve(cwd, 'stats.json');
 	let jsonStats = stats.toJson({
 		json: true,
 		chunkModules: true,
