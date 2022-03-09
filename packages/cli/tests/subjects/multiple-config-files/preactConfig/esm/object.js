@@ -1,3 +1,5 @@
 export default {
-	webpack() {},
+	webpack(config) {
+		config.output.filename = '[name].js';
+	},
 };

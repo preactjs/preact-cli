@@ -1,3 +1,5 @@
+const { join } = require('path');
+const { access } = require('fs').promises;
 const { build } = require('./lib/cli');
 const { subject } = require('./lib/output');
 
@@ -17,15 +19,12 @@ describe('config files', () => {
 		it(`should load the 'prerender-urls.json' file`, async () => {
 			let dir = await subject('multiple-config-files');
 
-			const logSpy = jest.spyOn(process.stdout, 'write');
-
 			await build(dir);
 
-			expect(logSpy).not.toHaveBeenCalledWith(
-				expect.stringContaining(
-					'Failed to load prerenderUrls file, using default!'
-				)
-			);
+			expect(await access(join(dir, 'build/index.html'))).toBeUndefined();
+			expect(
+				await access(join(dir, 'build/custom/index.html'))
+			).toBeUndefined();
 		});
 
 		formats.forEach(moduleFormat => {
@@ -33,17 +32,14 @@ describe('config files', () => {
 				it(`should load the '${dataFormat}' file in ${moduleFormat}`, async () => {
 					let dir = await subject('multiple-config-files');
 
-					const logSpy = jest.spyOn(process.stdout, 'write');
-
 					await build(dir, {
 						prerenderUrls: `prerenderUrls/${moduleFormat}/${dataFormat}`,
 					});
 
-					expect(logSpy).not.toHaveBeenCalledWith(
-						expect.stringContaining(
-							'Failed to load prerenderUrls file, using default!'
-						)
-					);
+					expect(await access(join(dir, 'build/index.html'))).toBeUndefined();
+					expect(
+						await access(join(dir, 'build/custom/index.html'))
+					).toBeUndefined();
 				});
 			});
 		});
@@ -55,17 +51,11 @@ describe('config files', () => {
 				it(`should load the '${dataFormat}' file in ${moduleFormat}`, async () => {
 					let dir = await subject('multiple-config-files');
 
-					const logSpy = jest.spyOn(process.stdout, 'write');
-
 					await build(dir, {
 						config: `preactConfig/${moduleFormat}/${dataFormat}`,
 					});
 
-					expect(logSpy).not.toHaveBeenCalledWith(
-						expect.stringContaining(
-							'Failed to load preact-cli config file, using default!'
-						)
-					);
+					expect(await access(join(dir, 'build/bundle.js'))).toBeUndefined();
 				});
 			});
 		});
