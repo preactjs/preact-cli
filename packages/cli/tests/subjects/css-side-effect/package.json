@@ -1,5 +1,5 @@
 {
   "private": true,
-  "name": "side-effect-css",
+  "name": "preact-css-side-effect-import",
   "sideEffects": false
 }

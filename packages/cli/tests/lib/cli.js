@@ -7,10 +7,12 @@ const shell = require('shelljs');
 const root = join(__dirname, '../../../..');
 
 async function linkPackage(name, from, to) {
-	await symlink(
-		join(from, 'node_modules', name),
-		join(to, 'node_modules', name)
-	);
+	try {
+		await symlink(
+			join(from, 'node_modules', name),
+			join(to, 'node_modules', name)
+		);
+	} catch {}
 }
 
 const argv = {
@@ -23,7 +25,7 @@ const argv = {
 };
 
 exports.create = async function (template, name) {
-	let dest = tmpDir();
+	let dest = await tmpDir();
 	name = name || `test-${template}`;
 
 	await cmd.create(template, dest, { name, cwd: '.' });
@@ -42,7 +44,7 @@ exports.build = async function (cwd, options, installNodeModules = false) {
 	}
 
 	let opts = Object.assign({}, { cwd }, argv, options);
-	return await cmd.build(argv.src, opts);
+	return await cmd.build(opts.src, opts);
 };
 
 exports.watch = function (cwd, port, host = '127.0.0.1') {
