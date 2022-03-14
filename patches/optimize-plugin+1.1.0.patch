@@ -1,0 +1,36 @@
+diff --git a/node_modules/optimize-plugin/dist/optimize-plugin.js b/node_modules/optimize-plugin/dist/optimize-plugin.js
+index a0882b1..5d2974a 100644
+--- a/node_modules/optimize-plugin/dist/optimize-plugin.js
++++ b/node_modules/optimize-plugin/dist/optimize-plugin.js
+@@ -384,7 +384,13 @@ const DEFAULT_OPTIONS = {
+   /**
+    * @default "polyfills.legacy.js"
+    */
+-  polyfillsFilename: 'polyfills.legacy.js'
++  polyfillsFilename: 'polyfills.legacy.js',
++
++  /**
++   * RegExp patterns of assets to exclude
++   * @default []
++   */
++  exclude: []
+ };
+ class OptimizePlugin {
+   /**
+@@ -446,7 +452,15 @@ class OptimizePlugin {
+     };
+     const processing = new WeakMap();
+     const chunkAssets = Array.from(compilation.additionalChunkAssets || []);
+-    const files = [...chunkFiles, ...chunkAssets];
++    const files = [...chunkFiles, ...chunkAssets]
++      .filter((asset) => {
++        for (const pattern of this.options.exclude) {
++          if (pattern.test(asset)) {
++            return false;
++          }
++        }
++        return true;
++      });
+     start('Optimize Assets');
+     let transformed;
+ 
