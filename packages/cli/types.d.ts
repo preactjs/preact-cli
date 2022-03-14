@@ -59,7 +59,6 @@ export type Config = {
 export type Env = {
 	src: string;
 	dest: string;
-	esm: boolean;
 	sw: boolean;
 	dev: boolean;
 	production: boolean;
