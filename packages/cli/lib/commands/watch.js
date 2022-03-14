@@ -2,6 +2,7 @@ const runWebpack = require('../lib/webpack/run-webpack');
 const { isPortFree, toBool, warn } = require('../util');
 const { validateArgs } = require('./validate-args');
 const getPort = require('get-port');
+const { resolve } = require('path');
 
 const options = [
 	{
@@ -104,6 +105,9 @@ async function command(src, argv) {
 	if (argv.sw) {
 		argv.sw = toBool(argv.sw);
 	}
+
+	let cwd = resolve(argv.cwd);
+	require('dotenv').config({ path: resolve(cwd, '.env') });
 
 	argv.port = await determinePort(argv.port);
 

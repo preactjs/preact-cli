@@ -92,6 +92,7 @@ async function command(src, argv) {
 	argv.production = toBool(argv.production);
 
 	let cwd = resolve(argv.cwd);
+	require('dotenv').config({ path: resolve(cwd, '.env') });
 	if (argv.clean === void 0) {
 		let dest = resolve(cwd, argv.dest);
 		await promisify(rimraf)(dest);

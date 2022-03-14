@@ -306,11 +306,21 @@ module.exports = function createBaseConfig(env) {
 
 		plugins: [
 			new webpack.NoEmitOnErrorsPlugin(),
-			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(
-					isProd ? 'production' : 'development'
-				),
-			}),
+			new webpack.DefinePlugin(
+				Object.keys(process.env)
+					.filter(key => /^PREACT_APP_/.test(key))
+					.reduce(
+						(env, key) => {
+							env[`process.env.${key}`] = JSON.stringify(process.env[key]);
+							return env;
+						},
+						{
+							'process.env.NODE_ENV': JSON.stringify(
+								isProd ? 'production' : 'development'
+							),
+						}
+					)
+			),
 			new webpack.ProvidePlugin({
 				h: ['preact', 'h'],
 				Fragment: ['preact', 'Fragment'],
