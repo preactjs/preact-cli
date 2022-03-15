@@ -3,6 +3,8 @@ const { resolve } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');
 const { determinePort } = require('../lib/commands/watch');
+const { subject } = require('./lib/output');
+const { getServer } = require('./server');
 
 const { loadPage, waitUntilExpression } = startChrome;
 let chrome, server;
@@ -61,6 +63,23 @@ describe('preact', () => {
 		);
 
 		server.close();
+	});
+
+	it('should proxy requests when "proxy" exists in package.json', async () => {
+		const api = getServer('', 8086);
+		let app = await subject('proxy');
+
+		server = await watch(app, 8087);
+
+		let page = await loadPage(chrome, 'http://127.0.0.1:8087/');
+
+		await waitUntilExpression(
+			page,
+			`document.querySelector('h1').innerText === 'Data retrieved from proxied server: Hello World!'`
+		);
+
+		server.close();
+		api.server.close();
 	});
 });
 
