@@ -266,8 +266,9 @@ preact build --prerenderUrls src/prerender-urls.json
 If a static JSON file is too restrictive, you may want to provide a javascript file that exports your routes instead.
 Routes can be exported as a JSON string or an object and can optionally be returned from a function.
 
+> `prerender-urls.js`
+
 ```js
-// prerender-urls.js
 module.exports = [
 	{
 		url: '/',
@@ -279,8 +280,9 @@ module.exports = [
 ];
 ```
 
+> `prerender-urls.js`
+
 ```js
-// prerender-urls.js
 export default () => {
 	return [
 		{
