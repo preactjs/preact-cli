@@ -140,6 +140,7 @@
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-dev-server": "^4.7.3",
     "webpack-fix-style-only-entries": "^0.6.1",
+    "webpack-manifest-plugin": "^4.1.1",
     "webpack-merge": "^5.3.0",
     "webpack-plugin-replace": "^1.2.0",
     "which": "^2.0.2",
