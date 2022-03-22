@@ -31,4 +31,7 @@ module.exports = {
 
 	// This option allows use of a custom test runner
 	// testRunner: "jest-circus/runner",
+
+	// TODO: Restored in #1667, remove when upgrading Jest
+	testEnvironment: 'node',
 };
