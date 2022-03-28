@@ -1,4 +1,4 @@
-const { access, mkdir } = require('fs').promises;
+const { mkdir } = require('fs').promises;
 const copy = require('ncp');
 const { resolve } = require('path');
 const { promisify } = require('util');
@@ -11,11 +11,7 @@ async function tmpDir() {
 		.toString(36)
 		.replace(/[^a-z]+/g, '')
 		.substr(0, 12);
-	try {
-		await access(output);
-	} catch {
-		await mkdir(output, { recursive: true });
-	}
+	await mkdir(output, { recursive: true });
 	return resolve(output, str);
 }
 
