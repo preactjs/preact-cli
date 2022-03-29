@@ -92,7 +92,13 @@ async function command(src, argv) {
 	argv.production = toBool(argv.production);
 
 	let cwd = resolve(argv.cwd);
+
+	// we explicitly set the path as `dotenv` otherwise uses
+	// `process.cwd()` -- this would cause issues in environments
+	// like mono-repos or our test suite subjects where project root
+	// and the current directory differ.
 	require('dotenv').config({ path: resolve(cwd, '.env') });
+
 	if (argv.clean === void 0) {
 		let dest = resolve(cwd, argv.dest);
 		await promisify(rimraf)(dest);
