@@ -1,7 +1,7 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
 const { stat } = require('fs').promises;
-const { error } = require('../../util');
+const { error, esmImport, tryResolveConfig, warn } = require('../../util');
 
 const FILE = 'preact.config';
 const EXTENSIONS = ['js', 'json'];
@@ -95,24 +95,26 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 		env.config !== 'preact.config.js'
 			? { configFile: env.config, isDefault: false }
 			: await findConfig(env);
-	env.config = configFile;
-	let myConfig = resolve(env.cwd, env.config);
 
+	const cliConfig = tryResolveConfig(
+		env.cwd,
+		configFile,
+		isDefault,
+		env.verbose
+	);
+
+	if (!cliConfig) return;
+
+	let m;
 	try {
-		await stat(myConfig);
-	} catch (e) {
-		if (isDefault) return;
-		throw new Error(
-			`preact-cli config could not be loaded!\nFile ${env.config} not found.`
+		m = esmImport(cliConfig);
+	} catch (error) {
+		warn(
+			`Failed to load preact-cli config file, using default!\n${
+				env.verbose ? error.stack : error.message
+			}`
 		);
-	}
-
-	let m = require('esm')(module)(myConfig);
-
-	// The line above results in an empty object w/ Jest,
-	// so we need to do the following in order to load it:
-	if (Object.keys(m).length === 0) {
-		m = require(myConfig);
+		return;
 	}
 
 	const transformers = parseConfig((m && m.default) || m);
@@ -131,7 +133,7 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 				options
 			);
 		} catch (err) {
-			throw new Error((`Error at ${myConfig}: \n` + err && err.stack) || err);
+			throw new Error((`Error at ${cliConfig}: \n` + err && err.stack) || err);
 		}
 	}
 };
