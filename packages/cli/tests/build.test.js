@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { access, readdir, readFile } = require('fs').promises;
+const { access, readdir, readFile, writeFile } = require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
 const { snapshot } = require('./lib/utils');
@@ -245,13 +245,68 @@ describe('preact build', () => {
 		mockExit.mockRestore();
 	});
 
-	it('should produce correct push-manifest', async () => {
-		let dir = await create('default');
+	describe('Push manifest plugin', () => {
+		it('should produce correct default `push-manifest.json`', async () => {
+			let dir = await create('default');
 
-		await build(dir);
-		const manifest = await readFile(`${dir}/build/push-manifest.json`, 'utf8');
-		expect(manifest).toEqual(
-			expect.stringMatching(getRegExpFromMarkup(images.pushManifest))
-		);
+			await build(dir);
+			const manifest = await readFile(
+				`${dir}/build/push-manifest.json`,
+				'utf8'
+			);
+			expect(manifest).toEqual(
+				expect.stringMatching(getRegExpFromMarkup(images.pushManifest))
+			);
+		});
+
+		it('should produce correct default `push-manifest.json` with esm', async () => {
+			let dir = await create('default');
+
+			await build(dir, { esm: true });
+			const manifest = await readFile(
+				`${dir}/build/push-manifest.json`,
+				'utf8'
+			);
+			expect(manifest).toEqual(
+				expect.stringMatching(getRegExpFromMarkup(images.pushManifestEsm))
+			);
+		});
+
+		it('should produce correct `push-manifest.json` when expected values are missing', async () => {
+			// In this subject, there is no source CSS which means no CSS asset is output.
+			// In the past, this would result in `"undefined": { type: "style" ... }` being added to the manifest.
+			let dir = await subject('custom-webpack');
+			await build(dir);
+			const manifest = await readFile(
+				`${dir}/build/push-manifest.json`,
+				'utf8'
+			);
+			expect(manifest).not.toMatch(/"undefined"/);
+		});
+
+		// Issue #1675
+		it('should produce correct `push-manifest.json` when user configures output filenames', async () => {
+			let dir = await subject('custom-webpack');
+
+			const config = await readFile(`${dir}/preact.config.js`, 'utf8');
+			await writeFile(
+				`${dir}/preact.config.js`,
+				config.replace(
+					"config.output.filename = '[name].js'",
+					"config.output.filename = 'scripts/[name].js'"
+				)
+			);
+
+			await build(dir, { prerender: false });
+			const manifest = await readFile(
+				`${dir}/build/push-manifest.json`,
+				'utf8'
+			);
+			expect(manifest).toEqual(
+				expect.stringMatching(
+					getRegExpFromMarkup(images.pushManifestAlteredFilenames)
+				)
+			);
+		});
 	});
 });

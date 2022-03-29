@@ -1,30 +1,33 @@
+const webpack = require('webpack');
 const createLoadManifest = require('./create-load-manifest');
 
 module.exports = class PushManifestPlugin {
-	constructor(env = {}) {
-		this.isESMBuild_ = env.esm;
-	}
 	apply(compiler) {
-		compiler.hooks.emit.tap('PushManifestPlugin', compilation => {
-			const manifest = createLoadManifest(
-				compilation.assets,
-				this.isESMBuild_,
-				compilation.namedChunkGroups
-			);
+		compiler.hooks.emit.tap(
+			{
+				name: 'PushManifestPlugin',
+				stage: webpack.Compiler.PROCESS_ASSETS_STAGE_REPORT,
+			},
+			compilation => {
+				const manifest = createLoadManifest(
+					compilation.assets,
+					compilation.namedChunkGroups
+				);
 
-			let output = JSON.stringify(manifest);
-			compilation.assets['push-manifest.json'] = {
-				source() {
-					return output;
-				},
-				size() {
-					return output.length;
-				},
-			};
+				let output = JSON.stringify(manifest);
+				compilation.assets['push-manifest.json'] = {
+					source() {
+						return output;
+					},
+					size() {
+						return output.length;
+					},
+				};
 
-			return compilation;
+				return compilation;
 
-			// callback();
-		});
+				// callback();
+			}
+		);
 	}
 };

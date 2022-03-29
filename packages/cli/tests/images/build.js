@@ -15,6 +15,7 @@ exports.default = Object.assign({}, common, {
 	'ssr-build/ssr-bundle.aaacf.css.map': 2070,
 	'ssr-build/ssr-bundle.js': 11937,
 	'ssr-build/ssr-bundle.js.map': 32557,
+	'ssr-build/asset-manifest.json': 178,
 	'bundle.2da73.css': 901,
 	'bundle.44866.js': 21429,
 	'bundle.44866.js.map': 111801,
@@ -23,6 +24,7 @@ exports.default = Object.assign({}, common, {
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 	'push-manifest.json': 450,
+	'asset-manifest.json': 1074,
 	'route-home.chunk.bcb8a.css': 58,
 	'route-home.chunk.3cec8.js': 327,
 	'route-home.chunk.3cec8.js.map': 483,
@@ -42,6 +44,7 @@ exports['default-esm'] = Object.assign({}, exports.default, {
 	'route-profile.chunk.*.esm.js.map': 15392,
 	'index.html': 2193,
 	'push-manifest.json': 466,
+	'asset-manifest.json': 1106,
 });
 
 exports.sass = `
@@ -249,6 +252,58 @@ exports.pushManifest = `
 		"route-profile.chunk.\\w{5}.css":{
 			"type":"style",
 			"weight":0.9
+		}
+	}
+}
+`;
+
+exports.pushManifestEsm = `
+{
+	"/":{
+		"bundle.\\w{5}.css":{
+			"type":"style",
+			"weight":1
+		},
+		"bundle.\\w{5}.esm.js":{
+			"type":"script",
+			"weight":1
+		},
+		"route-home.chunk.\\w{5}.esm.js":{
+			"type":"script",
+			"weight":0.9
+		},
+		"route-home.chunk.\\w{5}.css":{
+			"type":"style",
+			"weight":0.9
+		}
+	},
+	"/profile":{
+		"bundle.\\w{5}.css":{
+			"type":"style",
+			"weight":1
+		},
+		"bundle.\\w{5}.esm.js":{
+			"type":"script",
+			"weight":1
+		},
+		"route-profile.chunk.\\w{5}.esm.js":{
+			"type":"script",
+			"weight":0.9
+		},
+		"route-profile.chunk.\\w{5}.css":{
+			"type":"style",
+			"weight":0.9
+		}
+	}
+}
+`;
+
+exports.pushManifestAlteredFilenames = `
+{
+	"/":{
+		"scripts/bundle.js":{
+			"type":"script",
+			"weight":1
 		}
 	}
 }
