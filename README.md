@@ -338,7 +338,7 @@ console.log(process.env.PREACT_APP_MY_VARIABLE);
 
 If your variable is not prefixed, you can still add it manually by using your `preact.config.js` (see [DefinePlugin] config in the recipes wiki).
 
-You can also set variables using a `.env` file in the root of your project:
+You can set and store variables using a `.env` file in the root of your project:
 
 > `.env`
 
