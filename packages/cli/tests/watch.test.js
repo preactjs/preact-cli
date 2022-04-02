@@ -37,9 +37,6 @@ describe('preact', () => {
 
 	it('should use a custom `.env` with prefixed environment variables', async () => {
 		let app = await create('default');
-		server = await watch(app, 8085);
-
-		let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
 
 		let header = resolve(app, './src/components/header/index.js');
 		let original = await readFile(header, 'utf8');
@@ -48,6 +45,14 @@ describe('preact', () => {
 			'<h1>{process.env.PREACT_APP_MY_VARIABLE}</h1>'
 		);
 		await writeFile(header, update);
+		await writeFile(
+			resolve(app, '.env'),
+			'PREACT_APP_MY_VARIABLE="Hello World!"'
+		);
+
+		server = await watch(app, 8085);
+
+		let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
 
 		// "Hello World!" should replace 'process.env.PREACT_APP_MY_VARIABLE'
 		await waitUntilExpression(
