@@ -309,4 +309,19 @@ describe('preact build', () => {
 			);
 		});
 	});
+
+	it('should use a custom `.env` with prefixed environment variables', async () => {
+		let dir = await subject('custom-dotenv');
+		await build(dir);
+
+		const bundleFile = (await readdir(`${dir}/build`)).find(file =>
+			/bundle\.\w{5}\.js$/.test(file)
+		);
+		const transpiledChunk = await readFile(
+			`${dir}/build/${bundleFile}`,
+			'utf8'
+		);
+		// "Hello World!" should replace 'process.env.PREACT_APP_MY_VARIABLE'
+		expect(transpiledChunk.includes('console.log("Hello World!")')).toBe(true);
+	});
 });

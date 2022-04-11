@@ -2,6 +2,7 @@ const runWebpack = require('../lib/webpack/run-webpack');
 const { isPortFree, toBool, warn } = require('../util');
 const { validateArgs } = require('./validate-args');
 const getPort = require('get-port');
+const { resolve } = require('path');
 
 const options = [
 	{
@@ -104,6 +105,14 @@ async function command(src, argv) {
 	if (argv.sw) {
 		argv.sw = toBool(argv.sw);
 	}
+
+	let cwd = resolve(argv.cwd);
+
+	// we explicitly set the path as `dotenv` otherwise uses
+	// `process.cwd()` -- this would cause issues in environments
+	// like mono-repos or our test suite subjects where project root
+	// and the current directory differ.
+	require('dotenv').config({ path: resolve(cwd, '.env') });
 
 	argv.port = await determinePort(argv.port);
 

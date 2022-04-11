@@ -34,6 +34,34 @@ describe('preact', () => {
 
 		server.close();
 	});
+
+	it('should use a custom `.env` with prefixed environment variables', async () => {
+		let app = await create('default');
+
+		let header = resolve(app, './src/components/header/index.js');
+		let original = await readFile(header, 'utf8');
+		let update = original.replace(
+			'<h1>Preact App</h1>',
+			'<h1>{process.env.PREACT_APP_MY_VARIABLE}</h1>'
+		);
+		await writeFile(header, update);
+		await writeFile(
+			resolve(app, '.env'),
+			'PREACT_APP_MY_VARIABLE="Hello World!"'
+		);
+
+		server = await watch(app, 8085);
+
+		let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
+
+		// "Hello World!" should replace 'process.env.PREACT_APP_MY_VARIABLE'
+		await waitUntilExpression(
+			page,
+			`document.querySelector('header > h1').innerText === 'Hello World!'`
+		);
+
+		server.close();
+	});
 });
 
 describe('should determine the correct port', () => {
