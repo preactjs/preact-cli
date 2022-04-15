@@ -48,7 +48,7 @@ async function handlePrerenderError(err, env, stack, entry) {
 	let sourceMapContent, position, sourcePath, sourceLines, sourceCodeHighlight;
 
 	try {
-		sourceMapContent = JSON.parse(readFileSync(`${entry}.map`));
+		sourceMapContent = JSON.parse(readFileSync(`${entry}.map`, 'utf-8'));
 	} catch (err) {
 		process.stderr.write(red(`Unable to read sourcemap: ${entry}.map\n`));
 	}
@@ -100,17 +100,29 @@ async function handlePrerenderError(err, env, stack, entry) {
 
 	process.stderr.write('\n');
 	process.stderr.write(red(`${errorMessage}\n`));
-	process.stderr.write(`method: ${methodName}\n`);
-	if (sourceMapContent) {
-		process.stderr.write(
-			`at: ${sourcePath}:${position.line}:${position.column}\n`
-		);
-		process.stderr.write('\n');
-		process.stderr.write('Source code:\n\n');
-		process.stderr.write(sourceCodeHighlight);
-		process.stderr.write('\n');
+	// check if we have methodName (ie, the error originated in user code)
+	if (methodName) {
+		process.stderr.write(`method: ${methodName}\n`);
+		if (sourceMapContent & sourceCodeHighlight) {
+			process.stderr.write(
+				`at: ${sourcePath}:${position.line}:${position.column}\n`
+			);
+			process.stderr.write('\n');
+			process.stderr.write('Source code:\n\n');
+			process.stderr.write(sourceCodeHighlight);
+			process.stderr.write('\n');
+		} else {
+			process.stderr.write('\n');
+			process.stderr.write('Stack:\n\n');
+			process.stderr.write(JSON.stringify(stack, null, 4) + '\n');
+		}
 	} else {
-		process.stderr.write(stack.toString() + '\n');
+		process.stderr.write(
+			yellow(
+				'Cannot determine error position. This most likely means it originated in node_modules.'
+			)
+		);
+		process.stderr.write('\n\n');
 	}
 	process.stderr.write(
 		`This ${
@@ -118,21 +130,21 @@ async function handlePrerenderError(err, env, stack, entry) {
 		} caused by using DOM or Web APIs.\n`
 	);
 	process.stderr.write(
-		`Pre-render runs in node and has no access to globals available in browsers.\n\n`
+		'Pre-render runs in node and has no access to globals available in browsers.\n\n'
 	);
 	process.stderr.write(
-		`Consider wrapping code producing error in: 'if (typeof window !== "undefined") { ... }'\n`
+		'Consider wrapping code producing error in: "if (typeof window !== "undefined") { ... }"\n'
 	);
 
 	if (methodName === 'componentWillMount') {
-		process.stderr.write(`or place logic in 'componentDidMount' method.\n`);
+		process.stderr.write('or place logic in "componentDidMount" method.\n');
 	}
 	process.stderr.write('\n');
 	process.stderr.write(
-		`Alternatively use 'preact build --no-prerender' to disable prerendering.\n\n`
+		'Alternatively use "preact build --no-prerender" to disable prerendering.\n\n'
 	);
 	process.stderr.write(
-		'See https://github.com/developit/preact-cli#pre-rendering for further information.'
+		'See https://github.com/preactjs/preact-cli#pre-rendering for further information.\n\n'
 	);
 	process.exit(1);
 }
