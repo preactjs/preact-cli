@@ -90,13 +90,13 @@ describe('preact build', () => {
 		// Remove when https://github.com/preactjs/enzyme-adapter-preact-pure/issues/161 is resolved
 		shell.exec('rm tsconfig.json');
 
-		expect(() => build(dir)).not.toThrow();
+		await expect(build(dir)).resolves.not.toThrow();
 	});
 
 	it('should patch global location object', async () => {
 		let dir = await subject('location-patch');
 
-		expect(() => build(dir)).not.toThrow();
+		await expect(build(dir)).resolves.not.toThrow();
 	});
 
 	it('should copy resources from static to build directory', async () => {
@@ -349,9 +349,9 @@ describe('preact build', () => {
 
 			await rename(
 				join(dir, 'preact.config.js'),
-				join(dir, 'preact-config.js')
+				join(dir, 'renamed-config.js')
 			);
-			await build(dir, { config: 'preact-config.js' });
+			await build(dir, { config: 'renamed-config.js' });
 			expect(await access(join(dir, 'build/bundle.js'))).toBeUndefined();
 		});
 
