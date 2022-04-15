@@ -107,7 +107,7 @@ async function command(src, argv) {
 	let stats = await runWebpack(argv, false);
 
 	if (argv.json) {
-		await runWebpack.writeJsonStats(stats);
+		await runWebpack.writeJsonStats(cwd, stats);
 	}
 }
 

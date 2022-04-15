@@ -57,23 +57,6 @@ exports.sass = `
 </body>
 `;
 
-exports.sideEffectCss = `
-<head>
-	<meta charset="utf-8">
-	<title>side-effect-css<\\/title>
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<meta name="mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<link rel="apple-touch-icon" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
-	<link rel="manifest" href="\\/manifest\\.json">
-	<style>h1{background:#673ab8}<\\/style>
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
-	<noscript>
-		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
-	</noscript>
-<\\/head>
-`;
-
 exports.prerender = {};
 
 exports.prerender.heads = {};
@@ -130,10 +113,10 @@ exports.prerender.heads.custom = `
 
 exports.preload = {};
 
-exports.preload.head = `
+exports.preload.true = `
 <head>
 	<meta charset=\\"utf-8\\">
-	<title>preact-prerender<\\/title>
+	<title>preact-preload-chunks<\\/title>
 	<meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\">
 	<meta name=\\"mobile-web-app-capable\\" content=\\"yes\\">
 	<meta name=\\"apple-mobile-web-app-capable\\" content=\\"yes\\">
@@ -142,6 +125,23 @@ exports.preload.head = `
 	<link rel=\\"preload\\" href=\\"\\/bundle\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
 	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
+	<style>html{padding:0}<\\/style>
+	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
+	<noscript>
+		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
+	</noscript>
+</head>
+`;
+
+exports.preload.false = `
+<head>
+	<meta charset=\\"utf-8\\">
+	<title>preact-preload-chunks<\\/title>
+	<meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\">
+	<meta name=\\"mobile-web-app-capable\\" content=\\"yes\\">
+	<meta name=\\"apple-mobile-web-app-capable\\" content=\\"yes\\">
+	<link rel=\\"apple-touch-icon\\" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
+	<link rel=\\"manifest\\" href=\\"\\/manifest\\.json\\">
 	<style>html{padding:0}<\\/style>
 	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
 	<noscript>
@@ -200,7 +200,7 @@ exports.template = `
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>preact-webpack</title>
+		<title>preact-custom-template</title>
 		<meta name="example-meta" content="Hello World">
 		<link rel="manifest" href="/manifest.json">
 	</head>
@@ -307,4 +307,27 @@ exports.pushManifestAlteredFilenames = `
 		}
 	}
 }
+`;
+
+exports.publicPath = `
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>preact-public-path</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<link rel="apple-touch-icon" href="/example-path/assets/icons/apple-touch-icon.png">
+		<link rel="manifest" href="/example-path/manifest.json">
+		<link href="/example-path/bundle.\\w{5}.css" rel="stylesheet">
+		<style></style>
+	</head>
+	<body>
+		<h1>Public path test</h1>
+		<script type="__PREACT_CLI_DATA__">%7B%22preRenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
+		<script defer="defer" src="/example-path/bundle.\\w{5}.js"></script>
+		<script nomodule="" src="/example-path/polyfills.\\w{5}.js"></script>
+	</body>
+</html>
 `;
