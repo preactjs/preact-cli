@@ -32,9 +32,7 @@ module.exports = function (env, params) {
 		}));
 		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
-		let stack = stackTrace
-			.parse(err)
-			.filter((s) => s.getFileName() === entry)[0];
+		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
 		if (!stack) {
 			throw err;
 		}
@@ -50,13 +48,13 @@ async function handlePrerenderError(err, env, stack, entry) {
 	let sourceMapContent, position, sourcePath, sourceLines, sourceCodeHighlight;
 
 	try {
-		sourceMapContent = JSON.parse(readFileSync(`${entry}.map`));
+		sourceMapContent = JSON.parse(readFileSync(`${entry}.map`, 'utf-8'));
 	} catch (err) {
 		process.stderr.write(red(`Unable to read sourcemap: ${entry}.map\n`));
 	}
 
 	if (sourceMapContent) {
-		await SourceMapConsumer.with(sourceMapContent, null, (consumer) => {
+		await SourceMapConsumer.with(sourceMapContent, null, consumer => {
 			position = consumer.originalPositionFor({
 				line: stack.getLineNumber(),
 				column: stack.getColumnNumber(),
@@ -132,21 +130,21 @@ async function handlePrerenderError(err, env, stack, entry) {
 		} caused by using DOM or Web APIs.\n`
 	);
 	process.stderr.write(
-		`Pre-render runs in node and has no access to globals available in browsers.\n\n`
+		'Pre-render runs in node and has no access to globals available in browsers.\n\n'
 	);
 	process.stderr.write(
-		`Consider wrapping code producing error in: 'if (typeof window !== "undefined") { ... }'\n`
+		'Consider wrapping code producing error in: "if (typeof window !== "undefined") { ... }"\n'
 	);
 
 	if (methodName === 'componentWillMount') {
-		process.stderr.write(`or place logic in 'componentDidMount' method.\n`);
+		process.stderr.write('or place logic in "componentDidMount" method.\n');
 	}
 	process.stderr.write('\n');
 	process.stderr.write(
-		`Alternatively use 'preact build --no-prerender' to disable prerendering.\n\n`
+		'Alternatively use "preact build --no-prerender" to disable prerendering.\n\n'
 	);
 	process.stderr.write(
-		'See https://github.com/developit/preact-cli#pre-rendering for further information.'
+		'See https://github.com/preactjs/preact-cli#pre-rendering for further information.\n\n'
 	);
 	process.exit(1);
 }
