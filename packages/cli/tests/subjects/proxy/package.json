@@ -1,0 +1,5 @@
+{
+  "private": true,
+  "name": "preact-proxy",
+  "proxy": "http://localhost:8086"
+}

@@ -278,6 +278,43 @@ function isProd(env) {
 	return prodConfig;
 }
 
+function setupProxy(target) {
+	if (!target) {
+		return;
+	}
+
+	const errorTemplate = warn =>
+		`Invalid proxy configuration in package.json. ${warn} Skipping and using default.`;
+
+	if (typeof target !== 'string') {
+		warn(errorTemplate('If provided, "proxy" must be a string.'));
+		return;
+	} else if (!/https?:\/\//.test(target)) {
+		warn(
+			errorTemplate(
+				'If provided, "proxy" must start with "http://" or "https://".'
+			)
+		);
+		return;
+	}
+
+	return {
+		target,
+		logLevel: 'warn',
+		context: (pathname, req) => {
+			return (
+				req.method != 'GET' ||
+				(!(/^\/?assets/.test(pathname) || pathname.startsWith('/ws')) &&
+					req.headers.accept.indexOf('html') === -1)
+			);
+		},
+		secure: false,
+		changeOrigin: true,
+		ws: true,
+		xfwd: true,
+	};
+}
+
 /**
  * @returns {import('webpack').Configuration}
  */
@@ -315,6 +352,7 @@ function isDev(env) {
 				logging: 'none',
 				overlay: false,
 			},
+			proxy: setupProxy(env.pkg.proxy),
 		},
 	};
 }
