@@ -89,7 +89,7 @@ describe('should determine the correct port', () => {
 		expect(await determinePort('3999')).toBe(3999);
 	});
 
-	it('should use $PORT in the abscence of --port', async () => {
+	it('should use $PORT in the absence of --port', async () => {
 		process.env.PORT = '4001';
 		expect(await determinePort()).toBe(4001);
 	});
@@ -105,14 +105,10 @@ describe('should determine the correct port', () => {
 	});
 
 	it('should return an error if requested --port is taken', async () => {
-		await Promise.all([determinePort(4003), determinePort(4003)]).catch(
-			error => {
-				expect(error.message).toMatch(
-					new RegExp(
-						/^Another process is already running on port 4003. Please choose a different port./g
-					)
-				);
-			}
+		expect(
+			Promise.all([determinePort(4003), determinePort(4003)])
+		).rejects.toThrow(
+			'Another process is already running on port 4003. Please choose a different port.'
 		);
 	});
 
