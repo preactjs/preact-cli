@@ -1,7 +1,7 @@
 import { registerRoute, setCatchHandler } from 'workbox-routing';
 import { precacheAndRoute, getCacheKeyForURL } from 'workbox-precaching';
 import { isNav } from './utils';
-import { NETWORK_HANDLER, PRECACHING_OPTIONS } from './contants';
+import { NETWORK_HANDLER, PRECACHING_OPTIONS } from './constants';
 
 export function getFiles() {
 	return self.__WB_MANIFEST;

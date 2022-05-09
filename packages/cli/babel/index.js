@@ -21,7 +21,7 @@ var defaultBrowserListDev = [
 	'ios_saf >= 10.3',
 	'edge >= 16',
 	'opera >= 48',
-	'samsung >= 8.2'
+	'samsung >= 8.2',
 ];
 
 // preact-cli babel configs
