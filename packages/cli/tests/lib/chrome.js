@@ -12,7 +12,7 @@ module.exports.waitUntilExpression = async function (page, expression) {
 			`Waiting for ${expression}`
 		);
 
-		return result; // && result.value;
+		return result;
 	};
 
 	await waitUntil(evaluate, `Waiting for ${expression} timed out!`);
