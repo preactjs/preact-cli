@@ -184,7 +184,7 @@ describe('preact build', () => {
 		);
 
 		// "Hello World!" should replace 'process.env.PREACT_APP_MY_VARIABLE'
-		expect(transpiledChunk.includes('Hello World!')).toBe(true);
+		expect(transpiledChunk.includes('"Hello World!"')).toBe(true);
 		expect(transpiledChunk.includes('PREACT_APP_MY_VARIABLE')).toBe(false);
 	});
 
