@@ -1,5 +1,3 @@
-// Is this file used/required? If not, can it be removed?
-
 var isProd = (process.env.BABEL_ENV || process.env.NODE_ENV) === 'production';
 /**
  * test env detection is used to default mode for
