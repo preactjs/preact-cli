@@ -44,36 +44,11 @@ jobs:
           LIGHTHOUSE_CHROMIUM_PATH: 'which google-chrome-stable'
         run: npm run test
 
-  pnpTest:
-    name: PnPTest
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
-
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-
-      - name: Run PnP test
-        run: |
-          git clone https://github.com/preactjs-templates/default.git default
-          cd default/template
-          touch yarn.lock
-          echo $(cat package.json | jq '.name = "pnp-test"') > package.json
-          yarn set version 2
-          yarn config set pnpFallbackMode none
-          yarn config set compressionLevel 0
-          yarn link -A -p ../..
-          yarn build
-
   ci-success:
     name: ci
     if: ${{ success() }}
     needs:
       - test
-      - pnpTest
     runs-on: ubuntu-latest
     steps:
       - name: CI succeeded
