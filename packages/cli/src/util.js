@@ -26,7 +26,7 @@ exports.trim = function (str) {
 };
 
 exports.info = function (text, code) {
-	process.stderr.write(symbols.info + blue(' INFO ') + text + '\n');
+	process.stdout.write(symbols.info + blue(' INFO ') + text + '\n');
 	code && process.exit(code);
 };
 

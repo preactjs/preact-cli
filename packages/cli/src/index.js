@@ -13,8 +13,7 @@ if (
 		.localeCompare(min.match(/\d+/g).join('.'), 'en', { numeric: true }) === -1
 ) {
 	error(
-		`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!`,
-		1
+		`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!\n`
 	);
 }
 
@@ -28,33 +27,93 @@ process.on('unhandledRejection', err => {
 	error(err.stack || err.message);
 });
 
-let prog = sade('preact').version(pkg.version);
+const prog = sade('preact').version(pkg.version);
 
-const buildCommand = prog
+prog
 	.command('build [src]')
 	.describe(
 		'Create a production build. You can disable "default: true" flags by prefixing them with --no-<option>'
-	);
-commands.buildOptions.forEach(option => {
-	buildCommand.option(option.name, option.description, option.default);
-});
-buildCommand.action(commands.build);
+	)
+	.option('--src', 'Specify source directory', 'src')
+	.option('--dest', 'Specify output directory', 'build')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--esm', 'Builds ES-2015 bundles for your code', false)
+	.option('--sw', 'Generate and attach a Service Worker', true)
+	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
+	.option('--json', 'Generate build stats for bundle analysis', false)
+	.option(
+		'--template',
+		'Path to custom HTML template (default "src/template.html")'
+	)
+	.option(
+		'--preload',
+		'Adds preload links to the HTML for required resources',
+		false
+	)
+	.option(
+		'--analyze',
+		'Launch interactive Analyzer to inspect production bundle(s)',
+		false
+	)
+	.option('--prerender', 'Renders route(s) into static HTML', true)
+	.option(
+		'--prerenderUrls',
+		'Path to prerendered routes config',
+		'prerender-urls.json'
+	)
+	.option('--brotli', 'Builds brotli compressed bundles of JS resources', false)
+	.option('--inline-css', 'Adds critical CSS to the prerendered HTML', true)
+	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
+	.option('-v, --verbose', 'Verbose output', false)
+	.action(commands.build);
 
-const createCommand = prog
+prog
 	.command('create [template] [dest]')
-	.describe('Create a new application');
-commands.createOptions.forEach(option => {
-	createCommand.option(option.name, option.description, option.default);
-});
-createCommand.action(commands.create);
+	.describe('Create a new application')
+	.option('--name', 'The application name')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--force', 'Force destination output; will override!', false)
+	.option('--install', 'Install dependencies', true)
+	.option(
+		'--yarn',
+		'Use `yarn` instead of `npm` to install dependencies',
+		false
+	)
+	.option('--git', 'Initialize Git repository', false)
+	.option('--license', 'License type', 'MIT')
+	.option('-v, --verbose', 'Verbose output', false)
+	.action(commands.create);
 
-const watchCommand = prog
+prog
 	.command('watch [src]')
-	.describe('Start a live-reload server for development');
-commands.watchOptions.forEach(option => {
-	watchCommand.option(option.name, option.description, option.default);
-});
-watchCommand.action(commands.watch);
+	.describe('Start a live-reload server for development')
+	.option('--src', 'Specify source directory', 'src')
+	.option('--cwd', 'A directory to use instead of $PWD', '.')
+	.option('--esm', 'Builds ES-2015 bundles for your code', false)
+	.option('--clear', 'Clears the console when the devServer updates', true)
+	.option('--sw', 'Generate and attach a Service Worker')
+	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
+	.option('--rhl', 'Deprecated, use --refresh instead', false)
+	.option('--refresh', 'Enables experimental prefresh functionality', false)
+	.option('--json', 'Generate build stats for bundle analysis', false)
+	.option(
+		'--template',
+		'Path to custom HTML template (default "src/template.html")'
+	)
+	.option('--https', 'Run server with HTTPS protocol')
+	.option('--key', 'Path to PEM key for custom SSL certificate')
+	.option('--cert', 'Path to custom SSL certificate')
+	.option('--cacert', 'Path to optional CA certificate override')
+	.option('--prerender', 'Render route(s) into static HTML (first run only)')
+	.option(
+		'--prerenderUrls',
+		'Path to prerendered routes config',
+		'prerender-urls.json'
+	)
+	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
+	.option('-H, --host', 'Set server hostname', '0.0.0.0')
+	.option('-p, --port', 'Set server port (default 8080)')
+	.action(commands.watch);
 
 prog.command('list').describe('List official templates').action(commands.list);
 
@@ -62,7 +121,6 @@ prog
 	.command('info')
 	.describe('Print out debugging information about the local environment')
 	.action(() => {
-		process.stdout.write('\nEnvironment Info:');
 		envinfo
 			.run({
 				System: ['OS', 'CPU'],
@@ -77,7 +135,14 @@ prog
 				],
 				npmGlobalPackages: ['preact-cli'],
 			})
-			.then(info => process.stdout.write(`${info}\n`));
+			.then(info => process.stdout.write(`\nEnvironment Info:${info}\n`));
 	});
 
-prog.parse(process.argv);
+prog.parse(process.argv, {
+	unknown: arg => {
+		const cmd = process.argv[2];
+		error(
+			`Invalid argument '${arg}' passed to ${cmd}. Please refer to 'preact ${cmd} --help' for the full list of options.\n`
+		);
+	},
+});
