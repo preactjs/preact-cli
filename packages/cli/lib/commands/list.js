@@ -11,7 +11,8 @@ module.exports = async function () {
 		process.stdout.write('\n');
 		info('Available official templates: \n');
 
-		repos.map(repo => {
+		repos.forEach(repo => {
+			if (repo.name === 'material') return;
 			const description = repo.description ? ` - ${repo.description}` : '';
 			process.stdout.write(
 				`  ⭐️  ${bold(magenta(repo.name))}${description} \n`
