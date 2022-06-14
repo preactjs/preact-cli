@@ -11,12 +11,14 @@ module.exports = async function () {
 		process.stdout.write('\n');
 		info('Available official templates: \n');
 
-		repos.map(repo => {
-			const description = repo.description ? ` - ${repo.description}` : '';
-			process.stdout.write(
-				`  ⭐️  ${bold(magenta(repo.name))}${description} \n`
-			);
-		});
+		repos
+			.filter(repo => !repo.archived)
+			.forEach(repo => {
+				const description = repo.description ? ` - ${repo.description}` : '';
+				process.stdout.write(
+					`  ⭐️  ${bold(magenta(repo.name))}${description} \n`
+				);
+			});
 
 		process.stdout.write('\n');
 	} catch (err) {
