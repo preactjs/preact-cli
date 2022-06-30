@@ -332,6 +332,7 @@ function isDev(env) {
 
 		devServer: {
 			hot: true,
+			liveReload: !env.refresh,
 			compress: true,
 			devMiddleware: {
 				publicPath: '/',
