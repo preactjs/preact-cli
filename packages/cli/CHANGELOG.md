@@ -1,5 +1,31 @@
 # preact-cli
 
+## 3.4.0
+
+### Minor Changes
+
+- [#1674](https://github.com/preactjs/preact-cli/pull/1674) [`0346549`](https://github.com/preactjs/preact-cli/commit/0346549a2a42b7cb1edf48df5871c47a621df57d) Thanks [@rschristian](https://github.com/rschristian)! - Supports consuming "proxy" from package.json to proxy API requests in watch mode
+
+* [#1671](https://github.com/preactjs/preact-cli/pull/1671) [`8d3bd42`](https://github.com/preactjs/preact-cli/commit/8d3bd42759c72ed0cf2f7b8e6be11e109090c2e9) Thanks [@rschristian](https://github.com/rschristian)! - Any environment variables prefixed with 'PREACT*APP*' will automatically be available for reference and use in your application without having to configure `DefinePlugin` any more. Furthermore, if a `.env` file exists in the root of your application, any variables it defines will automatically be available for use.
+
+  Huge shout out to [robinvdvleuten](https://github.com/robinvdvleuten) who provided this functionality through the [`preact-cli-plugin-env-vars`](https://github.com/robinvdvleuten/preact-cli-plugin-env-vars) package in the past.
+
+### Patch Changes
+
+- [#1667](https://github.com/preactjs/preact-cli/pull/1667) [`a56d904`](https://github.com/preactjs/preact-cli/commit/a56d904ee0a213109a0e6090ab4e8e575b382001) Thanks [@rschristian](https://github.com/rschristian)! - Allows users to author prerender-urls.js as ESM once again
+
+* [#1693](https://github.com/preactjs/preact-cli/pull/1693) [`6385ec1`](https://github.com/preactjs/preact-cli/commit/6385ec1ce19f3b0b196b7dd5370b5694b34986c2) Thanks [@rschristian](https://github.com/rschristian)! - Bumps dependencies to latest versions where possible and applicable.
+
+- [#1680](https://github.com/preactjs/preact-cli/pull/1680) [`fcd0375`](https://github.com/preactjs/preact-cli/commit/fcd0375a947b9d7778fb4a393999468fc48ad79f) Thanks [@rschristian](https://github.com/rschristian)! - Fixed bug in push-manifest that would result in undefined entries
+
+* [#1670](https://github.com/preactjs/preact-cli/pull/1670) [`7afd8bb`](https://github.com/preactjs/preact-cli/commit/7afd8bbf979cb36f1a3dd3b29de2f3db8368de48) Thanks [@rschristian](https://github.com/rschristian)! - Corrects 'build --json' ouput location and 'apple-touch-icon' will respect the publicPath automatically
+
+- [#1700](https://github.com/preactjs/preact-cli/pull/1700) [`a60f8df`](https://github.com/preactjs/preact-cli/commit/a60f8df8e87935f3b3e03a2bb4aecda801568c83) Thanks [@rschristian](https://github.com/rschristian)! - Removes the archived & non-recommended 'material' template from 'preact list' output
+
+* [#1426](https://github.com/preactjs/preact-cli/pull/1426) [`7d33cd1`](https://github.com/preactjs/preact-cli/commit/7d33cd1380b5dc7d4b4b970eceabfc8f126da1af) Thanks [@VanTanev](https://github.com/VanTanev)! - Improves prerender error message when offending use of browser globals cannot be found
+
+- [#1705](https://github.com/preactjs/preact-cli/pull/1705) [`f9ef9b1`](https://github.com/preactjs/preact-cli/commit/f9ef9b1d7de50d2e15ea53a51ca07b8a58345f2c) Thanks [@rschristian](https://github.com/rschristian)! - Fixes HMR / `--refresh` flag in watch mode
+
 ## 3.3.5
 
 ### Patch Changes
