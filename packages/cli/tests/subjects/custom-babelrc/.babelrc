@@ -4,7 +4,7 @@
 			"@babel/preset-env",
 			{
 				"bugfixes": true,
-				"targets": "last 1 Chrome versions"
+				"targets": "ie 11"
 			}
 		]
 	]

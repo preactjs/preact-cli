@@ -22,11 +22,6 @@ const options = [
 		default: '.',
 	},
 	{
-		name: '--esm',
-		description: 'Builds ES-2015 bundles for your code',
-		default: true,
-	},
-	{
 		name: '--sw',
 		description: 'Generate and attach a Service Worker',
 		default: true,

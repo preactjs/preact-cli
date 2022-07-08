@@ -4,15 +4,11 @@
 		<%= encodeURI(JSON.stringify(cli.CLI_DATA)) %>
 	</script>
 <% } %>
-<% if (htmlWebpackPlugin.files.js.filter(entry => entry.match(/bundle(\.\w{5})?.esm.js$/)).length > 0) { %>
-	<script crossorigin="anonymous" src="<%= htmlWebpackPlugin.files.js.filter(entry => entry.match(/bundle(\.\w{5})?.esm.js$/))[0] %>" type="module"></script>
-	<%
-		/*Fetch and Promise polyfills are not needed for browsers that support type=module
-		Please re-evaluate below line if adding more polyfills.*/
-	%>
-	<script nomodule src="<%= cli.entrypoints['polyfills'] %>"></script>
-	<script nomodule defer src="<%= cli.entrypoints['bundle'] %>"></script>
-<% } else { %>
-	<script <%= htmlWebpackPlugin.options.scriptLoading %>  src="<%= cli.entrypoints['bundle'] %>"></script>
-	<script nomodule src="<%= cli.entrypoints['polyfills'] %>"></script>
-<% } %>
+<script crossorigin="anonymous" src="<%= cli.entrypoints['bundle'] %>" type="module"></script>
+<% /*
+       Fetch and Promise polyfills are not needed for browsers that support type=module
+       Please re-evaluate below line if adding more polyfills.
+*/ %>
+<script nomodule src="<%= cli.entrypoints['dom-polyfills'] %>"></script>
+<script nomodule src="<%= htmlWebpackPlugin.files.publicPath + 'es-polyfills.legacy.js'%>"></script>
+<script nomodule defer src="<%= cli.entrypoints['bundle'].replace(/\.js$/, '.legacy.js') %>"></script>

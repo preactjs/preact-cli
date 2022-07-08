@@ -1,9 +1,4 @@
-const common = {
-	'polyfills.1ea90.js': 6426,
-	'polyfills.1ea90.js.map': 21668,
-};
-
-exports.default = Object.assign({}, common, {
+exports.default = {
 	'assets/icons/android-chrome-192x192.png': 14058,
 	'assets/icons/android-chrome-512x512.png': 51484,
 	'assets/icons/apple-touch-icon.png': 12746,
@@ -11,44 +6,49 @@ exports.default = Object.assign({}, common, {
 	'assets/icons/favicon-32x32.png': 1487,
 	'assets/icons/mstile-150x150.png': 9050,
 	'assets/favicon.ico': 15086,
-	'ssr-build/ssr-bundle.89e23.css': 1281,
-	'ssr-build/ssr-bundle.89e23.css.map': 2070,
-	'ssr-build/ssr-bundle.js': 11937,
-	'ssr-build/ssr-bundle.js.map': 32557,
-	'ssr-build/asset-manifest.json': 178,
-	'bundle.259c5.css': 901,
-	'bundle.fcca3.js': 21429,
-	'bundle.fcca3.js.map': 111801,
+
+	'ssr-build/ssr-bundle.77c49.css': 1281,
+	'ssr-build/ssr-bundle.77c49.css.map': 2070,
+	'ssr-build/ssr-bundle.js': 10453,
+	'ssr-build/ssr-bundle.js.map': 30625,
+	'ssr-build/asset-manifest.json': 82,
+
+	'bundle.948a7.js': 21323,
+	'bundle.948a7.js.map': 85534,
+	'bundle.948a7.legacy.js': 22514,
+	'bundle.948a7.legacy.js.map': 106422,
+	'bundle.9bde9.css': 945,
+	'bundle.9bde9.css.map': 1758,
+
+	'dom-polyfills.f6a89.legacy.js': 5252,
+	'dom-polyfills.f6a89.legacy.js.map': 18836,
+	'es-polyfills.legacy.js': 42540,
+
 	'favicon.ico': 15086,
-	'index.html': 2034,
+	'index.html': 2263,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 	'push-manifest.json': 450,
-	'asset-manifest.json': 1074,
-	'route-home.chunk.df08e.css': 58,
-	'route-home.chunk.85051.js': 327,
-	'route-home.chunk.85051.js.map': 483,
-	'route-profile.chunk.7bcae.css': 61,
-	'route-profile.chunk.6d480.js': 3514,
-	'route-profile.chunk.6d480.js.map': 15454,
-});
-exports['default-esm'] = Object.assign({}, exports.default, {
-	'bundle.*.esm.js': 21135,
-	'bundle.*.esm.js.map': 111771,
-	'polyfills.*.esm.js': 5721,
-	'polyfills.*.esm.js.map': 21633,
-	'route-home.chunk.*.esm.js': 316,
-	'route-home.chunk.*.esm.js.map': 486,
-	'route-profile.chunk.*.esm.js': 2448,
-	'route-profile.chunk.*.esm.js.map': 15392,
-	'index.html': 2193,
-	'push-manifest.json': 466,
-	'asset-manifest.json': 1106,
-});
+	'asset-manifest.json': 943,
+
+	'route-home.chunk.25907.js': 306,
+	'route-home.chunk.25907.js.map': 1615,
+	'route-home.chunk.25907.legacy.js': 363,
+	'route-home.chunk.25907.legacy.js.map': 1913,
+	'route-home.chunk.f1c94.css': 112,
+	'route-home.chunk.f1c94.css.map': 224,
+
+	'route-profile.chunk.e5dd7.js': 3121,
+	'route-profile.chunk.e5dd7.js.map': 12212,
+	'route-profile.chunk.e5dd7.legacy.js': 3266,
+	'route-profile.chunk.e5dd7.legacy.js.map': 15616,
+	'route-profile.chunk.e0d39.css': 118,
+	'route-profile.chunk.e0d39.css.map': 231,
+};
 
 exports.sass = `
 <body>
-	<div class="background__2mKGE">
+	<div class="background__sL1ip">
 		<h1>Header on background</h1>
 		<p>Paragraph on background</p>
 	</div>
@@ -209,8 +209,10 @@ exports.template = `
 		<script defer="defer" src="/bundle.\\w{5}.js"></script>
 		<h2>This is an app with custom template</h2>
 		<script type="__PREACT_CLI_DATA__">%7B%22preRenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
-		<script defer="defer" src="/bundle.\\w{5}.js"></script>
-		<script nomodule="" src="/polyfills.\\w{5}.js"></script>
+		<script crossorigin="anonymous" src="/bundle.\\w{5}.js" type="module"></script>
+		<script nomodule="" src="/dom-polyfills.\\w{5}.legacy.js"></script>
+		<script nomodule="" src="/es-polyfills.legacy.js"></script>
+		<script nomodule="" defer="defer" src="/bundle.\\w{5}.legacy.js"></script>
 	</body>
 </html>
 `;
@@ -256,47 +258,6 @@ exports.pushManifest = `
 }
 `;
 
-exports.pushManifestEsm = `
-{
-	"/":{
-		"bundle.\\w{5}.css":{
-			"type":"style",
-			"weight":1
-		},
-		"bundle.\\w{5}.esm.js":{
-			"type":"script",
-			"weight":1
-		},
-		"route-home.chunk.\\w{5}.esm.js":{
-			"type":"script",
-			"weight":0.9
-		},
-		"route-home.chunk.\\w{5}.css":{
-			"type":"style",
-			"weight":0.9
-		}
-	},
-	"/profile":{
-		"bundle.\\w{5}.css":{
-			"type":"style",
-			"weight":1
-		},
-		"bundle.\\w{5}.esm.js":{
-			"type":"script",
-			"weight":1
-		},
-		"route-profile.chunk.\\w{5}.esm.js":{
-			"type":"script",
-			"weight":0.9
-		},
-		"route-profile.chunk.\\w{5}.css":{
-			"type":"style",
-			"weight":0.9
-		}
-	}
-}
-`;
-
 exports.pushManifestAlteredFilenames = `
 {
 	"/":{
@@ -324,8 +285,10 @@ exports.publicPath = `
 	<body>
 		<h1>Public path test</h1>
 		<script type="__PREACT_CLI_DATA__">%7B%22preRenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
-		<script defer="defer" src="/example-path/bundle.\\w{5}.js"></script>
-		<script nomodule="" src="/example-path/polyfills.\\w{5}.js"></script>
+		<script crossorigin="anonymous" src="/example-path/bundle.\\w{5}.js" type="module"></script>
+		<script nomodule="" src="/example-path/dom-polyfills.\\w{5}.legacy.js"></script>
+		<script nomodule="" src="/example-path/es-polyfills.legacy.js"></script>
+		<script nomodule="" defer="defer" src="/example-path/bundle.\\w{5}.legacy.js"></script>
 	</body>
 </html>
 `;

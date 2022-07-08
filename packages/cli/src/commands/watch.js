@@ -16,11 +16,6 @@ const options = [
 		default: '.',
 	},
 	{
-		name: '--esm',
-		description: 'Builds ES-2015 bundles for your code',
-		default: false,
-	},
-	{
 		name: '--clear',
 		description: 'Clear the console',
 		default: true,
