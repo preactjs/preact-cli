@@ -38,7 +38,7 @@ exports.create = async function create(repo, dest, argv) {
 
 	await mkdir(resolve(cwd, dest), { recursive: true });
 
-	// Attempt to fetch the `template`
+	// Attempt to fetch the template
 	let archive = await gittar.fetch(repo).catch(err => {
 		err = err || { message: 'An error occured while fetching template.' };
 
@@ -55,7 +55,7 @@ exports.create = async function create(repo, dest, argv) {
 		color: 'magenta',
 	}).start();
 
-	// Extract files = require(`archive` to `target`
+	// Extract files from `archive` to `target`
 	// TODO: read & respond to meta/hooks
 	let hasValidStructure = false;
 	await gittar.extract(archive, target, {
