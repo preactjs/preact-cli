@@ -40,14 +40,6 @@ commands.buildOptions.forEach(option => {
 });
 buildCommand.action(commands.build);
 
-const createCommand = prog
-	.command('create [template] [dest]')
-	.describe('Create a new application');
-commands.createOptions.forEach(option => {
-	createCommand.option(option.name, option.description, option.default);
-});
-createCommand.action(commands.create);
-
 const watchCommand = prog
 	.command('watch [src]')
 	.describe('Start a live-reload server for development');
@@ -55,8 +47,6 @@ commands.watchOptions.forEach(option => {
 	watchCommand.option(option.name, option.description, option.default);
 });
 watchCommand.action(commands.watch);
-
-prog.command('list').describe('List official templates').action(commands.list);
 
 prog
 	.command('info')

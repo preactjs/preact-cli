@@ -1,0 +1,32 @@
+{
+  "name": "@preactjs/create-cli-app",
+  "version": "3.4.0",
+  "description": "Start building a Preact Progressive Web App in seconds.",
+  "repository": "preactjs/preact-cli",
+  "main": "src/index.js",
+  "bin": "src/index.js",
+  "engines": {
+    "node": ">=14"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "preact",
+    "cli",
+    "pwa",
+    "project",
+    "generator"
+  ],
+  "license": "MIT",
+  "bugs": "https://github.com/preactjs/preact-cli/issues",
+  "homepage": "https://github.com/preactjs/preact-cli",
+  "dependencies": {
+    "cross-spawn-promise": "^0.10.1",
+    "gittar": "^0.1.0",
+    "isomorphic-unfetch": "^3.1.0",
+    "kleur": "^4.1.4",
+    "ora": "^5.4.1",
+    "sade": "^1.8.1"
+  }
+}
