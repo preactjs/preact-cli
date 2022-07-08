@@ -1,7 +1,5 @@
-var utils = require('loader-utils');
-
 function proxyLoader(source, map) {
-	var options = utils.getOptions(this);
+	var options = this.getOptions();
 
 	// First run proxy-loader run
 	if (!this.query.__proxy_loader__) {

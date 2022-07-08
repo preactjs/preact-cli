@@ -6,13 +6,12 @@ const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const autoprefixer = require('autoprefixer');
 const browserslist = require('browserslist');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
+const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ReplacePlugin = require('webpack-plugin-replace');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const createBabelConfig = require('../babel-config');
 const loadPostcssConfig = require('postcss-load-config');
-const PnpWebpackPlugin = require('pnp-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 function readJson(file) {
@@ -65,23 +64,19 @@ function getSassConfiguration(...includePaths) {
  */
 module.exports = function createBaseConfig(env) {
 	const { cwd, isProd, isWatch, src, source } = env;
-	const babelConfigFile = env.babelConfig || '.babelrc';
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	// Apply base-level `env` values
 	env.dest = resolve(cwd, env.dest || 'build');
 	env.manifest = readJson(source('manifest.json')) || {};
 	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
-	let babelrc = readJson(resolve(cwd, babelConfigFile)) || {};
-
 	// use browserslist config environment, config default, or default browsers
-	// default browsers are > 0.25% global market share or Internet Explorer >= 9
-	const browserslistDefaults = ['> 0.25%', 'IE >= 9'];
+	// default browsers are '> 0.5%, last 2 versions, Firefox ESR, not dead'
 	const browserlistConfig = Object(browserslist.findConfig(cwd));
 	const browsers =
 		(isProd ? browserlistConfig.production : browserlistConfig.development) ||
 		browserlistConfig.defaults ||
-		browserslistDefaults;
+		'defaults';
 
 	let userNodeModules = findAllNodeModules(cwd);
 	let cliNodeModules = findAllNodeModules(__dirname);
@@ -142,7 +137,7 @@ module.exports = function createBaseConfig(env) {
 				style: source('style'),
 				'preact-cli-entrypoint': source('index'),
 				url: dirname(require.resolve('native-url/package.json')),
-				// preact-compat aliases for supporting React dependencies:
+				// preact/compat aliases for supporting React dependencies:
 				react: compat,
 				'react-dom': compat,
 				'preact-compat': compat,
@@ -151,10 +146,6 @@ module.exports = function createBaseConfig(env) {
 					? require.resolve('@preact/async-loader/async')
 					: require.resolve('@preact/async-loader/async-legacy'),
 			},
-			plugins: [
-				// TODO: Remove when upgrading to webpack 5
-				PnpWebpackPlugin,
-			],
 		},
 
 		resolveLoader: {
@@ -167,17 +158,12 @@ module.exports = function createBaseConfig(env) {
 		module: {
 			rules: [
 				{
-					// ES2015
 					enforce: 'pre',
 					test: /\.m?[jt]sx?$/,
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: require.resolve('babel-loader'),
-					options: Object.assign(
-						{ babelrc: false },
-						createBabelConfig(env, { browsers }),
-						babelrc // intentionally overwrite our settings
-					),
+					options: createBabelConfig(env),
 				},
 				{
 					// LESS
@@ -293,13 +279,11 @@ module.exports = function createBaseConfig(env) {
 				},
 				{
 					test: /\.(xml|html|txt|md)$/,
-					loader: require.resolve('raw-loader'),
+					type: 'asset/source',
 				},
 				{
 					test: /\.(svg|woff2?|ttf|eot|jpe?g|png|webp|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
-					loader: isProd
-						? require.resolve('file-loader')
-						: require.resolve('url-loader'),
+					type: isProd ? 'asset/resource' : 'asset/inline',
 				},
 			],
 		},
@@ -326,8 +310,7 @@ module.exports = function createBaseConfig(env) {
 				Fragment: ['preact', 'Fragment'],
 			}),
 			// Fix for https://github.com/webpack-contrib/mini-css-extract-plugin/issues/151
-			new FixStyleOnlyEntriesPlugin(),
-			// Extract CSS
+			new RemoveEmptyScriptsPlugin(),
 			new MiniCssExtractPlugin({
 				filename: isProd ? '[name].[contenthash:5].css' : '[name].css',
 				chunkFilename: isProd
@@ -350,37 +333,32 @@ module.exports = function createBaseConfig(env) {
 				// This is just to avoid any potentially breaking changes for right now.
 				publicPath: '',
 			}),
-			...(tsconfig
-				? [
-						new ForkTsCheckerWebpackPlugin({
-							checkSyntacticErrors: true,
-							async: !isProd,
-							tsconfig: tsconfig,
-							silent: !isWatch,
-						}),
-				  ]
-				: []),
-			...(isProd
-				? [
-						new webpack.HashedModuleIdsPlugin(),
-						new webpack.LoaderOptionsPlugin({ minimize: true }),
-						new webpack.optimize.ModuleConcatenationPlugin(),
+			tsconfig &&
+				new ForkTsCheckerWebpackPlugin({
+					typescript: {
+						configFile: tsconfig,
+						diagnosticOptions: {
+							syntactic: true,
+						},
+					},
+				}),
+			isProd && new webpack.LoaderOptionsPlugin({ minimize: true }),
+			new webpack.optimize.ModuleConcatenationPlugin(),
 
-						// strip out babel-helper invariant checks
-						new ReplacePlugin({
-							include: /babel-helper$/,
-							patterns: [
-								{
-									regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-									value: s => `return;${Array(s.length - 7).join(' ')}(`,
-								},
-							],
-						}),
-				  ]
-				: []),
-		],
+			// strip out babel-helper invariant checks
+			new ReplacePlugin({
+				include: /babel-helper$/,
+				patterns: [
+					{
+						regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
+						value: s => `return;${Array(s.length - 7).join(' ')}(`,
+					},
+				],
+			}),
+		].filter(Boolean),
 
 		optimization: {
+			...(isProd && { moduleIds: 'deterministic' }),
 			splitChunks: {
 				minChunks: 3,
 			},
@@ -388,15 +366,11 @@ module.exports = function createBaseConfig(env) {
 
 		mode: isProd ? 'production' : 'development',
 
-		devtool: isWatch ? 'cheap-module-eval-source-map' : 'source-map',
+		devtool: isWatch ? 'eval-cheap-module-source-map' : 'source-map',
 
 		node: {
-			console: false,
-			process: false,
-			Buffer: false,
 			__filename: false,
 			__dirname: false,
-			setImmediate: false,
 		},
 	};
 };
