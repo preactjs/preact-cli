@@ -61,6 +61,20 @@ function waitUntil(action, errorMessage) {
 
 const sleep = promisify(setTimeout);
 
+const disableOptimize = `
+	const optimizePlugin = helpers.getPluginsByName(config, 'OptimizePlugin')[0];
+
+	if (optimizePlugin) {
+		const { plugin } = optimizePlugin;
+		plugin.options.downlevel = false;
+		plugin.options.minify = false;
+	}
+`;
+
+const disableOptimizeConfig = `module.exports = function (config, env, helpers) {
+	${disableOptimize}
+}`;
+
 expect.extend({
 	toFindMatchingKey(key, matchingKey) {
 		if (matchingKey) {
@@ -109,4 +123,6 @@ module.exports = {
 	log,
 	waitUntil,
 	sleep,
+	disableOptimize,
+	disableOptimizeConfig,
 };

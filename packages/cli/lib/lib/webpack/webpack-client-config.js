@@ -7,17 +7,17 @@ const { filter } = require('minimatch');
 const SizePlugin = require('size-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CrittersPlugin = require('critters-webpack-plugin');
 const renderHTMLPlugin = require('./render-html-plugin');
 const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
-const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
+const OptimizePlugin = require('optimize-plugin');
 
 const cleanFilename = name =>
 	name.replace(
@@ -37,7 +37,7 @@ async function clientConfig(env) {
 
 	let entry = {
 		bundle: resolve(__dirname, './../entry'),
-		polyfills: resolve(__dirname, './polyfills'),
+		'dom-polyfills': resolve(__dirname, './polyfills'),
 	};
 
 	let swInjectManifest = [];
@@ -50,31 +50,15 @@ async function clientConfig(env) {
 			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
 		}
 
-		if (env.esm) {
-			swInjectManifest.push(
-				new InjectManifest({
-					swSrc: swPath,
-					swDest: 'sw-esm.js',
-					include: [
-						/200\.html$/,
-						/\.esm.js$/,
-						/\.css$/,
-						/\.(png|jpg|svg|gif|webp)$/,
-					],
-					webpackCompilationPlugins: [
-						new webpack.DefinePlugin({
-							'process.env.ESM': true,
-						}),
-					],
-				})
-			);
-		}
-
 		swInjectManifest.push(
 			new InjectManifest({
 				swSrc: swPath,
-				include: [/200\.html$/, /\.js$/, /\.css$/, /\.(png|jpg|svg|gif|webp)$/],
-				exclude: [/\.esm\.js$/],
+				include: [
+					/200\.html$/,
+					/(?<!legacy)\.js$/,
+					/\.css$/,
+					/\.(png|jpg|svg|gif|webp)$/,
+				],
 			})
 		);
 	}
@@ -96,11 +80,18 @@ async function clientConfig(env) {
 	].filter(Boolean);
 
 	return {
-		entry: entry,
+		entry,
 		output: {
 			path: env.dest,
 			publicPath: '/',
-			filename: env.isProd ? '[name].[chunkhash:5].js' : '[name].js',
+			filename: pathData => {
+				if (pathData.chunk.name === 'dom-polyfills') {
+					return env.isProd
+						? '[name].[chunkhash:5].legacy.js'
+						: '[name].legacy.js';
+				}
+				return env.isProd ? '[name].[chunkhash:5].js' : '[name].js';
+			},
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
 		},
 
@@ -142,13 +133,11 @@ async function clientConfig(env) {
 
 		plugins: [
 			new webpack.DefinePlugin({
-				'process.env.ES_BUILD': false,
 				'process.env.ADD_SW': env.sw,
 				'process.env.PRERENDER': env.prerender,
 			}),
 			new PushManifestPlugin(),
 			...(await renderHTMLPlugin(env)),
-			...getBabelEsmPlugin(env),
 			copyPatterns.length !== 0 &&
 				new CopyWebpackPlugin({
 					patterns: copyPatterns,
@@ -156,41 +145,6 @@ async function clientConfig(env) {
 			...swInjectManifest,
 		].filter(Boolean),
 	};
-}
-
-function getBabelEsmPlugin(env) {
-	const esmPlugins = [];
-	if (env.esm) {
-		esmPlugins.push(
-			new BabelEsmPlugin({
-				filename: env.isProd ? '[name].[chunkhash:5].esm.js' : '[name].esm.js',
-				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
-				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest'],
-				beforeStartExecution: plugins => {
-					plugins.forEach(plugin => {
-						if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							plugin.definitions
-						) {
-							for (const definition in plugin.definitions) {
-								if (definition === 'process.env.ES_BUILD') {
-									plugin.definitions[definition] = true;
-								}
-							}
-						} else if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							!plugin.definitions
-						) {
-							throw new Error(
-								'WebpackDefinePlugin found but not `process.env.ES_BUILD`.'
-							);
-						}
-					});
-				},
-			})
-		);
-	}
-	return esmPlugins;
 }
 
 /**
@@ -209,17 +163,24 @@ function isProd(env) {
 		),
 
 		plugins: [
-			new webpack.DefinePlugin({
-				'process.env.ESM': env.esm,
+			new OptimizePlugin({
+				polyfillsFilename: 'es-polyfills.legacy.js',
+				exclude: [/^sw.*\.js/, /^dom-polyfills.*\.js/],
+				modernize: false,
+				verbose: false,
 			}),
-			new SizePlugin(),
+			new SizePlugin({
+				stripHash: name =>
+					name.replace(/\.[a-z0-9]{5}((\.legacy)?\.(?:js|css)$)/i, '.*****$1'),
+			}),
 		],
+		cache: true,
 
 		optimization: {
 			minimizer: [
 				new TerserPlugin({
-					cache: true,
-					parallel: true,
+					extractComments: false,
+					test: /(sw|dom-polyfills).*\.js$/,
 					terserOptions: {
 						output: { comments: false },
 						mangle: true,
@@ -237,15 +198,8 @@ function isProd(env) {
 							],
 						},
 					},
-					extractComments: false,
-					sourceMap: true,
 				}),
-				new OptimizeCssAssetsPlugin({
-					cssProcessorOptions: {
-						// Fix keyframes in different CSS chunks minifying to colliding names:
-						reduceIdents: false,
-					},
-				}),
+				new CssMinimizerPlugin(),
 			],
 		},
 	};
@@ -270,7 +224,7 @@ function isProd(env) {
 			new CompressionPlugin({
 				filename: '[path].br[query]',
 				algorithm: 'brotliCompress',
-				test: /\.esm\.js$/,
+				test: /(?<!legacy)\.js$/,
 			})
 		);
 	}
@@ -325,10 +279,11 @@ function isDev(env) {
 		infrastructureLogging: {
 			level: 'info',
 		},
-		plugins: [
-			new webpack.NamedModulesPlugin(),
-			env.refresh && new RefreshPlugin(),
-		].filter(Boolean),
+		plugins: [env.refresh && new RefreshPlugin()].filter(Boolean),
+
+		optimization: {
+			moduleIds: 'named',
+		},
 
 		devServer: {
 			hot: true,

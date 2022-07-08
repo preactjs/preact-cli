@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { access } = require('fs').promises;
-const { build } = require('./lib/cli');
+const { build, buildFast } = require('./lib/cli');
 const { subject } = require('./lib/output');
 
 const formats = ['cjs', 'esm'];
@@ -19,7 +19,7 @@ describe('config files', () => {
 		it(`should load the 'prerender-urls.json' file`, async () => {
 			let dir = await subject('multiple-config-files');
 
-			await build(dir);
+			await buildFast(dir);
 
 			expect(await access(join(dir, 'build/index.html'))).toBeUndefined();
 			expect(
@@ -32,7 +32,7 @@ describe('config files', () => {
 				it(`should load the '${dataFormat}' file in ${moduleFormat}`, async () => {
 					let dir = await subject('multiple-config-files');
 
-					await build(dir, {
+					await buildFast(dir, {
 						prerenderUrls: `prerenderUrls/${moduleFormat}/${dataFormat}`,
 					});
 

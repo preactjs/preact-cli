@@ -96,26 +96,13 @@ function showStats(stats, isProd) {
 		if (stats.hasErrors()) {
 			allFields(stats, 'errors')
 				.map(stripLoaderPrefix)
-				.forEach(msg => error(msg, isProd ? 1 : 0));
+				.forEach(({ message }) => error(message, isProd ? 1 : 0));
 		}
 
 		if (stats.hasWarnings()) {
 			allFields(stats, 'warnings')
 				.map(stripLoaderPrefix)
-				.forEach(msg => {
-					if (
-						msg.match(
-							/Conflict: Multiple assets emit different content to the same filename .*\.(css|map)/
-						)
-					) {
-						/**
-						 * This particular warning is expected due to `babel-esm-plugin`.
-						 * This can be removed when upgrading to webpack5 with https://webpack.js.org/configuration/output/#outputcomparebeforeemit
-						 */
-						return;
-					}
-					warn(msg);
-				});
+				.forEach(({ message }) => warn(message));
 		}
 	}
 
