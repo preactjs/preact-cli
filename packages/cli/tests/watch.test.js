@@ -28,7 +28,7 @@ describe('preact', () => {
 
 		let header = resolve(app, './src/components/header/index.js');
 		let original = await readFile(header, 'utf8');
-		let update = original.replace('<h1>Preact App</h1>', '<h1>Test App</h1>');
+		let update = original.replace('<h1>Preact App</h1>', '<h1>Tefst App</h1>');
 		await writeFile(header, update);
 
 		await waitUntilExpression(
@@ -104,21 +104,10 @@ describe('preact', () => {
 			server.close();
 		});
 
-		it('--esm', async () => {
-			let app = await subject('minimal');
-
-			server = await watch(app, { port: 8089, esm: true });
-			let bundle = await fetch('http://127.0.0.1:8089/bundle.esm.js').then(
-				res => res.text()
-			);
-			expect(bundle).toMatch('Minimal App');
-			server.close();
-		});
-
 		it('--sw', async () => {
 			let app = await subject('minimal');
 
-			// The `waitUntil` in these tests ensures the SW is installed before our checks
+			// The `waitUntil` in these tests should ensure the SW is installed before our checks
 			server = await watch(app, { port: 8090 });
 			let page = await chrome.newPage();
 			await page.goto('http://127.0.0.1:8090/', { waitUntil: 'networkidle0' });
