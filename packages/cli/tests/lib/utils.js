@@ -71,6 +71,43 @@ async function linkPackage(name, cwd) {
 	} catch {}
 }
 
+/**
+ * Injectable configuration to disable the optimize plugin
+ */
+const disableOptimizePluginConfig = `
+	const optimizePlugin = helpers.getPluginsByName(config, 'OptimizePlugin')[0];
+
+	if (optimizePlugin) {
+		const { plugin } = optimizePlugin;
+		plugin.options.downlevel = false;
+		plugin.options.minify = false;
+	}
+`;
+
+/**
+ * Full config file to disable the optimize plugin
+ */
+const disableOptimizePluginConfigFile = `module.exports = function (config, env, helpers) {
+	${disableOptimizePluginConfig}
+}`;
+
+/**
+ * Disables the slow portions of `optimize-plugin` for
+ * the tests that don't rely on its functionality.
+ */
+async function handleOptimize(cwd, config) {
+	const configFile = `${cwd}/${config || 'preact.config.js'}`;
+	try {
+		let config = await readFile(configFile, 'utf8');
+		// Don't alter config in subsequent runs of same subject
+		if (/optimizePlugin/.test(config)) return;
+		config = config.replace(/}(?![\s\S]*})(?:;?)/m, `${disableOptimizePluginConfig}};`);
+		await writeFile(configFile, config);
+	} catch {
+		await writeFile(configFile, disableOptimizePluginConfigFile);
+	}
+}
+
 expect.extend({
 	toFindMatchingKey(key, matchingKey) {
 		if (matchingKey) {
@@ -120,4 +157,5 @@ module.exports = {
 	waitUntil,
 	sleep,
 	linkPackage,
+	handleOptimize,
 };
