@@ -25,10 +25,7 @@ describe('preact service worker tests', () => {
 
 	beforeAll(async () => {
 		dir = await create('default');
-		await build(dir, {
-			sw: true,
-			esm: true,
-		});
+		await build(dir, { sw: true });
 		dir = join(dir, 'build');
 		server = getServer(dir);
 	});
@@ -86,7 +83,7 @@ describe('preact service worker tests', () => {
 	});
 
 	it('should respond with 200.html when offline', async () => {
-		const swText = await fetch('http://localhost:3000/sw-esm.js').then(res =>
+		const swText = await fetch('http://localhost:3000/sw.js').then(res =>
 			res.text()
 		);
 		// eslint-disable-next-line no-useless-escape
