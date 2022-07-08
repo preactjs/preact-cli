@@ -1,9 +1,8 @@
 const { join } = require('path');
 const { mkdir } = require('fs').promises;
-const shell = require('shelljs');
 const cmd = require('../../src/commands');
 const { tmpDir } = require('./output');
-const { linkPackage } = require('./utils');
+const { linkPackage, handleOptimize } = require('./utils');
 
 exports.create = async function (template, options) {
 	let dest = await tmpDir();
@@ -14,26 +13,28 @@ exports.create = async function (template, options) {
 	return dest;
 };
 
-exports.build = async function (cwd, options, installNodeModules = false) {
+const build = (exports.build = async function (cwd, options) {
 	const argv = {
 		src: 'src',
 		dest: 'build',
+		babelConfig: '.babelrc',
 		config: 'preact.config.js',
 		prerender: true,
 		prerenderUrls: 'prerender-urls.json',
 		'inline-css': true,
 	};
 
-	if (!installNodeModules) {
-		await mkdir(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
-		await linkPackage('preact', cwd);
-		await linkPackage('preact-render-to-string', cwd);
-	} else {
-		shell.exec(`npm --prefix ${cwd} i`);
-	}
+	await mkdir(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
+	await linkPackage('preact', cwd);
+	await linkPackage('preact-render-to-string', cwd);
 
 	let opts = Object.assign({ cwd }, argv, options);
 	return await cmd.build(opts.src, opts);
+});
+
+exports.buildFast = async function (cwd, options) {
+	await handleOptimize(cwd, options && options.config);
+	return await build(cwd, options);
 };
 
 exports.watch = function (cwd, options) {
