@@ -1,26 +1,31 @@
-module.exports = function (env, options = {}) {
-	const { production: isProd, refresh } = env || {};
+const { tryResolveConfig } = require('../util');
+
+module.exports = function (env) {
+	const { babelConfig, cwd, isProd, refresh } = env;
+
+	const resolvedConfig =
+		babelConfig &&
+		tryResolveConfig(cwd, babelConfig, babelConfig === '.babelrc');
 
 	return {
+		babelrc: false,
+		configFile: resolvedConfig,
 		presets: [
-			[
+			!isProd && [
 				require.resolve('@babel/preset-env'),
 				{
+					loose: true,
+					modules: false,
 					bugfixes: true,
-					modules: options.modules || false,
 					targets: {
-						browsers: options.browsers,
+						esmodules: true,
 					},
 					exclude: ['transform-regenerator'],
 				},
 			],
-		],
+		].filter(Boolean),
 		plugins: [
-			require.resolve('@babel/plugin-syntax-dynamic-import'),
-			require.resolve('@babel/plugin-transform-object-assign'),
 			[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-			require.resolve('@babel/plugin-proposal-class-properties'),
-			require.resolve('@babel/plugin-proposal-object-rest-spread'),
 			isProd &&
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
 			require.resolve('babel-plugin-macros'),

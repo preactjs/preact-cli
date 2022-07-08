@@ -106,7 +106,7 @@ Note: If you don't specify enough data to the `npx preact-cli create` command, i
 
 Create a production build
 
-You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw`, `--no-esm`, and `--no-inline-css`.
+You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw`, `--no-prerender`, and `--no-inline-css`.
 
 ```
 $ preact build
@@ -114,7 +114,6 @@ $ preact build
     --src              Specify source directory  (default src)
     --dest             Specify output directory  (default build)
     --cwd              A directory to use instead of $PWD  (default .)
-    --esm              Builds ES-2015 bundles for your code  (default true)
     --sw               Generate and attach a Service Worker  (default true)
     --babelConfig      Path to custom Babel config (default .babelrc)
     --json             Generate build stats for bundle analysis
@@ -139,7 +138,6 @@ $ preact watch
 
     --src              Specify source directory  (default src)
     --cwd              A directory to use instead of $PWD  (default .)
-    --esm              Builds ES-2015 bundles for your code  (default false)
     --clear            Clear the console (default true)
     --sw               Generate and attach a Service Worker  (default false)
     --babelConfig      Path to custom Babel config (default .babelrc)
@@ -192,7 +190,7 @@ To make customizing your configuration easier, preact-cli supports plugins. Visi
 
 #### Browserslist
 
-You may customize your list of supported browser versions by declaring a [`"browserslist"`] key within your `package.json`. Changing these values will modify your JavaScript (via [`@babel/preset-env`]) and your CSS (via [`autoprefixer`](https://github.com/postcss/autoprefixer)) output.
+You may customize your list of supported browser versions by declaring a [`"browserslist"`] key within your `package.json`. Changing these values will modify your legacy JavaScript (via [`@babel/preset-env`]) and your CSS (via [`autoprefixer`](https://github.com/postcss/autoprefixer)) output.
 
 By default, `preact-cli` emulates the following config:
 
@@ -200,7 +198,7 @@ By default, `preact-cli` emulates the following config:
 
 ```json
 {
-	"browserslist": ["> 0.25%", "IE >= 9"]
+	"browserslist": ["> 0.5%", "last 2 versions", "Firefox ESR", "not dead"]
 }
 ```
 
@@ -208,9 +206,9 @@ By default, `preact-cli` emulates the following config:
 
 To customize Babel, you have two options:
 
-1. You may create a [`.babelrc`] file in your project's root directory. Any settings you define here will overwrite matching config-keys within [Preact CLI preset]. For example, if you pass a `"plugins"` object, it will replace & reset all Babel plugins that Preact CLI defaults to.
+1. You may create a [`.babelrc`] file in your project's root directory, or use the `--babelConfig` path to point at any valid [Babel config file]. Any settings you define here will be merged into the [Preact CLI preset]. For example, if you pass a `"plugins"` object containing different plugins from those already in use, they will simply be added on top of the existing config. If there are conflicts, you'll want to look into option 2, as the default will take precedence.
 
-2. If you'd like to modify or add to the existing Babel config, you must use a `preact.config.js` file. Visit the [Webpack](#webpack) section for more info, or check out the [Customize Babel] example!
+2. If you'd like to modify the existing Babel config you must use a `preact.config.js` file. Visit the [Webpack](#webpack) section for more info, or check out the [Customize Babel] example!
 
 #### Webpack
 
@@ -402,9 +400,9 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 [preact]: https://github.com/preactjs/preact
 [webpackconfighelpers]: docs/webpack-helpers.md
 [`.babelrc`]: https://babeljs.io/docs/usage/babelrc
+[babel config file]: https://babeljs.io/docs/en/config-files
 [simple]: https://github.com/preactjs-templates/simple
 [`"browserslist"`]: https://github.com/ai/browserslist
-[```.babelrc```]: https://babeljs.io/docs/usage/babelrc
 [default]: https://github.com/preactjs-templates/default
 [workbox]: https://developers.google.com/web/tools/workbox
 [preact-router]: https://github.com/preactjs/preact-router

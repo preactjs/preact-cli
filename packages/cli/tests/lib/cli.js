@@ -1,8 +1,8 @@
 const { join } = require('path');
-const { mkdir, symlink } = require('fs').promises;
+const { mkdir, symlink, readFile, writeFile } = require('fs').promises;
 const cmd = require('../../lib/commands');
 const { tmpDir } = require('./output');
-const shell = require('shelljs');
+const { disableOptimizeConfig, disableOptimize } = require('./utils');
 
 const root = join(__dirname, '../../../..');
 
@@ -15,10 +15,26 @@ async function linkPackage(name, from, to) {
 	} catch {}
 }
 
+// Disables the slow portions of `optimize-plugin` for
+// the tests that don't rely on its functionality.
+async function handleOptimize(cwd, config) {
+	const configFile = `${cwd}/${config || 'preact.config.js'}`;
+	try {
+		let config = await readFile(configFile, 'utf8');
+		// Don't alter config in subsequent runs of same subject
+		if (/optimizePlugin/.test(config)) return;
+		config = config.replace(/}(?![\s\S]*})(?:;?)/m, `${disableOptimize}};`);
+		await writeFile(configFile, config);
+	} catch {
+		await writeFile(configFile, disableOptimizeConfig);
+	}
+}
+
 const argv = {
 	_: [],
 	src: 'src',
 	dest: 'build',
+	babelConfig: '.babelrc',
 	config: 'preact.config.js',
 	prerenderUrls: 'prerender-urls.json',
 	'inline-css': true,
@@ -33,18 +49,18 @@ exports.create = async function (template, name) {
 	return dest;
 };
 
-exports.build = async function (cwd, options, installNodeModules = false) {
-	if (!installNodeModules) {
-		await mkdir(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
-		await linkPackage('preact', root, cwd);
-		await linkPackage('preact-render-to-string', root, cwd);
-	} else {
-		shell.cd(cwd);
-		shell.exec('npm i');
-	}
+const build = (exports.build = async function (cwd, options) {
+	await mkdir(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
+	await linkPackage('preact', root, cwd);
+	await linkPackage('preact-render-to-string', root, cwd);
 
 	let opts = Object.assign({}, { cwd }, argv, options);
 	return await cmd.build(opts.src, opts);
+});
+
+exports.buildFast = async function (cwd, options) {
+	await handleOptimize(cwd, options && options.config);
+	return await build(cwd, options);
 };
 
 exports.watch = function (cwd, port, host = '127.0.0.1') {
