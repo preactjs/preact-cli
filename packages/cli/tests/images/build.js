@@ -1,9 +1,4 @@
-const common = {
-	'polyfills.1ea90.js': 6426,
-	'polyfills.1ea90.js.map': 21668,
-};
-
-exports.default = Object.assign({}, common, {
+exports.default = {
 	'assets/icons/android-chrome-192x192.png': 14058,
 	'assets/icons/android-chrome-512x512.png': 51484,
 	'assets/icons/apple-touch-icon.png': 12746,
@@ -13,43 +8,47 @@ exports.default = Object.assign({}, common, {
 	'assets/preact-logo.svg': 645,
 	'assets/preact-logo-inverse.svg': 649,
 	'assets/favicon.ico': 15086,
-	'ssr-build/ssr-bundle.82489.css': 2601,
-	'ssr-build/ssr-bundle.82489.css.map': 3708,
-	'ssr-build/ssr-bundle.js': 28830,
-	'ssr-build/ssr-bundle.js.map': 52686,
-	'ssr-build/asset-manifest.json': 178,
-	'bundle.4c6ac.css': 1276,
-	'bundle.9131e.js': 22529,
-	'bundle.9131e.js.map': 111801,
+
+	'ssr-build/ssr-bundle.038a0.css': 2352,
+	'ssr-build/ssr-bundle.038a0.css.map': 3609,
+	'ssr-build/ssr-bundle.js': 27197,
+	'ssr-build/ssr-bundle.js.map': 61808,
+	'ssr-build/asset-manifest.json': 82,
+
+	'bundle.f6c84.js': 21563,
+	'bundle.f6c84.js.map': 86009,
+	'bundle.f6c84.legacy.js': 22586,
+	'bundle.f6c84.legacy.js.map': 107151,
+	'bundle.cf9c9.css': 1173,
+	'bundle.cf9c9.css.map': 2165,
+
+	'dom-polyfills.9b9a8.js': 5221,
+	'dom-polyfills.9b9a8.js.map': 18676,
+	'es-polyfills.js': 42690,
+
 	'favicon.ico': 15086,
-	'index.html': 4127,
+	'index.html': 3998,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 	'push-manifest.json': 388,
-	'asset-manifest.json': 1142,
-	'route-home.chunk.9bcab.css': 834,
-	'route-home.chunk.5d28d.js': 1149,
-	'route-home.chunk.5d28d.js.map': 1961,
-	'route-profile.chunk.4c330.js': 3490,
-	'route-profile.chunk.4c330.js.map': 15002,
-});
-exports['default-esm'] = Object.assign({}, exports.default, {
-	'bundle.*.esm.js': 22249,
-	'bundle.*.esm.js.map': 113538,
-	'polyfills.*.esm.js': 5721,
-	'polyfills.*.esm.js.map': 21633,
-	'route-home.chunk.*.esm.js': 1127,
-	'route-home.chunk.*.esm.js.map': 1957,
-	'route-profile.chunk.*.esm.js': 2424,
-	'route-profile.chunk.*.esm.js.map': 14942,
-	'index.html': 4221,
-	'push-manifest.json': 404,
-	'asset-manifest.json': 1174,
-});
+	'asset-manifest.json': 1004,
+
+	'route-home.chunk.b0721.js': 1082,
+	'route-home.chunk.b0721.js.map': 3359,
+	'route-home.chunk.b0721.legacy.js': 1159,
+	'route-home.chunk.b0721.legacy.js.map': 4022,
+	'route-home.chunk.c81c9.css': 838,
+	'route-home.chunk.c81c9.css.map': 1406,
+
+	'route-profile.chunk.5e2be.js': 3097,
+	'route-profile.chunk.5e2be.js.map': 12031,
+	'route-profile.chunk.5e2be.legacy.js': 3240,
+	'route-profile.chunk.5e2be.legacy.js.map': 15421,
+};
 
 exports.sass = `
 <body>
-	<div class="background__2mKGE">
+	<div class="background__sL1ip">
 		<h1>Header on background</h1>
 		<p>Paragraph on background</p>
 	</div>
@@ -210,8 +209,10 @@ exports.template = `
 		<script defer="defer" src="/bundle.\\w{5}.js"></script>
 		<h2>This is an app with custom template</h2>
 		<script type="__PREACT_CLI_DATA__">%7B%22prerenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
-		<script blocking="" src="/bundle.\\w{5}.js"></script>
-		<script nomodule="" src="/polyfills.\\w{5}.js"></script>
+		<script crossorigin="anonymous" src="/bundle.\\w{5}.js" type="module"></script>
+		<script nomodule="" src="/dom-polyfills.\\w{5}.js"></script>
+		<script nomodule="" src="/es-polyfills.js"></script>
+		<script nomodule="" defer="defer" src="/bundle.\\w{5}.legacy.js"></script>
 	</body>
 </html>
 `;
@@ -253,43 +254,6 @@ exports.pushManifest = `
 }
 `;
 
-exports.pushManifestEsm = `
-{
-	"/":{
-		"bundle.\\w{5}.css":{
-			"type":"style",
-			"weight":1
-		},
-		"bundle.\\w{5}.esm.js":{
-			"type":"script",
-			"weight":1
-		},
-		"route-home.chunk.\\w{5}.esm.js":{
-			"type":"script",
-			"weight":0.9
-		},
-		"route-home.chunk.\\w{5}.css":{
-			"type":"style",
-			"weight":0.9
-		}
-	},
-	"/profile":{
-		"bundle.\\w{5}.css":{
-			"type":"style",
-			"weight":1
-		},
-		"bundle.\\w{5}.esm.js":{
-			"type":"script",
-			"weight":1
-		},
-		"route-profile.chunk.\\w{5}.esm.js":{
-			"type":"script",
-			"weight":0.9
-		}
-	}
-}
-`;
-
 exports.pushManifestAlteredFilenames = `
 {
 	"/":{
@@ -317,8 +281,10 @@ exports.publicPath = `
 	<body>
 		<h1>Public path test</h1>
 		<script type="__PREACT_CLI_DATA__">%7B%22prerenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
-		<script blocking="" src="/example-path/bundle.\\w{5}.js"></script>
-		<script nomodule="" src="/example-path/polyfills.\\w{5}.js"></script>
+		<script crossorigin="anonymous" src="/example-path/bundle.\\w{5}.js" type="module"></script>
+		<script nomodule="" src="/example-path/dom-polyfills.\\w{5}.js"></script>
+		<script nomodule="" src="/example-path/es-polyfills.js"></script>
+		<script nomodule="" defer="defer" src="/example-path/bundle.\\w{5}.legacy.js"></script>
 	</body>
 </html>
 `;

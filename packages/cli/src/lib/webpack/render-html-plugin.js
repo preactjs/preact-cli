@@ -1,6 +1,7 @@
 const { resolve, join } = require('path');
 const os = require('os');
 const { existsSync, mkdtempSync, readFileSync, writeFileSync } = require('fs');
+const { Compilation, sources } = require('webpack');
 const {
 	HtmlWebpackSkipAssetsPlugin,
 } = require('html-webpack-skip-assets-plugin');
@@ -183,20 +184,28 @@ class PrerenderDataExtractPlugin {
 		this.data_ = JSON.stringify(page || {});
 	}
 	apply(compiler) {
-		compiler.hooks.emit.tap('PrerenderDataExtractPlugin', compilation => {
-			if (this.location_ === `${PREACT_FALLBACK_URL}/`) {
-				// We dont build prerender data for `200.html`. It can re-use the one for homepage.
-				return;
+		compiler.hooks.thisCompilation.tap(
+			'PrerenderDataExtractPlugin',
+			compilation => {
+				compilation.hooks.processAssets.tap(
+					{
+						name: 'PrerenderDataExtractPlugin',
+						stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
+					},
+					() => {
+						if (this.location_ === `${PREACT_FALLBACK_URL}/`) {
+							// We dont build prerender data for `200.html`. It can re-use the one for homepage.
+							return;
+						}
+						let path = this.location_ + 'preact_prerender_data.json';
+						if (path.startsWith('/')) {
+							path = path.substr(1);
+						}
+						compilation.emitAsset(path, new sources.RawSource(this.data_));
+					}
+				);
 			}
-			let path = this.location_ + 'preact_prerender_data.json';
-			if (path.startsWith('/')) {
-				path = path.substr(1);
-			}
-			compilation.assets[path] = {
-				source: () => this.data_,
-				size: () => this.data_.length,
-			};
-		});
+		);
 	}
 }
 
