@@ -104,17 +104,6 @@ describe('preact', () => {
 			await server.stop();
 		});
 
-		it('--esm', async () => {
-			let app = await subject('minimal');
-
-			server = await watch(app, { port: 8089, esm: true });
-			let bundle = await fetch('http://127.0.0.1:8089/bundle.esm.js').then(
-				res => res.text()
-			);
-			expect(bundle).toMatch('Minimal App');
-			await server.stop();
-		});
-
 		it('--sw', async () => {
 			let app = await subject('minimal');
 

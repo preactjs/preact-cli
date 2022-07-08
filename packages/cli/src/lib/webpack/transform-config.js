@@ -240,6 +240,7 @@ class WebpackConfigHelpers {
 			)
 			.reduce((arr, loaders) => arr.concat(loaders), [])
 			.filter(({ loader }) => {
+				if (!loader) return false;
 				if (typeof loader === 'string') return loader.includes(name);
 				return typeof loader.loader === 'string' &&
 					loader.loader.includes('proxy-loader')

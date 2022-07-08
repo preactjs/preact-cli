@@ -18,14 +18,12 @@ if (process.env.NODE_ENV === 'development') {
 		);
 	} else if (process.env.ADD_SW && 'serviceWorker' in navigator) {
 		navigator.serviceWorker.register(
-			normalizeURL(__webpack_public_path__) +
-				(process.env.ES_BUILD ? 'sw-esm.js' : 'sw.js')
+			normalizeURL(__webpack_public_path__) + 'sw.js'
 		);
 	}
 } else if (process.env.ADD_SW && 'serviceWorker' in navigator) {
 	navigator.serviceWorker.register(
-		normalizeURL(__webpack_public_path__) +
-			(process.env.ES_BUILD ? 'sw-esm.js' : 'sw.js')
+		normalizeURL(__webpack_public_path__) + 'sw.js'
 	);
 }
 
