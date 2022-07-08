@@ -1,3 +1,4 @@
 **/node_modules
 **/tests/output
+**/tests/subjects/*/preact.config.js
 **/*.d.ts
