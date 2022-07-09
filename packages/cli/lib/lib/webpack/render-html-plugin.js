@@ -89,7 +89,7 @@ module.exports = async function (config) {
 				if (assets['push-manifest.json']) {
 					return JSON.parse(assets['push-manifest.json'].source());
 				}
-				return createLoadManifest(assets, namedChunkGroups);
+				return createLoadManifest(assets, namedChunkGroups, config.isProd);
 			},
 			config,
 			url,
