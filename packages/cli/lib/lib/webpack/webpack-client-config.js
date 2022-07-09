@@ -331,7 +331,7 @@ function isDev(env) {
 		].filter(Boolean),
 
 		devServer: {
-			hot: true,
+			hot: env.refresh,
 			liveReload: !env.refresh,
 			compress: true,
 			devMiddleware: {
