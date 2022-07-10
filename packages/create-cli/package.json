@@ -1,5 +1,5 @@
 {
-  "name": "@preactjs/create-cli-app",
+  "name": "create-preact-cli",
   "version": "3.4.0",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "preactjs/preact-cli",
