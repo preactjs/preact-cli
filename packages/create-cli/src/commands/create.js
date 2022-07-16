@@ -34,6 +34,11 @@ exports.create = async function create(repo, dest, argv) {
 
 	if (!repo.includes('/')) {
 		repo = `preactjs-templates/${repo}`;
+
+		// TODO: Remove this after updating all templates
+		if (repo.endsWith('default') || repo.endsWith('typescript')) {
+			repo += '#next';
+		}
 	}
 
 	await mkdir(resolve(cwd, dest), { recursive: true });
@@ -108,12 +113,6 @@ exports.create = async function create(repo, dest, argv) {
 		const serviceWorkerDest = join(sourceDirectory, 'sw.js');
 		await copyTemplateFile(serviceWorkerSrc, serviceWorkerDest, argv.force);
 	}
-
-	// TODO: Remove when templates are updated
-	const packagePath = join(target, 'package.json');
-	let packageFile = JSON.parse(await readFile(packagePath, 'utf-8'));
-	packageFile.name = 'foo';
-	await writeFile(packagePath, JSON.stringify(packageFile, null, 2));
 
 	if (argv.install) {
 		spinner.text = 'installing dependencies...';
