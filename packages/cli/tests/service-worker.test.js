@@ -4,6 +4,7 @@ const { create, build } = require('./lib/cli');
 const { sleep } = require('./lib/utils');
 const { getServer } = require('./server');
 const startChrome = require('./lib/chrome');
+const fetch = require('isomorphic-unfetch');
 
 async function enableOfflineMode(page, browser) {
 	await sleep(2000); // wait for service worker installation.

@@ -1,6 +1,9 @@
 const { join } = require('path');
 const { mkdir, symlink, readFile, writeFile } = require('fs').promises;
-const cmd = require('../../lib/commands');
+const { build: buildCmd, watch: watchCmd } = require('../../lib/commands');
+const {
+	create: createCmd,
+} = require('../../../create-cli/src/commands/create');
 const { tmpDir } = require('./output');
 const { disableOptimizeConfig, disableOptimize } = require('./utils');
 
@@ -44,7 +47,7 @@ exports.create = async function (template, name) {
 	let dest = await tmpDir();
 	name = name || `test-${template}`;
 
-	await cmd.create(template, dest, { name, cwd: '.' });
+	await createCmd(template, dest, { name, cwd: '.' });
 
 	return dest;
 };
@@ -55,7 +58,7 @@ const build = (exports.build = async function (cwd, options) {
 	await linkPackage('preact-render-to-string', root, cwd);
 
 	let opts = Object.assign({}, { cwd }, argv, options);
-	return await cmd.build(opts.src, opts);
+	return await buildCmd(opts.src, opts);
 });
 
 exports.buildFast = async function (cwd, options) {
@@ -68,5 +71,5 @@ exports.watch = function (cwd, port, host = '127.0.0.1') {
 	delete args.dest;
 	delete args['inline-css'];
 	let opts = Object.assign({ cwd, host, port, https: false }, args);
-	return cmd.watch(argv.src, opts);
+	return watchCmd(argv.src, opts);
 };
