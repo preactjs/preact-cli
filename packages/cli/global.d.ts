@@ -1,11 +1,21 @@
-declare global {
-	const __webpack_public_path__: string;
-	namespace jest {
-		interface Matchers<R> {
-			toBeCloseInSize(receivedSize: number, expectedSize: number): R;
-			toFindMatchingKey(receivedKey: string): R;
-		}
+declare const __webpack_public_path__: string;
+
+declare namespace jest {
+	interface Matchers<R> {
+		toBeCloseInSize(receivedSize: number, expectedSize: number): R;
+		toFindMatchingKey(receivedKey: string): R;
 	}
 }
 
-export {};
+declare module '*.module.css' {
+	const classes: { [key: string]: string };
+	export default classes;
+}
+declare module '*.module.sass' {
+	const classes: { [key: string]: string };
+	export default classes;
+}
+declare module '*.module.scss' {
+	const classes: { [key: string]: string };
+	export default classes;
+}
