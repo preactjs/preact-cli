@@ -5,7 +5,9 @@
   ],
   "scripts": {
     "pretest": "yarn lint",
-    "test": "yarn workspaces run test",
+    "test": "run-p test:*",
+    "test:cli": "yarn workspace preact-cli test",
+    "test:create-cli": "yarn workspace create-preact-cli test",
     "prettier": "prettier --write **/*.{js,ts,tsx,json,css,scss,md,yml}",
     "lint": "eslint .",
     "changeset": "changeset",
@@ -26,6 +28,7 @@
     "jest": "^24.9.0",
     "lint-staged": "^11.0.0",
     "ncp": "^2.0.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2"
   },
