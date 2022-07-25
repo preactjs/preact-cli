@@ -1,7 +1,7 @@
 const { access, readFile } = require('fs').promises;
 const { join, relative } = require('path');
-const { create } = require('./lib/cli');
-const { expand } = require('./lib/utils');
+const { create } = require('../../cli/tests/lib/cli');
+const { expand } = require('../../cli/tests/lib/utils');
 const snapshots = require('./images/create');
 const shell = require('shelljs');
 
@@ -16,24 +16,20 @@ describe('preact create', () => {
 		expect(output.sort()).toEqual(snapshots.default);
 	});
 
-	it('should use template.html from the github repo', async () => {
+	it('should use template.html from the repo if one exists', async () => {
 		let dir = await create('netlify');
+
 		const template = await readFile(join(dir, 'src/template.html'), 'utf8');
+
 		expect(template.includes('twitter:card')).toEqual(true);
 	});
 
 	describe('CLI Options', () => {
 		it('--name', async () => {
-			let dir = await create('simple', { name: 'renamed' });
-			const packageJson = await readFile(join(dir, 'package.json'), 'utf8');
+			let dir = await create('default', { name: 'renamed' });
+			const manifest = await readFile(join(dir, 'src/manifest.json'), 'utf8');
 
-			expect(JSON.parse(packageJson).name).toBe('renamed');
-
-			// @ts-ignore
-			const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
-			await create('simple', { name: '*()@!#!$-Invalid-Name' });
-			expect(mockExit).toHaveBeenCalledWith(1);
-			mockExit.mockRestore();
+			expect(JSON.parse(manifest).name).toBe('renamed');
 		});
 
 		it('--git', async () => {
