@@ -142,7 +142,7 @@ function writeJsonStats(cwd, stats) {
 function allFields(stats, field, fields = [], name = null) {
 	const info = stats.toJson({
 		errors: true,
-		warnings: false,
+		warnings: true,
 		errorDetails: false,
 	});
 	const addCompilerPrefix = msg =>

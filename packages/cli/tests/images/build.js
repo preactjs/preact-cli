@@ -46,16 +46,6 @@ exports.default = {
 	'route-profile.chunk.5e2be.legacy.js.map': 15421,
 };
 
-exports.sass = `
-<body>
-	<div class="background__sL1ip">
-		<h1>Header on background</h1>
-		<p>Paragraph on background</p>
-	</div>
-	{{ ... }}
-</body>
-`;
-
 exports.prerender = {};
 
 exports.prerender.heads = {};
