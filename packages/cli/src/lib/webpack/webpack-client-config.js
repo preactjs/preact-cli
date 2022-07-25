@@ -1,7 +1,6 @@
 const webpack = require('webpack');
 const { resolve, join } = require('path');
 const { existsSync } = require('fs');
-const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const { merge } = require('webpack-merge');
 const { filter } = require('minimatch');
 const SizePlugin = require('size-plugin');
@@ -29,11 +28,8 @@ const cleanFilename = name =>
  * @returns {Promise<import('webpack').Configuration>}
  */
 async function clientConfig(env) {
-	const { source, src, cwd } = env;
-	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
-	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
-		? require.resolve('@preact/async-loader')
-		: require.resolve('@preact/async-loader/legacy');
+	const { source, src } = env;
+	const asyncLoader = require.resolve('@preact/async-loader');
 
 	let swInjectManifest = [];
 	if (env.sw) {
