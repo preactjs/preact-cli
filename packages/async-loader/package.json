@@ -13,7 +13,7 @@
   "author": "The Preact Authors (https://preactjs.com)",
   "main": "lib/index.js",
   "files": [
-    "lib"
+    "*.js"
   ],
   "dependencies": {
     "kleur": "^4.1.4"
