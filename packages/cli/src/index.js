@@ -107,7 +107,6 @@ prog
 				Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
 				npmPackages: [
 					'preact',
-					'preact-compat',
 					'preact-cli',
 					'preact-router',
 					'preact-render-to-string',

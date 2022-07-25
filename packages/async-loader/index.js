@@ -1,11 +1,9 @@
 const path = require('path');
-const { getOptions, stringifyRequest } = require('loader-utils');
-const PREACT_LEGACY_MODE = 'PREACT_LEGACY_MODE';
 
-exports.pitch = function (req, mode) {
+exports.pitch = function (req) {
 	this.cacheable && this.cacheable();
 	let name;
-	let query = getOptions(this) || {};
+	let query = this.getOptions() || {};
 	let routeName =
 		typeof query.name === 'function' ? query.name(this.resourcePath) : null;
 
@@ -19,17 +17,15 @@ exports.pitch = function (req, mode) {
 
 	// import Async from '${path.relative(process.cwd(), path.resolve(__dirname, 'async-component.js'))}';
 	return `
-		import Async from ${stringifyRequest(
-			this,
-			path.resolve(
-				__dirname,
-				mode === PREACT_LEGACY_MODE ? 'async-legacy.js' : 'async.js'
-			) // explicit value check because webpack sends 2nd argument values but we dont use it
+		import Async from ${JSON.stringify(
+			this.utils.contextify(this.context, path.resolve(__dirname, 'async.js'))
 		)};
 
 		function load(cb) {
 			require.ensure([], function (require) {
-				var result = require(${stringifyRequest(this, '!!' + req)});
+				var result = require(${JSON.stringify(
+					this.utils.contextify(this.context, '!!' + req)
+				)});
 				typeof cb === 'function' && cb(result);
 			}${name ? ', ' + JSON.stringify(name) : ''});
 		}
@@ -37,5 +33,3 @@ exports.pitch = function (req, mode) {
 		export default Async(load);
 	`;
 };
-
-exports.PREACT_LEGACY_MODE = PREACT_LEGACY_MODE;
