@@ -5,7 +5,7 @@
   ],
   "scripts": {
     "cli": "yarn workspace cli",
-    "create-cli": "yarn workspace @preactjs/create-cli-app",
+    "create-cli": "yarn workspace create-preact-cli",
     "pretest": "yarn lint",
     "test": "lerna run test --stream",
     "prettier": "prettier --write **/*.{js,ts,tsx,json,css,scss,md,yml}",
