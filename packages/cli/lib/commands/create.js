@@ -263,8 +263,12 @@ async function command(repo, dest, argv) {
 	}
 
 	if (!repo.includes('/')) {
-		repo = `${ORG}/${repo}#main`;
-		info(`Assuming you meant ${repo}...`);
+		repo = `${ORG}/${repo}`;
+
+		// TODO: Remove this after updating all templates
+		if (repo.endsWith('default') || repo.endsWith('typescript')) {
+			repo += '#main';
+		}
 	}
 
 	if (!existsSync(resolve(cwd, dest, 'src'))) {
