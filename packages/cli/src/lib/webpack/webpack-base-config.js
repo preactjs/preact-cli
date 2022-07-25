@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const path = require('path');
 const { resolve, dirname } = require('path');
 const { readFileSync, existsSync } = require('fs');
-const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const autoprefixer = require('autoprefixer');
 const browserslist = require('browserslist');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -50,7 +49,6 @@ function resolveTsconfig(cwd, isProd) {
  */
 module.exports = function createBaseConfig(env) {
 	const { cwd, isProd, src, source } = env;
-	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	// Apply base-level `env` values
 	env.dest = resolve(cwd, env.dest || 'build');
 	env.manifest = readJson(source('manifest.json')) || {};
@@ -67,19 +65,6 @@ module.exports = function createBaseConfig(env) {
 	let userNodeModules = findAllNodeModules(cwd);
 	let cliNodeModules = findAllNodeModules(__dirname);
 	let nodeModules = [...new Set([...userNodeModules, ...cliNodeModules])];
-
-	let compat = 'preact-compat';
-	try {
-		compat = dirname(
-			require.resolve('preact/compat/package.json', { paths: [cwd] })
-		);
-	} catch (e) {
-		try {
-			compat = dirname(
-				require.resolve('preact-compat/package.json', { paths: [cwd] })
-			);
-		} catch (e) {}
-	}
 
 	let tsconfig = resolveTsconfig(cwd, isProd);
 
@@ -123,14 +108,14 @@ module.exports = function createBaseConfig(env) {
 				style: source('style'),
 				'preact-cli-entrypoint': source('index'),
 				url: dirname(require.resolve('native-url/package.json')),
-				// preact/compat aliases for supporting React dependencies:
-				react: compat,
-				'react-dom': compat,
-				'preact-compat': compat,
+				'react/jsx-runtime': require.resolve('preact/jsx-runtime'),
+				react: require.resolve('preact/compat'),
+				'react-dom/test-utils': require.resolve('preact/test-utils'),
+				'react-dom': require.resolve('preact/compat'),
 				'react-addons-css-transition-group': 'preact-css-transition-group',
-				'preact-cli/async-component': IS_SOURCE_PREACT_X_OR_ABOVE
-					? require.resolve('@preact/async-loader/async')
-					: require.resolve('@preact/async-loader/async-legacy'),
+				'preact-cli/async-component': require.resolve(
+					'@preact/async-loader/async'
+				),
 			},
 		},
 
