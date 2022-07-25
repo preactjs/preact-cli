@@ -4,17 +4,14 @@
     "packages/*"
   ],
   "scripts": {
-    "cli": "yarn workspace cli",
-    "create-cli": "yarn workspace @preactjs/create-cli-app",
     "pretest": "yarn lint",
-    "test": "lerna run test --stream",
+    "test": "yarn workspaces run test",
     "prettier": "prettier --write **/*.{js,ts,tsx,json,css,scss,md,yml}",
     "lint": "eslint .",
     "changeset": "changeset",
     "release": "ncp README.md packages/cli/README.md && changeset publish && rimraf packages/cli/README.md",
     "prepare": "husky install"
   },
-  "dependencies": {},
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.0",
     "@changesets/cli": "^2.16.0",
@@ -27,7 +24,6 @@
     "eslint-plugin-react": "^7.23.2",
     "husky": "^6.0.0",
     "jest": "^24.9.0",
-    "lerna": "^4.0.0",
     "lint-staged": "^11.0.0",
     "ncp": "^2.0.0",
     "prettier": "^2.2.1",
