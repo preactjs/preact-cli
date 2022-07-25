@@ -1,8 +1,0 @@
-{
-  "private": true,
-  "name": "preact-prerendering-hydration-preact8",
-  "dependencies": {
-    "preact": "8.5.3",
-    "preact-render-to-string": "4.1.0"
-  }
-}
