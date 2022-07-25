@@ -264,6 +264,7 @@ async function command(repo, dest, argv) {
 
 	if (!repo.includes('/')) {
 		repo = `${ORG}/${repo}`;
+		info(`Assuming you meant ${repo}...`);
 
 		// TODO: Remove this after updating all templates
 		if (repo.endsWith('default') || repo.endsWith('typescript')) {
