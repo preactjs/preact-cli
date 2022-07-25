@@ -177,7 +177,9 @@ describe('preact build', () => {
 			await rename(join(dir, 'index.js'), join(dir, 'renamed-src/index.js'));
 			await rename(join(dir, 'style.css'), join(dir, 'renamed-src/style.css'));
 
-			await expect(buildFast(dir, { src: 'renamed-src' })).resolves.not.toThrow();
+			await expect(
+				buildFast(dir, { src: 'renamed-src' })
+			).resolves.not.toThrow();
 		});
 
 		it('--dest', async () => {
@@ -361,18 +363,13 @@ describe('preact build', () => {
 			expect(builtStylesheet).toMatch('h2{color:green}');
 		});
 
-		it('should use CSS Modules in `routes` and `components` directories', async () => {
-			let dir = await subject('css-auto-modules');
+		it('should use plain CSS & CSS Modules together, determining loading method by filename', async () => {
+			let dir = await subject('css-modules');
 			await buildFast(dir);
 			const builtStylesheet = await getOutputFile(dir, /bundle\.\w{5}\.css$/);
-			const builtSplitStylesheet = await getOutputFile(
-				dir,
-				/route-index\.chunk\.\w{5}\.css$/
-			);
 
 			expect(builtStylesheet).toMatch('h1{color:red}');
-			expect(builtStylesheet).toMatch(/\.text__\w{5}{color:tan}/);
-			expect(builtSplitStylesheet).toMatch(/\.text__\w{5}{color:red}/);
+			expect(builtStylesheet).toMatch(/\.text__\w{5}{color:blue}/);
 		});
 
 		it('should inline critical CSS only', async () => {
@@ -394,12 +391,14 @@ describe('preact build', () => {
 			expect(builtStylesheet).toMatch('h1{background:#673ab8}');
 		});
 
-		it('should use SASS styles', async () => {
+		it('should use SASS, SCSS, and CSS Modules for each', async () => {
 			let dir = await subject('css-sass');
 			await buildFast(dir);
+			const builtStylesheet = await getOutputFile(dir, /bundle\.\w{5}\.css$/);
 
-			let body = await getBody(dir);
-			looksLike(body, images.sass);
+			expect(builtStylesheet).toMatch('h1{background:blue;color:red}');
+			expect(builtStylesheet).toMatch(/\.text__\w{5}{color:blue}/);
+			expect(builtStylesheet).toMatch(/\.text__\w{5}{background:red}/);
 		});
 	});
 
