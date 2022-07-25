@@ -49,7 +49,7 @@ function resolveTsconfig(cwd, isProd) {
  * @returns {import('webpack').Configuration}
  */
 module.exports = function createBaseConfig(env) {
-	const { cwd, isProd, isWatch, src, source } = env;
+	const { cwd, isProd, src, source } = env;
 	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
 	// Apply base-level `env` values
 	env.dest = resolve(cwd, env.dest || 'build');
@@ -214,42 +214,12 @@ module.exports = function createBaseConfig(env) {
 					],
 				},
 				{
-					// User styles
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
-					include: [source('components'), source('routes')],
+					exclude: /\.module\.(p?css|less|s[ac]ss|styl)$/,
 					use: [
-						isWatch
-							? require.resolve('style-loader')
-							: MiniCssExtractPlugin.loader,
-						{
-							loader: require.resolve('css-loader'),
-							options: {
-								modules: {
-									localIdentName: '[local]__[hash:base64:5]',
-								},
-								importLoaders: 1,
-								sourceMap: true,
-							},
-						},
-						{
-							loader: require.resolve('postcss-loader'),
-							options: {
-								sourceMap: true,
-								postcssOptions: {
-									plugins: postcssPlugins,
-								},
-							},
-						},
-					],
-				},
-				{
-					// External / `node_module` styles
-					test: /\.(p?css|less|s[ac]ss|styl)$/,
-					exclude: [source('components'), source('routes')],
-					use: [
-						isWatch
-							? require.resolve('style-loader')
-							: MiniCssExtractPlugin.loader,
+						isProd
+							? MiniCssExtractPlugin.loader
+							: require.resolve('style-loader'),
 						{
 							loader: require.resolve('css-loader'),
 							options: {
@@ -271,6 +241,33 @@ module.exports = function createBaseConfig(env) {
 					// Remove this when webpack adds a warning or an error for this.
 					// See https://github.com/webpack/webpack/issues/6571
 					sideEffects: true,
+				},
+				{
+					test: /\.module\.(p?css|less|s[ac]ss|styl)$/,
+					use: [
+						isProd
+							? MiniCssExtractPlugin.loader
+							: require.resolve('style-loader'),
+						{
+							loader: require.resolve('css-loader'),
+							options: {
+								modules: {
+									localIdentName: '[local]__[hash:base64:5]',
+								},
+								importLoaders: 1,
+								sourceMap: true,
+							},
+						},
+						{
+							loader: require.resolve('postcss-loader'),
+							options: {
+								sourceMap: true,
+								postcssOptions: {
+									plugins: postcssPlugins,
+								},
+							},
+						},
+					],
 				},
 				{
 					test: /\.(xml|html|txt|md)$/,
@@ -349,7 +346,7 @@ module.exports = function createBaseConfig(env) {
 
 		mode: isProd ? 'production' : 'development',
 
-		devtool: isWatch ? 'eval-cheap-module-source-map' : 'source-map',
+		devtool: isProd ? 'source-map' : 'eval-cheap-module-source-map',
 
 		node: {
 			__filename: false,
