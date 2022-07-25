@@ -31,7 +31,8 @@ const { addScripts, install, initGit } = require('../lib/setup');
 const { validateArgs } = require('./validate-args');
 
 const ORG = 'preactjs-templates';
-const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
+const RGX =
+	/\.(woff2?|ttf|eot|jpe?g|ico|png|gif|webp|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
@@ -176,11 +177,7 @@ async function fetchTemplates() {
 		// If cache file doesn't exist, then hit the API and fetch the data
 		if (!existsSync(cacheFilePath)) {
 			const repos = await fetch(TEMPLATES_REPO_URL).then(r => r.json());
-			await writeFile(
-				cacheFilePath,
-				JSON.stringify(repos, null, 2),
-				'utf-8'
-			);
+			await writeFile(cacheFilePath, JSON.stringify(repos, null, 2), 'utf-8');
 		}
 
 		// update the cache file without blocking the rest of the tasks.
@@ -268,6 +265,11 @@ async function command(repo, dest, argv) {
 	if (!repo.includes('/')) {
 		repo = `${ORG}/${repo}`;
 		info(`Assuming you meant ${repo}...`);
+
+		// TODO: Remove this after updating all templates
+		if (repo.endsWith('default') || repo.endsWith('typescript')) {
+			repo += '#main';
+		}
 	}
 
 	if (!existsSync(resolve(cwd, dest, 'src'))) {

@@ -7,18 +7,18 @@ exports.default = {
 	'assets/icons/mstile-150x150.png': 9050,
 	'assets/favicon.ico': 15086,
 
-	'ssr-build/ssr-bundle.77c49.css': 1281,
-	'ssr-build/ssr-bundle.77c49.css.map': 2070,
+	'ssr-build/ssr-bundle.c9123.css': 1281,
+	'ssr-build/ssr-bundle.c9123.css.map': 2070,
 	'ssr-build/ssr-bundle.js': 9801,
 	'ssr-build/ssr-bundle.js.map': 30625,
 	'ssr-build/asset-manifest.json': 82,
 
-	'bundle.6d2a5.js': 21323,
-	'bundle.6d2a5.js.map': 85534,
-	'bundle.6d2a5.legacy.js': 22514,
-	'bundle.6d2a5.legacy.js.map': 106422,
-	'bundle.9bde9.css': 945,
-	'bundle.9bde9.css.map': 1758,
+	'bundle.3f496.js': 21323,
+	'bundle.3f496.js.map': 85534,
+	'bundle.3f496.legacy.js': 22514,
+	'bundle.3f496.legacy.js.map': 106422,
+	'bundle.a2557.css': 945,
+	'bundle.a2557.css.map': 1758,
 
 	'dom-polyfills.c88f4.legacy.js': 5252,
 	'dom-polyfills.c88f4.legacy.js.map': 18836,
@@ -31,30 +31,20 @@ exports.default = {
 	'push-manifest.json': 450,
 	'asset-manifest.json': 943,
 
-	'route-home.chunk.25907.js': 306,
-	'route-home.chunk.25907.js.map': 1615,
-	'route-home.chunk.25907.legacy.js': 363,
-	'route-home.chunk.25907.legacy.js.map': 1913,
-	'route-home.chunk.f1c94.css': 112,
-	'route-home.chunk.f1c94.css.map': 224,
+	'route-home.chunk.b9f12.js': 306,
+	'route-home.chunk.b9f12.js.map': 1615,
+	'route-home.chunk.b9f12.legacy.js': 363,
+	'route-home.chunk.b9f12.legacy.js.map': 1913,
+	'route-home.chunk.6eaee.css': 112,
+	'route-home.chunk.6eaee.css.map': 224,
 
-	'route-profile.chunk.d1e1a.js': 2469,
-	'route-profile.chunk.d1e1a.js.map': 9736,
-	'route-profile.chunk.d1e1a.legacy.js': 2624,
-	'route-profile.chunk.d1e1a.legacy.js.map': 12373,
-	'route-profile.chunk.e0d39.css': 118,
-	'route-profile.chunk.e0d39.css.map': 231,
+	'route-profile.chunk.d94b1.js': 2469,
+	'route-profile.chunk.d94b1.js.map': 9736,
+	'route-profile.chunk.d94b1.legacy.js': 2624,
+	'route-profile.chunk.d94b1.legacy.js.map': 12373,
+	'route-profile.chunk.0af3e.css': 118,
+	'route-profile.chunk.0af3e.css.map': 231,
 };
-
-exports.sass = `
-<body>
-	<div class="background__sL1ip">
-		<h1>Header on background</h1>
-		<p>Paragraph on background</p>
-	</div>
-	{{ ... }}
-</body>
-`;
 
 exports.prerender = {};
 
