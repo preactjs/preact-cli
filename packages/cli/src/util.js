@@ -2,27 +2,10 @@ const { blue, yellow, red } = require('kleur');
 const { normalize, resolve } = require('path');
 const { statSync, existsSync } = require('fs');
 const symbols = require('./symbols');
-const which = require('which');
 const net = require('net');
 
 exports.isDir = function (str) {
 	return existsSync(str) && statSync(str).isDirectory();
-};
-
-exports.dirExists = function (workingDir, destDir) {
-	if (workingDir && destDir) {
-		const target = resolve(workingDir, destDir);
-		return exports.isDir(target);
-	}
-	return false;
-};
-
-exports.hasCommand = function (str) {
-	return !!which.sync(str, { nothrow: true });
-};
-
-exports.trim = function (str) {
-	return str.trim().replace(/^\t+/gm, '');
 };
 
 exports.info = function (text, code) {
@@ -42,14 +25,6 @@ exports.error = function (text, code = 1) {
 
 exports.normalizePath = function (str) {
 	return normalize(str).replace(/\\/g, '/');
-};
-
-exports.normalizeTemplatesResponse = function (repos = []) {
-	return repos.map(repo => ({
-		title: repo.name || '',
-		value: repo.full_name || '',
-		description: repo.description || '',
-	}));
 };
 
 exports.toBool = function (val) {
