@@ -4,9 +4,12 @@
     "packages/*"
   ],
   "scripts": {
+    "cli": "yarn workspace preact-cli",
+    "create-cli": "yarn workspace create-preact-cli",
     "pretest": "yarn lint",
     "test": "run-p test:*",
-    "test:cli": "yarn workspace preact-cli test",
+    "test:cli": "yarn cli test",
+    "test:create-cli": "yarn create-cli test",
     "prettier": "prettier --write **/*.{js,ts,tsx,json,css,scss,md,yml}",
     "lint": "eslint .",
     "changeset": "changeset",
@@ -25,6 +28,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.0",
     "@changesets/cli": "^2.16.0",
+    "@types/jest": "^24.9.1",
     "babel-eslint": "^10.0.1",
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.2.0",
@@ -32,6 +36,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
     "husky": "^6.0.0",
+    "jest": "^24.9.0",
     "lint-staged": "^11.0.0",
     "ncp": "^2.0.0",
     "npm-run-all": "^4.1.5",
