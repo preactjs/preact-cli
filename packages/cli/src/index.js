@@ -63,23 +63,6 @@ prog
 	.action(commands.build);
 
 prog
-	.command('create [template] [dest]')
-	.describe('Create a new application')
-	.option('--name', 'The application name')
-	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--force', 'Force destination output; will override!', false)
-	.option('--install', 'Install dependencies', true)
-	.option(
-		'--yarn',
-		'Use `yarn` instead of `npm` to install dependencies',
-		false
-	)
-	.option('--git', 'Initialize Git repository', false)
-	.option('--license', 'License type', 'MIT')
-	.option('-v, --verbose', 'Verbose output', false)
-	.action(commands.create);
-
-prog
 	.command('watch [src]')
 	.describe('Start a live-reload server for development')
 	.option('--src', 'Specify source directory', 'src')
@@ -108,8 +91,6 @@ prog
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port (default 8080)')
 	.action(commands.watch);
-
-prog.command('list').describe('List official templates').action(commands.list);
 
 prog
 	.command('info')

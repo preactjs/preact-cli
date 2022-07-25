@@ -13,7 +13,6 @@ exports.default = [
 	'src/assets/icons/mstile-150x150.png',
 	'src/assets/preact-logo-inverse.svg',
 	'src/assets/preact-logo.svg',
-	'src/components/app.js',
 	'src/components/header/index.js',
 	'src/components/header/style.module.css',
 	'src/index.js',

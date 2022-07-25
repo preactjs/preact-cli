@@ -1,6 +1,9 @@
 const { join } = require('path');
 const { mkdir } = require('fs').promises;
-const cmd = require('../../src/commands');
+const { build: buildCmd, watch: watchCmd } = require('../../src/commands');
+const {
+	create: createCmd,
+} = require('../../../create-cli/src/commands/create');
 const { tmpDir } = require('./output');
 const { linkPackage, handleOptimize } = require('./utils');
 
@@ -8,7 +11,7 @@ exports.create = async function (template, options) {
 	let dest = await tmpDir();
 
 	let opts = Object.assign({ name: `test-${template}`, cwd: '.' }, options);
-	await cmd.create(template, dest, opts);
+	await createCmd(template, dest, opts);
 
 	return dest;
 };
@@ -29,7 +32,7 @@ const build = (exports.build = async function (cwd, options) {
 	await linkPackage('preact-render-to-string', cwd);
 
 	let opts = Object.assign({ cwd }, argv, options);
-	return await cmd.build(opts.src, opts);
+	return await buildCmd(opts.src, opts);
 });
 
 exports.buildFast = async function (cwd, options) {
@@ -47,5 +50,5 @@ exports.watch = function (cwd, options) {
 	};
 
 	let opts = Object.assign({ cwd }, argv, options);
-	return cmd.watch(opts.src, opts);
+	return watchCmd(opts.src, opts);
 };
