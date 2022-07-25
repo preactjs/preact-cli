@@ -7,6 +7,15 @@ declare namespace jest {
 	}
 }
 
+// Modified from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/shelljs/index.d.ts
+declare module 'shelljs' {
+	const shell: {
+		cd: (string) => void;
+		exec: (string) => { stdout: string; stderr: string; code: number };
+	};
+	export = shell;
+}
+
 declare module '*.module.css' {
 	const classes: { [key: string]: string };
 	export default classes;
