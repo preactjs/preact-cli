@@ -221,6 +221,11 @@ exports.create = async function createCommand(repo, dest, argv) {
 	if (!repo.includes('/')) {
 		repo = `${ORG}/${repo}`;
 		info(`Assuming you meant ${repo}...`);
+
+		// TODO: Remove this after updating all templates
+		if (repo.endsWith('default') || repo.endsWith('typescript')) {
+			repo += '#next';
+		}
 	}
 
 	if (!existsSync(resolve(cwd, dest, 'src'))) {
