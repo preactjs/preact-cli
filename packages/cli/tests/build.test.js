@@ -62,7 +62,7 @@ async function getOutputFile(dir, file) {
 }
 
 describe('preact build', () => {
-	it.only('builds the `default` template', async () => {
+	it('builds the `default` template', async () => {
 		let dir = await create('default');
 
 		await build(dir);

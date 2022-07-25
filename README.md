@@ -50,13 +50,15 @@
 ### Usage
 
 ```sh
-$ npx preact-cli create <template-name> <project-name>
+$ npm init preact-cli <template-name> <project-name>
+
+$ yarn create preact-cli <template-name> <project-name>
 ```
 
 Example:
 
 ```sh
-$ npx preact-cli create default my-project
+$ npm init preact-cli default my-project
 ```
 
 The above command pulls the template from [preactjs-templates/default], prompts for some information, and generates the project at `./my-project/`.
@@ -65,7 +67,7 @@ The above command pulls the template from [preactjs-templates/default], prompts 
 
 The purpose of official preact project templates are to provide opinionated development tooling setups so that users can get started with actual app code as fast as possible. However, these templates are un-opinionated in terms of how you structure your app code and what libraries you use in addition to preact.js.
 
-All official project templates are repos in the [preactjs-templates organization]. When a new template is added to the organization, you will be able to run `npx preact-cli create <template-name> <project-name>` to use that template.
+All official project templates are repos in the [preactjs-templates organization]. When a new template is added to the organization, you will be able to run `npm init preact-cli <template-name> <project-name>` to use that template.
 
 Current available templates include:
 
@@ -81,26 +83,31 @@ Current available templates include:
 
 - [widget-typescript] - Widget template implemented in TypeScript
 
-> 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `npx preact-cli create <username>/<repository> <project-name>`
+> 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `npm init preact-cli <username>/<repository> <project-name>`
 
 ### CLI Options
+
+#### preact list
+
+Lists all the official preactjs-cli repositories
+
+```sh
+$ [npm init / yarn create] preact-cli list
+```
 
 #### preact create
 
 Create a project to quick start development.
 
 ```
-$ npx preact-cli create <template-name> <project-name>
+$ [npm init / yarn create] preact-cli <template-name> <project-name>
 
   --name        The application name.
   --cwd         A directory to use instead of $PWD.
   --force       Force option to create the directory for the new app  [boolean] [default: false]
-  --yarn        Installs dependencies with yarn.                      [boolean] [default: false]
   --git         Initialize version control using git.                 [boolean] [default: false]
   --install     Installs dependencies.                                [boolean] [default: true]
 ```
-
-Note: If you don't specify enough data to the `npx preact-cli create` command, it will prompt the required questions.
 
 #### preact build
 
@@ -109,7 +116,7 @@ Create a production build
 You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw`, `--no-prerender`, and `--no-inline-css`.
 
 ```
-$ preact build
+$ [npm run / yarn] preact build
 
     --src              Specify source directory  (default src)
     --dest             Specify output directory  (default build)
@@ -134,7 +141,7 @@ $ preact build
 Spin up a development server with multiple features like `hot-module-replacement`, `module-watcher`
 
 ```
-$ preact watch
+$ [npm run / yarn] preact watch
 
     --src              Specify source directory  (default src)
     --cwd              A directory to use instead of $PWD  (default .)
@@ -161,17 +168,13 @@ Note:
 1. You can run dev server using `HTTPS` then you can use the following `HTTPS=true preact watch`
 2. You can run the dev server on a different port using `PORT=8091 preact watch`
 
-#### preact list
-
-Lists all the official preactjs-cli repositories
-
-```sh
-$ preact list
-```
-
 #### preact info
 
 Prints debugging information concerning the local environment.
+
+```sh
+$ [npm run / yarn] preact info
+```
 
 ### Pre-rendering
 

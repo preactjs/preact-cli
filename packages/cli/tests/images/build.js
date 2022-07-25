@@ -32,9 +32,9 @@ exports.default = {
 	'asset-manifest.json': 943,
 
 	'route-home.chunk.7736d.js': 306,
-	'route-home.chunk.7736d.js.map': 1448,
+	'route-home.chunk.7736d.js.map': 1490,
 	'route-home.chunk.7736d.legacy.js': 363,
-	'route-home.chunk.7736d.legacy.js.map': 1702,
+	'route-home.chunk.7736d.legacy.js.map': 1752,
 	'route-home.chunk.6eaee.css': 112,
 	'route-home.chunk.6eaee.css.map': 224,
 
