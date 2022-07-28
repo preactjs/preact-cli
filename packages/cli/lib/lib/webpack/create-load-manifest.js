@@ -1,4 +1,5 @@
-module.exports = (assets, namedChunkGroups) => {
+module.exports = (assets, namedChunkGroups, isProd) => {
+	if (!isProd) return {};
 	/**
 	 * This is a mapping of generic/pre-build filenames to their postbuild output
 	 *
