@@ -1,5 +1,11 @@
 # preact-cli
 
+## 3.4.1
+
+### Patch Changes
+
+- [#1711](https://github.com/preactjs/preact-cli/pull/1711) [`5eb5d00`](https://github.com/preactjs/preact-cli/commit/5eb5d00b80bfd35ead1269fbb178973be149f013) Thanks [@rschristian](https://github.com/rschristian)! - Fix ensures that the load-manifest is only attempted to be built in prod. It serves no use in dev (as preloading is limited to prod) and can create a race condition when used alongside HMR.
+
 ## 3.4.0
 
 ### Minor Changes
