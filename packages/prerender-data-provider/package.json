@@ -15,9 +15,9 @@
   },
   "license": "MIT",
   "author": "The Preact Authors (https://preactjs.com)",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "files": [
-    "src"
+    "lib"
   ],
   "peerDependencies": {
     "preact": "^10.0.0"
