@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const sade = require('sade');
-const { create } = require('./commands/create.js');
-const { list } = require('./commands/list.js');
-const { error } = require('./util.js');
+const { create } = require('./commands/create');
+const { list } = require('./commands/list');
+const { error } = require('./util');
 
 const prog = sade('create-preact-app').version('0.1.3');
 
