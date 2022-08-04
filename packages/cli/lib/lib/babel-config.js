@@ -31,16 +31,14 @@ module.exports = function (env) {
 			require.resolve('babel-plugin-macros'),
 			[
 				require.resolve('@babel/plugin-transform-react-jsx'),
-				{ pragma: 'h', pragmaFrag: 'Fragment' },
+				{ runtime: 'automatic', importSource: 'preact' },
 			],
 		].filter(Boolean),
 		overrides: [
 			// Transforms to apply only to first-party code:
 			{
 				exclude: '**/node_modules/**',
-				presets: [
-					[require.resolve('@babel/preset-typescript'), { jsxPragma: 'h' }],
-				],
+				presets: [require.resolve('@babel/preset-typescript')],
 				plugins: [
 					!isProd && refresh && require.resolve('react-refresh/babel'),
 				].filter(Boolean),
