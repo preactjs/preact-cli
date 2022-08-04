@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import { Component } from 'preact';
 import './custom.css';
 import { PreRenderDataSource } from '@preact/prerender-data-provider';
 class Custom extends Component {

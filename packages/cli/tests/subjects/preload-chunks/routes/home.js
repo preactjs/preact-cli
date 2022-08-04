@@ -1,4 +1,3 @@
-import { h } from 'preact';
 import Base from './base';
 import './home.css';
 
