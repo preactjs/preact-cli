@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import { Component } from 'preact';
 
 const delay = t => new Promise(r => setTimeout(r, t));
 
