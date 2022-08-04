@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import { Component } from 'preact';
 import { Router } from 'preact-router';
 import Home from './routes/home';
 import Route66 from './routes/route66';
