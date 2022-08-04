@@ -287,10 +287,6 @@ module.exports = function createBaseConfig(env) {
 						}
 					)
 			),
-			new webpack.ProvidePlugin({
-				h: ['preact', 'h'],
-				Fragment: ['preact', 'Fragment'],
-			}),
 			// Fix for https://github.com/webpack-contrib/mini-css-extract-plugin/issues/151
 			new RemoveEmptyScriptsPlugin(),
 			new MiniCssExtractPlugin({
