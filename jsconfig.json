@@ -7,9 +7,9 @@
 		"noEmit": true,
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true,
-		"jsx": "react",
-		"jsxFactory": "h",
-		"jsxFragmentFactory": "Fragment"
+		"jsx": "preserve",
+		"jsxFactory": "preact.h",
+		"jsxFragmentFactory": "preact.Fragment"
 	},
 	"include": ["packages/**/*"]
 }
