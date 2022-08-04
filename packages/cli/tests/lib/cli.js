@@ -3,7 +3,7 @@ const { mkdir, symlink, readFile, writeFile } = require('fs').promises;
 const { build: buildCmd, watch: watchCmd } = require('../../src/commands');
 const {
 	create: createCmd,
-} = require('../../../create-cli/src/commands/create');
+} = require('../../../create-cli/lib/commands/create');
 const { tmpDir } = require('./output');
 const { disableOptimizeConfig, disableOptimize } = require('./utils');
 
