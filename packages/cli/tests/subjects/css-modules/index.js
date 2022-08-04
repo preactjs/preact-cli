@@ -1,5 +1,3 @@
-import { h } from 'preact';
-
 import './style.css';
 import styles from './style.module.css';
 
