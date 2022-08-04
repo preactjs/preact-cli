@@ -3,8 +3,8 @@
   "version": "3.4.0",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "preactjs/preact-cli",
-  "main": "src/index.js",
-  "bin": "src/index.js",
+  "main": "lib/index.js",
+  "bin": "lib/index.js",
   "scripts": {
     "pretest": "rimraf ../cli/tests/output",
     "test": "jest"

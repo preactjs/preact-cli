@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const sade = require('sade');
 const { create } = require('./commands/create.js');
-//const { create } = require('./commands/create.js)';
+const { list } = require('./commands/list.js');
 const { error } = require('./util.js');
 
 const prog = sade('create-preact-app').version('0.1.3');
@@ -16,10 +16,7 @@ prog
 	.option('--git', 'Initialize git repository', true)
 	.action(create);
 
-//prog
-//    .command('list')
-//    .describe('List official templates')
-//    .action(list);
+prog.command('list').describe('List official templates').action(list);
 
 prog.parse(process.argv, {
 	unknown: arg => {
