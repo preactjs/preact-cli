@@ -1,6 +1,6 @@
 {
   "name": "create-preact-cli",
-  "version": "3.4.0",
+  "version": "0.0.1",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "repository": "preactjs/preact-cli",
   "main": "src/index.js",
@@ -13,7 +13,7 @@
     "node": ">=14"
   },
   "files": [
-    "dist"
+    "lib"
   ],
   "keywords": [
     "preact",
