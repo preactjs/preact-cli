@@ -11,7 +11,6 @@ exports.default = [
 	'src/assets/icons/favicon-16x16.png',
 	'src/assets/icons/favicon-32x32.png',
 	'src/assets/icons/mstile-150x150.png',
-	'src/components/app.js',
 	'src/components/header/index.js',
 	'src/components/header/style.module.css',
 	'src/index.js',
