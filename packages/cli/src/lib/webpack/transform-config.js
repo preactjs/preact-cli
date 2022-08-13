@@ -90,7 +90,7 @@ function parseConfig(config) {
 	return transformers;
 }
 
-module.exports = async function (env, webpackConfig, isServer = false) {
+module.exports = async function (env, webpackConfig) {
 	const { configFile, isDefault } =
 		env.config !== 'preact.config.js'
 			? { configFile: env.config, isDefault: false }
@@ -122,16 +122,7 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 	const helpers = new WebpackConfigHelpers(env.cwd);
 	for (let [transformer, options] of transformers) {
 		try {
-			await transformer(
-				webpackConfig,
-				Object.assign({}, env, {
-					isServer,
-					dev: !env.production,
-					ssr: isServer,
-				}),
-				helpers,
-				options
-			);
+			await transformer(webpackConfig, env, helpers, options);
 		} catch (err) {
 			throw new Error((`Error at ${cliConfig}: \n` + err && err.stack) || err);
 		}

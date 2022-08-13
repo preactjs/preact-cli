@@ -51,12 +51,14 @@ async function devBuild(env) {
 }
 
 async function prodBuild(env) {
+	env = { ...env, isServer: false, dev: !env.production, ssr: false };
 	let config = await clientConfig(env);
 	await transformConfig(env, config);
 
 	if (env.prerender) {
-		let ssrConfig = serverConfig(env);
-		await transformConfig(env, ssrConfig, true);
+		const serverEnv = Object.assign({}, env, { isServer: true, ssr: true });
+		let ssrConfig = serverConfig(serverEnv);
+		await transformConfig(serverEnv, ssrConfig);
 		let serverCompiler = webpack(ssrConfig);
 		await runCompiler(serverCompiler);
 	}
