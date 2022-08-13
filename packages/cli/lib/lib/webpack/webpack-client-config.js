@@ -146,7 +146,7 @@ async function clientConfig(env) {
 				'process.env.ADD_SW': env.sw,
 				'process.env.PRERENDER': env.prerender,
 			}),
-			new PushManifestPlugin(),
+			new PushManifestPlugin(env.isProd),
 			...(await renderHTMLPlugin(env)),
 			...getBabelEsmPlugin(env),
 			copyPatterns.length !== 0 &&
@@ -331,7 +331,7 @@ function isDev(env) {
 		].filter(Boolean),
 
 		devServer: {
-			hot: true,
+			hot: env.refresh,
 			liveReload: !env.refresh,
 			compress: true,
 			devMiddleware: {

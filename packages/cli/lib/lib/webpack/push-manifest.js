@@ -2,6 +2,9 @@ const webpack = require('webpack');
 const createLoadManifest = require('./create-load-manifest');
 
 module.exports = class PushManifestPlugin {
+	constructor(isProd) {
+		this.isProd = isProd;
+	}
 	apply(compiler) {
 		compiler.hooks.emit.tap(
 			{
@@ -11,7 +14,8 @@ module.exports = class PushManifestPlugin {
 			compilation => {
 				const manifest = createLoadManifest(
 					compilation.assets,
-					compilation.namedChunkGroups
+					compilation.namedChunkGroups,
+					this.isProd
 				);
 
 				let output = JSON.stringify(manifest);
