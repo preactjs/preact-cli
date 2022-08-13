@@ -7,11 +7,11 @@ exports.default = {
 	'assets/icons/mstile-150x150.png': 9050,
 	'assets/favicon.ico': 15086,
 
-	'ssr-build/ssr-bundle.dba70.css': 1281,
-	'ssr-build/ssr-bundle.dba70.css.map': 2069,
+	'ssr-build/ssr-bundle.css': 1281,
+	'ssr-build/ssr-bundle.css.map': 2070,
 	'ssr-build/ssr-bundle.js': 10863,
 	'ssr-build/ssr-bundle.js.map': 49128,
-	'ssr-build/asset-manifest.json': 82,
+	'ssr-build/asset-manifest.json': 76,
 
 	'bundle.79d07.js': 21560,
 	'bundle.79d07.js.map': 85822,
