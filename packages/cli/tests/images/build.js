@@ -9,8 +9,8 @@ exports.default = {
 	'assets/preact-logo-inverse.svg': 649,
 	'assets/favicon.ico': 15086,
 
-	'ssr-build/ssr-bundle.c93c0.css': 2352,
-	'ssr-build/ssr-bundle.c93c0.css.map': 3609,
+	'ssr-build/ssr-bundle.css': 2352,
+	'ssr-build/ssr-bundle.css.map': 3609,
 	'ssr-build/ssr-bundle.js': 27197,
 	'ssr-build/ssr-bundle.js.map': 61808,
 	'ssr-build/asset-manifest.json': 82,
