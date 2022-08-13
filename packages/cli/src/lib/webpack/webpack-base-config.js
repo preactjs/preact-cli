@@ -285,7 +285,8 @@ module.exports = function createBaseConfig(env) {
 			// Fix for https://github.com/webpack-contrib/mini-css-extract-plugin/issues/151
 			new RemoveEmptyScriptsPlugin(),
 			new MiniCssExtractPlugin({
-				filename: isProd ? '[name].[contenthash:5].css' : '[name].css',
+				filename:
+					isProd && !env.isServer ? '[name].[contenthash:5].css' : '[name].css',
 				chunkFilename: isProd
 					? '[name].chunk.[contenthash:5].css'
 					: '[name].chunk.css',
