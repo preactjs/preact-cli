@@ -14,7 +14,6 @@ function serverConfig(env) {
 			publicPath: '/',
 			filename: 'ssr-bundle.js',
 			path: resolve(env.dest, 'ssr-build'),
-			chunkFilename: '[name].chunk.[chunkhash:5].js',
 			libraryTarget: 'commonjs2',
 		},
 		externals: {
