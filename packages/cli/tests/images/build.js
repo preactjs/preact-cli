@@ -7,8 +7,8 @@ exports.default = {
 	'assets/icons/mstile-150x150.png': 9050,
 	'assets/favicon.ico': 15086,
 
-	'ssr-build/ssr-bundle.dba70.css': 1281,
-	'ssr-build/ssr-bundle.dba70.css.map': 2069,
+	'ssr-build/ssr-bundle.css': 1281,
+	'ssr-build/ssr-bundle.css.map': 2069,
 	'ssr-build/ssr-bundle.js': 26049,
 	'ssr-build/ssr-bundle.js.map': 63276,
 	'ssr-build/asset-manifest.json': 76,
