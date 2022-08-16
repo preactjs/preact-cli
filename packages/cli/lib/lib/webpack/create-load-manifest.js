@@ -41,7 +41,7 @@ module.exports = (assets, namedChunkGroups, isProd) => {
 			const routeJs = assets[`${route}.js`];
 
 			routeManifest[routeJs] = { type: 'script', weight: 0.9 };
-			if (routeCss) routeManifest[routeCss] = { type: 'script', weight: 0.9 };
+			if (routeCss) routeManifest[routeCss] = { type: 'style', weight: 0.9 };
 
 			const path = route.replace(/^route-/, '/').replace(/^\/home/, '/');
 
