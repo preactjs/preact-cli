@@ -52,6 +52,7 @@ module.exports = (assets, namedChunkGroups, isProd) => {
 					asyncFiles.chunks.forEach(asset => {
 						asset.files = asset.files || [];
 						asset.files.forEach(file => {
+							if (routeManifest[file]) return;
 							if (/\.css$/.test(file)) {
 								routeManifest[file] = { type: 'style', weight: 0.9 };
 							} else if (/\.js$/.test(file)) {
