@@ -28,7 +28,6 @@ exports.default = {
 	'index.html': 2263,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
-	'push-manifest.json': 450,
 	'asset-manifest.json': 943,
 
 	'route-home.chunk.4ad71.js': 339,
@@ -100,45 +99,6 @@ exports.prerender.heads.custom = `
 <\\/head>
 `;
 
-exports.preload = {};
-
-exports.preload.true = `
-<head>
-	<meta charset=\\"utf-8\\">
-	<title>preact-preload-chunks<\\/title>
-	<meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\">
-	<meta name=\\"mobile-web-app-capable\\" content=\\"yes\\">
-	<meta name=\\"apple-mobile-web-app-capable\\" content=\\"yes\\">
-	<link rel=\\"apple-touch-icon\\" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
-	<link rel=\\"manifest\\" href=\\"\\/manifest\\.json\\">
-	<link rel=\\"preload\\" href=\\"\\/bundle\\.\\w{5}\\.js\\" as=\\"script\\">
-	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
-	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
-	<style>html{padding:0}<\\/style>
-	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
-	<noscript>
-		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
-	</noscript>
-</head>
-`;
-
-exports.preload.false = `
-<head>
-	<meta charset=\\"utf-8\\">
-	<title>preact-preload-chunks<\\/title>
-	<meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\">
-	<meta name=\\"mobile-web-app-capable\\" content=\\"yes\\">
-	<meta name=\\"apple-mobile-web-app-capable\\" content=\\"yes\\">
-	<link rel=\\"apple-touch-icon\\" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
-	<link rel=\\"manifest\\" href=\\"\\/manifest\\.json\\">
-	<style>html{padding:0}<\\/style>
-	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
-	<noscript>
-		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
-	</noscript>
-</head>
-`;
-
 exports.prerender.home = `
 <body>
 	<div id="app">
@@ -205,58 +165,6 @@ exports.template = `
 		<script nomodule="" defer="defer" src="/bundle.\\w{5}.legacy.js"></script>
 	</body>
 </html>
-`;
-
-exports.pushManifest = `
-{
-	"/":{
-		"bundle.\\w{5}.css":{
-			"type":"style",
-			"weight":1
-		},
-		"bundle.\\w{5}.js":{
-			"type":"script",
-			"weight":1
-		},
-		"route-home.chunk.\\w{5}.js":{
-			"type":"script",
-			"weight":0.9
-		},
-		"route-home.chunk.\\w{5}.css":{
-			"type":"style",
-			"weight":0.9
-		}
-	},
-	"/profile":{
-		"bundle.\\w{5}.css":{
-			"type":"style",
-			"weight":1
-		},
-		"bundle.\\w{5}.js":{
-			"type":"script",
-			"weight":1
-		},
-		"route-profile.chunk.\\w{5}.js":{
-			"type":"script",
-			"weight":0.9
-		},
-		"route-profile.chunk.\\w{5}.css":{
-			"type":"style",
-			"weight":0.9
-		}
-	}
-}
-`;
-
-exports.pushManifestAlteredFilenames = `
-{
-	"/":{
-		"scripts/bundle.js":{
-			"type":"script",
-			"weight":1
-		}
-	}
-}
 `;
 
 exports.publicPath = `
