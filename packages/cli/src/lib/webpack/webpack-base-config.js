@@ -11,7 +11,6 @@ const ReplacePlugin = require('webpack-plugin-replace');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const createBabelConfig = require('../babel-config');
 const loadPostcssConfig = require('postcss-load-config');
-const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 function readJson(file) {
 	try {
@@ -298,15 +297,6 @@ module.exports = function createBaseConfig(env) {
 				renderThrottle: 100,
 				summary: false,
 				clear: true,
-			}),
-			new WebpackManifestPlugin({
-				fileName: 'asset-manifest.json',
-				assetHookStage: webpack.Compiler.PROCESS_ASSETS_STAGE_ANALYSE,
-				// TODO: Remove this next breaking change and use the full filepath from this manifest
-				// when referring to built assets, i.e.:
-				// https://github.com/preactjs/preact-cli/blob/master/packages/cli/src/resources/head-end.ejs#L1
-				// This is just to avoid any potentially breaking changes for right now.
-				publicPath: '',
 			}),
 			tsconfig &&
 				new ForkTsCheckerWebpackPlugin({
