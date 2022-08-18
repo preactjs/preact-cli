@@ -302,7 +302,7 @@ module.exports = function createBaseConfig(env) {
 			}),
 			new WebpackManifestPlugin({
 				fileName: 'asset-manifest.json',
-				assetHookStage: webpack.Compiler.PROCESS_ASSETS_STAGE_ANALYSE,
+				assetHookStage: webpack.Compilation.PROCESS_ASSETS_STAGE_SUMMARIZE,
 				// TODO: Remove this next breaking change and use the full filepath from this manifest
 				// when referring to built assets, i.e.:
 				// https://github.com/preactjs/preact-cli/blob/master/packages/cli/src/resources/head-end.ejs#L1
