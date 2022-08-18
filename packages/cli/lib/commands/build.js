@@ -40,11 +40,6 @@ const options = [
 		description: 'Path to custom HTML template (default "src/template.html")',
 	},
 	{
-		name: '--preload',
-		description: 'Adds preload tags to the document its assets',
-		default: false,
-	},
-	{
 		name: '--analyze',
 		description: 'Launch interactive Analyzer to inspect production bundle(s)',
 	},

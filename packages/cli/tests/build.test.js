@@ -97,58 +97,6 @@ describe('preact build', () => {
 		expect(await access(file)).toBeUndefined();
 	});
 
-	describe('Push manifest plugin', () => {
-		it('should produce correct default `push-manifest.json`', async () => {
-			let dir = await create('default');
-
-			await buildFast(dir);
-			const manifest = await readFile(
-				`${dir}/build/push-manifest.json`,
-				'utf8'
-			);
-			expect(manifest).toEqual(
-				expect.stringMatching(getRegExpFromMarkup(images.pushManifest))
-			);
-		});
-
-		it('should produce correct `push-manifest.json` when expected values are missing', async () => {
-			// In this subject, there is no source CSS which means no CSS asset is output.
-			// In the past, this would result in `"undefined": { type: "style" ... }` being added to the manifest.
-			let dir = await subject('custom-webpack');
-			await buildFast(dir);
-			const manifest = await readFile(
-				`${dir}/build/push-manifest.json`,
-				'utf8'
-			);
-			expect(manifest).not.toMatch(/"undefined"/);
-		});
-
-		// Issue #1675
-		it('should produce correct `push-manifest.json` when user configures output filenames', async () => {
-			let dir = await subject('custom-webpack');
-
-			const config = await readFile(`${dir}/preact.config.js`, 'utf8');
-			await writeFile(
-				`${dir}/preact.config.js`,
-				config.replace(
-					"config.output.filename = '[name].js'",
-					"config.output.filename = 'scripts/[name].js'"
-				)
-			);
-
-			await buildFast(dir, { prerender: false });
-			const manifest = await readFile(
-				`${dir}/build/push-manifest.json`,
-				'utf8'
-			);
-			expect(manifest).toEqual(
-				expect.stringMatching(
-					getRegExpFromMarkup(images.pushManifestAlteredFilenames)
-				)
-			);
-		});
-	});
-
 	it('should use a custom `.env` with prefixed environment variables', async () => {
 		let dir = await subject('custom-dotenv');
 		await buildFast(dir);
@@ -257,22 +205,6 @@ describe('preact build', () => {
 			const html = await getOutputFile(dir, 'index.html');
 			expect(html).toEqual(
 				expect.stringMatching(getRegExpFromMarkup(images.template))
-			);
-		});
-
-		it('--preload', async () => {
-			let dir = await subject('preload-chunks');
-
-			await buildFast(dir, { preload: true });
-			let head = await getHead(dir);
-			expect(head).toEqual(
-				expect.stringMatching(getRegExpFromMarkup(images.preload.true))
-			);
-
-			await buildFast(dir, { preload: false });
-			head = await getHead(dir);
-			expect(head).toEqual(
-				expect.stringMatching(getRegExpFromMarkup(images.preload.false))
 			);
 		});
 
