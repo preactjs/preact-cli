@@ -86,7 +86,6 @@
     "webpack": "^5.67.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-dev-server": "^4.9.0",
-    "webpack-manifest-plugin": "^5.0.0",
     "webpack-merge": "^5.8.0",
     "webpack-remove-empty-scripts": "^0.7.2",
     "workbox-cacheable-response": "^6.5.3",

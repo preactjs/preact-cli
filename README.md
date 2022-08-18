@@ -125,7 +125,6 @@ $ [npm run / yarn] preact build
     --babelConfig      Path to custom Babel config (default .babelrc)
     --json             Generate build stats for bundle analysis
     --template         Path to custom HTML template (default 'src/template.html')
-    --preload          Adds preload tags to the document its assets  (default false)
     --analyze          Launch interactive Analyzer to inspect production bundle(s)
     --prerender        Renders route(s) into generated static HTML  (default true)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)

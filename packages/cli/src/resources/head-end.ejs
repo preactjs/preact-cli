@@ -2,10 +2,3 @@
 <% if (cli.manifest.theme_color) { %>
 	<meta name="theme-color" content="<%= cli.manifest.theme_color %>">
 <% } %>
-<% const filesRegexp = cli.inlineCss ? /\.(chunk\.\w{5}\.css|js)$/ : /\.(css|js)$/;%>
-<% for (const file in cli.loadManifest[cli.url]) { %>
-	<% if (cli.preload && file && file.match(filesRegexp)) { %>
-		<% /* crossorigin for main bundle as that is loaded from `<script type=module` tag, other lazy loaded bundles are from webpack so its not needed */ %>
-		<link rel="preload" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>" <%= file.match(/bundle\.\w{5}\.(?<!legacy)\.js$/)?'crossorigin="anonymous"':'' %>>
-	<% } %>
-<% } %>
