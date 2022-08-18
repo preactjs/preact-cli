@@ -30,6 +30,7 @@ const build = (exports.build = async function (cwd, options) {
 
 	await mkdir(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
 	await linkPackage('preact', cwd);
+	await linkPackage('preact-iso', cwd);
 	await linkPackage('preact-render-to-string', cwd);
 
 	let opts = Object.assign({ cwd }, argv, options);

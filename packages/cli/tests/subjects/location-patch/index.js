@@ -1,16 +1,19 @@
 export default () => {
+	// Uses WHATWG URL API
+	// https://nodejs.org/api/url.html#the-whatwg-url-api
 	if (
-		location.protocol === undefined ||
-		location.slashes === undefined ||
-		location.auth === undefined ||
-		location.host === undefined ||
-		location.port === undefined ||
-		location.hostname === undefined ||
 		location.hash === undefined ||
-		location.query === undefined ||
+		location.host === undefined ||
+		location.hostname === undefined ||
+		location.href === undefined ||
+		location.origin === undefined ||
+		location.password === undefined ||
 		location.pathname === undefined ||
-		location.path === undefined ||
-		location.href === undefined
+		location.port === undefined ||
+		location.protocol === undefined ||
+		location.search === undefined ||
+		location.searchParams === undefined ||
+		location.username === undefined
 	) {
 		throw new Error('Incomplete Location object');
 	}
