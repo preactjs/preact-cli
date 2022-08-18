@@ -41,11 +41,6 @@ prog
 		'Path to custom HTML template (default "src/template.html")'
 	)
 	.option(
-		'--preload',
-		'Adds preload links to the HTML for required resources',
-		false
-	)
-	.option(
 		'--analyze',
 		'Launch interactive Analyzer to inspect production bundle(s)',
 		false

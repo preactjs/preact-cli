@@ -9,18 +9,17 @@ exports.default = {
 	'assets/preact-logo-inverse.svg': 649,
 	'assets/favicon.ico': 15086,
 
-	'ssr-build/ssr-bundle.css': 2352,
-	'ssr-build/ssr-bundle.css.map': 3609,
-	'ssr-build/ssr-bundle.js': 27197,
-	'ssr-build/ssr-bundle.js.map': 61808,
-	'ssr-build/asset-manifest.json': 82,
+	'ssr-build/ssr-bundle.js': 27642,
+	'ssr-build/ssr-bundle.js.map': 65008,
+	'ssr-build/ssr-bundle.css': 2346,
+	'ssr-build/ssr-bundle.css.map': 3603,
 
-	'bundle.e1e75.js': 21563,
-	'bundle.e1e75.js.map': 86009,
-	'bundle.e1e75.legacy.js': 22586,
-	'bundle.e1e75.legacy.js.map': 107151,
-	'bundle.cf9c9.css': 1173,
-	'bundle.cf9c9.css.map': 2165,
+	'bundle.c74f5.js': 23145,
+	'bundle.c74f5.js.map': 92586,
+	'bundle.c74f5.legacy.js': 24195,
+	'bundle.c74f5.legacy.js.map': 107151,
+	'bundle.6329a.css': 1173,
+	'bundle.6329a.css.map': 2165,
 
 	'dom-polyfills.aeb97.js': 5221,
 	'dom-polyfills.aeb97.js.map': 18676,
@@ -30,20 +29,18 @@ exports.default = {
 	'index.html': 3998,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
-	'push-manifest.json': 388,
-	'asset-manifest.json': 1004,
 
-	'route-home.chunk.589f2.js': 1082,
-	'route-home.chunk.589f2.js.map': 3359,
-	'route-home.chunk.589f2.legacy.js': 1159,
-	'route-home.chunk.589f2.legacy.js.map': 3792,
-	'route-home.chunk.c81c9.css': 838,
-	'route-home.chunk.c81c9.css.map': 1406,
+	'route-home.chunk.6c974.js': 1179,
+	'route-home.chunk.6c974.js.map': 3814,
+	'route-home.chunk.6c974.legacy.js': 1222,
+	'route-home.chunk.6c974.legacy.js.map': 4452,
+	'route-home.chunk.d116e.css': 838,
+	'route-home.chunk.d116e.css.map': 1406,
 
-	'route-profile.chunk.4de97.js': 3097,
-	'route-profile.chunk.4de97.js.map': 12751,
-	'route-profile.chunk.4de97.legacy.js': 3240,
-	'route-profile.chunk.4de97.legacy.js.map': 15421,
+	'route-profile.chunk.0401b.js': 3165,
+	'route-profile.chunk.0401b.js.map': 13170,
+	'route-profile.chunk.0401b.legacy.js': 3302,
+	'route-profile.chunk.0401b.legacy.js.map': 15845,
 };
 
 exports.prerender = {};
@@ -98,45 +95,6 @@ exports.prerender.heads.custom = `
 		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
 	</noscript>
 <\\/head>
-`;
-
-exports.preload = {};
-
-exports.preload.true = `
-<head>
-	<meta charset=\\"utf-8\\">
-	<title>preact-preload-chunks<\\/title>
-	<meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\">
-	<meta name=\\"mobile-web-app-capable\\" content=\\"yes\\">
-	<meta name=\\"apple-mobile-web-app-capable\\" content=\\"yes\\">
-	<link rel=\\"apple-touch-icon\\" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
-	<link rel=\\"manifest\\" href=\\"\\/manifest\\.json\\">
-	<link rel=\\"preload\\" href=\\"\\/bundle\\.\\w{5}\\.js\\" as=\\"script\\">
-	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.js\\" as=\\"script\\">
-	<link rel=\\"preload\\" href=\\"\\/route-home\\.chunk\\.\\w{5}\\.css\\" as=\\"style\\">
-	<style>html{padding:0}<\\/style>
-	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
-	<noscript>
-		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
-	</noscript>
-</head>
-`;
-
-exports.preload.false = `
-<head>
-	<meta charset=\\"utf-8\\">
-	<title>preact-preload-chunks<\\/title>
-	<meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\">
-	<meta name=\\"mobile-web-app-capable\\" content=\\"yes\\">
-	<meta name=\\"apple-mobile-web-app-capable\\" content=\\"yes\\">
-	<link rel=\\"apple-touch-icon\\" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
-	<link rel=\\"manifest\\" href=\\"\\/manifest\\.json\\">
-	<style>html{padding:0}<\\/style>
-	<link href=\\"\\/bundle\\.\\w{5}\\.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
-	<noscript>
-		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
-	</noscript>
-</head>
 `;
 
 exports.prerender.home = `
@@ -205,54 +163,6 @@ exports.template = `
 		<script nomodule="" defer="defer" src="/bundle.\\w{5}.legacy.js"></script>
 	</body>
 </html>
-`;
-
-exports.pushManifest = `
-{
-	"/":{
-		"bundle.\\w{5}.css":{
-			"type":"style",
-			"weight":1
-		},
-		"bundle.\\w{5}.js":{
-			"type":"script",
-			"weight":1
-		},
-		"route-home.chunk.\\w{5}.js":{
-			"type":"script",
-			"weight":0.9
-		},
-		"route-home.chunk.\\w{5}.css":{
-			"type":"style",
-			"weight":0.9
-		}
-	},
-	"/profile":{
-		"bundle.\\w{5}.css":{
-			"type":"style",
-			"weight":1
-		},
-		"bundle.\\w{5}.js":{
-			"type":"script",
-			"weight":1
-		},
-		"route-profile.chunk.\\w{5}.js":{
-			"type":"script",
-			"weight":0.9
-		}
-	}
-}
-`;
-
-exports.pushManifestAlteredFilenames = `
-{
-	"/":{
-		"scripts/bundle.js":{
-			"type":"script",
-			"weight":1
-		}
-	}
-}
 `;
 
 exports.publicPath = `
