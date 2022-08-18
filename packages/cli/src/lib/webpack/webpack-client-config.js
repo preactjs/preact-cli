@@ -10,7 +10,6 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CrittersPlugin = require('critters-webpack-plugin');
 const renderHTMLPlugin = require('./render-html-plugin');
-const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
@@ -132,7 +131,6 @@ async function clientConfig(env) {
 				'process.env.ADD_SW': env.sw,
 				'process.env.PRERENDER': env.prerender,
 			}),
-			new PushManifestPlugin(env.isProd),
 			...(await renderHTMLPlugin(env)),
 			copyPatterns.length !== 0 &&
 				new CopyWebpackPlugin({
