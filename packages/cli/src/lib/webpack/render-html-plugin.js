@@ -7,7 +7,6 @@ const {
 } = require('html-webpack-skip-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
-const createLoadManifest = require('./create-load-manifest');
 const { esmImport, tryResolveConfig, warn } = require('../../util');
 
 const PREACT_FALLBACK_URL = '/200.html';
@@ -82,14 +81,6 @@ module.exports = async function renderHTMLPlugin(config) {
 						entryFiles.find(file => /\.(m?js)(\?|$)/.test(file));
 				});
 
-				let loadManifest = compilation.assets['push-manifest.json']
-					? JSON.parse(compilation.assets['push-manifest.json'].source())
-					: createLoadManifest(
-							compilation.assets,
-							compilation.namedChunkGroups,
-							config.isProd
-					  );
-
 				return {
 					cli: {
 						title,
@@ -101,7 +92,6 @@ module.exports = async function renderHTMLPlugin(config) {
 						preRenderData: values,
 						CLI_DATA: { preRenderData: { url, ...routeData } },
 						ssr: config.prerender ? prerender({ cwd, dest, src }, values) : '',
-						loadManifest,
 						entrypoints,
 					},
 					htmlWebpackPlugin: {
