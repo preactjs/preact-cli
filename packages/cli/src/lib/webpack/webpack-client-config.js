@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const { resolve, join } = require('path');
 const { existsSync } = require('fs');
 const { merge } = require('webpack-merge');
-const { filter } = require('minimatch');
 const SizePlugin = require('size-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -13,14 +12,8 @@ const renderHTMLPlugin = require('./render-html-plugin');
 const baseConfig = require('./webpack-base-config');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const RefreshPlugin = require('@prefresh/webpack');
-const { normalizePath, warn } = require('../../util');
+const { warn } = require('../../util');
 const OptimizePlugin = require('optimize-plugin');
-
-const cleanFilename = name =>
-	name.replace(
-		/(^\/(routes|components\/(routes|async))\/|(\/index)?\.[jt]sx?$)/g,
-		''
-	);
 
 /**
  * @param {import('../../../types').Env} env
@@ -29,7 +22,6 @@ const cleanFilename = name =>
 async function clientConfig(config, env) {
 	const { source, src } = config;
 	const { isProd } = env;
-	const asyncLoader = require.resolve('@preact/async-loader');
 
 	let swInjectManifest = [];
 	if (config.sw) {
@@ -79,43 +71,9 @@ async function clientConfig(config, env) {
 			path: config.dest,
 			publicPath: '/',
 			filename: isProd ? '[name].[chunkhash:5].js' : '[name].js',
-			chunkFilename: '[name].chunk.[chunkhash:5].js',
-		},
-
-		resolveLoader: {
-			alias: {
-				async: asyncLoader,
-			},
-		},
-
-		// automatic async components :)
-		module: {
-			rules: [
-				{
-					test: /\.[jt]sx?$/,
-					include: [
-						filter(source('routes') + '/{*,*/index}.{js,jsx,ts,tsx}'),
-						filter(
-							source('components') +
-								'/{routes,async}/{*,*/index}.{js,jsx,ts,tsx}'
-						),
-					],
-					loader: asyncLoader,
-					options: {
-						name(filename) {
-							filename = normalizePath(filename);
-							let relative = filename.replace(normalizePath(src), '');
-							if (!relative.includes('/routes/')) return false;
-							return 'route-' + cleanFilename(relative);
-						},
-						formatName(filename) {
-							filename = normalizePath(filename);
-							let relative = filename.replace(normalizePath(source('.')), '');
-							return cleanFilename(relative);
-						},
-					},
-				},
-			],
+			chunkFilename: isProd
+				? '[name].chunk.[chunkhash:5].js'
+				: '[name].chunk.js',
 		},
 
 		plugins: [
@@ -196,7 +154,7 @@ function prodBuild(config) {
 				preload: 'media',
 				pruneSource: false,
 				logLevel: 'silent',
-				additionalStylesheets: ['route-*.css'],
+				additionalStylesheets: ['routes-*.css'],
 			})
 		);
 	}

@@ -1,24 +1,26 @@
 import { Component } from 'preact';
-import { Router } from 'preact-router';
-import Home from './routes/home';
-import Route66 from './routes/route66';
-import Custom from './routes/custom';
+import { LocationProvider, Router } from 'preact-iso/router';
+import { default as lazy, ErrorBoundary } from 'preact-iso/lazy';
+
+const Home = lazy(() => import('./routes/home.js'));
+const Route66 = lazy(() => import('./routes/route66.js'));
+const Custom = lazy(() => import('./routes/custom.js'));
 import './style.css';
 
 export default class App extends Component {
-	handleRoute = e => {
-		this.currentUrl = e.url;
-	};
-
 	render(props) {
 		return (
-			<div id="app">
-				<Router url={props.url} onChange={this.handleRoute} {...props}>
-					<Home path="/" />
-					<Route66 path="/route66" />
-					<Custom path="/custom" {...props} />
-				</Router>
-			</div>
+			<LocationProvider>
+				<div id="app">
+					<ErrorBoundary>
+						<Router url={props.url} {...props}>
+							<Home path="/" />
+							<Route66 path="/route66" />
+							<Custom path="/custom" {...props} />
+						</Router>
+					</ErrorBoundary>
+				</div>
+			</LocationProvider>
 		);
 	}
 }

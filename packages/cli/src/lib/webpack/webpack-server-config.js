@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const { resolve } = require('path');
 const { merge } = require('webpack-merge');
 const baseConfig = require('./webpack-base-config');
@@ -20,11 +21,11 @@ function serverConfig(config) {
 			preact: 'preact',
 		},
 		target: 'node',
-		resolveLoader: {
-			alias: {
-				async: resolve(__dirname, './dummy-loader'),
-			},
-		},
+		plugins: [
+			new webpack.optimize.LimitChunkCountPlugin({
+				maxChunks: 1,
+			}),
+		],
 		optimization: {
 			minimize: false,
 		},
