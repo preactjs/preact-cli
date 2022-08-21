@@ -200,7 +200,7 @@ exports.template = `
 	<head>
 		<meta charset="utf-8">
 		<title>preact-custom-template</title>
-		<meta name="example-meta" content="Hello World">
+		<meta name="example-meta" content="Hello Prod">
 		<link rel="manifest" href="/manifest.json">
 	</head>
 	<body>
