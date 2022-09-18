@@ -45,63 +45,69 @@ async function handlePrerenderError(err, env, stack, entry) {
 	let errorMessage = err.toString();
 	let isReferenceError = errorMessage.startsWith('ReferenceError');
 	let methodName = stack.getMethodName();
-	let sourceMapContent, position, sourcePath, sourceLines, sourceCodeHighlight;
-
-	try {
-		sourceMapContent = JSON.parse(readFileSync(`${entry}.map`, 'utf-8'));
-	} catch (err) {
-		process.stderr.write(red(`Unable to read sourcemap: ${entry}.map\n`));
-	}
-
-	if (sourceMapContent) {
-		await SourceMapConsumer.with(sourceMapContent, null, consumer => {
-			position = consumer.originalPositionFor({
-				line: stack.getLineNumber(),
-				column: stack.getColumnNumber(),
-			});
-		});
-
-		if (position.source) {
-			position.source = position.source
-				.replace('webpack://', '.')
-				.replace(/^.*~\/((?:@[^/]+\/)?[^/]+)/, (s, name) =>
-					require
-						.resolve(name)
-						.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
-				);
-
-			sourcePath = resolve(env.src, position.source);
-			sourceLines;
-			try {
-				sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
-			} catch (err) {
-				try {
-					sourceLines = readFileSync(
-						require.resolve(position.source),
-						'utf-8'
-					).split('\n');
-				} catch (err) {
-					process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
-				}
-				// process.stderr.write(red(`Unable to read file: ${sourcePath}\n`));
-			}
-			sourceCodeHighlight = '';
-		}
-
-		if (sourceLines) {
-			for (var i = -4; i <= 4; i++) {
-				let color = i === 0 ? red : yellow;
-				let line = position.line + i;
-				let sourceLine = sourceLines[line - 1];
-				sourceCodeHighlight += sourceLine ? `${color(sourceLine)}\n` : '';
-			}
-		}
-	}
 
 	process.stderr.write('\n');
-	process.stderr.write(red(`${errorMessage}\n`));
-	// check if we have methodName (ie, the error originated in user code)
+	process.stderr.write(red(`\n${errorMessage}\n`));
+
+	// If a methodName exists, it's likely user code
 	if (methodName) {
+		let sourceMapContent,
+			position,
+			sourcePath,
+			sourceLines,
+			sourceCodeHighlight;
+		try {
+			sourceMapContent = JSON.parse(readFileSync(`${entry}.map`, 'utf-8'));
+		} catch (err) {
+			process.stderr.write(red(`\n\nUnable to read sourcemap: ${entry}.map\n`));
+		}
+
+		if (sourceMapContent) {
+			await SourceMapConsumer.with(sourceMapContent, null, consumer => {
+				position = consumer.originalPositionFor({
+					line: stack.getLineNumber(),
+					column: stack.getColumnNumber(),
+				});
+			});
+
+			if (position.source) {
+				position.source = position.source
+					.replace('webpack://', '.')
+					.replace(/^.*~\/((?:@[^/]+\/)?[^/]+)/, (s, name) =>
+						require
+							.resolve(name)
+							.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
+					);
+
+				sourcePath = resolve(env.src, position.source);
+				sourceLines;
+				try {
+					sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
+				} catch (err) {
+					try {
+						sourceLines = readFileSync(
+							require.resolve(position.source),
+							'utf-8'
+						).split('\n');
+					} catch (err) {
+						process.stderr.write(
+							red(`\n\nUnable to read file: ${sourcePath}\n`)
+						);
+					}
+				}
+				sourceCodeHighlight = '';
+			}
+
+			if (sourceLines) {
+				for (var i = -4; i <= 4; i++) {
+					let color = i === 0 ? red : yellow;
+					let line = position.line + i;
+					let sourceLine = sourceLines[line - 1];
+					sourceCodeHighlight += sourceLine ? `${color(sourceLine)}\n` : '';
+				}
+			}
+		}
+
 		process.stderr.write(`method: ${methodName}\n`);
 		if (sourceMapContent & sourceCodeHighlight) {
 			process.stderr.write(
@@ -119,11 +125,11 @@ async function handlePrerenderError(err, env, stack, entry) {
 	} else {
 		process.stderr.write(
 			yellow(
-				'Cannot determine error position. This most likely means it originated in node_modules.'
+				'Cannot determine error position. This most likely means it originated in node_modules.\n\n'
 			)
 		);
-		process.stderr.write('\n\n');
 	}
+
 	process.stderr.write(
 		`This ${
 			isReferenceError ? 'is most likely' : 'could be'

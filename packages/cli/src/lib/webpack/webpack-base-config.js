@@ -172,12 +172,17 @@ module.exports = function createBaseConfig(env) {
 					test: /\.m?[jt]sx?$/,
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
-					loader: require.resolve('babel-loader'),
-					options: Object.assign(
-						{ babelrc: false },
-						createBabelConfig(env, { browsers }),
-						babelrc // intentionally overwrite our settings
-					),
+					use: [
+						{
+							loader: require.resolve('babel-loader'),
+							options: Object.assign(
+								{ babelrc: false },
+								createBabelConfig(env, { browsers }),
+								babelrc // intentionally overwrite our settings
+							),
+						},
+						require.resolve('source-map-loader'),
+					],
 				},
 				{
 					// LESS
