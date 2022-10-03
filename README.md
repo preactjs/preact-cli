@@ -295,7 +295,9 @@ export default () => {
 	];
 };
 ```
-
+```sh
+preact build --prerenderUrls src/prerender-urls.js
+```
 #### Template
 
 A template is used to render your page by [EJS](https://ejs.co/).
