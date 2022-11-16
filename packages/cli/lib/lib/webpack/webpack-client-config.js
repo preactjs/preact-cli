@@ -59,7 +59,7 @@ async function clientConfig(env) {
 						/200\.html$/,
 						/\.esm.js$/,
 						/\.css$/,
-						/\.(png|jpg|svg|gif|webp)$/,
+						/\.(png|jpg|svg|gif|webp|avif)$/,
 					],
 					webpackCompilationPlugins: [
 						new webpack.DefinePlugin({
@@ -73,7 +73,12 @@ async function clientConfig(env) {
 		swInjectManifest.push(
 			new InjectManifest({
 				swSrc: swPath,
-				include: [/200\.html$/, /\.js$/, /\.css$/, /\.(png|jpg|svg|gif|webp)$/],
+				include: [
+					/200\.html$/,
+					/\.js$/,
+					/\.css$/,
+					/\.(png|jpg|svg|gif|webp|avif)$/,
+				],
 				exclude: [/\.esm\.js$/],
 			})
 		);
