@@ -296,7 +296,7 @@ module.exports = function createBaseConfig(env) {
 					loader: require.resolve('raw-loader'),
 				},
 				{
-					test: /\.(svg|woff2?|ttf|eot|jpe?g|png|webp|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
+					test: /\.(svg|woff2?|ttf|eot|jpe?g|png|webp|avif|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
 					loader: isProd
 						? require.resolve('file-loader')
 						: require.resolve('url-loader'),
