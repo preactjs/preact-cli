@@ -10,8 +10,7 @@ module.exports = function (env, options = {}) {
 					modules: options.modules || false,
 					targets: {
 						browsers: options.browsers,
-					},
-					exclude: ['transform-regenerator'],
+					}
 				},
 			],
 		],
