@@ -59,14 +59,17 @@ function getSassConfiguration(...includePaths) {
 }
 
 /**
+ * @param {import('../../../types').Env} env
  * @returns {import('webpack').Configuration}
  */
-module.exports = function createBaseConfig(env) {
-	const { cwd, isProd, src, source } = env;
+module.exports = function createBaseConfig(config, env) {
+	const { cwd, src, source } = config;
+	const { isProd, isServer } = env;
+
 	// Apply base-level `env` values
-	env.dest = resolve(cwd, env.dest || 'build');
-	env.manifest = readJson(source('manifest.json')) || {};
-	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
+	config.dest = resolve(cwd, config.dest || 'build');
+	config.manifest = readJson(source('manifest.json')) || {};
+	config.pkg = readJson(resolve(cwd, 'package.json')) || {};
 
 	// use browserslist config environment, config default, or default browsers
 	// default browsers are '> 0.5%, last 2 versions, Firefox ESR, not dead'
@@ -148,7 +151,7 @@ module.exports = function createBaseConfig(env) {
 					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					loader: require.resolve('babel-loader'),
-					options: createBabelConfig(env),
+					options: createBabelConfig(config, isProd),
 				},
 				{
 					// LESS
@@ -291,7 +294,7 @@ module.exports = function createBaseConfig(env) {
 			new RemoveEmptyScriptsPlugin(),
 			new MiniCssExtractPlugin({
 				filename:
-					isProd && !env.isServer ? '[name].[contenthash:5].css' : '[name].css',
+					isProd && !isServer ? '[name].[contenthash:5].css' : '[name].css',
 				chunkFilename: isProd
 					? '[name].chunk.[contenthash:5].css'
 					: '[name].chunk.css',

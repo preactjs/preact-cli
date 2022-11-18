@@ -96,7 +96,6 @@ async function command(src, argv) {
 		argv.refresh = argv.rhl;
 	}
 	argv.src = src || argv.src;
-	argv.production = false;
 	if (argv.sw) {
 		argv.sw = toBool(argv.sw);
 	}
@@ -120,7 +119,7 @@ async function command(src, argv) {
 		}
 	}
 
-	return runWebpack(argv, true);
+	return runWebpack(argv, false);
 }
 
 async function determinePort(port) {
