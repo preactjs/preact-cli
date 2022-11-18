@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title><% preact.title %></title>
-		<% if (cli.config.isProd) { %>
+		<% if (cli.env.isProd) { %>
 			<meta name="example-meta" content="Hello Prod">
 		<% } else { %>
 			<meta name="example-meta" content="Hello Dev">

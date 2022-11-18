@@ -24,10 +24,12 @@ const cleanFilename = name =>
 	);
 
 /**
+ * @param {import('../../../types').Env} env
  * @returns {Promise<import('webpack').Configuration>}
  */
-async function clientConfig(env) {
-	const { source, src } = env;
+async function clientConfig(config, env) {
+	const { source, src } = config;
+	const { isProd } = env;
 	const asyncLoader = require.resolve('@preact/async-loader');
 
 	let entry = {
@@ -36,7 +38,7 @@ async function clientConfig(env) {
 	};
 
 	let swInjectManifest = [];
-	if (env.sw) {
+	if (config.sw) {
 		let swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
 		const userSwPath = join(src, 'sw.js');
 		if (existsSync(userSwPath)) {
@@ -63,7 +65,7 @@ async function clientConfig(env) {
 		// copy any static files
 		existsSync(source('assets')) && { from: 'assets', to: 'assets' },
 		// copy sw-debug
-		!env.isProd && {
+		!isProd && {
 			from: resolve(__dirname, '../../resources/sw-debug.js'),
 			to: 'sw-debug.js',
 		},
@@ -77,15 +79,13 @@ async function clientConfig(env) {
 	return {
 		entry,
 		output: {
-			path: env.dest,
+			path: config.dest,
 			publicPath: '/',
 			filename: pathData => {
 				if (pathData.chunk.name === 'dom-polyfills') {
-					return env.isProd
-						? '[name].[chunkhash:5].legacy.js'
-						: '[name].legacy.js';
+					return isProd ? '[name].[chunkhash:5].legacy.js' : '[name].legacy.js';
 				}
-				return env.isProd ? '[name].[chunkhash:5].js' : '[name].js';
+				return isProd ? '[name].[chunkhash:5].js' : '[name].js';
 			},
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
 		},
@@ -128,10 +128,10 @@ async function clientConfig(env) {
 
 		plugins: [
 			new webpack.DefinePlugin({
-				'process.env.ADD_SW': env.sw,
-				'process.env.PRERENDER': env.prerender,
+				'process.env.ADD_SW': config.sw,
+				'process.env.PRERENDER': config.prerender,
 			}),
-			...(await renderHTMLPlugin(env)),
+			...(await renderHTMLPlugin(config, env)),
 			copyPatterns.length !== 0 &&
 				new CopyWebpackPlugin({
 					patterns: copyPatterns,
@@ -144,7 +144,7 @@ async function clientConfig(env) {
 /**
  * @returns {import('webpack').Configuration}
  */
-function isProd(env) {
+function prodBuild(config) {
 	let limit = 200 * 1000; // 200kb
 	const prodConfig = {
 		performance: Object.assign(
@@ -153,7 +153,7 @@ function isProd(env) {
 				maxAssetSize: limit,
 				maxEntrypointSize: limit,
 			},
-			env.pkg.performance
+			config.pkg.performance
 		),
 
 		plugins: [
@@ -198,7 +198,7 @@ function isProd(env) {
 		},
 	};
 
-	if (env['inline-css']) {
+	if (config['inline-css']) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
 				preload: 'media',
@@ -209,11 +209,11 @@ function isProd(env) {
 		);
 	}
 
-	if (env.analyze) {
+	if (config.analyze) {
 		prodConfig.plugins.push(new BundleAnalyzerPlugin());
 	}
 
-	if (env.brotli) {
+	if (config.brotli) {
 		prodConfig.plugins.push(
 			new CompressionPlugin({
 				filename: '[path].br[query]',
@@ -266,22 +266,22 @@ function setupProxy(target) {
 /**
  * @returns {import('webpack').Configuration}
  */
-function isDev(env) {
-	const { cwd, src } = env;
+function devBuild(config) {
+	const { cwd, src } = config;
 
 	return {
 		infrastructureLogging: {
 			level: 'info',
 		},
-		plugins: [env.refresh && new RefreshPlugin()].filter(Boolean),
+		plugins: [config.refresh && new RefreshPlugin()].filter(Boolean),
 
 		optimization: {
 			moduleIds: 'named',
 		},
 
 		devServer: {
-			hot: env.refresh,
-			liveReload: !env.refresh,
+			hot: config.refresh,
+			liveReload: !config.refresh,
 			compress: true,
 			devMiddleware: {
 				publicPath: '/',
@@ -293,24 +293,27 @@ function isDev(env) {
 					ignored: [resolve(cwd, 'build'), resolve(cwd, 'node_modules')],
 				},
 			},
-			https: env.https,
-			port: env.port,
-			host: process.env.HOST || env.host || '0.0.0.0',
+			https: config.https,
+			port: config.port,
+			host: process.env.HOST || config.host || '0.0.0.0',
 			allowedHosts: 'all',
 			historyApiFallback: true,
 			client: {
 				logging: 'none',
 				overlay: false,
 			},
-			proxy: setupProxy(env.pkg.proxy),
+			proxy: setupProxy(config.pkg.proxy),
 		},
 	};
 }
 
-module.exports = async function createClientConfig(env) {
+/**
+ * @param {import('../../../types').Env} env
+ */
+module.exports = async function createClientConfig(config, env) {
 	return merge(
-		baseConfig(env),
-		await clientConfig(env),
-		(env.isProd ? isProd : isDev)(env)
+		baseConfig(config, env),
+		await clientConfig(config, env),
+		(env.isProd ? prodBuild : devBuild)(config)
 	);
 };
