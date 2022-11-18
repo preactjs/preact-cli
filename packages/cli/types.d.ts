@@ -57,16 +57,9 @@ export type Config = {
  * to check for in your config
  */
 export type Env = {
-	src: string;
-	dest: string;
-	esm: boolean;
-	sw: boolean;
-	dev: boolean;
-	production: boolean;
 	isProd: boolean;
-	ssr: boolean;
-	prerender: boolean;
-	[key: string]: any;
+	isWatch: boolean;
+	isServer: boolean;
 };
 
 export type Helpers = {
