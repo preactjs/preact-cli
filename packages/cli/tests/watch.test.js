@@ -2,7 +2,7 @@ const { readFile, writeFile } = require('fs').promises;
 const { resolve } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');
-const { determinePort } = require('../lib/commands/watch');
+const { determinePort } = require('../src/commands/watch');
 const { subject } = require('./lib/output');
 const { getServer } = require('./server');
 
