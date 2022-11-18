@@ -10,7 +10,7 @@
     "directory": "packages/async-loader"
   },
   "license": "MIT",
-  "author": "The Preact Authors (https://preactjs.com)",
+  "author": "The Preact CLI Authors (https://github.com/preactjs/preact-cli/contributors)",
   "files": [
     "*.js"
   ],

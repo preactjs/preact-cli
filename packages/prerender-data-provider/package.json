@@ -14,7 +14,7 @@
     "directory": "packages/prerender-data-provider"
   },
   "license": "MIT",
-  "author": "The Preact Authors (https://preactjs.com)",
+  "author": "The Preact CLI Authors (https://github.com/preactjs/preact-cli/contributors)",
   "main": "lib/index.js",
   "files": [
     "lib"
