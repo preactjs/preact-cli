@@ -9,7 +9,6 @@ exports.watch = async function watchCommand(src, argv) {
 		argv.refresh = argv.rhl;
 	}
 	argv.src = src || argv.src;
-	argv.production = false;
 	if (argv.sw) {
 		argv.sw = toBool(argv.sw);
 	}
@@ -33,7 +32,7 @@ exports.watch = async function watchCommand(src, argv) {
 		}
 	}
 
-	return runWebpack(argv, true);
+	return runWebpack(argv, false);
 };
 
 const determinePort = (exports.determinePort = async function (port) {

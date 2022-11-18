@@ -8,7 +8,6 @@ exports.build = async function buildCommand(src, argv) {
 	argv.src = src || argv.src;
 	// add `default:true`s, `--no-*` disables
 	argv.prerender = toBool(argv.prerender);
-	argv.production = toBool(argv.production);
 
 	let cwd = resolve(argv.cwd);
 
@@ -23,7 +22,7 @@ exports.build = async function buildCommand(src, argv) {
 		await promisify(rimraf)(dest);
 	}
 
-	let stats = await runWebpack(argv, false);
+	let stats = await runWebpack(argv, true);
 
 	if (argv.json) {
 		await runWebpack.writeJsonStats(cwd, stats);
