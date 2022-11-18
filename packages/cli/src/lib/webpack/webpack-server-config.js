@@ -5,15 +5,15 @@ const baseConfig = require('./webpack-base-config');
 /**
  * @returns {import('webpack').Configuration}
  */
-function serverConfig(env) {
+function serverConfig(config) {
 	return {
 		entry: {
-			'ssr-bundle': env.source('index'),
+			'ssr-bundle': config.source('index'),
 		},
 		output: {
 			publicPath: '/',
 			filename: 'ssr-bundle.js',
-			path: resolve(env.dest, 'ssr-build'),
+			path: resolve(config.dest, 'ssr-build'),
 			libraryTarget: 'commonjs2',
 		},
 		externals: {
@@ -31,6 +31,9 @@ function serverConfig(env) {
 	};
 }
 
-module.exports = function createServerConfig(env) {
-	return merge(baseConfig(env), serverConfig(env));
+/**
+ * @param {import('../../../types').Env} env
+ */
+module.exports = function createServerConfig(config, env) {
+	return merge(baseConfig(config, env), serverConfig(config));
 };
