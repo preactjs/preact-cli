@@ -92,6 +92,7 @@
     "sade": "^1.8.1",
     "size-plugin": "^3.0.0",
     "source-map": "^0.7.2",
+    "source-map-loader": "^1.1.1",
     "stack-trace": "0.0.10",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^4.2.3",
