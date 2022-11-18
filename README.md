@@ -301,7 +301,7 @@ export default () => {
 A template is used to render your page by [EJS](https://ejs.co/).
 You can uses the data of `prerenderUrls` which does not have `title`, using `htmlWebpackPlugin.options.CLI_DATA.preRenderData` in EJS.
 
-The default one is visible [here](packages/cli/lib/resources/template.html) and it's going to be enough for the majority of cases.
+The default one is visible [here](packages/cli/src/resources/template.html) and it's going to be enough for the majority of cases.
 
 If you want to customise your template you can pass a custom template with the `--template` flag.
 
@@ -420,7 +420,7 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 [prpl]: https://developers.google.com/web/fundamentals/performance/prpl-pattern
 [`@babel/preset-env`]: https://babeljs.io/docs/en/babel-preset-env.html
 [proof]: https://googlechrome.github.io/lighthouse/viewer/?gist=142af6838482417af741d966e7804346
-[preact cli preset]: https://github.com/preactjs/preact-cli/blob/master/packages/cli/lib/lib/babel-config.js
+[preact cli preset]: https://github.com/preactjs/preact-cli/blob/master/packages/cli/src/lib/babel-config.js
 [service workers]: https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
 [customize babel]: https://github.com/preactjs/preact-cli/wiki/Config-Recipes#customising-babel-options-using-loader-helpers
 [`async!`]: https://github.com/preactjs/preact-cli/blob/1.4.1/examples/full/src/components/app.js#L7

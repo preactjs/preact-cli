@@ -25,7 +25,7 @@ var defaultBrowserListDev = [
 ];
 
 // preact-cli babel configs
-var babelConfigs = require('../lib/lib/babel-config');
+var babelConfigs = require('../src/lib/babel-config');
 
 /**
  * preset as a function means allow users to override some options

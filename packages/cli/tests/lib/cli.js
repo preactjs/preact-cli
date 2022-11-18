@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { mkdir, symlink } = require('fs').promises;
-const cmd = require('../../lib/commands');
+const cmd = require('../../src/commands');
 const { tmpDir } = require('./output');
 const shell = require('shelljs');
 

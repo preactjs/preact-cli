@@ -346,7 +346,7 @@ module.exports = function createBaseConfig(env) {
 				assetHookStage: webpack.Compiler.PROCESS_ASSETS_STAGE_ANALYSE,
 				// TODO: Remove this next breaking change and use the full filepath from this manifest
 				// when referring to built assets, i.e.:
-				// https://github.com/preactjs/preact-cli/blob/master/packages/cli/lib/resources/head-end.ejs#L1
+				// https://github.com/preactjs/preact-cli/blob/master/packages/cli/src/resources/head-end.ejs#L1
 				// This is just to avoid any potentially breaking changes for right now.
 				publicPath: '',
 			}),
