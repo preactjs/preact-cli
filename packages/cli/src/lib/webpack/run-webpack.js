@@ -10,25 +10,30 @@ const serverConfig = require('./webpack-server-config');
 const transformConfig = require('./transform-config');
 const { error, isDir, warn } = require('../../util');
 
-async function devBuild(env) {
-	let config = await clientConfig(env);
+/**
+ * @param {import('../../../types').Env} env
+ */
+async function devBuild(config, env) {
+	const webpackConfig = await clientConfig(config, env);
 
-	await transformConfig(env, config);
+	await transformConfig(webpackConfig, config, env);
 
-	let compiler = webpack(config);
+	let compiler = webpack(webpackConfig);
 	return new Promise((res, rej) => {
 		compiler.hooks.beforeCompile.tap('CliDevPlugin', () => {
-			if (env['clear']) clear(true);
+			if (config['clear']) clear(true);
 		});
 
 		compiler.hooks.done.tap('CliDevPlugin', stats => {
-			let devServer = config.devServer;
-			let protocol = devServer.https ? 'https' : 'http';
+			const devServer = webpackConfig.devServer;
+			const protocol = devServer.https ? 'https' : 'http';
 
-			let serverAddr = `${protocol}://${devServer.host}:${bold(
+			const serverAddr = `${protocol}://${devServer.host}:${bold(
 				devServer.port
 			)}`;
-			let localIpAddr = `${protocol}://${ip.address()}:${bold(devServer.port)}`;
+			const localIpAddr = `${protocol}://${ip.address()}:${bold(
+				devServer.port
+			)}`;
 
 			if (stats.hasErrors()) {
 				process.stdout.write(red('Build failed!\n\n'));
@@ -44,26 +49,28 @@ async function devBuild(env) {
 
 		compiler.hooks.failed.tap('CliDevPlugin', rej);
 
-		let server = new DevServer(config.devServer, compiler);
+		let server = new DevServer(webpackConfig.devServer, compiler);
 		server.start();
 		res(server);
 	});
 }
 
-async function prodBuild(env) {
-	env = { ...env, isServer: false, dev: !env.production, ssr: false };
-	let config = await clientConfig(env);
-	await transformConfig(env, config);
+/**
+ * @param {import('../../../types').Env} env
+ */
+async function prodBuild(config, env) {
+	if (config.prerender) {
+		const serverEnv = { ...env, isServer: true };
 
-	if (env.prerender) {
-		const serverEnv = Object.assign({}, env, { isServer: true, ssr: true });
-		let ssrConfig = serverConfig(serverEnv);
-		await transformConfig(serverEnv, ssrConfig);
-		let serverCompiler = webpack(ssrConfig);
+		const serverWebpackConfig = serverConfig(config, serverEnv);
+		await transformConfig(serverWebpackConfig, config, serverEnv);
+		const serverCompiler = webpack(serverWebpackConfig);
 		await runCompiler(serverCompiler);
 	}
 
-	let clientCompiler = webpack(config);
+	const clientWebpackConfig = await clientConfig(config, env);
+	await transformConfig(clientWebpackConfig, config, env);
+	const clientCompiler = webpack(clientWebpackConfig);
 
 	try {
 		let stats = await runCompiler(clientCompiler);
@@ -219,21 +226,26 @@ function stripLoaderFromModuleNames(m) {
 	return m;
 }
 
-module.exports = function (env, watch = false) {
-	env.production = !watch;
-	env.isProd = env.production; // shorthand
-	env.isWatch = !!watch; // use HMR?
-	env.cwd = resolve(env.cwd || process.cwd());
+/**
+ * @param {boolean} isProd
+ */
+module.exports = function (argv, isProd) {
+	const env = {
+		isProd,
+		isWatch: !isProd,
+		isServer: false,
+	};
+	const config = argv;
+	config.cwd = resolve(argv.cwd || process.cwd());
 
-	// env.src='src' via `build` default
-	let src = resolve(env.cwd, env.src);
-	env.src = isDir(src) ? src : env.cwd;
+	// config.src='src' via `build` default
+	const src = resolve(config.cwd, argv.src);
+	config.src = isDir(src) ? src : config.cwd;
 
 	// attach sourcing helper
-	env.source = dir => resolve(env.src, dir);
+	config.source = dir => resolve(config.src, dir);
 
-	// determine build-type to run
-	return (watch ? devBuild : prodBuild)(env);
+	return (isProd ? prodBuild : devBuild)(config, env);
 };
 
 module.exports.writeJsonStats = writeJsonStats;

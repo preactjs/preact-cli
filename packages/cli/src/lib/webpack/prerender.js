@@ -5,10 +5,10 @@ const stackTrace = require('stack-trace');
 const URL = require('url');
 const { SourceMapConsumer } = require('source-map');
 
-module.exports = function (env, params) {
+module.exports = function (config, params) {
 	params = params || {};
 
-	let entry = resolve(env.dest, './ssr-build/ssr-bundle.js');
+	let entry = resolve(config.dest, './ssr-build/ssr-bundle.js');
 	let url = params.url || '/';
 
 	global.history = {};
@@ -25,10 +25,9 @@ module.exports = function (env, params) {
 			);
 			return '';
 		}
-		const { cwd } = env;
-		const preact = require(require.resolve('preact', { paths: [cwd] }));
+		const preact = require(require.resolve('preact', { paths: [config.cwd] }));
 		const renderToString = require(require.resolve('preact-render-to-string', {
-			paths: [cwd],
+			paths: [config.cwd],
 		}));
 		return renderToString(preact.h(app, { ...params, url }));
 	} catch (err) {
@@ -37,11 +36,11 @@ module.exports = function (env, params) {
 			throw err;
 		}
 
-		handlePrerenderError(err, env, stack, entry);
+		handlePrerenderError(err, config, stack, entry);
 	}
 };
 
-async function handlePrerenderError(err, env, stack, entry) {
+async function handlePrerenderError(err, config, stack, entry) {
 	let errorMessage = err.toString();
 	let isReferenceError = errorMessage.startsWith('ReferenceError');
 	let methodName = stack.getMethodName();
@@ -70,7 +69,7 @@ async function handlePrerenderError(err, env, stack, entry) {
 						.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
 				);
 
-			sourcePath = resolve(env.src, position.source);
+			sourcePath = resolve(config.cwd, position.source);
 			sourceLines;
 			try {
 				sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
