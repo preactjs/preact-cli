@@ -1,7 +1,10 @@
 const { tryResolveConfig } = require('../util');
 
-module.exports = function (env) {
-	const { babelConfig, cwd, isProd, refresh } = env;
+/**
+ * @param {boolean} isProd
+ */
+module.exports = function (config, isProd) {
+	const { babelConfig, cwd, refresh } = config;
 
 	const resolvedConfig =
 		babelConfig &&
