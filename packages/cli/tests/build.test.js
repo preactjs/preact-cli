@@ -358,14 +358,13 @@ describe('preact build', () => {
 		});
 
 		it('--invalid-arg', async () => {
-			let dir = await subject('minimal');
-			// @ts-ignore
-			const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
-			await expect(build(dir, { 'invalid-arg': false })).rejects.toEqual(
-				new Error('Invalid argument found.')
+			const { code, stderr } = shell.exec(
+				`node ${join(__dirname, '../src/index.js')} build --invalid-arg`
 			);
-			expect(mockExit).toHaveBeenCalledWith(1);
-			mockExit.mockRestore();
+			expect(stderr).toMatch(
+				"Invalid argument '--invalid-arg' passed to build."
+			);
+			expect(code).toBe(1);
 		});
 	});
 
