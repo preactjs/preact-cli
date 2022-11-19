@@ -1,10 +1,12 @@
-const { readFile, writeFile } = require('fs').promises;
-const { resolve } = require('path');
+const { mkdir, readFile, rename, writeFile } = require('fs').promises;
+const { join, resolve } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');
 const { determinePort } = require('../src/commands/watch');
 const { subject } = require('./lib/output');
 const { getServer } = require('./server');
+const shell = require('shelljs');
+const fetch = require('isomorphic-unfetch');
 
 const { loadPage, waitUntilExpression } = startChrome;
 let chrome, server;
@@ -20,7 +22,7 @@ describe('preact', () => {
 
 	it('should create development server with hot reloading.', async () => {
 		let app = await create('default');
-		server = await watch(app, 8083);
+		server = await watch(app, { port: 8083 });
 
 		let page = await loadPage(chrome, 'http://127.0.0.1:8083/');
 
@@ -52,7 +54,7 @@ describe('preact', () => {
 			'PREACT_APP_MY_VARIABLE="Hello World!"'
 		);
 
-		server = await watch(app, 8085);
+		server = await watch(app, { port: 8085 });
 
 		let page = await loadPage(chrome, 'http://127.0.0.1:8085/');
 
@@ -69,7 +71,7 @@ describe('preact', () => {
 		const api = getServer('', 8086);
 		let app = await subject('proxy');
 
-		server = await watch(app, 8087);
+		server = await watch(app, { port: 8087 });
 
 		let page = await loadPage(chrome, 'http://127.0.0.1:8087/');
 
@@ -80,6 +82,157 @@ describe('preact', () => {
 
 		server.close();
 		api.server.close();
+	});
+
+	describe('CLI Options', () => {
+		it('--src', async () => {
+			let app = await subject('minimal');
+
+			await mkdir(join(app, 'renamed-src'));
+			await rename(join(app, 'index.js'), join(app, 'renamed-src/index.js'));
+			await rename(join(app, 'style.css'), join(app, 'renamed-src/style.css'));
+
+			server = await watch(app, { port: 8088, src: 'renamed-src' });
+
+			let page = await loadPage(chrome, 'http://127.0.0.1:8088/');
+
+			await waitUntilExpression(
+				page,
+				`document.querySelector('h1').innerText === 'Minimal App'`
+			);
+
+			server.close();
+		});
+
+		it('--esm', async () => {
+			let app = await subject('minimal');
+
+			server = await watch(app, { port: 8089, esm: true });
+			let bundle = await fetch('http://127.0.0.1:8089/bundle.esm.js').then(
+				res => res.text()
+			);
+			expect(bundle).toMatch('Minimal App');
+			server.close();
+		});
+
+		it('--sw', async () => {
+			let app = await subject('minimal');
+
+			// The `waitUntil` in these tests ensures the SW is installed before our checks
+			server = await watch(app, { port: 8090 });
+			let page = await chrome.newPage();
+			await page.goto('http://127.0.0.1:8090/', { waitUntil: 'networkidle0' });
+			expect(
+				await page.evaluate(async () => {
+					return await navigator.serviceWorker
+						.getRegistrations()
+						.then(registrations =>
+							registrations[0].active.scriptURL.endsWith('/sw-debug.js')
+						);
+				})
+			).toBe(true);
+			server.close();
+
+			server = await watch(app, { port: 8091, sw: true });
+			page = await chrome.newPage();
+			await page.goto('http://127.0.0.1:8091/', { waitUntil: 'networkidle0' });
+			expect(
+				await page.evaluate(async () => {
+					return await navigator.serviceWorker
+						.getRegistrations()
+						.then(registrations =>
+							registrations[0].active.scriptURL.endsWith('/sw.js')
+						);
+				})
+			).toBe(true);
+			server.close();
+
+			server = await watch(app, { port: 8092, sw: false });
+			page = await chrome.newPage();
+			await page.goto('http://127.0.0.1:8092/', { waitUntil: 'networkidle0' });
+			expect(
+				await page.evaluate(async () => {
+					return await navigator.serviceWorker
+						.getRegistrations()
+						.then(registrations => registrations);
+				})
+			).toHaveLength(0);
+			server.close();
+		});
+
+		it('--babelConfig', async () => {
+			let app = await subject('custom-babelrc');
+
+			server = await watch(app, { port: 8093 });
+			let bundle = await fetch('http://127.0.0.1:8093/bundle.js').then(res =>
+				res.text()
+			);
+			expect(/=>\s?setTimeout/.test(bundle)).toBe(true);
+			server.close();
+
+			await rename(join(app, '.babelrc'), join(app, 'babel.config.json'));
+			server = await watch(app, {
+				port: 8094,
+				babelConfig: 'babel.config.json',
+			});
+			bundle = await fetch('http://127.0.0.1:8094/bundle.js').then(res =>
+				res.text()
+			);
+			expect(/=>\s?setTimeout/.test(bundle)).toBe(true);
+
+			server.close();
+		});
+
+		it('--template', async () => {
+			let app = await subject('custom-template');
+
+			await rename(
+				join(app, 'template.html'),
+				join(app, 'renamed-template.html')
+			);
+
+			server = await watch(app, {
+				port: 8095,
+				template: 'renamed-template.html',
+			});
+			const html = await fetch('http://127.0.0.1:8095/').then(res =>
+				res.text()
+			);
+			expect(html).toMatch('<meta name="example-meta" content="Hello Dev">');
+			server.close();
+		});
+
+		it('--config', async () => {
+			let app = await subject('custom-webpack');
+
+			server = await watch(app, { port: 8096, config: 'preact.config.js' });
+			let bundle = await fetch('http://127.0.0.1:8096/renamed-bundle.js').then(
+				res => res.text()
+			);
+			expect(bundle).toMatch('This is an app with custom webpack config');
+			server.close();
+
+			await rename(
+				join(app, 'preact.config.js'),
+				join(app, 'renamed-config.js')
+			);
+			server = await watch(app, { port: 8097, config: 'renamed-config.js' });
+			bundle = await fetch('http://127.0.0.1:8097/renamed-bundle.js').then(
+				res => res.text()
+			);
+			expect(bundle).toMatch('This is an app with custom webpack config');
+			server.close();
+		});
+
+		it('--invalid-arg', async () => {
+			const { code, stderr } = shell.exec(
+				`node ${join(__dirname, '../src/index.js')} watch --invalid-arg`
+			);
+			expect(stderr).toMatch(
+				"Invalid argument '--invalid-arg' passed to watch."
+			);
+			expect(code).toBe(1);
+		});
 	});
 });
 
@@ -114,23 +267,10 @@ describe('should determine the correct port', () => {
 
 	it('should fallback to random if $PORT or 8080 are taken and --port is not specified', async () => {
 		process.env.PORT = '4004';
-		await Promise.all([determinePort(), determinePort()]).then(values => {
-			expect(values[0]).toBe(4004);
-			expect(values[1]).toBeGreaterThanOrEqual(1024);
-			expect(values[1]).toBeLessThanOrEqual(65535);
-		});
-
-		// This is pretty awful, but would be the way to do it. get-port locks the port for ~30 seconds,
-		// so if we want to test any behavior with our default (8080) twice, we'd have to wait :/
-		//
-		//await sleep(35000);
-
-		//process.env.PORT = undefined;
-		//await Promise.all([determinePort(), determinePort()]).then(values => {
-		//	console.log(values);
-		//	expect(values[0]).toBe(8080);
-		//	expect(values[1]).toBeGreaterThanOrEqual(1024);
-		//	expect(values[1]).toBeLessThanOrEqual(65535);
-		//});
+		const ports = await Promise.all([determinePort(), determinePort()]);
+		expect(ports[0]).toBe(4004);
+		expect(ports[1]).not.toBe(4004);
+		expect(ports[1]).toBeGreaterThanOrEqual(1024);
+		expect(ports[1]).toBeLessThanOrEqual(65535);
 	});
 });
