@@ -272,17 +272,5 @@ describe('should determine the correct port', () => {
 		expect(ports[1]).not.toBe(4004);
 		expect(ports[1]).toBeGreaterThanOrEqual(1024);
 		expect(ports[1]).toBeLessThanOrEqual(65535);
-
-		// This is pretty awful, but would be the way to do it. get-port locks the port for ~30 seconds,
-		// so if we want to test any behavior with our default (8080) twice, we'd have to wait :/
-		//
-		//await sleep(35000);
-
-		//process.env.PORT = undefined;
-		//const ports = await Promise.all([determinePort(), determinePort()]);
-		//expect(ports[0]).toBe(8080);
-		//expect(ports[1]).not.toBe(8080);
-		//expect(ports[1]).toBeGreaterThanOrEqual(1024);
-		//expect(ports[1]).toBeLessThanOrEqual(65535);
 	});
 });
