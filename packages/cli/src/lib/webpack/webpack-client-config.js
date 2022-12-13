@@ -12,7 +12,6 @@ const CrittersPlugin = require('critters-webpack-plugin');
 const renderHTMLPlugin = require('./render-html-plugin');
 const baseConfig = require('./webpack-base-config');
 const { InjectManifest } = require('workbox-webpack-plugin');
-const CompressionPlugin = require('compression-webpack-plugin');
 const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
 const OptimizePlugin = require('optimize-plugin');
@@ -191,7 +190,7 @@ function prodBuild(config) {
 		},
 	};
 
-	if (config['inline-css']) {
+	if (config.inlineCss) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
 				preload: 'media',
@@ -204,16 +203,6 @@ function prodBuild(config) {
 
 	if (config.analyze) {
 		prodConfig.plugins.push(new BundleAnalyzerPlugin());
-	}
-
-	if (config.brotli) {
-		prodConfig.plugins.push(
-			new CompressionPlugin({
-				filename: '[path][base].br[query]',
-				algorithm: 'brotliCompress',
-				test: /(?<!legacy)\.js$/,
-			})
-		);
 	}
 
 	return prodConfig;
