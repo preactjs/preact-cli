@@ -22,9 +22,5 @@ exports.build = async function buildCommand(src, argv) {
 		await promisify(rimraf)(dest);
 	}
 
-	let stats = await runWebpack(argv, true);
-
-	if (argv.json) {
-		await runWebpack.writeJsonStats(cwd, stats);
-	}
+	await runWebpack(argv, true);
 };

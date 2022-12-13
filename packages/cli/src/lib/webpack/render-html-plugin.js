@@ -87,7 +87,7 @@ module.exports = async function renderHTMLPlugin(config, env) {
 						title,
 						url,
 						manifest: config.manifest,
-						inlineCss: config['inline-css'],
+						inlineCss: config['inlineCss'],
 						config,
 						env,
 						preRenderData: values,
