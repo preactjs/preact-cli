@@ -4,10 +4,6 @@ const getPort = require('get-port');
 const { resolve } = require('path');
 
 exports.watch = async function watchCommand(src, argv) {
-	if (argv.rhl) {
-		delete argv.rhl;
-		argv.refresh = argv.rhl;
-	}
 	argv.src = src || argv.src;
 	if (argv.sw) {
 		argv.sw = toBool(argv.sw);
