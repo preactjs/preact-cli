@@ -35,7 +35,6 @@ prog
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
 	.option('--sw', 'Generate and attach a Service Worker', true)
 	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
-	.option('--json', 'Generate build stats for bundle analysis', false)
 	.option(
 		'--template',
 		'Path to custom HTML template (default "src/template.html")'
@@ -51,8 +50,7 @@ prog
 		'Path to prerendered routes config',
 		'prerender-urls.json'
 	)
-	.option('--brotli', 'Builds brotli compressed bundles of JS resources', false)
-	.option('--inline-css', 'Adds critical CSS to the prerendered HTML', true)
+	.option('--inlineCss', 'Adds critical CSS to the prerendered HTML', true)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-v, --verbose', 'Verbose output', false)
 	.action(commands.build);
@@ -65,9 +63,7 @@ prog
 	.option('--clear', 'Clears the console when the devServer updates', true)
 	.option('--sw', 'Generate and attach a Service Worker')
 	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
-	.option('--rhl', 'Deprecated, use --refresh instead', false)
 	.option('--refresh', 'Enables experimental prefresh functionality', false)
-	.option('--json', 'Generate build stats for bundle analysis', false)
 	.option(
 		'--template',
 		'Path to custom HTML template (default "src/template.html")'
@@ -108,6 +104,9 @@ prog
 	});
 
 prog.parse(process.argv, {
+	alias: {
+		inlineCss: ['inline-css'],
+	},
 	unknown: arg => {
 		const cmd = process.argv[2];
 		error(

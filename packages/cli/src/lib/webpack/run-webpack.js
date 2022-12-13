@@ -2,7 +2,6 @@ const ip = require('ip');
 const webpack = require('webpack');
 const { resolve } = require('path');
 const clear = require('console-clear');
-const { writeFile } = require('fs').promises;
 const { bold, red, green, magenta } = require('kleur');
 const DevServer = require('webpack-dev-server');
 const clientConfig = require('./webpack-client-config');
@@ -117,37 +116,6 @@ function showStats(stats, isProd) {
 	return stats;
 }
 
-function writeJsonStats(cwd, stats) {
-	let outputPath = resolve(cwd, 'stats.json');
-	let jsonStats = stats.toJson({
-		json: true,
-		chunkModules: true,
-		source: false,
-	});
-
-	function strip(stats) {
-		stats.modules.forEach(stripLoaderFromModuleNames);
-		stats.chunks.forEach(c => {
-			(
-				c.modules ||
-				(c.mapModules != null ? c.mapModules(Object) : c.getModules())
-			).forEach(stripLoaderFromModuleNames);
-		});
-		if (stats.children) stats.children.forEach(strip);
-	}
-
-	strip(jsonStats);
-
-	return writeFile(outputPath, JSON.stringify(jsonStats)).then(() => {
-		process.stdout.write('\nWebpack output stats generated.\n\n');
-		process.stdout.write('You can upload your stats.json to:\n');
-		process.stdout.write(
-			'- https://chrisbateman.github.io/webpack-visualizer/\n'
-		);
-		process.stdout.write('- https://webpack.github.io/analyse/\n');
-	});
-}
-
 function allFields(stats, field, fields = [], name = null) {
 	const info = stats.toJson({
 		errors: true,
@@ -171,16 +139,6 @@ function allFields(stats, field, fields = [], name = null) {
 	}
 	return fields;
 }
-
-const keysToNormalize = [
-	'issuer',
-	'issuerName',
-	'identifier',
-	'name',
-	'module',
-	'moduleName',
-	'moduleIdentifier',
-];
 
 /** Removes all loaders from any resource identifiers found in a string */
 function stripLoaderPrefix(str) {
@@ -208,24 +166,6 @@ function replaceAll(str, find, replace) {
 	return s + str.substring(index);
 }
 
-function stripLoaderFromModuleNames(m) {
-	for (let key in m) {
-		if (
-			Object.prototype.hasOwnProperty.call(m, key) &&
-			m[key] != null &&
-			~keysToNormalize.indexOf(key)
-		) {
-			m[key] = stripLoaderPrefix(m[key]);
-		}
-	}
-
-	if (m.reasons) {
-		m.reasons.forEach(stripLoaderFromModuleNames);
-	}
-
-	return m;
-}
-
 /**
  * @param {boolean} isProd
  */
@@ -247,5 +187,3 @@ module.exports = function (argv, isProd) {
 
 	return (isProd ? prodBuild : devBuild)(config, env);
 };
-
-module.exports.writeJsonStats = writeJsonStats;
