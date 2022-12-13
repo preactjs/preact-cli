@@ -24,7 +24,7 @@ const build = (exports.build = async function (cwd, options) {
 		config: 'preact.config.js',
 		prerender: true,
 		prerenderUrls: 'prerender-urls.json',
-		'inline-css': true,
+		inlineCss: true,
 	};
 
 	await mkdir(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()
