@@ -23,7 +23,7 @@ const build = (exports.build = async function (cwd, options) {
 		babelConfig: '.babelrc',
 		config: 'preact.config.js',
 		prerenderUrls: 'prerender-urls.json',
-		'inline-css': true,
+		inlineCss: true,
 	};
 
 	await mkdir(join(cwd, 'node_modules'), { recursive: true }); // ensure exists, avoid exit()

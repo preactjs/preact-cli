@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { access, mkdir, readdir, readFile, rename, unlink, writeFile } =
+const { access, mkdir, readdir, readFile, rename, writeFile } =
 	require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build, buildFast } = require('./lib/cli');
@@ -172,20 +172,6 @@ describe('preact build', () => {
 			expect(/=>\s?setTimeout/.test(transpiledChunk)).toBe(false);
 		});
 
-		it('--json', async () => {
-			let dir = await subject('minimal');
-
-			await buildFast(dir, { json: true });
-			expect(await access(join(dir, 'stats.json'))).toBeUndefined();
-			// Need to clean up manually as it is placed in project root
-			await unlink(join(dir, 'stats.json'));
-
-			await buildFast(dir, { json: false });
-			await expect(access(join(dir, 'stats.json'))).rejects.toThrow(
-				'no such file or directory'
-			);
-		});
-
 		it('--template', async () => {
 			let dir = await subject('custom-template');
 
@@ -239,14 +225,14 @@ describe('preact build', () => {
 			).toBeUndefined();
 		});
 
-		it('--inline-css', async () => {
+		it('--inlineCss', async () => {
 			let dir = await subject('minimal');
 
-			await buildFast(dir, { 'inline-css': true });
+			await buildFast(dir, { inlineCss: true });
 			let head = await getHead(dir);
 			expect(head).toMatch('<style>h1{color:red}</style>');
 
-			await buildFast(dir, { 'inline-css': false });
+			await buildFast(dir, { inlineCss: false });
 			head = await getOutputFile(dir, 'index.html');
 			expect(head).not.toMatch(/<style>[^<]*<\/style>/);
 		});

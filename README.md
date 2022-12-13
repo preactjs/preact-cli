@@ -123,13 +123,11 @@ $ [npm run / yarn] preact build
     --cwd              A directory to use instead of $PWD  (default .)
     --sw               Generate and attach a Service Worker  (default true)
     --babelConfig      Path to custom Babel config (default .babelrc)
-    --json             Generate build stats for bundle analysis
-    --template         Path to custom HTML template (default 'src/template.html')
-    --analyze          Launch interactive Analyzer to inspect production bundle(s)
     --prerender        Renders route(s) into generated static HTML  (default true)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
-    --brotli           Adds brotli redirects to the service worker  (default false)
-    --inline-css       Adds critical css to the prerendered markup  (default true)
+    --template         Path to custom HTML template (default 'src/template.html')
+    --inlineCss        Adds critical css to the prerendered markup  (default true)
+    --analyze          Launch interactive Analyzer to inspect production bundle(s) (default false)
     -c, --config       Path to custom CLI config  (default preact.config.js)
     -v, --verbose      Verbose output
     -h, --help         Displays this message
@@ -147,7 +145,6 @@ $ [npm run / yarn] preact watch
     --clear            Clear the console (default true)
     --sw               Generate and attach a Service Worker  (default false)
     --babelConfig      Path to custom Babel config (default .babelrc)
-    --json             Generate build stats for bundle analysis
     --https            Run server with HTTPS protocol
     --key              Path to PEM key for custom SSL certificate
     --cert             Path to custom SSL certificate
