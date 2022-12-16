@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 const sade = require('sade');
+const { green } = require('kleur');
 const { build } = require('./commands/build');
 const { info } = require('./commands/info');
 const { watch } = require('./commands/watch');
-const notifier = require('update-notifier');
-const { green } = require('kleur');
 const { error } = require('./util');
 const pkg = require('../package.json');
 
@@ -19,9 +18,6 @@ if (
 		`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!\n`
 	);
 }
-
-// installHooks();
-notifier({ pkg }).notify();
 
 const prog = sade('preact').version(pkg.version);
 
