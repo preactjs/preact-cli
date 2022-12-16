@@ -3,8 +3,7 @@ const { join, resolve } = require('path');
 const runWebpack = require('../lib/webpack/run-webpack');
 const { toBool } = require('../util');
 
-exports.build = async function buildCommand(src, argv) {
-	argv.src = src || argv.src;
+exports.build = async function buildCommand(argv) {
 	// add `default:true`s, `--no-*` disables
 	argv.prerender = toBool(argv.prerender);
 
