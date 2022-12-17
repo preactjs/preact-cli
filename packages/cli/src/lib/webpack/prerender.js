@@ -45,112 +45,98 @@ async function handlePrerenderError(err, env, stack, entry) {
 	let errorMessage = err.toString();
 	let isReferenceError = errorMessage.startsWith('ReferenceError');
 	let methodName = stack.getMethodName();
+	let sourceMapContent, position, sourcePath, sourceLines, sourceCodeHighlight;
+
+	try {
+		sourceMapContent = JSON.parse(readFileSync(`${entry}.map`, 'utf-8'));
+	} catch (err) {
+		process.stderr.write(red(`\n\nUnable to read sourcemap: ${entry}.map\n`));
+	}
+
+	if (sourceMapContent) {
+		position = await SourceMapConsumer.with(sourceMapContent, null, consumer =>
+			consumer.originalPositionFor({
+				line: stack.getLineNumber(),
+				column: stack.getColumnNumber(),
+			})
+		);
+
+		if (position.source) {
+			position.source = position.source
+				.replace('webpack://', '.')
+				.replace(/^.*~\/((?:@[^/]+\/)?[^/]+)/, (s, name) =>
+					require
+						.resolve(name)
+						.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
+				);
+
+			sourcePath = resolve(env.src, position.source);
+			sourceLines;
+			try {
+				sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
+			} catch (err) {
+				try {
+					sourceLines = readFileSync(
+						require.resolve(position.source),
+						'utf-8'
+					).split('\n');
+				} catch (err) {
+					process.stderr.write(red(`\n\nUnable to read file: ${sourcePath}\n`));
+				}
+			}
+			sourceCodeHighlight = '';
+		}
+
+		if (sourceLines) {
+			for (var i = -4; i <= 4; i++) {
+				let color = i === 0 ? red : yellow;
+				let line = position.line + i;
+				let sourceLine = sourceLines[line - 1];
+				sourceCodeHighlight += sourceLine ? `${color(sourceLine)}\n` : '\n';
+			}
+		}
+	}
 
 	process.stderr.write('\n');
 	process.stderr.write(red(`\n${errorMessage}\n`));
 
-	// If a methodName exists, it's likely user code
-	if (methodName) {
-		let sourceMapContent,
-			position,
-			sourcePath,
-			sourceLines,
-			sourceCodeHighlight;
-		try {
-			sourceMapContent = JSON.parse(readFileSync(`${entry}.map`, 'utf-8'));
-		} catch (err) {
-			process.stderr.write(red(`\n\nUnable to read sourcemap: ${entry}.map\n`));
-		}
-
-		if (sourceMapContent) {
-			await SourceMapConsumer.with(sourceMapContent, null, consumer => {
-				position = consumer.originalPositionFor({
-					line: stack.getLineNumber(),
-					column: stack.getColumnNumber(),
-				});
-			});
-
-			if (position.source) {
-				position.source = position.source
-					.replace('webpack://', '.')
-					.replace(/^.*~\/((?:@[^/]+\/)?[^/]+)/, (s, name) =>
-						require
-							.resolve(name)
-							.replace(/^(.*?\/node_modules\/(@[^/]+\/)?[^/]+)(\/.*)$/, '$1')
-					);
-
-				sourcePath = resolve(env.src, position.source);
-				sourceLines;
-				try {
-					sourceLines = readFileSync(sourcePath, 'utf-8').split('\n');
-				} catch (err) {
-					try {
-						sourceLines = readFileSync(
-							require.resolve(position.source),
-							'utf-8'
-						).split('\n');
-					} catch (err) {
-						process.stderr.write(
-							red(`\n\nUnable to read file: ${sourcePath}\n`)
-						);
-					}
-				}
-				sourceCodeHighlight = '';
-			}
-
-			if (sourceLines) {
-				for (var i = -4; i <= 4; i++) {
-					let color = i === 0 ? red : yellow;
-					let line = position.line + i;
-					let sourceLine = sourceLines[line - 1];
-					sourceCodeHighlight += sourceLine ? `${color(sourceLine)}\n` : '';
-				}
-			}
-		}
-
+	if (sourceMapContent && sourceCodeHighlight) {
 		process.stderr.write(`method: ${methodName}\n`);
-		if (sourceMapContent & sourceCodeHighlight) {
-			process.stderr.write(
-				`at: ${sourcePath}:${position.line}:${position.column}\n`
-			);
-			process.stderr.write('\n');
-			process.stderr.write('Source code:\n\n');
-			process.stderr.write(sourceCodeHighlight);
-			process.stderr.write('\n');
-		} else {
-			process.stderr.write('\n');
-			process.stderr.write('Stack:\n\n');
-			process.stderr.write(JSON.stringify(stack, null, 4) + '\n');
-		}
-	} else {
 		process.stderr.write(
-			yellow(
-				'Cannot determine error position. This most likely means it originated in node_modules.\n\n'
-			)
+			`at: ${sourcePath}:${position.line}:${position.column}\n`
 		);
+		process.stderr.write('\n');
+		process.stderr.write('Source code:\n');
+		process.stderr.write(sourceCodeHighlight);
+		process.stderr.write('\n');
+	} else {
+		process.stderr.write('\n');
+		process.stderr.write('Stack:\n\n');
+		process.stderr.write(JSON.stringify(stack, null, 4) + '\n');
 	}
 
-	process.stderr.write(
-		`This ${
+	const message = `
+		This ${
 			isReferenceError ? 'is most likely' : 'could be'
-		} caused by using DOM or Web APIs.\n`
-	);
-	process.stderr.write(
-		'Pre-render runs in node and has no access to globals available in browsers.\n\n'
-	);
-	process.stderr.write(
-		'Consider wrapping code producing error in: "if (typeof window !== "undefined") { ... }"\n'
-	);
+		} caused by using DOM or Web APIs.
+		Pre-rendering runs in Node and therefore has no access browser globals.
 
-	if (methodName === 'componentWillMount') {
-		process.stderr.write('or place logic in "componentDidMount" method.\n');
-	}
-	process.stderr.write('\n');
+		Consider wrapping the code producing the error in: 'if (typeof window !== "undefined") { ... }'
+		${
+			methodName === 'componentWillMount'
+				? 'or place logic in "componentDidMount" method.'
+				: ''
+		}
+
+		Alternatively, disable prerendering altogether with 'preact build --no-prerender'.
+
+		See https://github.com/preactjs/preact-cli#pre-rendering for further information.
+	`;
 	process.stderr.write(
-		'Alternatively use "preact build --no-prerender" to disable prerendering.\n\n'
-	);
-	process.stderr.write(
-		'See https://github.com/preactjs/preact-cli#pre-rendering for further information.\n\n'
+		message
+			.trim()
+			.replace(/^\t+/gm, '')
+			.replace(/\n\n\n/, '\n\n') + '\n\n'
 	);
 	process.exit(1);
 }
