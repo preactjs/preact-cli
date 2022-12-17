@@ -78,13 +78,13 @@ async function prodBuild(env) {
 }
 
 function runCompiler(compiler) {
-	return new Promise((res, rej) => {
+	return new Promise(res => {
 		compiler.run((err, stats) => {
-			showStats(stats, true);
-
-			if (err || (stats && stats.hasErrors())) {
-				rej(`${red('\n\nBuild failed! \n\n')} ${err || ''}`);
+			if (err) {
+				error(err, 1);
 			}
+
+			showStats(stats, true);
 
 			res(stats);
 		});
