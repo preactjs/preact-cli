@@ -1,5 +1,19 @@
 # preact-cli
 
+## 3.4.2
+
+### Patch Changes
+
+- [#1749](https://github.com/preactjs/preact-cli/pull/1749) [`691a4e2`](https://github.com/preactjs/preact-cli/commit/691a4e2a3e3d2b939b1b454f783f5c9ee14ca067) Thanks [@AlexanderShushunov](https://github.com/AlexanderShushunov)! - Add support for avif images format
+
+* [#1736](https://github.com/preactjs/preact-cli/pull/1736) [`396aec8`](https://github.com/preactjs/preact-cli/commit/396aec88a5a5c346b43e01e8dbfda3d3dcb62651) Thanks [@rschristian](https://github.com/rschristian)! - Fix for CSS assets sometimes being mistakenly labeled as 'scripts' in the push-manifest.
+
+- [#1735](https://github.com/preactjs/preact-cli/pull/1735) [`099876b`](https://github.com/preactjs/preact-cli/commit/099876b348ab04aba427a7a046beb1507bf9c6de) Thanks [@rschristian](https://github.com/rschristian)! - Restricts `preact.config.js`'s `env` types into a more idiomatic subset
+
+* [#1754](https://github.com/preactjs/preact-cli/pull/1754) [`227bfb7`](https://github.com/preactjs/preact-cli/commit/227bfb7c8c262b773a7979fe3590feab87a43c38) Thanks [@rschristian](https://github.com/rschristian)! - Corrects status code when there is a fatal Webpack error in production builds
+
+- [#1741](https://github.com/preactjs/preact-cli/pull/1741) [`82662af`](https://github.com/preactjs/preact-cli/commit/82662af41aefc277d7e40578a503ebbae01db665) Thanks [@rschristian](https://github.com/rschristian)! - Fix for source maps containing incorrect paths
+
 ## 3.4.1
 
 ### Patch Changes
