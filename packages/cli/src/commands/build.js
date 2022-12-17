@@ -1,4 +1,4 @@
-const { readdir, rm } = require('fs').promises;
+const { readdir, rm } = require('fs/promises');
 const { join, resolve } = require('path');
 const runWebpack = require('../lib/webpack/run-webpack');
 const { toBool } = require('../util');

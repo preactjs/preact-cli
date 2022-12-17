@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { access } = require('fs').promises;
+const { access } = require('fs/promises');
 const { build, buildFast } = require('./lib/cli');
 const { subject } = require('./lib/output');
 

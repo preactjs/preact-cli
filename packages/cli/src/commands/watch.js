@@ -1,7 +1,7 @@
+const { resolve } = require('path');
+const getPort = require('get-port');
 const runWebpack = require('../lib/webpack/run-webpack');
 const { isPortFree, toBool, warn } = require('../util');
-const getPort = require('get-port');
-const { resolve } = require('path');
 
 exports.watch = async function watchCommand(argv) {
 	if (argv.sw) {
