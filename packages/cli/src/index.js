@@ -2,6 +2,7 @@
 const envinfo = require('envinfo');
 const sade = require('sade');
 const notifier = require('update-notifier');
+const { green } = require('kleur');
 const { error } = require('./util');
 const pkg = require('../package.json');
 
@@ -120,10 +121,14 @@ function exec(cmd) {
 }
 
 /**
- * @param {Error} err
+ * @param {Error | import('webpack').StatsError} err
  */
 async function catchExceptions(err) {
-	error(err.stack || err.message);
+	// Webpack Stats Error
+	if ('moduleName' in err && 'loc' in err) {
+		error(`${err.moduleName} ${green(err.loc)}\n${err.message}\n\n`);
+	}
+	error(err.stack || err.message || err);
 }
 
 process.on('unhandledRejection', catchExceptions);
