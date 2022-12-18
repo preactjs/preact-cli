@@ -26,6 +26,9 @@ function serverConfig(env) {
 				async: resolve(__dirname, './dummy-loader'),
 			},
 		},
+		optimization: {
+			minimize: false,
+		},
 	};
 }
 
