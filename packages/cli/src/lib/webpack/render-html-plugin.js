@@ -73,7 +73,7 @@ module.exports = async function renderHTMLPlugin(config, env) {
 			title,
 			filename,
 			template: `!!${require.resolve('ejs-loader')}?esModule=false!${template}`,
-			templateParameters: (compilation, assets, assetTags, options) => {
+			templateParameters: async (compilation, assets, assetTags, options) => {
 				let entrypoints = {};
 				compilation.entrypoints.forEach((entrypoint, name) => {
 					let entryFiles = entrypoint.getFiles();
@@ -92,7 +92,9 @@ module.exports = async function renderHTMLPlugin(config, env) {
 						env,
 						preRenderData: values,
 						CLI_DATA: { preRenderData: { url, ...routeData } },
-						ssr: config.prerender ? prerender(config, values) : '',
+						ssr: config.prerender
+							? await prerender(config, values)
+							: '',
 						entrypoints,
 					},
 					htmlWebpackPlugin: {

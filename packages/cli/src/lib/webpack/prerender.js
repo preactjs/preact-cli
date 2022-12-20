@@ -5,7 +5,7 @@ const stackTrace = require('stack-trace');
 const URL = require('url');
 const { SourceMapConsumer } = require('source-map');
 
-module.exports = function (config, params) {
+module.exports = async function (config, params) {
 	params = params || {};
 
 	let entry = resolve(config.dest, './ssr-build/ssr-bundle.js');
@@ -36,7 +36,7 @@ module.exports = function (config, params) {
 			throw err;
 		}
 
-		handlePrerenderError(err, config, stack, entry);
+		await handlePrerenderError(err, config, stack, entry);
 	}
 };
 
