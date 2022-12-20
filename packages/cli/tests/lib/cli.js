@@ -1,6 +1,7 @@
 const { join } = require('path');
 const { mkdir } = require('fs').promises;
-const { build: buildCmd, watch: watchCmd } = require('../../src/commands');
+const { build: buildCmd } = require('../../src/commands/build');
+const { watch: watchCmd } = require('../../src/commands/watch');
 const {
 	create: createCmd,
 } = require('../../../create-cli/src/commands/create');
