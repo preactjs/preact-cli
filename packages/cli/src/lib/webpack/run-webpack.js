@@ -2,12 +2,12 @@ const ip = require('ip');
 const webpack = require('webpack');
 const { resolve } = require('path');
 const clear = require('console-clear');
-const { bold, red, green, magenta } = require('kleur');
+const { bold, green, magenta } = require('kleur');
 const DevServer = require('webpack-dev-server');
 const clientConfig = require('./webpack-client-config');
 const serverConfig = require('./webpack-server-config');
 const transformConfig = require('./transform-config');
-const { error, isDir, warn } = require('../../util');
+const { isDir, warn } = require('../../util');
 
 /**
  * @param {import('../../../types').Env} env
@@ -34,16 +34,12 @@ async function devBuild(config, env) {
 				devServer.port
 			)}`;
 
-			if (stats.hasErrors()) {
-				process.stdout.write(red('Build failed!\n\n'));
-			} else {
+			if (!stats.hasErrors()) {
 				process.stdout.write(green('Compiled successfully!\n\n'));
 				process.stdout.write('You can view the application in browser.\n\n');
 				process.stdout.write(`${bold('Local:')}            ${serverAddr}\n`);
 				process.stdout.write(`${bold('On Your Network:')}  ${localIpAddr}\n`);
 			}
-
-			showStats(stats, false);
 		});
 
 		compiler.hooks.failed.tap('CliDevPlugin', rej);
@@ -70,100 +66,81 @@ async function prodBuild(config, env) {
 	const clientWebpackConfig = await clientConfig(config, env);
 	await transformConfig(clientWebpackConfig, config, env);
 	const clientCompiler = webpack(clientWebpackConfig);
+	await runCompiler(clientCompiler);
 
-	try {
-		let stats = await runCompiler(clientCompiler);
-
-		// Timeout for plugins that work on `after-emit` event of webpack
-		await new Promise(r => setTimeout(r, 20));
-
-		return showStats(stats, true);
-	} catch (err) {
-		// eslint-disable-next-line
-		console.log(err);
-	}
+	// Timeout for plugins that work on `after-emit` event of webpack
+	await new Promise(r => setTimeout(r, 20));
 }
 
+/**
+ * @param {import('webpack').Compiler} compiler
+ */
 function runCompiler(compiler) {
-	return new Promise(res => {
+	return new Promise((res, rej) => {
 		compiler.run((err, stats) => {
-			if (err) {
-				error(err, 1);
-			}
+			if (err) rej(err);
 
-			showStats(stats, true);
+			showCompilationIssues(stats);
 
-			res(stats);
+			compiler.close(closeErr => {
+				if (closeErr) rej(closeErr);
+				res();
+			});
 		});
 	});
 }
 
-function showStats(stats, isProd) {
+/**
+ * @param {import('webpack').Stats} stats
+ */
+function showCompilationIssues(stats) {
 	if (stats) {
-		if (stats.hasErrors()) {
-			allFields(stats, 'errors')
-				.map(stripLoaderPrefix)
-				.forEach(({ message }) => error(message, isProd ? 1 : 0));
+		if (stats.hasWarnings()) {
+			allFields(stats, 'warnings').forEach(({ message }) => warn(message));
 		}
 
-		if (stats.hasWarnings()) {
-			allFields(stats, 'warnings')
-				.map(stripLoaderPrefix)
-				.forEach(({ message }) => warn(message));
+		if (stats.hasErrors()) {
+			allFields(stats, 'errors').forEach(err => {
+				throw err;
+			});
 		}
 	}
-
-	return stats;
 }
 
+/**
+ * Recursively retrieve all errors or warnings from compilation
+ *
+ * @param {import('webpack').Stats} stats
+ * @param {'warnings' | 'errors'} field
+ * @returns {import('webpack').StatsError[]}
+ */
 function allFields(stats, field, fields = [], name = null) {
 	const info = stats.toJson({
 		errors: true,
 		warnings: true,
 		errorDetails: false,
 	});
+
 	const addCompilerPrefix = msg =>
 		name ? bold(magenta(name + ': ')) + msg : msg;
-	if (field === 'errors' && stats.hasErrors()) {
+
+	if (field === 'errors') {
 		fields = fields.concat(info.errors.map(addCompilerPrefix));
-	}
-	if (field === 'warnings' && stats.hasWarnings()) {
+	} else {
 		fields = fields.concat(info.warnings.map(addCompilerPrefix));
 	}
+
 	if (stats.compilation.children) {
 		stats.compilation.children.forEach((child, index) => {
 			const name = child.name || `Child Compiler ${index + 1}`;
 			const stats = child.getStats();
-			fields = allFields(stats, field, fields, name);
+			if (field === 'errors' ? stats.hasErrors() : stats.hasWarnings()) {
+				fields = allFields(stats, field, fields, name);
+			}
 		});
 	}
+
 	return fields;
-}
-
-/** Removes all loaders from any resource identifiers found in a string */
-function stripLoaderPrefix(str) {
-	if (typeof str === 'string') {
-		str = str.replace(
-			/(?:(\()|(^|\b|@))(\.\/~|\.{0,2}\/(?:[^\s]+\/)?node_modules)\/\w+-loader(\/[^?!]+)?(\?\?[\w_.-]+|\?({[\s\S]*?})?)?!/g,
-			'$1'
-		);
-		str = str.replace(/(\.?\.?(?:\/[^/ ]+)+)\s+\(\1\)/g, '$1');
-		str = replaceAll(str, process.cwd(), '.');
-		return str;
-	}
-	return str;
-}
-
-// https://gist.github.com/developit/1a40a6fee65361d1182aaa22ab8c334c
-function replaceAll(str, find, replace) {
-	let s = '',
-		index,
-		next;
-	while (~(next = str.indexOf(find, index))) {
-		s += str.substring(index, next) + replace;
-		index = next + find.length;
-	}
-	return s + str.substring(index);
 }
 
 /**

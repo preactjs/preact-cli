@@ -2,6 +2,7 @@
 const envinfo = require('envinfo');
 const sade = require('sade');
 const notifier = require('update-notifier');
+const { green } = require('kleur');
 const { error } = require('./util');
 const pkg = require('../package.json');
 const { isNodeVersionGreater } = require('./util');
@@ -18,10 +19,6 @@ const commands = require('./commands');
 
 // installHooks();
 notifier({ pkg }).notify();
-
-process.on('unhandledRejection', err => {
-	error(err.stack || err.message);
-});
 
 const prog = sade('preact').version(pkg.version);
 
@@ -53,7 +50,7 @@ prog
 	.option('--inlineCss', 'Adds critical CSS to the prerendered HTML', true)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-v, --verbose', 'Verbose output', false)
-	.action(commands.build);
+	.action((src, argv) => exec(commands.build(src, argv)));
 
 prog
 	.command('watch [src]')
@@ -81,13 +78,13 @@ prog
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port (default 8080)')
-	.action(commands.watch);
+	.action((src, argv) => exec(commands.watch(src, argv)));
 
 prog
 	.command('info')
 	.describe('Print out debugging information about the local environment')
-	.action(() => {
-		envinfo
+	.action(() =>
+		exec(envinfo
 			.run({
 				System: ['OS', 'CPU'],
 				Binaries: ['Node', 'Yarn', 'npm'],
@@ -100,8 +97,8 @@ prog
 				],
 				npmGlobalPackages: ['preact-cli'],
 			})
-			.then(info => process.stdout.write(`\nEnvironment Info:${info}\n`));
-	});
+			.then(info => process.stdout.write(`\nEnvironment Info:${info}\n`))
+	));
 
 prog.parse(process.argv, {
 	alias: {
@@ -114,3 +111,20 @@ prog.parse(process.argv, {
 		);
 	},
 });
+
+function exec(cmd) {
+	cmd.catch(catchExceptions);
+}
+
+/**
+ * @param {Error | import('webpack').StatsError} err
+ */
+async function catchExceptions(err) {
+	// Webpack Stats Error
+	if ('moduleName' in err && 'loc' in err) {
+		error(`${err.moduleName} ${green(err.loc)}\n${err.message}\n\n`);
+	}
+	error(err.stack || err.message || err);
+}
+
+process.on('unhandledRejection', catchExceptions);
