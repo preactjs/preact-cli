@@ -1,4 +1,4 @@
-const { mkdir, readFile, rename, writeFile } = require('fs').promises;
+const { mkdir, readFile, rename, writeFile } = require('fs/promises');
 const { join, resolve } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');

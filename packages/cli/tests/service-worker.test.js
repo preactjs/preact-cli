@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { readFile, writeFile } = require('fs').promises;
+const { readFile, writeFile } = require('fs/promises');
 const { create, build } = require('./lib/cli');
 const { sleep } = require('./lib/utils');
 const { getServer } = require('./server');

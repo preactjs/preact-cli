@@ -1,6 +1,12 @@
 const { join } = require('path');
-const { access, mkdir, readdir, readFile, rename, writeFile } =
-	require('fs').promises;
+const {
+	access,
+	mkdir,
+	readdir,
+	readFile,
+	rename,
+	writeFile,
+} = require('fs/promises');
 const looksLike = require('html-looks-like');
 const { create, build, buildFast } = require('./lib/cli');
 const { snapshot } = require('./lib/utils');
