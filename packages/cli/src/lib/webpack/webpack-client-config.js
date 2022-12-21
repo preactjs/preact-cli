@@ -273,7 +273,7 @@ function isProd(env) {
 	if (env.brotli) {
 		prodConfig.plugins.push(
 			new CompressionPlugin({
-				filename: '[path].br[query]',
+				filename: '[path][base].br[query]',
 				algorithm: 'brotliCompress',
 				test: /\.esm\.js$/,
 			})
