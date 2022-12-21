@@ -1,5 +1,15 @@
 # preact-cli
 
+## 3.4.3
+
+### Patch Changes
+
+- [#1756](https://github.com/preactjs/preact-cli/pull/1756) [`a41d498`](https://github.com/preactjs/preact-cli/commit/a41d498b57599d03aaef67b24f9fd58361099403) Thanks [@rschristian](https://github.com/rschristian)! - Improves prerender error message's output and positioning
+
+* [#1760](https://github.com/preactjs/preact-cli/pull/1760) [`a789c9d`](https://github.com/preactjs/preact-cli/commit/a789c9d030c500db46048af84a705e2a99289c04) Thanks [@rschristian](https://github.com/rschristian)! - Fixed bug in which `--esm` was not enabled by default for production builds on v3.4.2
+
+  Fix for `--brotli` overwriting assets
+
 ## 3.4.2
 
 ### Patch Changes
