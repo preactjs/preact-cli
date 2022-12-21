@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-const envinfo = require('envinfo');
 const sade = require('sade');
-const notifier = require('update-notifier');
 const { green } = require('kleur');
+const { build } = require('./commands/build');
+const { info } = require('./commands/info');
+const { watch } = require('./commands/watch');
 const { error } = require('./util');
 const pkg = require('../package.json');
 const { isNodeVersionGreater } = require('./util');
@@ -14,16 +15,10 @@ if (!isNodeVersionGreater(min)) {
 	);
 }
 
-// Safe to load async-based funcs
-const commands = require('./commands');
-
-// installHooks();
-notifier({ pkg }).notify();
-
 const prog = sade('preact').version(pkg.version);
 
 prog
-	.command('build [src]')
+	.command('build')
 	.describe(
 		'Create a production build. You can disable "default: true" flags by prefixing them with --no-<option>'
 	)
@@ -34,7 +29,7 @@ prog
 	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
 	.option(
 		'--template',
-		'Path to custom HTML template (default "src/template.html")'
+		'Path to custom HTML template  (default src/template.html)'
 	)
 	.option(
 		'--analyze',
@@ -50,10 +45,10 @@ prog
 	.option('--inlineCss', 'Adds critical CSS to the prerendered HTML', true)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-v, --verbose', 'Verbose output', false)
-	.action((src, argv) => exec(commands.build(src, argv)));
+	.action(argv => exec(build(argv)));
 
 prog
-	.command('watch [src]')
+	.command('watch')
 	.describe('Start a live-reload server for development')
 	.option('--src', 'Specify source directory', 'src')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
@@ -78,27 +73,12 @@ prog
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port (default 8080)')
-	.action((src, argv) => exec(commands.watch(src, argv)));
+	.action(argv => exec(watch(argv)));
 
 prog
 	.command('info')
 	.describe('Print out debugging information about the local environment')
-	.action(() =>
-		exec(envinfo
-			.run({
-				System: ['OS', 'CPU'],
-				Binaries: ['Node', 'Yarn', 'npm'],
-				Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
-				npmPackages: [
-					'preact',
-					'preact-cli',
-					'preact-router',
-					'preact-render-to-string',
-				],
-				npmGlobalPackages: ['preact-cli'],
-			})
-			.then(info => process.stdout.write(`\nEnvironment Info:${info}\n`))
-	));
+	.action(() => exec(info()));
 
 prog.parse(process.argv, {
 	alias: {

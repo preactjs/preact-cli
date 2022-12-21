@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const { join, relative, resolve } = require('path');
-const { stat, symlink, readFile, writeFile } = require('fs').promises;
+const { stat, symlink, readFile, writeFile } = require('fs/promises');
 const pRetry = require('p-retry');
 const { promisify } = require('util');
 const glob = promisify(require('glob').glob);
@@ -101,7 +101,10 @@ async function handleOptimize(cwd, config) {
 		let config = await readFile(configFile, 'utf8');
 		// Don't alter config in subsequent runs of same subject
 		if (/optimizePlugin/.test(config)) return;
-		config = config.replace(/}(?![\s\S]*})(?:;?)/m, `${disableOptimizePluginConfig}};`);
+		config = config.replace(
+			/}(?![\s\S]*})(?:;?)/m,
+			`${disableOptimizePluginConfig}};`
+		);
 		await writeFile(configFile, config);
 	} catch {
 		await writeFile(configFile, disableOptimizePluginConfigFile);

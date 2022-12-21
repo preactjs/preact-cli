@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const path = require('path');
-const { resolve, dirname } = require('path');
 const { readFileSync, existsSync } = require('fs');
 const autoprefixer = require('autoprefixer');
 const browserslist = require('browserslist');
@@ -36,10 +35,12 @@ function findAllNodeModules(startDir) {
 }
 
 function resolveTsconfig(cwd, isProd) {
-	if (existsSync(resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`))) {
-		return resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`);
-	} else if (existsSync(resolve(cwd, 'tsconfig.json'))) {
-		return resolve(cwd, 'tsconfig.json');
+	if (
+		existsSync(path.resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`))
+	) {
+		return path.resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`);
+	} else if (existsSync(path.resolve(cwd, 'tsconfig.json'))) {
+		return path.resolve(cwd, 'tsconfig.json');
 	}
 }
 
@@ -52,9 +53,9 @@ module.exports = function createBaseConfig(config, env) {
 	const { isProd, isServer } = env;
 
 	// Apply base-level `config` values
-	config.dest = resolve(cwd, config.dest || 'build');
+	config.dest = path.resolve(cwd, config.dest || 'build');
 	config.manifest = readJson(source('manifest.json')) || {};
-	config.pkg = readJson(resolve(cwd, 'package.json')) || {};
+	config.pkg = readJson(path.resolve(cwd, 'package.json')) || {};
 
 	// use browserslist config environment, config default, or default browsers
 	// default browsers are '> 0.5%, last 2 versions, Firefox ESR, not dead'
@@ -109,7 +110,6 @@ module.exports = function createBaseConfig(config, env) {
 			alias: {
 				style: source('style'),
 				'preact-cli-entrypoint': source('index'),
-				url: dirname(require.resolve('native-url/package.json')),
 				'react/jsx-runtime': require.resolve('preact/jsx-runtime'),
 				react: require.resolve('preact/compat'),
 				'react-dom/test-utils': require.resolve('preact/test-utils'),
