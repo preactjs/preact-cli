@@ -1,4 +1,4 @@
-const { mkdir } = require('fs').promises;
+const { mkdir } = require('fs/promises');
 const copy = require('ncp');
 const { resolve } = require('path');
 const { promisify } = require('util');

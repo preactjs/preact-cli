@@ -1,8 +1,8 @@
-const { blue, yellow, red } = require('kleur');
-const { normalize, resolve } = require('path');
 const { statSync, existsSync } = require('fs');
+const { normalize, resolve } = require('path');
+const { createServer } = require('net');
+const { blue, yellow, red } = require('kleur');
 const symbols = require('./symbols');
-const net = require('net');
 
 exports.isDir = function (str) {
 	return existsSync(str) && statSync(str).isDirectory();
@@ -52,7 +52,7 @@ exports.esmImport = require('esm')(module);
 exports.isPortFree = async function (port) {
 	try {
 		await new Promise((resolve, reject) => {
-			const server = net.createServer();
+			const server = createServer();
 			server.unref();
 			server.on('error', reject);
 			server.listen({ port }, () => {
