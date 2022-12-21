@@ -37,7 +37,7 @@ prog
 	.option('--src', 'Specify source directory', 'src')
 	.option('--dest', 'Specify output directory', 'build')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--esm', 'Builds ES-2015 bundles for your code', false)
+	.option('--esm', 'Builds ES-2015 bundles for your code', true)
 	.option('--sw', 'Generate and attach a Service Worker', true)
 	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
 	.option('--json', 'Generate build stats for bundle analysis', false)
