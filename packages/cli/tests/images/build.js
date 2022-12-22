@@ -14,10 +14,10 @@ exports.default = {
 	'ssr-build/ssr-bundle.css': 2346,
 	'ssr-build/ssr-bundle.css.map': 3603,
 
-	'bundle.0b505.js': 21563,
-	'bundle.0b505.js.map': 86009,
-	'bundle.0b505.legacy.js': 22586,
-	'bundle.0b505.legacy.js.map': 107151,
+	'bundle.263af.js': 21563,
+	'bundle.263af.js.map': 86009,
+	'bundle.263af.legacy.js': 22586,
+	'bundle.263af.legacy.js.map': 107151,
 	'bundle.6329a.css': 1173,
 	'bundle.6329a.css.map': 2165,
 
