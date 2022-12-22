@@ -239,11 +239,13 @@ class WebpackConfigHelpers {
 					: [{ rule, ruleIndex, loader: loaders, loaderIndex: -1 }]
 			)
 			.reduce((arr, loaders) => arr.concat(loaders), [])
-			.filter(
-				({ loader }) =>
-					(typeof loader === 'string' && loader.includes(name)) ||
-					(typeof loader.loader === 'string' && loader.loader.includes(name))
-			);
+			.filter(({ loader }) => {
+				if (typeof loader === 'string') return loader.includes(name);
+				return typeof loader.loader === 'string' &&
+					loader.loader.includes('proxy-loader')
+					? loader.options.loader.includes(name)
+					: loader.loader.includes(name);
+			});
 	}
 
 	/**
