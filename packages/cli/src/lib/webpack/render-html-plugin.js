@@ -45,7 +45,10 @@ module.exports = async function (config) {
 
 		// Unfortunately html-webpack-plugin expects a true file,
 		// so we'll create a temporary one.
-		const tmpDir = join(os.tmpdir(), 'preact-cli');
+		const tmpDir = join(
+			os.tmpdir(),
+			`preact-cli-${Math.floor(Math.random() * 100000)}`
+		);
 		if (!existsSync(tmpDir)) {
 			mkdirSync(tmpDir);
 		}
