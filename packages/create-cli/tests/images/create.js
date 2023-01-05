@@ -21,7 +21,7 @@ exports.default = [
 	'src/routes/profile/style.module.css',
 	'src/style/index.css',
 	'src/sw.js',
-	'src/template.html',
+	'src/template.ejs',
 	'tests/__mocks__/browserMocks.js',
 	'tests/__mocks__/fileMocks.js',
 	'tests/__mocks__/setupTests.js',

@@ -11,7 +11,7 @@ const fetch = require('isomorphic-unfetch');
 const { loadPage, waitUntilExpression } = startChrome;
 let chrome, server;
 
-describe('preact', () => {
+describe('preact watch', () => {
 	beforeAll(async () => {
 		chrome = await startChrome();
 	});
@@ -176,13 +176,13 @@ describe('preact', () => {
 			let app = await subject('custom-template');
 
 			await rename(
-				join(app, 'template.html'),
-				join(app, 'renamed-template.html')
+				join(app, 'template.ejs'),
+				join(app, 'renamed-template.ejs')
 			);
 
 			server = await watch(app, {
 				port: 8095,
-				template: 'renamed-template.html',
+				template: 'renamed-template.ejs',
 			});
 			const html = await fetch('http://127.0.0.1:8095/').then(res =>
 				res.text()
