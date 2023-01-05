@@ -21,7 +21,7 @@ async function enableOfflineMode(page, browser) {
 	});
 }
 
-describe('preact service worker tests', () => {
+describe('service worker', () => {
 	let server, browser, dir;
 
 	beforeAll(async () => {
