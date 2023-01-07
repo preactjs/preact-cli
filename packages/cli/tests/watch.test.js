@@ -28,15 +28,15 @@ describe('preact', () => {
 
 		let header = resolve(app, './src/components/header/index.js');
 		let original = await readFile(header, 'utf8');
-		let update = original.replace('<h1>Preact App</h1>', '<h1>Test App</h1>');
+		let update = original.replace('<h1>Preact CLI</h1>', '<h1>Test App</h1>');
 		await writeFile(header, update);
 
 		await waitUntilExpression(
 			page,
-			`document.querySelector('header > h1').innerText === 'Test App'`
+			`document.querySelector('header h1').innerText === 'Test App'`
 		);
 
-		server.close();
+		await server.stop();
 	});
 
 	it('should use a custom `.env` with prefixed environment variables', async () => {
@@ -45,7 +45,7 @@ describe('preact', () => {
 		let header = resolve(app, './src/components/header/index.js');
 		let original = await readFile(header, 'utf8');
 		let update = original.replace(
-			'<h1>Preact App</h1>',
+			'<h1>Preact CLI</h1>',
 			'<h1>{process.env.PREACT_APP_MY_VARIABLE}</h1>'
 		);
 		await writeFile(header, update);
@@ -61,10 +61,10 @@ describe('preact', () => {
 		// "Hello World!" should replace 'process.env.PREACT_APP_MY_VARIABLE'
 		await waitUntilExpression(
 			page,
-			`document.querySelector('header > h1').innerText === 'Hello World!'`
+			`document.querySelector('header h1').innerText === 'Hello World!'`
 		);
 
-		server.close();
+		await server.stop();
 	});
 
 	it('should proxy requests when "proxy" exists in package.json', async () => {
@@ -80,7 +80,7 @@ describe('preact', () => {
 			`document.querySelector('h1').innerText === 'Data retrieved from proxied server: Hello World!'`
 		);
 
-		server.close();
+		await server.stop();
 		api.server.close();
 	});
 
@@ -101,7 +101,7 @@ describe('preact', () => {
 				`document.querySelector('h1').innerText === 'Minimal App'`
 			);
 
-			server.close();
+			await server.stop();
 		});
 
 		it('--esm', async () => {
@@ -112,7 +112,7 @@ describe('preact', () => {
 				res => res.text()
 			);
 			expect(bundle).toMatch('Minimal App');
-			server.close();
+			await server.stop();
 		});
 
 		it('--sw', async () => {
@@ -131,7 +131,7 @@ describe('preact', () => {
 						);
 				})
 			).toBe(true);
-			server.close();
+			await server.stop();
 
 			server = await watch(app, { port: 8091, sw: true });
 			page = await chrome.newPage();
@@ -145,7 +145,7 @@ describe('preact', () => {
 						);
 				})
 			).toBe(true);
-			server.close();
+			await server.stop();
 
 			server = await watch(app, { port: 8092, sw: false });
 			page = await chrome.newPage();
@@ -157,7 +157,7 @@ describe('preact', () => {
 						.then(registrations => registrations);
 				})
 			).toHaveLength(0);
-			server.close();
+			await server.stop();
 		});
 
 		it('--babelConfig', async () => {
@@ -168,7 +168,7 @@ describe('preact', () => {
 				res.text()
 			);
 			expect(/=>\s?setTimeout/.test(bundle)).toBe(true);
-			server.close();
+			await server.stop();
 
 			await rename(join(app, '.babelrc'), join(app, 'babel.config.json'));
 			server = await watch(app, {
@@ -180,7 +180,7 @@ describe('preact', () => {
 			);
 			expect(/=>\s?setTimeout/.test(bundle)).toBe(true);
 
-			server.close();
+			await server.stop();
 		});
 
 		it('--template', async () => {
@@ -199,7 +199,7 @@ describe('preact', () => {
 				res.text()
 			);
 			expect(html).toMatch('<meta name="example-meta" content="Hello Dev">');
-			server.close();
+			await server.stop();
 		});
 
 		it('--config', async () => {
@@ -210,7 +210,7 @@ describe('preact', () => {
 				res => res.text()
 			);
 			expect(bundle).toMatch('This is an app with custom webpack config');
-			server.close();
+			await server.stop();
 
 			await rename(
 				join(app, 'preact.config.js'),
@@ -221,7 +221,7 @@ describe('preact', () => {
 				res => res.text()
 			);
 			expect(bundle).toMatch('This is an app with custom webpack config');
-			server.close();
+			await server.stop();
 		});
 
 		it('--invalid-arg', async () => {
