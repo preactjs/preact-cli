@@ -1,21 +1,16 @@
+const { mkdtemp, readFile, writeFile } = require('fs/promises');
+const { existsSync } = require('fs');
 const { resolve, join } = require('path');
 const os = require('os');
-const { existsSync, mkdtempSync, readFileSync, writeFileSync } = require('fs');
 const { Compilation, sources } = require('webpack');
 const {
 	HtmlWebpackSkipAssetsPlugin,
 } = require('html-webpack-skip-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
-const { esmImport, tryResolveConfig, warn } = require('../../util');
+const { esmImport, error, tryResolveConfig, warn } = require('../../util');
 
 const PREACT_FALLBACK_URL = '/200.html';
-
-let defaultTemplate = resolve(__dirname, '../../resources/template.html');
-
-function read(path) {
-	return readFileSync(resolve(__dirname, path), 'utf-8');
-}
 
 /**
  * @param {import('../../../types').Env} env
@@ -23,34 +18,61 @@ function read(path) {
 module.exports = async function renderHTMLPlugin(config, env) {
 	const { cwd, dest, src } = config;
 
-	const inProjectTemplatePath = resolve(src, 'template.html');
-	let template = defaultTemplate;
-	if (existsSync(inProjectTemplatePath)) {
-		template = inProjectTemplatePath;
-	}
-
+	let templatePath;
 	if (config.template) {
-		const templatePathFromArg = resolve(cwd, config.template);
-		if (existsSync(templatePathFromArg)) template = templatePathFromArg;
-		else {
-			warn(`Template not found at ${templatePathFromArg}`);
-		}
+		templatePath = tryResolveConfig(
+			cwd,
+			config.template,
+			false,
+			config.verbose
+		);
 	}
 
-	let content = read(template);
-	if (/preact\.(title|headEnd|bodyEnd)/.test(content)) {
-		const headEnd = read('../../resources/head-end.ejs');
-		const bodyEnd = read('../../resources/body-end.ejs');
-		content = content
-			.replace(/<%[=]?\s+preact\.title\s+%>/, '<%= cli.title %>')
-			.replace(/<%\s+preact\.headEnd\s+%>/, headEnd)
-			.replace(/<%\s+preact\.bodyEnd\s+%>/, bodyEnd);
+	if (!templatePath) {
+		templatePath = tryResolveConfig(
+			cwd,
+			resolve(src, 'template.ejs'),
+			true,
+			config.verbose
+		);
+
+		// Additionally checks for <src-dir>/template.html for
+		// back-compat with v3
+		if (!templatePath) {
+			templatePath = tryResolveConfig(
+				cwd,
+				resolve(src, 'template.html'),
+				true,
+				config.verbose
+			);
+		}
+
+		if (!templatePath)
+			templatePath = resolve(__dirname, '../../resources/template.ejs');
+	}
+
+	let templateContent = await readFile(templatePath, 'utf-8');
+	if (/preact\.(?:headEnd|bodyEnd)/.test(templateContent)) {
+		const message = `
+			'<% preact.headEnd %>' and '<% preact.bodyEnd %>' are no longer supported in CLI v4!
+			You can copy the new default 'template.ejs' from the following link or adapt your existing:
+
+			https://github.com/preactjs/preact-cli/blob/master/packages/cli/src/resources/template.ejs
+		`;
+
+		error(message.trim().replace(/^\t+/gm, '') + '\n');
+	}
+	if (/preact\.title/.test(templateContent)) {
+		templateContent = templateContent.replace(
+			/<%[=]?\s+preact\.title\s+%>/,
+			'<%= cli.title %>'
+		);
 
 		// Unfortunately html-webpack-plugin expects a true file,
 		// so we'll create a temporary one.
-		const tmpDir = mkdtempSync(join(os.tmpdir(), 'preact-cli-'));
-		template = resolve(tmpDir, 'template.tmp.ejs');
-		writeFileSync(template, content);
+		const tmpDir = await mkdtemp(join(os.tmpdir(), 'preact-cli-'));
+		templatePath = resolve(tmpDir, 'template.tmp.ejs');
+		await writeFile(templatePath, templateContent);
 	}
 
 	const htmlWebpackConfig = values => {
@@ -72,29 +94,46 @@ module.exports = async function renderHTMLPlugin(config, env) {
 		return {
 			title,
 			filename,
-			template: `!!${require.resolve('ejs-loader')}?esModule=false!${template}`,
+			template: `!!${require.resolve(
+				'ejs-loader'
+			)}?esModule=false!${templatePath}`,
 			templateParameters: async (compilation, assets, assetTags, options) => {
 				let entrypoints = {};
 				compilation.entrypoints.forEach((entrypoint, name) => {
 					let entryFiles = entrypoint.getFiles();
+
 					entrypoints[name] =
 						assets.publicPath +
-						entryFiles.find(file => /\.(m?js)(\?|$)/.test(file));
+						entryFiles.find(file => /\.m?js(?:\?|$)/.test(file));
 				});
+
+				const compilationAssets = Object.keys(compilation.assets);
+				const outputName = entrypoints['bundle']
+					.match(/^([^.]*)/)[1]
+					.replace(assets.publicPath, '');
+				const rgx = new RegExp(`${outputName}.*legacy.js$`);
+				const legacyOutput = compilationAssets.find(file => rgx.test(file));
+				if (legacyOutput) {
+					entrypoints['legacy-bundle'] = assets.publicPath + legacyOutput;
+				}
+
+				if (compilationAssets.includes('es-polyfills.js')) {
+					entrypoints['es-polyfills'] = assets.publicPath + 'es-polyfills.js';
+				}
 
 				return {
 					cli: {
 						title,
 						url,
 						manifest: config.manifest,
-						inlineCss: config['inlineCss'],
-						config,
+						// pkg isn't likely to be useful and manifest is already made available
+						config: (({ pkg: _pkg, manifest: _manifest, ...rest }) => rest)(
+							config
+						),
 						env,
 						preRenderData: values,
 						CLI_DATA: { preRenderData: { url, ...routeData } },
-						ssr: config.prerender
-							? await prerender(config, values)
-							: '',
+						ssr: config.prerender ? await prerender(config, values) : '',
 						entrypoints,
 					},
 					htmlWebpackPlugin: {
@@ -195,7 +234,7 @@ class PrerenderDataExtractPlugin {
 						}
 						let path = this.location_ + 'preact_prerender_data.json';
 						if (path.startsWith('/')) {
-							path = path.substr(1);
+							path = path.substring(1);
 						}
 						compilation.emitAsset(path, new sources.RawSource(this.data_));
 					}
@@ -204,5 +243,3 @@ class PrerenderDataExtractPlugin {
 		);
 	}
 }
-
-exports.PREACT_FALLBACK_URL = PREACT_FALLBACK_URL;

@@ -8,12 +8,10 @@
 		<% } else { %>
 			<meta name="example-meta" content="Hello Dev">
 		<% } %>
-		<% preact.headEnd %>
 	</head>
 	<body>
 		<h1>Guess what</h1>
 		<%= cli.ssr %>
 		<script defer src="<%= cli.entrypoints['bundle'] %>"></script>
-		<% preact.bodyEnd %>
 	</body>
 </html>
