@@ -351,7 +351,7 @@ function isDev(env) {
 			},
 			https: env.https,
 			port: env.port,
-			host: process.env.HOST || env.host || '0.0.0.0',
+			host: env.host,
 			allowedHosts: 'all',
 			historyApiFallback: true,
 			client: {
