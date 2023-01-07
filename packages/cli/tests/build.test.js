@@ -115,7 +115,7 @@ describe('preact build', () => {
 
 	it('should respect `publicPath` value', async () => {
 		let dir = await subject('public-path');
-		await buildFast(dir);
+		await build(dir);
 		const html = await getOutputFile(dir, 'index.html');
 
 		expect(html).toEqual(
@@ -182,10 +182,10 @@ describe('preact build', () => {
 			let dir = await subject('custom-template');
 
 			await rename(
-				join(dir, 'template.html'),
-				join(dir, 'renamed-template.html')
+				join(dir, 'template.ejs'),
+				join(dir, 'renamed-template.ejs')
 			);
-			await buildFast(dir, { template: 'renamed-template.html' });
+			await buildFast(dir, { template: 'renamed-template.ejs' });
 
 			const html = await getOutputFile(dir, 'index.html');
 			expect(html).toEqual(

@@ -149,18 +149,11 @@ exports.template = `
 		<meta charset="utf-8">
 		<title>preact-custom-template</title>
 		<meta name="example-meta" content="Hello Prod">
-		<link rel="manifest" href="/manifest.json">
 	</head>
 	<body>
 		<h1>Guess what</h1>
 		<h2>This is an app with custom template</h2>
 		<script defer="defer" src="/bundle.\\w{5}.js"></script>
-		<h2>This is an app with custom template</h2>
-		<script type="__PREACT_CLI_DATA__">%7B%22preRenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
-		<script crossorigin="anonymous" src="/bundle.\\w{5}.js" type="module"></script>
-		<script nomodule="" src="/dom-polyfills.\\w{5}.js"></script>
-		<script nomodule="" src="/es-polyfills.js"></script>
-		<script nomodule="" defer="defer" src="/bundle.\\w{5}.legacy.js"></script>
 	</body>
 </html>
 `;
@@ -181,7 +174,7 @@ exports.publicPath = `
 	<body>
 		<h1>Public path test</h1>
 		<script type="__PREACT_CLI_DATA__">%7B%22preRenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
-		<script crossorigin="anonymous" src="/example-path/bundle.\\w{5}.js" type="module"></script>
+		<script type="module" src="/example-path/bundle.\\w{5}.js"></script>
 		<script nomodule="" src="/example-path/dom-polyfills.\\w{5}.js"></script>
 		<script nomodule="" src="/example-path/es-polyfills.js"></script>
 		<script nomodule="" defer="defer" src="/example-path/bundle.\\w{5}.legacy.js"></script>

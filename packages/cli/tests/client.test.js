@@ -9,7 +9,7 @@ const getPort = require('get-port');
 let chrome;
 let PORT;
 
-describe('client-side tests', () => {
+describe('client', () => {
 	beforeAll(async () => {
 		chrome = await startChrome();
 	});
