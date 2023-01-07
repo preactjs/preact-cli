@@ -19,6 +19,7 @@ exports.build = async function (cwd, options, installNodeModules = false) {
 		src: 'src',
 		dest: 'build',
 		config: 'preact.config.js',
+		prerender: true,
 		prerenderUrls: 'prerender-urls.json',
 		'inline-css': true,
 	};

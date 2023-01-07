@@ -9,7 +9,6 @@ exports.watch = async function watchCommand(src, argv) {
 		argv.refresh = argv.rhl;
 	}
 	argv.src = src || argv.src;
-	argv.production = false;
 	if (argv.sw) {
 		argv.sw = toBool(argv.sw);
 	}
@@ -22,9 +21,14 @@ exports.watch = async function watchCommand(src, argv) {
 	// and the current directory differ.
 	require('dotenv').config({ path: resolve(cwd, '.env') });
 
+	argv.https = toBool(process.env.HTTPS || argv.https);
+	argv.host = process.env.HOST || argv.host;
+	if (argv.host === '0.0.0.0' && process.platform === 'win32') {
+		argv.host = 'localhost';
+	}
 	argv.port = await determinePort(argv.port);
 
-	if (argv.https || process.env.HTTPS) {
+	if (argv.https) {
 		let { key, cert, cacert } = argv;
 		if (key && cert) {
 			argv.https = { key, cert, ca: cacert };

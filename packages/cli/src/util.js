@@ -53,7 +53,7 @@ exports.normalizeTemplatesResponse = function (repos = []) {
 };
 
 exports.toBool = function (val) {
-	return val === void 0 || (val === 'false' ? false : val);
+	return val !== void 0 && val !== false && !/false|0/.test(val);
 };
 
 exports.esmImport = require('esm')(module);

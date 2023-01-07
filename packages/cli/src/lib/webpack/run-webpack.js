@@ -23,13 +23,12 @@ async function devBuild(env) {
 
 		compiler.hooks.done.tap('CliDevPlugin', stats => {
 			let devServer = config.devServer;
-			let protocol = process.env.HTTPS || devServer.https ? 'https' : 'http';
-			let host = process.env.HOST || devServer.host || 'localhost';
-			if (host === '0.0.0.0' && process.platform === 'win32') {
-				host = 'localhost';
-			}
-			let serverAddr = `${protocol}://${host}:${bold(env.port)}`;
-			let localIpAddr = `${protocol}://${ip.address()}:${bold(env.port)}`;
+			let protocol = devServer.https ? 'https' : 'http';
+
+			let serverAddr = `${protocol}://${devServer.host}:${bold(
+				devServer.port
+			)}`;
+			let localIpAddr = `${protocol}://${ip.address()}:${bold(devServer.port)}`;
 
 			if (stats.hasErrors()) {
 				process.stdout.write(red('Build failed!\n\n'));
@@ -232,6 +231,7 @@ function stripLoaderFromModuleNames(m) {
 }
 
 module.exports = function (env, watch = false) {
+	env.production = !watch;
 	env.isProd = env.production; // shorthand
 	env.isWatch = !!watch; // use HMR?
 	env.cwd = resolve(env.cwd || process.cwd());

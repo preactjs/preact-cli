@@ -8,7 +8,6 @@ exports.build = async function buildCommand(src, argv) {
 	argv.src = src || argv.src;
 	// add `default:true`s, `--no-*` disables
 	argv.prerender = toBool(argv.prerender);
-	argv.production = toBool(argv.production);
 
 	let cwd = resolve(argv.cwd);
 
