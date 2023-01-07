@@ -8,7 +8,7 @@ const {
 } = require('html-webpack-skip-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
-const { esmImport, tryResolveConfig, warn } = require('../../util');
+const { esmImport, error, tryResolveConfig, warn } = require('../../util');
 
 const PREACT_FALLBACK_URL = '/200.html';
 
@@ -52,6 +52,16 @@ module.exports = async function renderHTMLPlugin(config, env) {
 	}
 
 	let templateContent = await readFile(templatePath, 'utf-8');
+	if (/preact\.(?:headEnd|bodyEnd)/.test(templateContent)) {
+		const message = `
+			'<% preact.headEnd %>' and '<% preact.bodyEnd %>' are no longer supported in CLI v4!
+			You can copy the new default 'template.ejs' from the following link or adapt your existing:
+
+			https://github.com/preactjs/preact-cli/blob/master/packages/cli/src/resources/template.ejs
+		`;
+
+		error(message.trim().replace(/^\t+/gm, '') + '\n');
+	}
 	if (/preact\.title/.test(templateContent)) {
 		templateContent = templateContent.replace(
 			/<%[=]?\s+preact\.title\s+%>/,
