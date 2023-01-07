@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title><% preact.title %></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<link rel="apple-touch-icon" href="<%= htmlWebpackPlugin.files.publicPath %>assets/icons/apple-touch-icon.png">
+		<link rel="manifest" href="<%= htmlWebpackPlugin.files.publicPath %>manifest.json">
+		<% if (cli.manifest.theme_color) { %>
+			<meta name="theme-color" content="<%= cli.manifest.theme_color %>">
+		<% } %>
+	</head>
+	<body>
+		<%= cli.ssr %>
+		<% if (cli.config.prerender === true) { %>
+			<script type="__PREACT_CLI_DATA__">
+				<%= encodeURI(JSON.stringify(cli.CLI_DATA)) %>
+			</script>
+		<% } %>
+		<script type="module" src="<%= cli.entrypoints['bundle'] %>"></script>
+		<script nomodule src="<%= cli.entrypoints['dom-polyfills'] %>"></script>
+		<script nomodule src="<%= cli.entrypoints['es-polyfills'] %>"></script>
+		<script nomodule defer src="<%= cli.entrypoints['legacy-bundle'] %>"></script>
+	</body>
+</html>

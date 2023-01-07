@@ -1,19 +1,12 @@
 {
-  "extends": [
-    "eslint:recommended",
-    "prettier"
-  ],
+  "extends": ["eslint:recommended", "prettier"],
   "parser": "babel-eslint",
   "env": {
     "browser": true,
     "node": true,
     "es6": true
   },
-  "plugins": [
-    "babel",
-    "react",
-    "prettier"
-  ],
+  "plugins": ["babel", "react", "prettier"],
   "settings": {
     "react": {
       "pragma": "h",
@@ -29,6 +22,13 @@
   "rules": {
     "no-console": 1,
     "no-empty": 0,
+    "no-unused-vars": [
+      2,
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
     "semi": 2,
     "keyword-spacing": 2,
     "require-atomic-updates": 0,
