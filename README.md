@@ -125,7 +125,7 @@ $ [npm run / yarn] preact build
     --babelConfig      Path to custom Babel config (default .babelrc)
     --prerender        Renders route(s) into generated static HTML  (default true)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
-    --template         Path to custom HTML template (default 'src/template.html')
+    --template         Path to custom EJS or HTML template  (default 'src/template.ejs')
     --inlineCss        Adds critical css to the prerendered markup  (default true)
     --analyze          Launch interactive Analyzer to inspect production bundle(s) (default false)
     -c, --config       Path to custom CLI config  (default preact.config.js)
@@ -151,7 +151,7 @@ $ [npm run / yarn] preact watch
     --cacert           Path to optional CA certificate override
     --prerender        Pre-render static content on first run
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
-    --template         Path to custom HTML template (default 'src/template.html')
+    --template         Path to custom EJS or HTML template  (default 'src/template.ejs')
     --refresh          Enables experimental preact-refresh functionality
     -c, --config       Path to custom CLI config  (default preact.config.js)
     -H, --host         Set server hostname  (default 0.0.0.0)
@@ -211,7 +211,7 @@ To customize Babel, you have two options:
 
 #### Webpack
 
-To customize preact-cli create a `preact.config.js` or a `preact.config.json` file.
+To customize Preact-CLI's Webpack config, create a `preact.config.js` or a `preact.config.json` file:
 
 > `preact.config.js`
 
@@ -295,18 +295,15 @@ export default () => {
 
 #### Template
 
-A template is used to render your page by [EJS](https://ejs.co/).
-You can uses the data of `prerenderUrls` which does not have `title`, using `htmlWebpackPlugin.options.CLI_DATA.preRenderData` in EJS.
+To customize the HTML document that your app uses, edit the `template.ejs` file in your app's source directory.
 
-The default one is visible [here](packages/cli/src/resources/template.html) and it's going to be enough for the majority of cases.
+[EJS](https://ejs.dev) is a simple templating language that lets you generate HTML markup with plain JavaScript. Alongside `html-webpack-plugin`, you're able to conditionally add HTML, access your bundles and assets, and link to external content if you wish. The default we provide on project initialization should fit the majority of use cases very well, but feel free to customize!
 
-If you want to customise your template you can pass a custom template with the `--template` flag.
-
-The `--template` flag is available on the `build` and `watch` commands.
+You can customize the location of your template with the `--template` flag on the `build` and `watch` commands:
 
 ```sh
-preact build --template src/template.html
-preact watch --template src/template.html
+preact build --template renamed-src/template.ejs
+preact watch --template template.ejs
 ```
 
 ### Using CSS preprocessors

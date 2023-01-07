@@ -29,7 +29,7 @@ prog
 	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
 	.option(
 		'--template',
-		'Path to custom HTML template  (default src/template.html)'
+		'Path to custom EJS or HTML template  (default src/template.ejs)'
 	)
 	.option(
 		'--analyze',

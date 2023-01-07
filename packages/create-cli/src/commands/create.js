@@ -97,12 +97,12 @@ exports.create = async function createCommand(repo, dest, argv) {
 	if (!repo.includes('widget')) {
 		const sourceDirectory = join(resolve(cwd, dest), 'src');
 
-		// Copy over template.html
+		// Copy over template.ejs
 		const templateSrc = resolve(
 			__dirname,
-			join('..', 'resources', 'template.html')
+			join('..', 'resources', 'template.ejs')
 		);
-		const templateDest = join(sourceDirectory, 'template.html');
+		const templateDest = join(sourceDirectory, 'template.ejs');
 		await copyTemplateFile(templateSrc, templateDest, argv.force);
 
 		// Copy over sw.js
