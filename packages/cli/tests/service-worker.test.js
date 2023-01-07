@@ -58,7 +58,7 @@ describe('preact service worker tests', () => {
 		await page.waitForSelector('h1');
 		expect(
 			await page.$$eval('h1', nodes => nodes.map(n => n.innerText))
-		).toEqual(['Preact App', 'Home']);
+		).toEqual(['Preact CLI', 'Get Started Building PWAs with Preact-CLI']);
 		expect(offlineContent).not.toEqual(initialContent);
 	});
 

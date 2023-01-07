@@ -10,40 +10,41 @@ exports.default = Object.assign({}, common, {
 	'assets/icons/favicon-16x16.png': 626,
 	'assets/icons/favicon-32x32.png': 1487,
 	'assets/icons/mstile-150x150.png': 9050,
+	'assets/preact-logo.svg': 645,
+	'assets/preact-logo-inverse.svg': 649,
 	'assets/favicon.ico': 15086,
-	'ssr-build/ssr-bundle.89e23.css': 1281,
-	'ssr-build/ssr-bundle.89e23.css.map': 2070,
+	'ssr-build/ssr-bundle.2b941.css': 2601,
+	'ssr-build/ssr-bundle.2b941.css.map': 3708,
 	'ssr-build/ssr-bundle.js': 28830,
 	'ssr-build/ssr-bundle.js.map': 52686,
 	'ssr-build/asset-manifest.json': 178,
-	'bundle.259c5.css': 901,
-	'bundle.85124.js': 21429,
-	'bundle.85124.js.map': 111801,
+	'bundle.4c6ac.css': 1276,
+	'bundle.fbf1b.js': 22529,
+	'bundle.fbf1b.js.map': 111801,
 	'favicon.ico': 15086,
-	'index.html': 2034,
+	'index.html': 4127,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
-	'push-manifest.json': 450,
-	'asset-manifest.json': 1074,
-	'route-home.chunk.df08e.css': 58,
-	'route-home.chunk.f5172.js': 327,
-	'route-home.chunk.f5172.js.map': 483,
-	'route-profile.chunk.7bcae.css': 61,
-	'route-profile.chunk.03a58.js': 3514,
-	'route-profile.chunk.03a58.js.map': 15454,
+	'push-manifest.json': 388,
+	'asset-manifest.json': 1142,
+	'route-home.chunk.c490f.css': 834,
+	'route-home.chunk.50bd0.js': 1149,
+	'route-home.chunk.50bd0.js.map': 1961,
+	'route-profile.chunk.4c330.js': 3490,
+	'route-profile.chunk.4c330.js.map': 15002,
 });
 exports['default-esm'] = Object.assign({}, exports.default, {
-	'bundle.*.esm.js': 21135,
-	'bundle.*.esm.js.map': 111771,
+	'bundle.*.esm.js': 22249,
+	'bundle.*.esm.js.map': 113538,
 	'polyfills.*.esm.js': 5721,
 	'polyfills.*.esm.js.map': 21633,
-	'route-home.chunk.*.esm.js': 316,
-	'route-home.chunk.*.esm.js.map': 486,
-	'route-profile.chunk.*.esm.js': 2448,
-	'route-profile.chunk.*.esm.js.map': 15392,
-	'index.html': 2193,
-	'push-manifest.json': 466,
-	'asset-manifest.json': 1106,
+	'route-home.chunk.*.esm.js': 1127,
+	'route-home.chunk.*.esm.js.map': 1957,
+	'route-profile.chunk.*.esm.js': 2424,
+	'route-profile.chunk.*.esm.js.map': 14942,
+	'index.html': 4221,
+	'push-manifest.json': 404,
+	'asset-manifest.json': 1174,
 });
 
 exports.sass = `
@@ -247,10 +248,6 @@ exports.pushManifest = `
 		"route-profile.chunk.\\w{5}.js":{
 			"type":"script",
 			"weight":0.9
-		},
-		"route-profile.chunk.\\w{5}.css":{
-			"type":"style",
-			"weight":0.9
 		}
 	}
 }
@@ -287,10 +284,6 @@ exports.pushManifestEsm = `
 		},
 		"route-profile.chunk.\\w{5}.esm.js":{
 			"type":"script",
-			"weight":0.9
-		},
-		"route-profile.chunk.\\w{5}.css":{
-			"type":"style",
 			"weight":0.9
 		}
 	}
