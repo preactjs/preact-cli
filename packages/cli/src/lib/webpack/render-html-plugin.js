@@ -1,6 +1,6 @@
 const { resolve, join } = require('path');
 const os = require('os');
-const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
+const { existsSync, mkdtempSync, readFileSync, writeFileSync } = require('fs');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
@@ -45,13 +45,7 @@ module.exports = async function (config) {
 
 		// Unfortunately html-webpack-plugin expects a true file,
 		// so we'll create a temporary one.
-		const tmpDir = join(
-			os.tmpdir(),
-			`preact-cli-${Math.floor(Math.random() * 100000)}`
-		);
-		if (!existsSync(tmpDir)) {
-			mkdirSync(tmpDir);
-		}
+		const tmpDir = mkdtempSync(join(os.tmpdir(), 'preact-cli-'));
 		template = resolve(tmpDir, 'template.tmp.ejs');
 		writeFileSync(template, content);
 	}
