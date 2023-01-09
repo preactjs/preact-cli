@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "3.4.5",
+  "version": "4.0.0-next.1",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "keywords": [
     "preact",
