@@ -1,6 +1,6 @@
 {
   "name": "@preact/async-loader",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Preact's async component loader for Webpack",
   "homepage": "https://github.com/preactjs/preact-cli",
   "bugs": "https://github.com/preactjs/preact-cli/issues",

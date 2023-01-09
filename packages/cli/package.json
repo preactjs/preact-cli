@@ -1,6 +1,6 @@
 {
   "name": "preact-cli",
-  "version": "3.4.3",
+  "version": "3.4.4",
   "description": "Start building a Preact Progressive Web App in seconds.",
   "keywords": [
     "preact",
@@ -43,7 +43,7 @@
     "@babel/plugin-transform-react-jsx": "^7.13.12",
     "@babel/preset-env": "^7.13.15",
     "@babel/preset-typescript": "^7.13.0",
-    "@preact/async-loader": "^3.0.1",
+    "@preact/async-loader": "^3.0.2",
     "@prefresh/babel-plugin": "^0.4.1",
     "@prefresh/webpack": "^3.2.2",
     "@types/webpack": "^4.38.0",
