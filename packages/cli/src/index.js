@@ -55,7 +55,7 @@ prog
 	.option('--clear', 'Clears the console when the devServer updates', true)
 	.option('--sw', 'Generate and attach a Service Worker')
 	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
-	.option('--refresh', 'Enables experimental prefresh functionality', false)
+	.option('--refresh', 'Enables HMR with Prefresh', true)
 	.option(
 		'--template',
 		'Path to custom HTML template (default "src/template.html")'

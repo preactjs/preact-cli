@@ -3,6 +3,7 @@ const path = require('path');
 exports.default = [
 	'.gitignore',
 	'package.json',
+	'preact.config.js',
 	'README.md',
 	'src/assets/favicon.ico',
 	'src/assets/icons/android-chrome-192x192.png',
