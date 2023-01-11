@@ -15,10 +15,10 @@ exports.default = {
 	'ssr-build/ssr-bundle.css': 2346,
 	'ssr-build/ssr-bundle.css.map': 3603,
 
-	'bundle.448c6.js': 21563,
-	'bundle.448c6.js.map': 86009,
-	'bundle.448c6.legacy.js': 22586,
-	'bundle.448c6.legacy.js.map': 107151,
+	'bundle.5be14.js': 21563,
+	'bundle.5be14.js.map': 86009,
+	'bundle.5be14.legacy.js': 22586,
+	'bundle.5be14.legacy.js.map': 107151,
 	'bundle.6329a.css': 1173,
 	'bundle.6329a.css.map': 2165,
 
@@ -32,12 +32,12 @@ exports.default = {
 	'preact_prerender_data.json': 11,
 	'asset-manifest.json': 1686,
 
-	'route-home.chunk.45dcd.js': 1179,
-	'route-home.chunk.45dcd.js.map': 3814,
-	'route-home.chunk.45dcd.legacy.js': 1222,
-	'route-home.chunk.45dcd.legacy.js.map': 4452,
-	'route-home.chunk.b1385.css': 838,
-	'route-home.chunk.b1385.css.map': 1406,
+	'route-home.chunk.e8f16.js': 1179,
+	'route-home.chunk.e8f16.js.map': 3814,
+	'route-home.chunk.e8f16.legacy.js': 1222,
+	'route-home.chunk.e8f16.legacy.js.map': 4452,
+	'route-home.chunk.d116e.css': 838,
+	'route-home.chunk.d116e.css.map': 1406,
 
 	'route-profile.chunk.7a48e.js': 3165,
 	'route-profile.chunk.7a48e.js.map': 12464,
