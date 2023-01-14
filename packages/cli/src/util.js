@@ -56,7 +56,7 @@ exports.toBool = function (val) {
 	return val !== void 0 && val !== false && !/false|0/.test(val);
 };
 
-exports.isNodeVersionGreator = function (minimum) {
+exports.isNodeVersionGreater = function (minimum) {
 	return (
 		process.version
 			.substring(1)

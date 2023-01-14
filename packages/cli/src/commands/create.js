@@ -19,7 +19,7 @@ const {
 	warn,
 	dirExists,
 	normalizeTemplatesResponse,
-	isNodeVersionGreator,
+	isNodeVersionGreater,
 } = require('../util');
 const {
 	CUSTOM_TEMPLATE,
@@ -315,7 +315,7 @@ exports.create = async function createCommand(repo, dest, argv) {
 		pkgData.name = argv.name.toLowerCase().replace(/\s+/g, '_');
 	}
 
-	if (repo.startsWith(ORG) && isNodeVersionGreator('16.0.0')) {
+	if (repo.startsWith(ORG) && isNodeVersionGreater('16.0.0')) {
 		pkgData.scripts.build =
 			'cross-env NODE_OPTIONS=--openssl-legacy-provider preact build';
 		pkgData.scripts.dev =
