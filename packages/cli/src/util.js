@@ -56,6 +56,16 @@ exports.toBool = function (val) {
 	return val !== void 0 && val !== false && !/false|0/.test(val);
 };
 
+exports.isNodeVersionGreater = function (minimum) {
+	return (
+		process.version
+			.substring(1)
+			.localeCompare(minimum.match(/\d+/g).join('.'), 'en', {
+				numeric: true,
+			}) === 1
+	);
+};
+
 exports.esmImport = require('esm')(module);
 
 /**

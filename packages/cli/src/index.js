@@ -4,16 +4,12 @@ const sade = require('sade');
 const notifier = require('update-notifier');
 const { error } = require('./util');
 const pkg = require('../package.json');
+const { isNodeVersionGreater } = require('./util');
 
-const ver = process.version;
 const min = pkg.engines.node;
-if (
-	ver
-		.substring(1)
-		.localeCompare(min.match(/\d+/g).join('.'), 'en', { numeric: true }) === -1
-) {
+if (!isNodeVersionGreater(min)) {
 	error(
-		`You are using Node ${ver} but preact-cli requires Node ${min}. Please upgrade Node to continue!\n`
+		`You are using Node ${process.version} but preact-cli requires Node ${min}. Please upgrade Node to continue!\n`
 	);
 }
 

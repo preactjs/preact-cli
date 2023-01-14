@@ -19,6 +19,7 @@ const {
 	warn,
 	dirExists,
 	normalizeTemplatesResponse,
+	isNodeVersionGreater,
 } = require('../util');
 const {
 	CUSTOM_TEMPLATE,
@@ -313,6 +314,15 @@ exports.create = async function createCommand(repo, dest, argv) {
 		spinner.text = 'Updating `name` within `package.json` file';
 		pkgData.name = argv.name.toLowerCase().replace(/\s+/g, '_');
 	}
+
+	if (repo.startsWith(ORG) && isNodeVersionGreater('16.0.0')) {
+		pkgData.scripts.build =
+			'cross-env NODE_OPTIONS=--openssl-legacy-provider preact build';
+		pkgData.scripts.dev =
+			'cross-env NODE_OPTIONS=--openssl-legacy-provider preact watch';
+		pkgData.devDependencies['cross-env'] = '^7.0.3';
+	}
+
 	// Find a `manifest.json`; use the first match, if any
 	let files = await glob(target + '/**/manifest.json');
 	let manifest = files[0] && JSON.parse(await readFile(files[0]));
