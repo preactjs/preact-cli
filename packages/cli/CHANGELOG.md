@@ -1,5 +1,11 @@
 # preact-cli
 
+## 3.4.5
+
+### Patch Changes
+
+- [#1774](https://github.com/preactjs/preact-cli/pull/1774) [`05ba4b2`](https://github.com/preactjs/preact-cli/commit/05ba4b2ea5247877475bffb262c996d28fa7da9b) Thanks [@rschristian](https://github.com/rschristian)! - Injects necessary Node options config into new projects if user's Node version is 16+
+
 ## 3.4.4
 
 ### Patch Changes
