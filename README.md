@@ -113,7 +113,7 @@ $ [npm init / yarn create] preact-cli <template-name> <project-name>
 
 Create a production build
 
-You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw`, `--no-prerender`, and `--no-inline-css`.
+You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw` and `--no-prerender`.
 
 ```
 $ [npm run / yarn] preact build
@@ -126,7 +126,6 @@ $ [npm run / yarn] preact build
     --prerender        Renders route(s) into generated static HTML  (default true)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
     --template         Path to custom EJS or HTML template  (default 'src/template.ejs')
-    --inlineCss        Adds critical css to the prerendered markup  (default true)
     --analyze          Launch interactive Analyzer to inspect production bundle(s) (default false)
     -c, --config       Path to custom CLI config  (default preact.config.js)
     -v, --verbose      Verbose output
