@@ -26,7 +26,7 @@ exports.default = {
 	'es-polyfills.js': 42690,
 
 	'favicon.ico': 15086,
-	'index.html': 1972,
+	'index.html': 3998,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 
@@ -55,7 +55,11 @@ exports.prerender.heads.home = `
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="apple-touch-icon" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\">
+	<style>html{padding:0}<\\/style>
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
+	<noscript>
+		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
+	</noscript>
 <\\/head>
 `;
 
@@ -68,7 +72,11 @@ exports.prerender.heads.route66 = `
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="apple-touch-icon" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\">
+	<style>html{padding:0}<\\/style>
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
+	<noscript>
+		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
+	</noscript>
 <\\/head>
 `;
 
@@ -81,7 +89,11 @@ exports.prerender.heads.custom = `
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="apple-touch-icon" href=\\"\\/assets\\/icons\\/apple-touch-icon\\.png\\">
 	<link rel="manifest" href="\\/manifest\\.json">
-	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\">
+	<style>html{padding:0}<\\/style>
+	<link href=\\"/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"print\\" onload=\\"this.media='all'\\">
+	<noscript>
+		<link rel=\\"stylesheet\\" href=\\"\\/bundle.\\w{5}.css\\">
+	</noscript>
 <\\/head>
 `;
 
@@ -131,7 +143,7 @@ exports.prerender.htmlSafe = `
 `;
 
 exports.template = `
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -147,7 +159,7 @@ exports.template = `
 `;
 
 exports.publicPath = `
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -163,9 +175,9 @@ exports.publicPath = `
 		<h1>Public path test</h1>
 		<script type="__PREACT_CLI_DATA__">%7B%22preRenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
 		<script type="module" src="/example-path/bundle.\\w{5}.js"></script>
-		<script nomodule src="/example-path/dom-polyfills.\\w{5}.js"></script>
-		<script nomodule src="/example-path/es-polyfills.js"></script>
-		<script nomodule defer="defer" src="/example-path/bundle.\\w{5}.legacy.js"></script>
+		<script nomodule="" src="/example-path/dom-polyfills.\\w{5}.js"></script>
+		<script nomodule="" src="/example-path/es-polyfills.js"></script>
+		<script nomodule="" defer="defer" src="/example-path/bundle.\\w{5}.legacy.js"></script>
 	</body>
 </html>
 `;

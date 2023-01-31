@@ -231,6 +231,18 @@ describe('preact build', () => {
 			).toBeUndefined();
 		});
 
+		it('--inlineCss', async () => {
+			let dir = await subject('minimal');
+
+			await buildFast(dir, { inlineCss: true });
+			let head = await getHead(dir);
+			expect(head).toMatch('<style>h1{color:red}</style>');
+
+			await buildFast(dir, { inlineCss: false });
+			head = await getOutputFile(dir, 'index.html');
+			expect(head).not.toMatch(/<style>[^<]*<\/style>/);
+		});
+
 		it('--config', async () => {
 			let dir = await subject('custom-webpack');
 
@@ -282,6 +294,16 @@ describe('preact build', () => {
 
 			expect(builtStylesheet).toMatch('h1{color:red}');
 			expect(builtStylesheet).toMatch(/\.text__\w{5}{color:blue}/);
+		});
+
+		it('should inline critical CSS only', async () => {
+			let dir = await subject('css-inline');
+			await buildFast(dir);
+			const builtStylesheet = await getOutputFile(dir, /bundle\.\w{5}\.css$/);
+			const html = await getOutputFile(dir, 'index.html');
+
+			expect(builtStylesheet).toMatch('h1{color:red}div{background:tan}');
+			expect(html).toMatch('<style>h1{color:red}</style>');
 		});
 
 		// Issue #1411
