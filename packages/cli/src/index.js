@@ -42,6 +42,7 @@ prog
 		'Path to prerendered routes config',
 		'prerender-urls.json'
 	)
+	.option('--inlineCss', 'Adds critical CSS to the prerendered HTML', true)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-v, --verbose', 'Verbose output', false)
 	.action(argv => exec(build(argv)));
@@ -80,6 +81,9 @@ prog
 	.action(() => exec(info()));
 
 prog.parse(process.argv, {
+	alias: {
+		inlineCss: ['inline-css'],
+	},
 	unknown: arg => {
 		const cmd = process.argv[2];
 		error(
