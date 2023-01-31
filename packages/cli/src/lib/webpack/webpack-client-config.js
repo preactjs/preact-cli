@@ -8,6 +8,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CrittersPlugin = require('./critters-plugin.js');
 const renderHTMLPlugin = require('./render-html-plugin');
 const baseConfig = require('./webpack-base-config');
 const { InjectManifest } = require('workbox-webpack-plugin');
@@ -188,6 +189,17 @@ function prodBuild(config) {
 			],
 		},
 	};
+
+	if (config.inlineCss) {
+		prodConfig.plugins.push(
+			new CrittersPlugin({
+				preload: 'media',
+				pruneSource: false,
+				logLevel: 'silent',
+				additionalStylesheets: ['route-*.css'],
+			})
+		);
+	}
 
 	if (config.analyze) {
 		prodConfig.plugins.push(new BundleAnalyzerPlugin());
