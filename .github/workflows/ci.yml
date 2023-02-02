@@ -5,8 +5,6 @@ on:
     branches:
       - master
       - next
-      - staging
-      - trying
   pull_request:
     branches:
       - master
@@ -31,6 +29,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            cli:
+              - 'packages/cli/**'
+
       - uses: actions/cache@v3
         id: gittar-cache
         with:
@@ -48,19 +53,11 @@ jobs:
           restore-keys: ${{ runner.os }}-yarn-
 
       - run: yarn install --frozen-lockfile
-      - name: test
+
+      - name: test:cli
+        if: steps.filter.outputs.cli == 'true'
         env:
           CI: true
           WITH_LOG: true
           LIGHTHOUSE_CHROMIUM_PATH: 'which google-chrome-stable'
-        run: npm run test
-
-  ci-success:
-    name: ci
-    if: ${{ success() }}
-    needs:
-      - test
-    runs-on: ubuntu-latest
-    steps:
-      - name: CI succeeded
-        run: exit 0
+        run: yarn test:cli
