@@ -16,6 +16,11 @@ declare module 'shelljs' {
 	export = shell;
 }
 
+declare module 'preact-cli-entrypoint' {
+	const app: any;
+	export default app;
+}
+
 declare module '*.module.css' {
 	const classes: { [key: string]: string };
 	export default classes;

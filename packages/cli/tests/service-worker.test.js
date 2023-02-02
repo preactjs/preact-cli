@@ -102,6 +102,6 @@ describe('service worker', () => {
 			await page.$$eval('script[type=__PREACT_CLI_DATA__]', nodes =>
 				nodes.map(n => n.innerText)
 			)
-		).toEqual(['%7B%22preRenderData%22:%7B%22url%22:%22/200.html%22%7D%7D']);
+		).toEqual(['%7B%22prerenderData%22:%7B%22url%22:%22/200.html%22%7D%7D']);
 	});
 });

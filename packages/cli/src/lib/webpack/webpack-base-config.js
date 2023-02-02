@@ -115,9 +115,6 @@ module.exports = function createBaseConfig(config, env) {
 				'react-dom/test-utils': require.resolve('preact/test-utils'),
 				'react-dom': require.resolve('preact/compat'),
 				'react-addons-css-transition-group': 'preact-css-transition-group',
-				'preact-cli/async-component': require.resolve(
-					'@preact/async-loader/async'
-				),
 			},
 		},
 

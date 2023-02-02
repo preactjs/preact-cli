@@ -35,8 +35,10 @@ exports.create = async function createCommand(repo, dest, argv) {
 	if (!repo.includes('/')) {
 		repo = `preactjs-templates/${repo}`;
 
-		// TODO: Remove this after updating all templates
-		if (repo.endsWith('default') || repo.endsWith('typescript')) {
+		// TODO: This is an awful hack but necessary to test with
+		if (repo.endsWith('default')) {
+			repo += '#experimental/preact-iso';
+		} else if (repo.endsWith('typescript')) {
 			repo += '#next';
 		}
 	}

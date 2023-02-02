@@ -2,7 +2,7 @@ const { red, yellow } = require('kleur');
 const { resolve } = require('path');
 const { readFileSync } = require('fs');
 const stackTrace = require('stack-trace');
-const URL = require('url');
+const { URL } = require('url');
 const { SourceMapConsumer } = require('source-map');
 
 module.exports = async function (config, params) {
@@ -11,25 +11,42 @@ module.exports = async function (config, params) {
 	let entry = resolve(config.dest, './ssr-build/ssr-bundle.js');
 	let url = params.url || '/';
 
-	global.history = {};
-	global.location = { ...URL.parse(url) };
+	global.history = /** @type {object} */ ({});
+	global.location = /** @type {object} */ (new URL(url, 'http://localhost'));
 
 	try {
 		let m = require(entry),
-			app = (m && m.default) || m;
+			vnode = (m && m.default) || m;
 
-		if (typeof app !== 'function') {
+		if (typeof vnode !== 'function') {
 			// eslint-disable-next-line no-console
 			console.warn(
 				'Entry does not export a Component function/class, aborting prerendering.'
 			);
 			return '';
 		}
+
 		const preact = require(require.resolve('preact', { paths: [config.cwd] }));
 		const renderToString = require(require.resolve('preact-render-to-string', {
 			paths: [config.cwd],
 		}));
-		return renderToString(preact.h(app, { ...params, url }));
+
+		vnode = preact.h(vnode, { ...params, url });
+
+		// Slightly modified version of preact-iso's `prerender()`
+		let tries;
+		const maxDepth = 10;
+		const render = () => {
+			if (++tries > maxDepth) return;
+			try {
+				return renderToString(vnode);
+			} catch (e) {
+				if (e && e.then) return e.then(render);
+				throw e;
+			}
+		};
+
+		return await render();
 	} catch (err) {
 		let stack = stackTrace.parse(err).filter(s => s.getFileName() === entry)[0];
 		if (!stack) {
