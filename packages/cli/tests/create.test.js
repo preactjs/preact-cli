@@ -1,19 +1,22 @@
 const { access, readFile } = require('fs').promises;
-const { join, relative } = require('path');
+const { join } = require('path');
 const { create } = require('./lib/cli');
-const { expand } = require('./lib/utils');
-const snapshots = require('./images/create');
+const { snapshotDir } = require('./lib/utils');
 const shell = require('shelljs');
+const dirTree = require('directory-tree');
 
 describe('preact create', () => {
 	it('scaffolds the `default` official template', async () => {
 		let dir = await create('default');
 
-		let output = await expand(dir).then(arr => {
-			return arr.map(x => relative(dir, x));
+		const directoryTree = dirTree(dir, {
+			exclude: /node_modules|package-lock|yarn.lock/,
 		});
 
-		expect(output.sort()).toEqual(snapshots.default);
+		// Creating a stable name, as the test directory is normally a randomized string
+		directoryTree.name = 'default-template-project';
+
+		expect(await snapshotDir([directoryTree], false)).toMatchSnapshot();
 	});
 
 	it('should use template.html from the github repo', async () => {

@@ -1,43 +1,79 @@
 /* eslint-disable no-console */
-const { join, relative, resolve } = require('path');
-const { stat, symlink, readFile, writeFile } = require('fs').promises;
+const { join } = require('path');
+const { symlink, readFile } = require('fs').promises;
 const pRetry = require('p-retry');
 const { promisify } = require('util');
-const glob = promisify(require('glob').glob);
 
 const LOG = !!process.env.WITH_LOG;
 const logger = (lvl, msg) => (lvl === 'error' || LOG) && console[lvl](msg);
 
-// `node-glob` ignore pattern buggy?
-const ignores = x => !/node_modules|package-lock|yarn.lock/i.test(x);
+const snapshotExtensionOrder = [
+	{ ext: /(?<!\.esm)\.js$/, order: 1 },
+	{ ext: /(?<!\.esm)\.js\.map$/, order: 2 },
+	{ ext: /\.esm\.js$/, order: 3 },
+	{ ext: /\.esm\.js\.map$/, order: 4 },
+	{ ext: /\.css$/, order: 5 },
+	{ ext: /\.css\.map$/, order: 6 },
+];
 
-function expand(dir, opts) {
-	dir = resolve(dir);
-	opts = Object.assign({ dot: true, nodir: true }, opts);
-	return glob(`${dir}/**/*.*`, opts).then(arr => arr.filter(ignores));
-}
+/**
+ * @typedef {Object} Node
+ * @property {string} path
+ * @property {string} name
+ * @property {Node[]} [children]
+ * @property {number} [size]
+ */
 
-async function bytes(str) {
-	// Sourcemap paths will be different in different environments,
-	// and therefore not useful to test. This strips them out before
-	// file size comparisons.
-	if (/\.map$/.test(str)) {
-		let fileContent = await readFile(str, 'utf-8');
-		fileContent = fileContent.replace(/"sources":[^\]]*]/, '');
-		await writeFile(str, fileContent);
+/**
+ * Generate prettified directory snapshot
+ * Modified from: https://github.com/developit/microbundle/blob/master/test/index.test.js
+ *
+ * @param {Node[]} nodes
+ * @param {boolean} isBuild
+ * @param {number} indentLevel
+ */
+async function snapshotDir(nodes, isBuild = true, indentLevel = 0) {
+	const indent = '  '.repeat(indentLevel);
+
+	if (isBuild) {
+		// Directories[A->Z], files [A->Z] + [.js -> .js.map -> .esm.js -> esm.js.map -> .css -> .css.map]
+		// Ensures consistent ordering so that changing hashes don't massacre the diff when updated
+		nodes.sort((a, b) => {
+			if (a.children && !b.children) return -1;
+
+			const assetName = ({ name }) => name.match(/([^.]*)/);
+			const extIndex = ({ name }) =>
+				snapshotExtensionOrder.findIndex(e => e.ext.test(name));
+
+			if (assetName(a)?.[1] === assetName(b)?.[1]) {
+				return extIndex(a) - extIndex(b);
+			}
+			return a.name < b.name ? -1 : 1;
+		});
 	}
-	return (await stat(str)).size;
-}
 
-async function snapshot(dir) {
-	let str,
-		tmp,
-		out = {};
-	for (str of await expand(dir)) {
-		tmp = relative(dir, str);
-		out[tmp] = await bytes(str);
-	}
-	return out;
+	return (
+		await Promise.all(
+			nodes.map(async node => {
+				// Sourcemaps paths can differ between environments and are therefore
+				// not useful to test. Strip before comparing sizes.
+				if (isBuild && /\.map$/.test(node.name)) {
+					let fileContent = await readFile(node.path, 'utf-8');
+					fileContent = fileContent.replace(/"sources":[^\]]*]/, '');
+					node.size = new TextEncoder().encode(fileContent).length;
+				}
+
+				const isDir = node.children;
+				return `${indent}${node.name}${
+					isBuild && !isDir ? `: ${node.size}` : ''
+				}\n${
+					isDir
+						? await snapshotDir(node.children, isBuild, indentLevel + 1)
+						: ``
+				}`;
+			})
+		)
+	).join('');
 }
 
 async function log(fn, msg) {
@@ -71,51 +107,8 @@ async function linkPackage(name, cwd) {
 	} catch {}
 }
 
-expect.extend({
-	toFindMatchingKey(key, matchingKey) {
-		if (matchingKey) {
-			return {
-				message: () => `expected '${key}'' not to exist in received keys`,
-				pass: true,
-			};
-		}
-		return {
-			message: () => `expected '${key}' to exist in received keys`,
-			pass: false,
-		};
-	},
-	toBeCloseInSize(key, receivedSize, expectedSize) {
-		const expectedMin = expectedSize * 0.95;
-		const expectedMax = expectedSize * 1.05;
-
-		const message = (comparator, val) =>
-			`expected '${key}' to be ${comparator} than ${val}, but it's ${receivedSize}`;
-
-		if (receivedSize < expectedMin) {
-			return {
-				message: () => message('greater', expectedMin),
-				pass: false,
-			};
-		}
-
-		if (receivedSize > expectedMax) {
-			return {
-				message: () => message('less', expectedMax),
-				pass: false,
-			};
-		}
-
-		return {
-			message: () => '',
-			pass: true,
-		};
-	},
-});
-
 module.exports = {
-	expand,
-	bytes,
-	snapshot,
+	snapshotDir,
 	log,
 	waitUntil,
 	sleep,

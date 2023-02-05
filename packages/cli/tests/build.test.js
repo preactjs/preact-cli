@@ -3,11 +3,11 @@ const { access, mkdir, readdir, readFile, rename, unlink, writeFile } =
 	require('fs').promises;
 const looksLike = require('html-looks-like');
 const { create, build } = require('./lib/cli');
-const { snapshot } = require('./lib/utils');
+const { snapshotDir } = require('./lib/utils');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
-const minimatch = require('minimatch');
 const shell = require('shelljs');
+const dirTree = require('directory-tree');
 
 const prerenderUrlFiles = [
 	'prerender-urls.json',
@@ -35,18 +35,6 @@ function getRegExpFromMarkup(markup) {
 	return new RegExp(minifiedMarkup);
 }
 
-function testMatch(received, expected) {
-	let receivedKeys = Object.keys(received);
-	let expectedKeys = Object.keys(expected);
-	expect(receivedKeys).toHaveLength(expectedKeys.length);
-	for (let key in expected) {
-		const receivedKey = receivedKeys.find(k => minimatch(k, key));
-		expect(key).toFindMatchingKey(receivedKey);
-
-		expect(receivedKey).toBeCloseInSize(received[receivedKey], expected[key]);
-	}
-}
-
 /**
  * Get build output file as utf-8 string
  * @param {string} dir
@@ -67,8 +55,8 @@ describe('preact build', () => {
 
 		await build(dir);
 
-		let output = await snapshot(join(dir, 'build'));
-		testMatch(output, images.default);
+		const directoryTree = dirTree(join(dir, 'build'), { attributes: ['size'] });
+		expect(await snapshotDir([directoryTree])).toMatchSnapshot();
 	});
 
 	it('builds the `default` template with esm', async () => {
@@ -76,8 +64,8 @@ describe('preact build', () => {
 
 		await build(dir, { esm: true });
 
-		let output = await snapshot(join(dir, 'build'));
-		testMatch(output, images['default-esm']);
+		const directoryTree = dirTree(join(dir, 'build'), { attributes: ['size'] });
+		expect(await snapshotDir([directoryTree])).toMatchSnapshot();
 	});
 
 	it('builds the `typescript` template', async () => {

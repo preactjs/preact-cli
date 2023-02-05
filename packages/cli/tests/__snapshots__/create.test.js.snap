@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`preact create scaffolds the \`default\` official template 1`] = `
+"default-template-project
+  .gitignore
+  README.md
+  package.json
+  src
+    assets
+      favicon.ico
+      icons
+        android-chrome-192x192.png
+        android-chrome-512x512.png
+        apple-touch-icon.png
+        favicon-16x16.png
+        favicon-32x32.png
+        mstile-150x150.png
+      preact-logo-inverse.svg
+      preact-logo.svg
+    components
+      app.js
+      header
+        index.js
+        style.css
+    index.js
+    manifest.json
+    routes
+      home
+        index.js
+        style.css
+      profile
+        index.js
+    style
+      index.css
+    sw.js
+    template.html
+  tests
+    __mocks__
+      browserMocks.js
+      fileMocks.js
+      setupTests.js
+    header.test.js
+"
+`;
