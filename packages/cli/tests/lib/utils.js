@@ -45,7 +45,10 @@ async function snapshotDir(nodes, isBuild = true, indentLevel = 0) {
 			const extIndex = ({ name }) =>
 				snapshotExtensionOrder.findIndex(e => e.ext.test(name));
 
-			if (assetName(a)?.[1] === assetName(b)?.[1]) {
+			const assetNameA = assetName(a);
+			const assetNameB = assetName(b);
+
+			if (assetNameA && assetNameB && assetNameA[1] === assetNameB[1]) {
 				return extIndex(a) - extIndex(b);
 			}
 			return a.name < b.name ? -1 : 1;
