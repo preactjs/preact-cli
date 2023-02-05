@@ -66,6 +66,10 @@ async function snapshotDir(nodes, isBuild = true, indentLevel = 0) {
 					node.size = new TextEncoder().encode(fileContent).length;
 				}
 
+				if (node.name === 'ssr-bundle.js') {
+					console.log(await readFile(node.path, 'utf-8'));
+				}
+
 				const isDir = node.children;
 				return `${indent}${node.name}${
 					isBuild && !isDir ? `: ${node.size}` : ''
