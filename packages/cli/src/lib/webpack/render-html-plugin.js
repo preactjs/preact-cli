@@ -5,7 +5,7 @@ const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plug
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const prerender = require('./prerender');
 const createLoadManifest = require('./create-load-manifest');
-const { esmImport, tryResolveConfig, warn } = require('../../util');
+const { error, esmImport, tryResolveConfig, warn } = require('../../util');
 
 const PREACT_FALLBACK_URL = '/200.html';
 
@@ -126,11 +126,12 @@ module.exports = async function (config) {
 				if (Array.isArray(result)) {
 					pages = result;
 				}
-			} catch (error) {
-				warn(
-					`Failed to load prerenderUrls file, using default!\n${
-						config.verbose ? error.stack : error.message
-					}`
+			} catch (err) {
+				error(
+					`Failed to load prerenderUrls file!\n${
+						config.verbose ? err.stack : err.message
+					}`,
+					1
 				);
 			}
 		}
