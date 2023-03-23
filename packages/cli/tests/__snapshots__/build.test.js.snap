@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`preact build builds the \`default\` template 1`] = `
+"build
+  assets
+    icons
+      android-chrome-192x192.png: 14058
+      android-chrome-512x512.png: 51484
+      apple-touch-icon.png: 12746
+      favicon-16x16.png: 626
+      favicon-32x32.png: 1487
+      mstile-150x150.png: 9050
+    favicon.ico: 15086
+    preact-logo-inverse.svg: 649
+    preact-logo.svg: 645
+  ssr-build
+    asset-manifest.json: 178
+    ssr-bundle.js: 30158
+    ssr-bundle.js.map: 54671
+    ssr-bundle.82489.css: 2585
+    ssr-bundle.82489.css.map: 3680
+  asset-manifest.json: 1142
+  bundle.c4895.js: 22552
+  bundle.c4895.js.map: 113627
+  bundle.4c6ac.css: 1276
+  favicon.ico: 15086
+  index.html: 4162
+  manifest.json: 455
+  polyfills.1ea90.js: 6426
+  polyfills.1ea90.js.map: 21116
+  preact_prerender_data.json: 11
+  push-manifest.json: 388
+  route-home.chunk.5d28d.js: 1174
+  route-home.chunk.5d28d.js.map: 2028
+  route-home.chunk.9bcab.css: 821
+  route-profile.chunk.4c330.js: 3490
+  route-profile.chunk.4c330.js.map: 15002
+"
+`;
+
+exports[`preact build builds the \`default\` template with esm 1`] = `
+"build
+  assets
+    icons
+      android-chrome-192x192.png: 14058
+      android-chrome-512x512.png: 51484
+      apple-touch-icon.png: 12746
+      favicon-16x16.png: 626
+      favicon-32x32.png: 1487
+      mstile-150x150.png: 9050
+    favicon.ico: 15086
+    preact-logo-inverse.svg: 649
+    preact-logo.svg: 645
+  ssr-build
+    asset-manifest.json: 178
+    ssr-bundle.js: 30158
+    ssr-bundle.js.map: 54671
+    ssr-bundle.82489.css: 2585
+    ssr-bundle.82489.css.map: 3680
+  asset-manifest.json: 1174
+  bundle.c4895.js: 22552
+  bundle.c4895.js.map: 113627
+  bundle.9eeeb.esm.js: 22272
+  bundle.9eeeb.esm.js.map: 113603
+  bundle.4c6ac.css: 1276
+  favicon.ico: 15086
+  index.html: 4256
+  manifest.json: 455
+  polyfills.1ea90.js: 6426
+  polyfills.1ea90.js.map: 21116
+  polyfills.bfe9e.esm.js: 5721
+  polyfills.bfe9e.esm.js.map: 21081
+  preact_prerender_data.json: 11
+  push-manifest.json: 404
+  route-home.chunk.5d28d.js: 1174
+  route-home.chunk.5d28d.js.map: 2028
+  route-home.chunk.f8caa.esm.js: 1152
+  route-home.chunk.f8caa.esm.js.map: 2024
+  route-home.chunk.9bcab.css: 821
+  route-profile.chunk.4c330.js: 3490
+  route-profile.chunk.4c330.js.map: 15002
+  route-profile.chunk.44303.esm.js: 2424
+  route-profile.chunk.44303.esm.js.map: 14942
+"
+`;

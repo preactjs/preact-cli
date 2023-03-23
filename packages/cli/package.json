@@ -118,6 +118,7 @@
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/jest": "^24.9.1",
+    "directory-tree": "^3.5.1",
     "html-looks-like": "^1.0.2",
     "jest": "^24.9.0",
     "less": "^4.1.1",
