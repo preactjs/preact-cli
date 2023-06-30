@@ -46,7 +46,7 @@ exports['default-esm'] = Object.assign({}, exports.default, {
 	'route-profile.chunk.*.esm.js.map': 14942,
 	'index.html': 4221,
 	'push-manifest.json': 404,
-	'asset-manifest.json': 1174,
+	'asset-manifest.json': 1294,
 });
 
 exports.sass = `
