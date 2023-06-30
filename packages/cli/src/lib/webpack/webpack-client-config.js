@@ -249,6 +249,7 @@ function isProd(env) {
 					cssProcessorOptions: {
 						// Fix keyframes in different CSS chunks minifying to colliding names:
 						reduceIdents: false,
+						map: { inline: false, annotation: true },
 					},
 				}),
 			],
