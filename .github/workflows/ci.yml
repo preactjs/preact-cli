@@ -12,6 +12,7 @@ on:
 
 jobs:
   test:
+    if: ${{ github.head_ref != 'changeset-release/master' || github.ref_name != 'changeset-release/master' }}
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 10
