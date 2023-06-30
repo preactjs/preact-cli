@@ -19,6 +19,7 @@ exports.default = Object.assign({}, common, {
 	'ssr-build/ssr-bundle.js.map': 52686,
 	'ssr-build/asset-manifest.json': 178,
 	'bundle.4c6ac.css': 1276,
+	'bundle.4c6ac.css.map': 2234,
 	'bundle.c4895.js': 22529,
 	'bundle.c4895.js.map': 111801,
 	'favicon.ico': 15086,
@@ -26,8 +27,9 @@ exports.default = Object.assign({}, common, {
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 	'push-manifest.json': 388,
-	'asset-manifest.json': 1142,
-	'route-home.chunk.9bcab.css': 834,
+	'asset-manifest.json': 1262,
+	'route-home.chunk.9bcab.css': 876,
+	'route-home.chunk.9bcab.css.map': 1349,
 	'route-home.chunk.5d28d.js': 1149,
 	'route-home.chunk.5d28d.js.map': 1961,
 	'route-profile.chunk.4c330.js': 3490,
@@ -44,7 +46,7 @@ exports['default-esm'] = Object.assign({}, exports.default, {
 	'route-profile.chunk.*.esm.js.map': 14942,
 	'index.html': 4221,
 	'push-manifest.json': 404,
-	'asset-manifest.json': 1174,
+	'asset-manifest.json': 1294,
 });
 
 exports.sass = `
@@ -312,8 +314,10 @@ exports.publicPath = `
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<link rel="apple-touch-icon" href="/example-path/assets/icons/apple-touch-icon.png">
 		<link rel="manifest" href="/example-path/manifest.json">
-		<link href="/example-path/bundle.\\w{5}.css" rel="stylesheet">
-		<style></style>
+		<link href=\\"/example-path/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
+		<noscript>
+			<link rel=\\"stylesheet\\" href=\\"\\/example-path/bundle.\\w{5}.css\\">
+		</noscript>
 	</head>
 	<body>
 		<h1>Public path test</h1>
