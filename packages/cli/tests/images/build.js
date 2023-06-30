@@ -13,23 +13,25 @@ exports.default = Object.assign({}, common, {
 	'assets/preact-logo.svg': 645,
 	'assets/preact-logo-inverse.svg': 649,
 	'assets/favicon.ico': 15086,
-	'ssr-build/ssr-bundle.82489.css': 2601,
-	'ssr-build/ssr-bundle.82489.css.map': 3708,
+	'ssr-build/ssr-bundle.fbbeb.css': 2601,
+	'ssr-build/ssr-bundle.fbbeb.css.map': 3708,
 	'ssr-build/ssr-bundle.js': 28830,
 	'ssr-build/ssr-bundle.js.map': 52686,
 	'ssr-build/asset-manifest.json': 178,
 	'bundle.4c6ac.css': 1276,
-	'bundle.c4895.js': 22529,
-	'bundle.c4895.js.map': 111801,
+	'bundle.4c6ac.css.map': 2234,
+	'bundle.1c2f8.js': 22529,
+	'bundle.1c2f8.js.map': 111801,
 	'favicon.ico': 15086,
 	'index.html': 4127,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 	'push-manifest.json': 388,
-	'asset-manifest.json': 1142,
-	'route-home.chunk.9bcab.css': 834,
-	'route-home.chunk.5d28d.js': 1149,
-	'route-home.chunk.5d28d.js.map': 1961,
+	'asset-manifest.json': 1262,
+	'route-home.chunk.5d51b.css': 834,
+	'route-home.chunk.5d51b.css.map': 1349,
+	'route-home.chunk.6e054.js': 1149,
+	'route-home.chunk.6e054.js.map': 1961,
 	'route-profile.chunk.4c330.js': 3490,
 	'route-profile.chunk.4c330.js.map': 15002,
 });
@@ -312,8 +314,10 @@ exports.publicPath = `
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<link rel="apple-touch-icon" href="/example-path/assets/icons/apple-touch-icon.png">
 		<link rel="manifest" href="/example-path/manifest.json">
-		<link href="/example-path/bundle.\\w{5}.css" rel="stylesheet">
-		<style></style>
+		<link href=\\"/example-path/bundle.\\w{5}.css\\" rel=\\"stylesheet\\" media=\\"only x\\" onload=\\"this.media='all'\\">
+		<noscript>
+			<link rel=\\"stylesheet\\" href=\\"\\/example-path/bundle.\\w{5}.css\\">
+		</noscript>
 	</head>
 	<body>
 		<h1>Public path test</h1>
