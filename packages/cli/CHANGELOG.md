@@ -1,5 +1,13 @@
 # preact-cli
 
+## 3.4.6
+
+### Patch Changes
+
+- [#1785](https://github.com/preactjs/preact-cli/pull/1785) [`a4968ee`](https://github.com/preactjs/preact-cli/commit/a4968eea23543756faaf374aa03fe84d8b24e66f) Thanks [@rschristian](https://github.com/rschristian)! - If `--prerenderUrls` file exists on the disk, but it cannot be processed (thrown errors, incorrect format, etc), the build should error out rather than continue with a warning.
+
+* [#1794](https://github.com/preactjs/preact-cli/pull/1794) [`047837d`](https://github.com/preactjs/preact-cli/commit/047837d9120e7e5fc9aa9766ef25d39fd53ed5e3) Thanks [@teodragovic](https://github.com/teodragovic)! - Output CSS source map on build
+
 ## 3.4.5
 
 ### Patch Changes
