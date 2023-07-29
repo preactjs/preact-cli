@@ -1,5 +1,15 @@
 # preact-cli
 
+## 3.5.0
+
+### Minor Changes
+
+- [#1798](https://github.com/preactjs/preact-cli/pull/1798) [`96fc0f3`](https://github.com/preactjs/preact-cli/commit/96fc0f30912af86d1c2bc68e47179cd17c50a2a6) Thanks [@rschristian](https://github.com/rschristian)! - TypeScript is now an optional peer dependency, rather than a direct dependency, of `preact-cli`.
+
+  If you use TypeScript in your projects (`.ts` or `.tsx`), you will need to have your own version of TypeScript installed and added to your `package.json`. This gives you greator control over the version of TypeScript used and most already have TypeScript listed as a dependency anyways.
+
+  For those not using TypeScript, no change is needed, and this should make your `node_modules` directory a bit smaller (~20% w/ barebones dependency list).
+
 ## 3.4.6
 
 ### Patch Changes
