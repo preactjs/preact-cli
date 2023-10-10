@@ -55,21 +55,13 @@ $ npm init preact-cli <template-name> <project-name>
 $ yarn create preact-cli <template-name> <project-name>
 ```
 
-> **Note**
-> You can try out the v4 beta by using either of the following initializers instead (and they should be much faster!):
-> ```
-> $ npm init preact-cli <template-name> <project-name>
->
-> $ yarn create preact-cli <template-name> <project-name>
-> ```
-
 Example:
 
 ```sh
 $ npm init preact-cli default my-project
 ```
 
-The above command pulls the template from [preactjs-templates/default], prompts for some information, and generates the project at `./my-project/`.
+The above command pulls the template from [preactjs-templates/default] and generates the project at `./my-project/`.
 
 ### Official Templates
 
