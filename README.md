@@ -2,6 +2,9 @@
 
 > Start building a [Preact] Progressive Web App in seconds 🔥
 
+> **Note**
+> `preact-cli` no longer sees active development! It's stable so you can rely upon it for all of your existing apps, but for creating new ones, we recommend Vite via [`create-preact`](https://github.com/preactjs/create-preact). It's a much faster, more modern experience and we're working to bring some Preact-CLI/WMR features to it.
+
 ### Contents
 
 - [Features](#features)
