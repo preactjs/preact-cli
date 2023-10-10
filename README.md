@@ -45,7 +45,7 @@
 
 ### Requirements
 
-> **Important**: [Node.js](https://nodejs.org/en/) >= v12 is required.
+> **Important**: [Node.js](https://nodejs.org/en/) >= v14.14 is required.
 
 ### Usage
 
