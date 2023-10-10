@@ -1,4 +1,4 @@
-const { mkdir, readFile, rename, writeFile } = require('fs').promises;
+const { mkdir, readFile, rename, writeFile } = require('fs/promises');
 const { join, resolve } = require('path');
 const startChrome = require('./lib/chrome');
 const { create, watch } = require('./lib/cli');
@@ -11,7 +11,7 @@ const fetch = require('isomorphic-unfetch');
 const { loadPage, waitUntilExpression } = startChrome;
 let chrome, server;
 
-describe('preact', () => {
+describe('preact watch', () => {
 	beforeAll(async () => {
 		chrome = await startChrome();
 	});
@@ -104,17 +104,6 @@ describe('preact', () => {
 			await server.stop();
 		});
 
-		it('--esm', async () => {
-			let app = await subject('minimal');
-
-			server = await watch(app, { port: 8089, esm: true });
-			let bundle = await fetch('http://127.0.0.1:8089/bundle.esm.js').then(
-				res => res.text()
-			);
-			expect(bundle).toMatch('Minimal App');
-			await server.stop();
-		});
-
 		it('--sw', async () => {
 			let app = await subject('minimal');
 
@@ -187,13 +176,13 @@ describe('preact', () => {
 			let app = await subject('custom-template');
 
 			await rename(
-				join(app, 'template.html'),
-				join(app, 'renamed-template.html')
+				join(app, 'template.ejs'),
+				join(app, 'renamed-template.ejs')
 			);
 
 			server = await watch(app, {
 				port: 8095,
-				template: 'renamed-template.html',
+				template: 'renamed-template.ejs',
 			});
 			const html = await fetch('http://127.0.0.1:8095/').then(res =>
 				res.text()

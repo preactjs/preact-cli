@@ -1,9 +1,10 @@
 const { join } = require('path');
-const { readFile, writeFile } = require('fs').promises;
+const { readFile, writeFile } = require('fs/promises');
 const { create, build } = require('./lib/cli');
 const { sleep } = require('./lib/utils');
 const { getServer } = require('./server');
 const startChrome = require('./lib/chrome');
+const fetch = require('isomorphic-unfetch');
 
 async function enableOfflineMode(page, browser) {
 	await sleep(2000); // wait for service worker installation.
@@ -20,15 +21,12 @@ async function enableOfflineMode(page, browser) {
 	});
 }
 
-describe('preact service worker tests', () => {
+describe('service worker', () => {
 	let server, browser, dir;
 
 	beforeAll(async () => {
 		dir = await create('default');
-		await build(dir, {
-			sw: true,
-			esm: true,
-		});
+		await build(dir, { sw: true });
 		dir = join(dir, 'build');
 		server = getServer(dir);
 	});
@@ -86,7 +84,7 @@ describe('preact service worker tests', () => {
 	});
 
 	it('should respond with 200.html when offline', async () => {
-		const swText = await fetch('http://localhost:3000/sw-esm.js').then(res =>
+		const swText = await fetch('http://localhost:3000/sw.js').then(res =>
 			res.text()
 		);
 		// eslint-disable-next-line no-useless-escape
@@ -104,6 +102,6 @@ describe('preact service worker tests', () => {
 			await page.$$eval('script[type=__PREACT_CLI_DATA__]', nodes =>
 				nodes.map(n => n.innerText)
 			)
-		).toEqual(['%7B%22preRenderData%22:%7B%22url%22:%22/200.html%22%7D%7D']);
+		).toEqual(['%7B%22prerenderData%22:%7B%22url%22:%22/200.html%22%7D%7D']);
 	});
 });

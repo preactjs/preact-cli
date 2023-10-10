@@ -1,19 +1,14 @@
 const webpack = require('webpack');
 const path = require('path');
-const { resolve, dirname } = require('path');
 const { readFileSync, existsSync } = require('fs');
-const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const autoprefixer = require('autoprefixer');
 const browserslist = require('browserslist');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
+const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const ReplacePlugin = require('webpack-plugin-replace');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const createBabelConfig = require('../babel-config');
 const loadPostcssConfig = require('postcss-load-config');
-const PnpWebpackPlugin = require('pnp-webpack-plugin');
-const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 function readJson(file) {
 	try {
@@ -40,65 +35,39 @@ function findAllNodeModules(startDir) {
 }
 
 function resolveTsconfig(cwd, isProd) {
-	if (existsSync(resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`))) {
-		return resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`);
-	} else if (existsSync(resolve(cwd, 'tsconfig.json'))) {
-		return resolve(cwd, 'tsconfig.json');
+	if (
+		existsSync(path.resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`))
+	) {
+		return path.resolve(cwd, `tsconfig.${isProd ? 'prod' : 'dev'}.json`);
+	} else if (existsSync(path.resolve(cwd, 'tsconfig.json'))) {
+		return path.resolve(cwd, 'tsconfig.json');
 	}
 }
 
-function getSassConfiguration(...includePaths) {
-	const config = {
-		sourceMap: true,
-		sassOptions: {
-			includePaths,
-		},
-	};
-
-	Object.defineProperty(config, 'includePaths', { value: includePaths });
-
-	return config;
-}
-
 /**
+ * @param {import('../../../types').Env} env
  * @returns {import('webpack').Configuration}
  */
-module.exports = function createBaseConfig(env) {
-	const { cwd, isProd, isWatch, src, source } = env;
-	const babelConfigFile = env.babelConfig || '.babelrc';
-	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
-	// Apply base-level `env` values
-	env.dest = resolve(cwd, env.dest || 'build');
-	env.manifest = readJson(source('manifest.json')) || {};
-	env.pkg = readJson(resolve(cwd, 'package.json')) || {};
+module.exports = function createBaseConfig(config, env) {
+	const { cwd, src, source } = config;
+	const { isProd, isServer } = env;
 
-	let babelrc = readJson(resolve(cwd, babelConfigFile)) || {};
+	// Apply base-level `config` values
+	config.dest = path.resolve(cwd, config.dest || 'build');
+	config.manifest = readJson(source('manifest.json')) || {};
+	config.pkg = readJson(path.resolve(cwd, 'package.json')) || {};
 
 	// use browserslist config environment, config default, or default browsers
-	// default browsers are > 0.25% global market share or Internet Explorer >= 9
-	const browserslistDefaults = ['> 0.25%', 'IE >= 9'];
+	// default browsers are '> 0.5%, last 2 versions, Firefox ESR, not dead'
 	const browserlistConfig = Object(browserslist.findConfig(cwd));
 	const browsers =
 		(isProd ? browserlistConfig.production : browserlistConfig.development) ||
 		browserlistConfig.defaults ||
-		browserslistDefaults;
+		'defaults';
 
 	let userNodeModules = findAllNodeModules(cwd);
 	let cliNodeModules = findAllNodeModules(__dirname);
 	let nodeModules = [...new Set([...userNodeModules, ...cliNodeModules])];
-
-	let compat = 'preact-compat';
-	try {
-		compat = dirname(
-			require.resolve('preact/compat/package.json', { paths: [cwd] })
-		);
-	} catch (e) {
-		try {
-			compat = dirname(
-				require.resolve('preact-compat/package.json', { paths: [cwd] })
-			);
-		} catch (e) {}
-	}
 
 	let tsconfig = resolveTsconfig(cwd, isProd);
 
@@ -141,20 +110,15 @@ module.exports = function createBaseConfig(env) {
 			alias: {
 				style: source('style'),
 				'preact-cli-entrypoint': source('index'),
-				url: dirname(require.resolve('native-url/package.json')),
-				// preact-compat aliases for supporting React dependencies:
-				react: compat,
-				'react-dom': compat,
-				'preact-compat': compat,
+				'react/jsx-runtime': require.resolve('preact/jsx-runtime'),
+				react: require.resolve('preact/compat'),
+				'react-dom/test-utils': require.resolve('preact/test-utils'),
+				'react-dom': require.resolve('preact/compat'),
 				'react-addons-css-transition-group': 'preact-css-transition-group',
-				'preact-cli/async-component': IS_SOURCE_PREACT_X_OR_ABOVE
-					? require.resolve('@preact/async-loader/async')
-					: require.resolve('@preact/async-loader/async-legacy'),
+				'preact-cli/async-component': require.resolve(
+					'@preact/async-loader/async'
+				),
 			},
-			plugins: [
-				// TODO: Remove when upgrading to webpack 5
-				PnpWebpackPlugin,
-			],
 		},
 
 		resolveLoader: {
@@ -167,19 +131,13 @@ module.exports = function createBaseConfig(env) {
 		module: {
 			rules: [
 				{
-					// ES2015
 					enforce: 'pre',
 					test: /\.m?[jt]sx?$/,
-					resolve: { mainFields: ['module', 'jsnext:main', 'browser', 'main'] },
 					type: 'javascript/auto',
 					use: [
 						{
 							loader: require.resolve('babel-loader'),
-							options: Object.assign(
-								{ babelrc: false },
-								createBabelConfig(env, { browsers }),
-								babelrc // intentionally overwrite our settings
-							),
+							options: createBabelConfig(config, isProd),
 						},
 						require.resolve('source-map-loader'),
 					],
@@ -214,7 +172,12 @@ module.exports = function createBaseConfig(env) {
 							options: {
 								cwd,
 								loader: tryResolveOptionalLoader('sass-loader'),
-								options: getSassConfiguration(...nodeModules),
+								options: {
+									sourceMap: true,
+									sassOptions: {
+										includePaths: [...nodeModules],
+									},
+								},
 							},
 						},
 					],
@@ -238,42 +201,12 @@ module.exports = function createBaseConfig(env) {
 					],
 				},
 				{
-					// User styles
 					test: /\.(p?css|less|s[ac]ss|styl)$/,
-					include: [source('components'), source('routes')],
+					exclude: /\.module\.(p?css|less|s[ac]ss|styl)$/,
 					use: [
-						isWatch
-							? require.resolve('style-loader')
-							: MiniCssExtractPlugin.loader,
-						{
-							loader: require.resolve('css-loader'),
-							options: {
-								modules: {
-									localIdentName: '[local]__[hash:base64:5]',
-								},
-								importLoaders: 1,
-								sourceMap: true,
-							},
-						},
-						{
-							loader: require.resolve('postcss-loader'),
-							options: {
-								sourceMap: true,
-								postcssOptions: {
-									plugins: postcssPlugins,
-								},
-							},
-						},
-					],
-				},
-				{
-					// External / `node_module` styles
-					test: /\.(p?css|less|s[ac]ss|styl)$/,
-					exclude: [source('components'), source('routes')],
-					use: [
-						isWatch
-							? require.resolve('style-loader')
-							: MiniCssExtractPlugin.loader,
+						isProd
+							? MiniCssExtractPlugin.loader
+							: require.resolve('style-loader'),
 						{
 							loader: require.resolve('css-loader'),
 							options: {
@@ -297,14 +230,39 @@ module.exports = function createBaseConfig(env) {
 					sideEffects: true,
 				},
 				{
+					test: /\.module\.(p?css|less|s[ac]ss|styl)$/,
+					use: [
+						isProd
+							? MiniCssExtractPlugin.loader
+							: require.resolve('style-loader'),
+						{
+							loader: require.resolve('css-loader'),
+							options: {
+								modules: {
+									localIdentName: '[local]__[hash:base64:5]',
+								},
+								importLoaders: 1,
+								sourceMap: true,
+							},
+						},
+						{
+							loader: require.resolve('postcss-loader'),
+							options: {
+								sourceMap: true,
+								postcssOptions: {
+									plugins: postcssPlugins,
+								},
+							},
+						},
+					],
+				},
+				{
 					test: /\.(xml|html|txt|md)$/,
-					loader: require.resolve('raw-loader'),
+					type: 'asset/source',
 				},
 				{
 					test: /\.(svg|woff2?|ttf|eot|jpe?g|png|webp|avif|gif|mp4|mov|ogg|webm)(\?.*)?$/i,
-					loader: isProd
-						? require.resolve('file-loader')
-						: require.resolve('url-loader'),
+					type: isProd ? 'asset/resource' : 'asset/inline',
 				},
 			],
 		},
@@ -326,15 +284,11 @@ module.exports = function createBaseConfig(env) {
 						}
 					)
 			),
-			new webpack.ProvidePlugin({
-				h: ['preact', 'h'],
-				Fragment: ['preact', 'Fragment'],
-			}),
 			// Fix for https://github.com/webpack-contrib/mini-css-extract-plugin/issues/151
-			new FixStyleOnlyEntriesPlugin(),
-			// Extract CSS
+			new RemoveEmptyScriptsPlugin(),
 			new MiniCssExtractPlugin({
-				filename: isProd ? '[name].[contenthash:5].css' : '[name].css',
+				filename:
+					isProd && !isServer ? '[name].[contenthash:5].css' : '[name].css',
 				chunkFilename: isProd
 					? '[name].chunk.[contenthash:5].css'
 					: '[name].chunk.css',
@@ -346,46 +300,20 @@ module.exports = function createBaseConfig(env) {
 				summary: false,
 				clear: true,
 			}),
-			new WebpackManifestPlugin({
-				fileName: 'asset-manifest.json',
-				assetHookStage: webpack.Compiler.PROCESS_ASSETS_STAGE_ANALYSE,
-				// TODO: Remove this next breaking change and use the full filepath from this manifest
-				// when referring to built assets, i.e.:
-				// https://github.com/preactjs/preact-cli/blob/master/packages/cli/src/resources/head-end.ejs#L1
-				// This is just to avoid any potentially breaking changes for right now.
-				publicPath: '',
-			}),
-			...(tsconfig
-				? [
-						new ForkTsCheckerWebpackPlugin({
-							checkSyntacticErrors: true,
-							async: !isProd,
-							tsconfig: tsconfig,
-							silent: !isWatch,
-						}),
-				  ]
-				: []),
-			...(isProd
-				? [
-						new webpack.HashedModuleIdsPlugin(),
-						new webpack.LoaderOptionsPlugin({ minimize: true }),
-						new webpack.optimize.ModuleConcatenationPlugin(),
-
-						// strip out babel-helper invariant checks
-						new ReplacePlugin({
-							include: /babel-helper$/,
-							patterns: [
-								{
-									regex: /throw\s+(new\s+)?(Type|Reference)?Error\s*\(/g,
-									value: s => `return;${Array(s.length - 7).join(' ')}(`,
-								},
-							],
-						}),
-				  ]
-				: []),
-		],
+			tsconfig &&
+				new ForkTsCheckerWebpackPlugin({
+					typescript: {
+						configFile: tsconfig,
+						diagnosticOptions: {
+							syntactic: true,
+						},
+					},
+				}),
+			new webpack.optimize.ModuleConcatenationPlugin(),
+		].filter(Boolean),
 
 		optimization: {
+			...(isProd && { moduleIds: 'deterministic' }),
 			splitChunks: {
 				minChunks: 3,
 			},
@@ -393,15 +321,11 @@ module.exports = function createBaseConfig(env) {
 
 		mode: isProd ? 'production' : 'development',
 
-		devtool: isWatch ? 'cheap-module-eval-source-map' : 'source-map',
+		devtool: isProd ? 'source-map' : 'eval-cheap-module-source-map',
 
 		node: {
-			console: false,
-			process: false,
-			Buffer: false,
 			__filename: false,
 			__dirname: false,
-			setImmediate: false,
 		},
 	};
 };

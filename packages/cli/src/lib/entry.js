@@ -18,14 +18,12 @@ if (process.env.NODE_ENV === 'development') {
 		);
 	} else if (process.env.ADD_SW && 'serviceWorker' in navigator) {
 		navigator.serviceWorker.register(
-			normalizeURL(__webpack_public_path__) +
-				(process.env.ES_BUILD ? 'sw-esm.js' : 'sw.js')
+			normalizeURL(__webpack_public_path__) + 'sw.js'
 		);
 	}
 } else if (process.env.ADD_SW && 'serviceWorker' in navigator) {
 	navigator.serviceWorker.register(
-		normalizeURL(__webpack_public_path__) +
-			(process.env.ES_BUILD ? 'sw-esm.js' : 'sw.js')
+		normalizeURL(__webpack_public_path__) + 'sw.js'
 	);
 }
 
@@ -37,21 +35,21 @@ if (typeof app === 'function') {
 
 	let init = () => {
 		let app = interopDefault(require('preact-cli-entrypoint'));
-		let preRenderData = {};
+		let prerenderData = {};
 		const inlineDataElement = document.querySelector(
 			'[type="__PREACT_CLI_DATA__"]'
 		);
 		if (inlineDataElement) {
-			preRenderData =
-				JSON.parse(decodeURI(inlineDataElement.innerHTML)).preRenderData ||
-				preRenderData;
+			prerenderData =
+				JSON.parse(decodeURI(inlineDataElement.innerHTML)).prerenderData ||
+				prerenderData;
 		}
 		/* An object named CLI_DATA is passed as a prop,
 		 * this keeps us future proof if in case we decide,
 		 * to send other data like at some point in time.
 		 */
-		const CLI_DATA = { preRenderData };
-		const currentURL = preRenderData.url ? normalizeURL(preRenderData.url) : '';
+		const CLI_DATA = { prerenderData };
+		const currentURL = prerenderData.url ? normalizeURL(prerenderData.url) : '';
 		const canHydrate =
 			process.env.PRERENDER &&
 			process.env.NODE_ENV === 'production' &&

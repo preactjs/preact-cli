@@ -1,7 +1,9 @@
 #!/usr/bin/env node
-const envinfo = require('envinfo');
 const sade = require('sade');
-const notifier = require('update-notifier');
+const { green } = require('kleur');
+const { build } = require('./commands/build');
+const { info } = require('./commands/info');
+const { watch } = require('./commands/watch');
 const { error } = require('./util');
 const pkg = require('../package.json');
 const { isNodeVersionGreater } = require('./util');
@@ -13,38 +15,21 @@ if (!isNodeVersionGreater(min)) {
 	);
 }
 
-// Safe to load async-based funcs
-const commands = require('./commands');
-
-// installHooks();
-notifier({ pkg }).notify();
-
-process.on('unhandledRejection', err => {
-	error(err.stack || err.message);
-});
-
 const prog = sade('preact').version(pkg.version);
 
 prog
-	.command('build [src]')
+	.command('build')
 	.describe(
 		'Create a production build. You can disable "default: true" flags by prefixing them with --no-<option>'
 	)
 	.option('--src', 'Specify source directory', 'src')
 	.option('--dest', 'Specify output directory', 'build')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--esm', 'Builds ES-2015 bundles for your code', true)
 	.option('--sw', 'Generate and attach a Service Worker', true)
 	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
-	.option('--json', 'Generate build stats for bundle analysis', false)
 	.option(
 		'--template',
-		'Path to custom HTML template (default "src/template.html")'
-	)
-	.option(
-		'--preload',
-		'Adds preload links to the HTML for required resources',
-		false
+		'Path to custom EJS or HTML template  (default src/template.ejs)'
 	)
 	.option(
 		'--analyze',
@@ -57,41 +42,20 @@ prog
 		'Path to prerendered routes config',
 		'prerender-urls.json'
 	)
-	.option('--brotli', 'Builds brotli compressed bundles of JS resources', false)
-	.option('--inline-css', 'Adds critical CSS to the prerendered HTML', true)
+	.option('--inlineCss', 'Adds critical CSS to the prerendered HTML', true)
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-v, --verbose', 'Verbose output', false)
-	.action(commands.build);
+	.action(argv => exec(build(argv)));
 
 prog
-	.command('create [template] [dest]')
-	.describe('Create a new application')
-	.option('--name', 'The application name')
-	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--force', 'Force destination output; will override!', false)
-	.option('--install', 'Install dependencies', true)
-	.option(
-		'--yarn',
-		'Use `yarn` instead of `npm` to install dependencies',
-		false
-	)
-	.option('--git', 'Initialize Git repository', false)
-	.option('--license', 'License type', 'MIT')
-	.option('-v, --verbose', 'Verbose output', false)
-	.action(commands.create);
-
-prog
-	.command('watch [src]')
+	.command('watch')
 	.describe('Start a live-reload server for development')
 	.option('--src', 'Specify source directory', 'src')
 	.option('--cwd', 'A directory to use instead of $PWD', '.')
-	.option('--esm', 'Builds ES-2015 bundles for your code', false)
 	.option('--clear', 'Clears the console when the devServer updates', true)
 	.option('--sw', 'Generate and attach a Service Worker')
 	.option('--babelConfig', 'Path to custom Babel config', '.babelrc')
-	.option('--rhl', 'Deprecated, use --refresh instead', false)
-	.option('--refresh', 'Enables experimental prefresh functionality', false)
-	.option('--json', 'Generate build stats for bundle analysis', false)
+	.option('--refresh', 'Enables HMR with Prefresh', true)
 	.option(
 		'--template',
 		'Path to custom HTML template (default "src/template.html")'
@@ -109,32 +73,17 @@ prog
 	.option('-c, --config', 'Path to custom CLI config', 'preact.config.js')
 	.option('-H, --host', 'Set server hostname', '0.0.0.0')
 	.option('-p, --port', 'Set server port (default 8080)')
-	.action(commands.watch);
-
-prog.command('list').describe('List official templates').action(commands.list);
+	.action(argv => exec(watch(argv)));
 
 prog
 	.command('info')
 	.describe('Print out debugging information about the local environment')
-	.action(() => {
-		envinfo
-			.run({
-				System: ['OS', 'CPU'],
-				Binaries: ['Node', 'Yarn', 'npm'],
-				Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
-				npmPackages: [
-					'preact',
-					'preact-compat',
-					'preact-cli',
-					'preact-router',
-					'preact-render-to-string',
-				],
-				npmGlobalPackages: ['preact-cli'],
-			})
-			.then(info => process.stdout.write(`\nEnvironment Info:${info}\n`));
-	});
+	.action(() => exec(info()));
 
 prog.parse(process.argv, {
+	alias: {
+		inlineCss: ['inline-css'],
+	},
 	unknown: arg => {
 		const cmd = process.argv[2];
 		error(
@@ -142,3 +91,20 @@ prog.parse(process.argv, {
 		);
 	},
 });
+
+function exec(cmd) {
+	cmd.catch(catchExceptions);
+}
+
+/**
+ * @param {Error | import('webpack').StatsError} err
+ */
+async function catchExceptions(err) {
+	// Webpack Stats Error
+	if ('moduleName' in err && 'loc' in err) {
+		error(`${err.moduleName} ${green(err.loc)}\n${err.message}\n\n`);
+	}
+	error(err.stack || err.message || err);
+}
+
+process.on('unhandledRejection', catchExceptions);

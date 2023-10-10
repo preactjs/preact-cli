@@ -1,23 +1,20 @@
 const webpack = require('webpack');
 const { resolve, join } = require('path');
 const { existsSync } = require('fs');
-const { isInstalledVersionPreactXOrAbove } = require('./utils');
 const { merge } = require('webpack-merge');
 const { filter } = require('minimatch');
 const SizePlugin = require('size-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const CrittersPlugin = require('critters-webpack-plugin');
+const CrittersPlugin = require('./critters-plugin.js');
 const renderHTMLPlugin = require('./render-html-plugin');
-const PushManifestPlugin = require('./push-manifest');
 const baseConfig = require('./webpack-base-config');
-const BabelEsmPlugin = require('babel-esm-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
-const CompressionPlugin = require('compression-webpack-plugin');
 const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
+const OptimizePlugin = require('optimize-plugin');
 
 const cleanFilename = name =>
 	name.replace(
@@ -26,22 +23,16 @@ const cleanFilename = name =>
 	);
 
 /**
+ * @param {import('../../../types').Env} env
  * @returns {Promise<import('webpack').Configuration>}
  */
-async function clientConfig(env) {
-	const { source, src, cwd } = env;
-	const IS_SOURCE_PREACT_X_OR_ABOVE = isInstalledVersionPreactXOrAbove(cwd);
-	const asyncLoader = IS_SOURCE_PREACT_X_OR_ABOVE
-		? require.resolve('@preact/async-loader')
-		: require.resolve('@preact/async-loader/legacy');
-
-	let entry = {
-		bundle: resolve(__dirname, './../entry'),
-		polyfills: resolve(__dirname, './polyfills'),
-	};
+async function clientConfig(config, env) {
+	const { source, src } = config;
+	const { isProd } = env;
+	const asyncLoader = require.resolve('@preact/async-loader');
 
 	let swInjectManifest = [];
-	if (env.sw) {
+	if (config.sw) {
 		let swPath = join(__dirname, '..', '..', '..', 'sw', 'sw.js');
 		const userSwPath = join(src, 'sw.js');
 		if (existsSync(userSwPath)) {
@@ -50,36 +41,15 @@ async function clientConfig(env) {
 			warn(`Could not find sw.js in ${src}. Using the default service worker.`);
 		}
 
-		if (env.esm) {
-			swInjectManifest.push(
-				new InjectManifest({
-					swSrc: swPath,
-					swDest: 'sw-esm.js',
-					include: [
-						/200\.html$/,
-						/\.esm.js$/,
-						/\.css$/,
-						/\.(png|jpg|svg|gif|webp|avif)$/,
-					],
-					webpackCompilationPlugins: [
-						new webpack.DefinePlugin({
-							'process.env.ESM': true,
-						}),
-					],
-				})
-			);
-		}
-
 		swInjectManifest.push(
 			new InjectManifest({
 				swSrc: swPath,
 				include: [
 					/200\.html$/,
-					/\.js$/,
+					/(?<!legacy|polyfills)\.js$/,
 					/\.css$/,
 					/\.(png|jpg|svg|gif|webp|avif)$/,
 				],
-				exclude: [/\.esm\.js$/],
 			})
 		);
 	}
@@ -89,7 +59,7 @@ async function clientConfig(env) {
 		// copy any static files
 		existsSync(source('assets')) && { from: 'assets', to: 'assets' },
 		// copy sw-debug
-		!env.isProd && {
+		!isProd && {
 			from: resolve(__dirname, '../../resources/sw-debug.js'),
 			to: 'sw-debug.js',
 		},
@@ -101,11 +71,14 @@ async function clientConfig(env) {
 	].filter(Boolean);
 
 	return {
-		entry: entry,
+		entry: {
+			bundle: resolve(__dirname, './../entry'),
+			'dom-polyfills': resolve(__dirname, './polyfills'),
+		},
 		output: {
-			path: env.dest,
+			path: config.dest,
 			publicPath: '/',
-			filename: env.isProd ? '[name].[chunkhash:5].js' : '[name].js',
+			filename: isProd ? '[name].[chunkhash:5].js' : '[name].js',
 			chunkFilename: '[name].chunk.[chunkhash:5].js',
 		},
 
@@ -147,13 +120,10 @@ async function clientConfig(env) {
 
 		plugins: [
 			new webpack.DefinePlugin({
-				'process.env.ES_BUILD': false,
-				'process.env.ADD_SW': env.sw,
-				'process.env.PRERENDER': env.prerender,
+				'process.env.ADD_SW': config.sw,
+				'process.env.PRERENDER': config.prerender,
 			}),
-			new PushManifestPlugin(env.isProd),
-			...(await renderHTMLPlugin(env)),
-			...getBabelEsmPlugin(env),
+			...(await renderHTMLPlugin(config, env)),
 			copyPatterns.length !== 0 &&
 				new CopyWebpackPlugin({
 					patterns: copyPatterns,
@@ -163,45 +133,10 @@ async function clientConfig(env) {
 	};
 }
 
-function getBabelEsmPlugin(env) {
-	const esmPlugins = [];
-	if (env.esm) {
-		esmPlugins.push(
-			new BabelEsmPlugin({
-				filename: env.isProd ? '[name].[chunkhash:5].esm.js' : '[name].esm.js',
-				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
-				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest'],
-				beforeStartExecution: plugins => {
-					plugins.forEach(plugin => {
-						if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							plugin.definitions
-						) {
-							for (const definition in plugin.definitions) {
-								if (definition === 'process.env.ES_BUILD') {
-									plugin.definitions[definition] = true;
-								}
-							}
-						} else if (
-							plugin.constructor.name === 'DefinePlugin' &&
-							!plugin.definitions
-						) {
-							throw new Error(
-								'WebpackDefinePlugin found but not `process.env.ES_BUILD`.'
-							);
-						}
-					});
-				},
-			})
-		);
-	}
-	return esmPlugins;
-}
-
 /**
  * @returns {import('webpack').Configuration}
  */
-function isProd(env) {
+function prodBuild(config) {
 	let limit = 200 * 1000; // 200kb
 	const prodConfig = {
 		performance: Object.assign(
@@ -210,21 +145,28 @@ function isProd(env) {
 				maxAssetSize: limit,
 				maxEntrypointSize: limit,
 			},
-			env.pkg.performance
+			config.pkg.performance
 		),
 
 		plugins: [
-			new webpack.DefinePlugin({
-				'process.env.ESM': env.esm,
+			new OptimizePlugin({
+				polyfillsFilename: 'es-polyfills.js',
+				exclude: [/^sw.*\.js/, /^dom-polyfills.*\.js/],
+				modernize: false,
+				verbose: false,
 			}),
-			new SizePlugin(),
+			new SizePlugin({
+				stripHash: name =>
+					name.replace(/\.[a-z0-9]{5}((\.legacy)?\.(?:js|css)$)/i, '.*****$1'),
+			}),
 		],
+		cache: true,
 
 		optimization: {
 			minimizer: [
 				new TerserPlugin({
-					cache: true,
-					parallel: true,
+					extractComments: false,
+					test: /(sw|dom-polyfills).*\.js$/,
 					terserOptions: {
 						output: { comments: false },
 						mangle: true,
@@ -242,43 +184,25 @@ function isProd(env) {
 							],
 						},
 					},
-					extractComments: false,
-					sourceMap: true,
 				}),
-				new OptimizeCssAssetsPlugin({
-					cssProcessorOptions: {
-						// Fix keyframes in different CSS chunks minifying to colliding names:
-						reduceIdents: false,
-						map: { inline: false, annotation: true },
-					},
-				}),
+				new CssMinimizerPlugin(),
 			],
 		},
 	};
 
-	if (env['inline-css']) {
+	if (config.inlineCss) {
 		prodConfig.plugins.push(
 			new CrittersPlugin({
 				preload: 'media',
 				pruneSource: false,
 				logLevel: 'silent',
-				additionalStylesheets: ['*.css'],
+				additionalStylesheets: ['route-*.css'],
 			})
 		);
 	}
 
-	if (env.analyze) {
+	if (config.analyze) {
 		prodConfig.plugins.push(new BundleAnalyzerPlugin());
-	}
-
-	if (env.brotli) {
-		prodConfig.plugins.push(
-			new CompressionPlugin({
-				filename: '[path][base].br[query]',
-				algorithm: 'brotliCompress',
-				test: /\.esm\.js$/,
-			})
-		);
 	}
 
 	return prodConfig;
@@ -324,21 +248,22 @@ function setupProxy(target) {
 /**
  * @returns {import('webpack').Configuration}
  */
-function isDev(env) {
-	const { cwd, src } = env;
+function devBuild(config) {
+	const { cwd, src } = config;
 
 	return {
 		infrastructureLogging: {
 			level: 'info',
 		},
-		plugins: [
-			new webpack.NamedModulesPlugin(),
-			env.refresh && new RefreshPlugin(),
-		].filter(Boolean),
+		plugins: [config.refresh && new RefreshPlugin()].filter(Boolean),
+
+		optimization: {
+			moduleIds: 'named',
+		},
 
 		devServer: {
-			hot: env.refresh,
-			liveReload: !env.refresh,
+			hot: config.refresh,
+			liveReload: !config.refresh,
 			compress: true,
 			devMiddleware: {
 				publicPath: '/',
@@ -350,24 +275,27 @@ function isDev(env) {
 					ignored: [resolve(cwd, 'build'), resolve(cwd, 'node_modules')],
 				},
 			},
-			https: env.https,
-			port: env.port,
-			host: env.host,
+			https: config.https,
+			port: config.port,
+			host: config.host,
 			allowedHosts: 'all',
 			historyApiFallback: true,
 			client: {
 				logging: 'none',
 				overlay: false,
 			},
-			proxy: setupProxy(env.pkg.proxy),
+			proxy: setupProxy(config.pkg.proxy),
 		},
 	};
 }
 
-module.exports = async function createClientConfig(env) {
+/**
+ * @param {import('../../../types').Env} env
+ */
+module.exports = async function createClientConfig(config, env) {
 	return merge(
-		baseConfig(env),
-		await clientConfig(env),
-		(env.isProd ? isProd : isDev)(env)
+		baseConfig(config, env),
+		await clientConfig(config, env),
+		(env.isProd ? prodBuild : devBuild)(config)
 	);
 };

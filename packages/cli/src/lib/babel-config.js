@@ -1,41 +1,47 @@
-module.exports = function (env, options = {}) {
-	const { production: isProd, refresh } = env || {};
+const { tryResolveConfig } = require('../util');
+
+/**
+ * @param {boolean} isProd
+ */
+module.exports = function (config, isProd) {
+	const { babelConfig, cwd, refresh } = config;
+
+	const resolvedConfig =
+		babelConfig &&
+		tryResolveConfig(cwd, babelConfig, babelConfig === '.babelrc');
 
 	return {
+		babelrc: false,
+		configFile: resolvedConfig,
 		presets: [
-			[
+			!isProd && [
 				require.resolve('@babel/preset-env'),
 				{
+					loose: true,
+					modules: false,
 					bugfixes: true,
-					modules: options.modules || false,
 					targets: {
-						browsers: options.browsers,
+						esmodules: true,
 					},
 					exclude: ['transform-regenerator'],
 				},
 			],
-		],
+		].filter(Boolean),
 		plugins: [
-			require.resolve('@babel/plugin-syntax-dynamic-import'),
-			require.resolve('@babel/plugin-transform-object-assign'),
 			[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-			require.resolve('@babel/plugin-proposal-class-properties'),
-			require.resolve('@babel/plugin-proposal-object-rest-spread'),
 			isProd &&
 				require.resolve('babel-plugin-transform-react-remove-prop-types'),
 			require.resolve('babel-plugin-macros'),
 			[
 				require.resolve('@babel/plugin-transform-react-jsx'),
-				{ pragma: 'h', pragmaFrag: 'Fragment' },
+				{ runtime: 'automatic', importSource: 'preact' },
 			],
 		].filter(Boolean),
 		overrides: [
 			// Transforms to apply only to first-party code:
 			{
 				exclude: '**/node_modules/**',
-				presets: [
-					[require.resolve('@babel/preset-typescript'), { jsxPragma: 'h' }],
-				],
+				presets: [require.resolve('@babel/preset-typescript')],
 				plugins: [
 					!isProd && refresh && require.resolve('react-refresh/babel'),
 				].filter(Boolean),

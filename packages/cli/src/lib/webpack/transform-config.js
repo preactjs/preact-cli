@@ -1,19 +1,19 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
-const { stat } = require('fs').promises;
+const { stat } = require('fs/promises');
 const { error, esmImport, tryResolveConfig, warn } = require('../../util');
 
 const FILE = 'preact.config';
 const EXTENSIONS = ['js', 'json'];
 
-async function findConfig(env) {
+async function findConfig(cwd) {
 	let idx = 0;
 	for (idx; idx < EXTENSIONS.length; idx++) {
-		let config = `${FILE}.${EXTENSIONS[idx]}`;
-		let path = resolve(env.cwd, config);
+		let configFile = `${FILE}.${EXTENSIONS[idx]}`;
+		let path = resolve(cwd, configFile);
 		try {
 			await stat(path);
-			return { configFile: config, isDefault: true };
+			return { configFile, isDefault: true };
 		} catch (e) {}
 	}
 
@@ -90,17 +90,20 @@ function parseConfig(config) {
 	return transformers;
 }
 
-module.exports = async function (env, webpackConfig, isServer = false) {
+/**
+ * @param {import('../../../types').Env} env
+ */
+module.exports = async function (webpackConfig, config, env) {
 	const { configFile, isDefault } =
-		env.config !== 'preact.config.js'
-			? { configFile: env.config, isDefault: false }
-			: await findConfig(env);
+		config.config !== 'preact.config.js'
+			? { configFile: config.config, isDefault: false }
+			: await findConfig(config.cwd);
 
 	const cliConfig = tryResolveConfig(
-		env.cwd,
+		config.cwd,
 		configFile,
 		isDefault,
-		env.verbose
+		config.verbose
 	);
 
 	if (!cliConfig) return;
@@ -111,7 +114,7 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 	} catch (error) {
 		warn(
 			`Failed to load preact-cli config file, using default!\n${
-				env.verbose ? error.stack : error.message
+				config.verbose ? error.stack : error.message
 			}`
 		);
 		return;
@@ -119,19 +122,10 @@ module.exports = async function (env, webpackConfig, isServer = false) {
 
 	const transformers = parseConfig((m && m.default) || m);
 
-	const helpers = new WebpackConfigHelpers(env.cwd);
+	const helpers = new WebpackConfigHelpers(config.cwd);
 	for (let [transformer, options] of transformers) {
 		try {
-			await transformer(
-				webpackConfig,
-				Object.assign({}, env, {
-					isServer,
-					dev: !env.production,
-					ssr: isServer,
-				}),
-				helpers,
-				options
-			);
+			await transformer(webpackConfig, env, helpers, options);
 		} catch (err) {
 			throw new Error((`Error at ${cliConfig}: \n` + err && err.stack) || err);
 		}
@@ -240,6 +234,7 @@ class WebpackConfigHelpers {
 			)
 			.reduce((arr, loaders) => arr.concat(loaders), [])
 			.filter(({ loader }) => {
+				if (!loader) return false;
 				if (typeof loader === 'string') return loader.includes(name);
 				return typeof loader.loader === 'string' &&
 					loader.loader.includes('proxy-loader')

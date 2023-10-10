@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title><% preact.title %></title>
+		<% if (cli.env.isProd) { %>
+			<meta name="example-meta" content="Hello Prod">
+		<% } else { %>
+			<meta name="example-meta" content="Hello Dev">
+		<% } %>
+	</head>
+	<body>
+		<h1>Guess what</h1>
+		<%= cli.ssr %>
+		<script defer src="<%= cli.entrypoints['bundle'] %>"></script>
+	</body>
+</html>

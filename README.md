@@ -45,35 +45,29 @@
 
 ### Requirements
 
-> **Important**: [Node.js](https://nodejs.org/en/) >= v12 is required.
+> **Important**: [Node.js](https://nodejs.org/en/) >= v14.14 is required.
 
 ### Usage
 
 ```sh
-$ npx preact-cli create <template-name> <project-name>
-```
+$ npm init preact-cli <template-name> <project-name>
 
-> **Note**
-> You can try out the v4 beta by using either of the following initializers instead (and they should be much faster!):
-> ```
-> $ npm init preact-cli <template-name> <project-name>
->
-> $ yarn create preact-cli <template-name> <project-name>
-> ```
+$ yarn create preact-cli <template-name> <project-name>
+```
 
 Example:
 
 ```sh
-$ npx preact-cli create default my-project
+$ npm init preact-cli default my-project
 ```
 
-The above command pulls the template from [preactjs-templates/default], prompts for some information, and generates the project at `./my-project/`.
+The above command pulls the template from [preactjs-templates/default] and generates the project at `./my-project/`.
 
 ### Official Templates
 
 The purpose of official preact project templates are to provide opinionated development tooling setups so that users can get started with actual app code as fast as possible. However, these templates are un-opinionated in terms of how you structure your app code and what libraries you use in addition to preact.js.
 
-All official project templates are repos in the [preactjs-templates organization]. When a new template is added to the organization, you will be able to run `npx preact-cli create <template-name> <project-name>` to use that template.
+All official project templates are repos in the [preactjs-templates organization]. When a new template is added to the organization, you will be able to run `npm init preact-cli <template-name> <project-name>` to use that template.
 
 Current available templates include:
 
@@ -89,50 +83,50 @@ Current available templates include:
 
 - [widget-typescript] - Widget template implemented in TypeScript
 
-> 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `npx preact-cli create <username>/<repository> <project-name>`
+> 💁 Tip: Any Github repo with a `'template'` folder can be used as a custom template: <br /> `npm init preact-cli <username>/<repository> <project-name>`
 
 ### CLI Options
+
+#### preact list
+
+Lists all the official preactjs-cli repositories
+
+```sh
+$ [npm init / yarn create] preact-cli list
+```
 
 #### preact create
 
 Create a project to quick start development.
 
 ```
-$ npx preact-cli create <template-name> <project-name>
+$ [npm init / yarn create] preact-cli <template-name> <project-name>
 
   --name        The application name.
   --cwd         A directory to use instead of $PWD.
   --force       Force option to create the directory for the new app  [boolean] [default: false]
-  --yarn        Installs dependencies with yarn.                      [boolean] [default: false]
   --git         Initialize version control using git.                 [boolean] [default: false]
   --install     Installs dependencies.                                [boolean] [default: true]
 ```
-
-Note: If you don't specify enough data to the `npx preact-cli create` command, it will prompt the required questions.
 
 #### preact build
 
 Create a production build
 
-You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw`, `--no-esm`, and `--no-inline-css`.
+You can disable `default: true` flags by prefixing them with `--no-<option>`; for example, `--no-sw` and `--no-prerender`.
 
 ```
-$ preact build
+$ [npm run / yarn] preact build
 
     --src              Specify source directory  (default src)
     --dest             Specify output directory  (default build)
     --cwd              A directory to use instead of $PWD  (default .)
-    --esm              Builds ES-2015 bundles for your code  (default true)
     --sw               Generate and attach a Service Worker  (default true)
     --babelConfig      Path to custom Babel config (default .babelrc)
-    --json             Generate build stats for bundle analysis
-    --template         Path to custom HTML template (default 'src/template.html')
-    --preload          Adds preload tags to the document its assets  (default false)
-    --analyze          Launch interactive Analyzer to inspect production bundle(s)
     --prerender        Renders route(s) into generated static HTML  (default true)
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
-    --brotli           Adds brotli redirects to the service worker  (default false)
-    --inline-css       Adds critical css to the prerendered markup  (default true)
+    --template         Path to custom EJS or HTML template  (default 'src/template.ejs')
+    --analyze          Launch interactive Analyzer to inspect production bundle(s) (default false)
     -c, --config       Path to custom CLI config  (default preact.config.js)
     -v, --verbose      Verbose output
     -h, --help         Displays this message
@@ -143,22 +137,20 @@ $ preact build
 Spin up a development server with multiple features like `hot-module-replacement`, `module-watcher`
 
 ```
-$ preact watch
+$ [npm run / yarn] preact watch
 
     --src              Specify source directory  (default src)
     --cwd              A directory to use instead of $PWD  (default .)
-    --esm              Builds ES-2015 bundles for your code  (default false)
     --clear            Clear the console (default true)
     --sw               Generate and attach a Service Worker  (default false)
     --babelConfig      Path to custom Babel config (default .babelrc)
-    --json             Generate build stats for bundle analysis
     --https            Run server with HTTPS protocol
     --key              Path to PEM key for custom SSL certificate
     --cert             Path to custom SSL certificate
     --cacert           Path to optional CA certificate override
     --prerender        Pre-render static content on first run
     --prerenderUrls    Path to pre-rendered routes config  (default prerender-urls.json)
-    --template         Path to custom HTML template (default 'src/template.html')
+    --template         Path to custom EJS or HTML template  (default 'src/template.ejs')
     --refresh          Enables experimental preact-refresh functionality
     -c, --config       Path to custom CLI config  (default preact.config.js)
     -H, --host         Set server hostname  (default 0.0.0.0)
@@ -171,17 +163,13 @@ Note:
 1. You can run dev server using `HTTPS` then you can use the following `HTTPS=true preact watch`
 2. You can run the dev server on a different port using `PORT=8091 preact watch`
 
-#### preact list
-
-Lists all the official preactjs-cli repositories
-
-```sh
-$ preact list
-```
-
 #### preact info
 
 Prints debugging information concerning the local environment.
+
+```sh
+$ [npm run / yarn] preact info
+```
 
 ### Pre-rendering
 
@@ -200,7 +188,7 @@ To make customizing your configuration easier, preact-cli supports plugins. Visi
 
 #### Browserslist
 
-You may customize your list of supported browser versions by declaring a [`"browserslist"`] key within your `package.json`. Changing these values will modify your JavaScript (via [`@babel/preset-env`]) and your CSS (via [`autoprefixer`](https://github.com/postcss/autoprefixer)) output.
+You may customize your list of supported browser versions by declaring a [`"browserslist"`] key within your `package.json`. Changing these values will modify your legacy JavaScript (via [`@babel/preset-env`]) and your CSS (via [`autoprefixer`](https://github.com/postcss/autoprefixer)) output.
 
 By default, `preact-cli` emulates the following config:
 
@@ -208,7 +196,7 @@ By default, `preact-cli` emulates the following config:
 
 ```json
 {
-	"browserslist": ["> 0.25%", "IE >= 9"]
+	"browserslist": ["> 0.5%", "last 2 versions", "Firefox ESR", "not dead"]
 }
 ```
 
@@ -216,13 +204,13 @@ By default, `preact-cli` emulates the following config:
 
 To customize Babel, you have two options:
 
-1. You may create a [`.babelrc`] file in your project's root directory. Any settings you define here will overwrite matching config-keys within [Preact CLI preset]. For example, if you pass a `"plugins"` object, it will replace & reset all Babel plugins that Preact CLI defaults to.
+1. You may create a [`.babelrc`] file in your project's root directory, or use the `--babelConfig` path to point at any valid [Babel config file]. Any settings you define here will be merged into the [Preact CLI preset]. For example, if you pass a `"plugins"` object containing different plugins from those already in use, they will simply be added on top of the existing config. If there are conflicts, you'll want to look into option 2, as the default will take precedence.
 
-2. If you'd like to modify or add to the existing Babel config, you must use a `preact.config.js` file. Visit the [Webpack](#webpack) section for more info, or check out the [Customize Babel] example!
+2. If you'd like to modify the existing Babel config you must use a `preact.config.js` file. Visit the [Webpack](#webpack) section for more info, or check out the [Customize Babel] example!
 
 #### Webpack
 
-To customize preact-cli create a `preact.config.js` or a `preact.config.json` file.
+To customize Preact-CLI's Webpack config, create a `preact.config.js` or a `preact.config.json` file:
 
 > `preact.config.js`
 
@@ -306,18 +294,15 @@ export default () => {
 
 #### Template
 
-A template is used to render your page by [EJS](https://ejs.co/).
-You can uses the data of `prerenderUrls` which does not have `title`, using `htmlWebpackPlugin.options.CLI_DATA.preRenderData` in EJS.
+To customize the HTML document that your app uses, edit the `template.ejs` file in your app's source directory.
 
-The default one is visible [here](packages/cli/src/resources/template.html) and it's going to be enough for the majority of cases.
+[EJS](https://ejs.dev) is a simple templating language that lets you generate HTML markup with plain JavaScript. Alongside `html-webpack-plugin`, you're able to conditionally add HTML, access your bundles and assets, and link to external content if you wish. The default we provide on project initialization should fit the majority of use cases very well, but feel free to customize!
 
-If you want to customise your template you can pass a custom template with the `--template` flag.
-
-The `--template` flag is available on the `build` and `watch` commands.
+You can customize the location of your template with the `--template` flag on the `build` and `watch` commands:
 
 ```sh
-preact build --template src/template.html
-preact watch --template src/template.html
+preact build --template renamed-src/template.ejs
+preact watch --template template.ejs
 ```
 
 ### Using CSS preprocessors
@@ -410,9 +395,9 @@ Automatic code splitting is applied to all JavaScript and TypeScript files in th
 [preact]: https://github.com/preactjs/preact
 [webpackconfighelpers]: docs/webpack-helpers.md
 [`.babelrc`]: https://babeljs.io/docs/usage/babelrc
+[babel config file]: https://babeljs.io/docs/en/config-files
 [simple]: https://github.com/preactjs-templates/simple
 [`"browserslist"`]: https://github.com/ai/browserslist
-[```.babelrc```]: https://babeljs.io/docs/usage/babelrc
 [default]: https://github.com/preactjs-templates/default
 [workbox]: https://developers.google.com/web/tools/workbox
 [preact-router]: https://github.com/preactjs/preact-router
