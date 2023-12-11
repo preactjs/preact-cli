@@ -73,7 +73,7 @@
     "react-refresh": "0.11.0",
     "sade": "^1.8.1",
     "size-plugin": "^2.0.2",
-    "source-map": "^0.7.2",
+    "source-map": "^0.7.4",
     "source-map-loader": "^1.1.1",
     "stack-trace": "0.0.10",
     "style-loader": "^3.3.1",

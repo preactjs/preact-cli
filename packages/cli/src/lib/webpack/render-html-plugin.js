@@ -142,9 +142,10 @@ module.exports = async function renderHTMLPlugin(config, env) {
 						env,
 						prerenderData: values,
 						CLI_DATA: { prerenderData: { url, ...routeData } },
-						ssr: config.prerender
-							? await prerender(config, values)
-							: '',
+						ssr:
+							config.prerender && url !== PREACT_FALLBACK_URL
+								? await prerender(config, values)
+								: '',
 						entrypoints,
 					},
 					htmlWebpackPlugin: {
