@@ -153,6 +153,7 @@ function prodBuild(config) {
 				polyfillsFilename: 'es-polyfills.js',
 				exclude: [/^sw.*\.js/, /^dom-polyfills.*\.js/],
 				modernize: false,
+				minify: false,
 				verbose: false,
 			}),
 			new SizePlugin({
@@ -166,7 +167,7 @@ function prodBuild(config) {
 			minimizer: [
 				new TerserPlugin({
 					extractComments: false,
-					test: /(sw|dom-polyfills).*\.js$/,
+					test: /\.js$/,
 					terserOptions: {
 						output: { comments: false },
 						mangle: true,
