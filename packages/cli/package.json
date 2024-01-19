@@ -64,7 +64,6 @@
     "kleur": "^4.1.4",
     "mini-css-extract-plugin": "^2.5.3",
     "minimatch": "^3.0.3",
-    "optimize-plugin": "^1.3.1",
     "postcss": "^8.4.13",
     "postcss-load-config": "^3.1.4",
     "postcss-loader": "^6.2.1",
