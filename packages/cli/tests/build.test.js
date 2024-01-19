@@ -8,7 +8,7 @@ const {
 	writeFile,
 } = require('fs/promises');
 const looksLike = require('html-looks-like');
-const { create, build, buildFast } = require('./lib/cli');
+const { create, build } = require('./lib/cli');
 const { snapshot } = require('./lib/utils');
 const { subject } = require('./lib/output');
 const images = require('./images/build');
@@ -80,25 +80,25 @@ describe('preact build', () => {
 	it('builds the `typescript` template', async () => {
 		let dir = await create('typescript');
 
-		await expect(buildFast(dir)).resolves.not.toThrow();
+		await expect(build(dir)).resolves.not.toThrow();
 	});
 
 	it('should patch global location object', async () => {
 		let dir = await subject('location-patch');
 
-		await expect(buildFast(dir)).resolves.not.toThrow();
+		await expect(build(dir)).resolves.not.toThrow();
 	});
 
 	it('should copy resources from static to build directory', async () => {
 		let dir = await subject('static-root');
-		await buildFast(dir);
+		await build(dir);
 		let file = join(dir, 'build', '.htaccess');
 		expect(await access(file)).toBeUndefined();
 	});
 
 	it('should use a custom `.env` with prefixed environment variables', async () => {
 		let dir = await subject('custom-dotenv');
-		await buildFast(dir);
+		await build(dir);
 
 		const bundleFile = (await readdir(`${dir}/build`)).find(file =>
 			/bundle\.\w{5}\.js$/.test(file)
@@ -131,15 +131,13 @@ describe('preact build', () => {
 			await rename(join(dir, 'index.js'), join(dir, 'renamed-src/index.js'));
 			await rename(join(dir, 'style.css'), join(dir, 'renamed-src/style.css'));
 
-			await expect(
-				buildFast(dir, { src: 'renamed-src' })
-			).resolves.not.toThrow();
+			await expect(build(dir, { src: 'renamed-src' })).resolves.not.toThrow();
 		});
 
 		it('--dest', async () => {
 			let dir = await subject('minimal');
 
-			await buildFast(dir, { dest: 'renamed-dest' });
+			await build(dir, { dest: 'renamed-dest' });
 			expect(await access(join(dir, 'renamed-dest'))).toBeUndefined();
 		});
 
@@ -148,13 +146,13 @@ describe('preact build', () => {
 
 			const logSpy = jest.spyOn(process.stdout, 'write');
 
-			await buildFast(dir, { sw: true });
+			await build(dir, { sw: true });
 			expect(await access(join(dir, 'build', 'sw.js'))).toBeUndefined();
 			expect(logSpy).toHaveBeenCalledWith(
 				expect.stringContaining('Could not find sw.js')
 			);
 
-			await buildFast(dir, { sw: false });
+			await build(dir, { sw: false });
 			await expect(access(join(dir, 'build', 'sw.js'))).rejects.toThrow(
 				'no such file or directory'
 			);
@@ -165,12 +163,12 @@ describe('preact build', () => {
 			// Prerendering is disabled to avoid (non-relevant) regenerator issues
 			let dir = await subject('custom-babelrc');
 
-			await buildFast(dir, { prerender: false });
+			await build(dir, { prerender: false });
 			let transpiledChunk = await getOutputFile(dir, /bundle\.\w{5}\.js$/);
 			expect(/=>\s?setTimeout/.test(transpiledChunk)).toBe(false);
 
 			await rename(join(dir, '.babelrc'), join(dir, 'babel.config.json'));
-			await buildFast(dir, {
+			await build(dir, {
 				babelConfig: 'babel.config.json',
 				prerender: false,
 			});
@@ -185,7 +183,7 @@ describe('preact build', () => {
 				join(dir, 'template.ejs'),
 				join(dir, 'renamed-template.ejs')
 			);
-			await buildFast(dir, { template: 'renamed-template.ejs' });
+			await build(dir, { template: 'renamed-template.ejs' });
 
 			const html = await getOutputFile(dir, 'index.html');
 			expect(html).toEqual(
@@ -196,11 +194,11 @@ describe('preact build', () => {
 		it('--prerender', async () => {
 			let dir = await subject('minimal');
 
-			await buildFast(dir, { prerender: true });
+			await build(dir, { prerender: true });
 			let html = await getOutputFile(dir, 'index.html');
 			expect(html).toMatch('<h1>Minimal App</h1>');
 
-			await buildFast(dir, { prerender: false });
+			await build(dir, { prerender: false });
 			html = await getOutputFile(dir, 'index.html');
 			expect(html).not.toMatch('<h1>Minimal App</h1>');
 		});
@@ -208,7 +206,7 @@ describe('preact build', () => {
 		it('--prerenderUrls', async () => {
 			let dir = await subject('multiple-prerendering');
 
-			await buildFast(dir, { prerenderUrls: 'prerender-urls.json' });
+			await build(dir, { prerenderUrls: 'prerender-urls.json' });
 			expect(await access(join(dir, 'build/index.html'))).toBeUndefined();
 			expect(
 				await access(join(dir, 'build/route66/index.html'))
@@ -221,7 +219,7 @@ describe('preact build', () => {
 				join(dir, 'prerender-urls.json'),
 				join(dir, 'renamed-urls.json')
 			);
-			await buildFast(dir, { prerenderUrls: 'renamed-urls.json' });
+			await build(dir, { prerenderUrls: 'renamed-urls.json' });
 			expect(await access(join(dir, 'build/index.html'))).toBeUndefined();
 			expect(
 				await access(join(dir, 'build/route66/index.html'))
@@ -234,11 +232,11 @@ describe('preact build', () => {
 		it('--inlineCss', async () => {
 			let dir = await subject('minimal');
 
-			await buildFast(dir, { inlineCss: true });
+			await build(dir, { inlineCss: true });
 			let head = await getHead(dir);
 			expect(head).toMatch('<style>h1{color:red}</style>');
 
-			await buildFast(dir, { inlineCss: false });
+			await build(dir, { inlineCss: false });
 			head = await getOutputFile(dir, 'index.html');
 			expect(head).not.toMatch(/<style>[^<]*<\/style>/);
 		});
@@ -246,14 +244,14 @@ describe('preact build', () => {
 		it('--config', async () => {
 			let dir = await subject('custom-webpack');
 
-			await buildFast(dir, { config: 'preact.config.js' });
+			await build(dir, { config: 'preact.config.js' });
 			expect(await access(join(dir, 'build/bundle.js'))).toBeUndefined();
 
 			await rename(
 				join(dir, 'preact.config.js'),
 				join(dir, 'renamed-config.js')
 			);
-			await buildFast(dir, { config: 'renamed-config.js' });
+			await build(dir, { config: 'renamed-config.js' });
 			expect(await access(join(dir, 'build/bundle.js'))).toBeUndefined();
 		});
 
@@ -278,7 +276,7 @@ describe('preact build', () => {
 				'h2{color:green}'
 			);
 
-			await buildFast(dir);
+			await build(dir);
 			const builtStylesheet = await getOutputFile(dir, /bundle\.\w{5}\.css$/);
 
 			expect(builtStylesheet).toMatch('h1{color:red}');
@@ -289,7 +287,7 @@ describe('preact build', () => {
 
 		it('should use plain CSS & CSS Modules together, determining loading method by filename', async () => {
 			let dir = await subject('css-modules');
-			await buildFast(dir);
+			await build(dir);
 			const builtStylesheet = await getOutputFile(dir, /bundle\.\w{5}\.css$/);
 
 			expect(builtStylesheet).toMatch('h1{color:red}');
@@ -298,7 +296,7 @@ describe('preact build', () => {
 
 		it('should inline critical CSS only', async () => {
 			let dir = await subject('css-inline');
-			await buildFast(dir);
+			await build(dir);
 			const builtStylesheet = await getOutputFile(dir, /bundle\.\w{5}\.css$/);
 			const html = await getOutputFile(dir, 'index.html');
 
@@ -309,7 +307,7 @@ describe('preact build', () => {
 		// Issue #1411
 		it('should preserve side-effectful CSS imports even if package.json claims no side effects', async () => {
 			let dir = await subject('css-side-effect');
-			await buildFast(dir);
+			await build(dir);
 
 			const builtStylesheet = await getOutputFile(dir, /bundle\.\w{5}\.css$/);
 			expect(builtStylesheet).toMatch('h1{background:#673ab8}');
@@ -317,7 +315,7 @@ describe('preact build', () => {
 
 		it('should use SASS, SCSS, and CSS Modules for each', async () => {
 			let dir = await subject('css-sass');
-			await buildFast(dir);
+			await build(dir);
 			const builtStylesheet = await getOutputFile(dir, /bundle\.\w{5}\.css$/);
 
 			expect(builtStylesheet).toMatch('h1{background:blue;color:red}');
@@ -330,7 +328,7 @@ describe('preact build', () => {
 		prerenderUrlFiles.forEach(prerenderUrls => {
 			it(`should prerender the routes provided with '${prerenderUrls}'`, async () => {
 				let dir = await subject('multiple-prerendering');
-				await buildFast(dir, { prerenderUrls });
+				await build(dir, { prerenderUrls });
 
 				const body1 = await getBody(dir);
 				looksLike(body1, images.prerender.home);
@@ -367,7 +365,7 @@ describe('preact build', () => {
 		prerenderUrlFiles.forEach(prerenderUrls => {
 			it(`should prerender the routes with data provided with '${prerenderUrls}' via provider`, async () => {
 				let dir = await subject('multiple-prerendering-with-provider');
-				await buildFast(dir, { prerenderUrls });
+				await build(dir, { prerenderUrls });
 
 				const body1 = await getBody(dir);
 				looksLike(body1, images.prerender.home);

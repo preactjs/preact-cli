@@ -6,7 +6,7 @@ const {
 	create: createCmd,
 } = require('../../../create-cli/src/commands/create');
 const { tmpDir } = require('./output');
-const { linkPackage, handleOptimize } = require('./utils');
+const { linkPackage } = require('./utils');
 
 exports.create = async function (template, options) {
 	let dest = await tmpDir();
@@ -17,7 +17,7 @@ exports.create = async function (template, options) {
 	return dest;
 };
 
-const build = (exports.build = async function (cwd, options) {
+exports.build = async function (cwd, options) {
 	const argv = {
 		src: 'src',
 		dest: 'build',
@@ -34,11 +34,6 @@ const build = (exports.build = async function (cwd, options) {
 
 	let opts = Object.assign({ cwd }, argv, options);
 	return await buildCmd(opts);
-});
-
-exports.buildFast = async function (cwd, options) {
-	await handleOptimize(cwd, options && options.config);
-	return await build(cwd, options);
 };
 
 exports.watch = function (cwd, options) {

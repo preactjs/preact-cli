@@ -14,33 +14,26 @@ exports.default = {
 	'ssr-build/ssr-bundle.css': 2346,
 	'ssr-build/ssr-bundle.css.map': 3603,
 
-	'bundle.d55d3.js': 22978,
-	'bundle.d55d3.js.map': 92378,
-	'bundle.d55d3.legacy.js': 23646,
-	'bundle.d55d3.legacy.js.map': 92673,
+	'bundle.05a31.js': 22978,
+	'bundle.05a31.js.map': 125226,
 	'bundle.6329a.css': 1173,
 	'bundle.6329a.css.map': 2165,
 
-	'dom-polyfills.99150.js': 5221,
-	'dom-polyfills.99150.js.map': 18676,
-	'es-polyfills.js': 46419,
+	'dom-polyfills.f5813.js': 5221,
+	'dom-polyfills.f5813.js.map': 18676,
 
 	'favicon.ico': 15086,
 	'index.html': 3998,
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 
-	'route-home.chunk.ede4d.js': 1179,
-	'route-home.chunk.ede4d.js.map': 3814,
-	'route-home.chunk.ede4d.legacy.js': 1222,
-	'route-home.chunk.ede4d.legacy.js.map': 3964,
-	'route-home.chunk.d116e.css': 838,
-	'route-home.chunk.d116e.css.map': 1406,
+	'route-home.chunk.585d0.js': 1231,
+	'route-home.chunk.585d0.js.map': 2057,
+	'route-home.chunk.d116e.css': 825,
+	'route-home.chunk.d116e.css.map': 1378,
 
-	'route-profile.chunk.6856a.js': 3165,
-	'route-profile.chunk.6856a.js.map': 13170,
-	'route-profile.chunk.6856a.legacy.js': 3302,
-	'route-profile.chunk.6856a.legacy.js.map': 13200,
+	'route-profile.chunk.66aa5.js': 3300,
+	'route-profile.chunk.66aa5.js.map': 21931,
 };
 
 exports.prerender = {};
@@ -176,8 +169,6 @@ exports.publicPath = `
 		<script type="__PREACT_CLI_DATA__">%7B%22prerenderData%22:%7B%22url%22:%22/%22%7D%7D</script>
 		<script type="module" src="/example-path/bundle.\\w{5}.js"></script>
 		<script nomodule="" src="/example-path/dom-polyfills.\\w{5}.js"></script>
-		<script nomodule="" src="/example-path/es-polyfills.js"></script>
-		<script nomodule="" defer="defer" src="/example-path/bundle.\\w{5}.legacy.js"></script>
 	</body>
 </html>
 `;
