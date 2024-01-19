@@ -14,7 +14,6 @@ const baseConfig = require('./webpack-base-config');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const RefreshPlugin = require('@prefresh/webpack');
 const { normalizePath, warn } = require('../../util');
-const OptimizePlugin = require('optimize-plugin');
 
 const cleanFilename = name =>
 	name.replace(
@@ -46,7 +45,7 @@ async function clientConfig(config, env) {
 				swSrc: swPath,
 				include: [
 					/200\.html$/,
-					/(?<!legacy|polyfills)\.js$/,
+					/(?<!polyfills)\.js$/,
 					/\.css$/,
 					/\.(png|jpg|svg|gif|webp|avif)$/,
 				],
@@ -149,16 +148,9 @@ function prodBuild(config) {
 		),
 
 		plugins: [
-			new OptimizePlugin({
-				polyfillsFilename: 'es-polyfills.js',
-				exclude: [/^sw.*\.js/, /^dom-polyfills.*\.js/],
-				modernize: false,
-				minify: false,
-				verbose: false,
-			}),
 			new SizePlugin({
 				stripHash: name =>
-					name.replace(/\.[a-z0-9]{5}((\.legacy)?\.(?:js|css)$)/i, '.*****$1'),
+					name.replace(/\.[a-z0-9]{5}(\.(?:js|css)$)/i, '.*****$1'),
 			}),
 		],
 		cache: true,

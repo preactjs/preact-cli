@@ -85,21 +85,6 @@ module.exports = async function renderHTMLPlugin(config, env) {
 			entrypoints[name] =
 				publicPath + entryFiles.find(file => /\.m?js(?:\?|$)/.test(file));
 		});
-
-		const optimizePlugin = compilation.options.plugins.find(
-			plugin => plugin.constructor.name == 'OptimizePlugin'
-		);
-		if (optimizePlugin) {
-			// Retrieves the (generated) legacy bundle
-			const legacyBundle = entrypoints['bundle']
-				.replace(publicPath, '')
-				.replace(/\.js$/, '.legacy.js');
-			entrypoints['legacy-bundle'] = publicPath + legacyBundle;
-
-			// Retrieves the (generated) es-polyfills
-			entrypoints['es-polyfills'] =
-				publicPath + optimizePlugin.options.polyfillsFilename;
-		}
 	};
 
 	const htmlWebpackConfig = values => {
