@@ -14,15 +14,15 @@ exports.default = {
 	'ssr-build/ssr-bundle.css': 2346,
 	'ssr-build/ssr-bundle.css.map': 3603,
 
-	'bundle.c74f5.js': 23145,
-	'bundle.c74f5.js.map': 92586,
-	'bundle.c74f5.legacy.js': 24195,
-	'bundle.c74f5.legacy.js.map': 107151,
+	'bundle.d55d3.js': 22978,
+	'bundle.d55d3.js.map': 92378,
+	'bundle.d55d3.legacy.js': 23646,
+	'bundle.d55d3.legacy.js.map': 92673,
 	'bundle.6329a.css': 1173,
 	'bundle.6329a.css.map': 2165,
 
-	'dom-polyfills.aeb97.js': 5221,
-	'dom-polyfills.aeb97.js.map': 18676,
+	'dom-polyfills.99150.js': 5221,
+	'dom-polyfills.99150.js.map': 18676,
 	'es-polyfills.js': 46419,
 
 	'favicon.ico': 15086,
@@ -30,17 +30,17 @@ exports.default = {
 	'manifest.json': 455,
 	'preact_prerender_data.json': 11,
 
-	'route-home.chunk.6c974.js': 1179,
-	'route-home.chunk.6c974.js.map': 3814,
-	'route-home.chunk.6c974.legacy.js': 1222,
-	'route-home.chunk.6c974.legacy.js.map': 4452,
+	'route-home.chunk.ede4d.js': 1179,
+	'route-home.chunk.ede4d.js.map': 3814,
+	'route-home.chunk.ede4d.legacy.js': 1222,
+	'route-home.chunk.ede4d.legacy.js.map': 3964,
 	'route-home.chunk.d116e.css': 838,
 	'route-home.chunk.d116e.css.map': 1406,
 
-	'route-profile.chunk.0401b.js': 3165,
-	'route-profile.chunk.0401b.js.map': 13170,
-	'route-profile.chunk.0401b.legacy.js': 3302,
-	'route-profile.chunk.0401b.legacy.js.map': 15845,
+	'route-profile.chunk.6856a.js': 3165,
+	'route-profile.chunk.6856a.js.map': 13170,
+	'route-profile.chunk.6856a.legacy.js': 3302,
+	'route-profile.chunk.6856a.legacy.js.map': 13200,
 };
 
 exports.prerender = {};
