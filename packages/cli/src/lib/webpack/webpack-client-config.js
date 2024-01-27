@@ -170,7 +170,7 @@ function getBabelEsmPlugin(env) {
 			new BabelEsmPlugin({
 				filename: env.isProd ? '[name].[chunkhash:5].esm.js' : '[name].esm.js',
 				chunkFilename: '[name].chunk.[chunkhash:5].esm.js',
-				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest'],
+				excludedPlugins: ['BabelEsmPlugin', 'InjectManifest', 'ForkTsCheckerWebpackPlugin'],
 				beforeStartExecution: plugins => {
 					plugins.forEach(plugin => {
 						if (
