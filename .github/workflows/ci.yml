@@ -5,10 +5,12 @@ on:
     branches:
       - master
       - next
+      - 3.x.x
   pull_request:
     branches:
       - master
       - next
+      - 3.x.x
 
 jobs:
   test:
