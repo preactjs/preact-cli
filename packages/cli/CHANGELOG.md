@@ -1,5 +1,81 @@
 # preact-cli
 
+## 4.0.0
+
+### Major Changes
+
+- [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Drops support for Preact v8
+
+* [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Alters CSS Module detection to instead rely upon file names, rather than directory names.
+
+  Treating all CSS files found within `routes/` and `components/` as CSS Modules was not obvious, nor did it offer an easy way to opt out (or in) without editing the Webpack config itself.
+
+  This change makes is so that users can opt into CSS Modules from anywhere in their app by instead naming their CSS files according to the pattern `*.module.css`.
+
+  Anyone using CSS Modules within `routes/` or `components/` will need to alter their CSS files to be `x.module.css`. If you've disabled CSS Modules in your `preact.config.js`, you can remove that bit of configuration and use file names to instead determine behavior.
+
+- [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Reduces the `env` parameter of `preact.config.js` to only contain 3 values: `isProd`, `isWatch`, and `isServer`.
+
+  Previously, `env` contained many semi-duplicated values (`production` and `isProd`, etc) as well as values that were unlikely to be of much use to many users (what flags were set, for instance). Because of this, the signal-to-noise ratio was rather low which we didn't like. As such, we reduced `env` down to the most basic environment info: what type of build is `preact-cli` doing and for which environement?
+
+  If you customize your Webpack config using a `preact.config.js`, please be aware that you may need to update which values you consume from `env`.
+
+* [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - To increase transparency and user control over the `template.html`, `<% preact.headEnd %>` and `<% preact.bodyEnd %>` will no longer be supported; instead, users should directly adopt the EJS and keep it in their templates.
+
+  In the past, these were abstracted away as they were a bit unwieldy; EJS might be unfamiliar with users and the way data was retrieved from `html-webpack-plugin` was somewhat less than elegant. However, this has much improved over the years and the abstraction only makes simple edits less than obvious, so it is no longer fulfilling it's purpose.
+
+  New projects will have a `template.ejs` created in place of the old `template.html`, containing the full EJS template. For existing projects, you can copy [the default `template.ejs`](https://github.com/preactjs/preact-cli/blob/master/packages/cli/src/resources/template.ejs) into your project or adapt it as you wish.
+
+- [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - HMR / the `--refresh` flag is now enabled by default in dev mode.
+
+* [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Changes the JSX transform from 'classic' to the newer 'automatic'
+
+  Users will no longer need to add `import { h } from 'preact'` in their components; it will be done automatically for them.
+
+- [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Removes `--preload` flag and functionality from build command.
+
+* [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Removes `--json` & `--brotli` flags from `preact build`. Also removes `--rhl` alias for `--refresh` from `preact watch`.
+
+- [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Updates to use html-webpack-plugin v4
+
+* [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - - Upgrades to Webpack v5
+
+  - Any custom configuration you do in your `preact.config.js` may need to be altered to account for this. Plugins may need replacements or different option formats.
+
+  - `--esm` flag has been removed
+
+    - Dual output is now enabled by default in production builds.
+
+  - `.babelrc` no longer overwrites matching keys
+    - Instead, the config will be merged in to the default. The default still takes precedence when there are conflicts, so you will still need to use your `preact.config.js` if you want to edit or remove default plugins or presets.
+
+- [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Minimum supported Node version for `preact-cli` is now v14.14.0. Please upgrade if you are on an older version.
+
+  `build` and `watch` commands will no longer take an optional `src` directory argument; if you want to change the source directory from the default (`./src`), please instead use the `--src` flag (i.e., `--src differentSrc`).
+
+  Upon rebuild, the output directory will no longer be outright deleted; instead, it will be emptied. This has the benefit of better supporting containerized environments where specific directories are mounted. Emptying the directory, rather than deleting and recreating it, ensures a stable reference for those tools.
+
+* [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Extracts project creation functionality from `preact-cli` into `create-preact-cli`
+
+  Setting up new `preact-cli` projects with `npx` is slow, as all dependencies of `preact-cli` would need to be installed, even though only a handful are used for project initialization. On the other hand, suggesting global installs is less than attractive due to NPM's poor default install location (requires `sudo`) and this can get out of sync over time.
+
+  By extracting project initialization into its own package, we can provide much, much faster project setup times.
+
+  To setup a new project, users will use `npm init preact-cli ...` or `yarn create preact-cli ...`.
+
+  Additionally, the `--yarn` flag has been removed in favour of using the yarn initializer (`yarn create`).
+
+### Patch Changes
+
+- [#1816](https://github.com/preactjs/preact-cli/pull/1816) [`372d8fa`](https://github.com/preactjs/preact-cli/commit/372d8fa7744b53398ee42cd910f7cb65dddcd480) Thanks [@rschristian](https://github.com/rschristian)! - Removed `optimize-plugin`, now a single bundle will be output.
+
+* [#1647](https://github.com/preactjs/preact-cli/pull/1647) [`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606) Thanks [@rschristian](https://github.com/rschristian)! - Disables hash in CSS file names for the SSR build
+
+- [#1814](https://github.com/preactjs/preact-cli/pull/1814) [`1777c90`](https://github.com/preactjs/preact-cli/commit/1777c90f24827c24ff725430ef2cf837abc2028e) Thanks [@rschristian](https://github.com/rschristian)! - Fix for incorrect minification in some specific circumstances. Files should now minify slightly better too.
+
+- Updated dependencies [[`03b8f9d`](https://github.com/preactjs/preact-cli/commit/03b8f9d893e3a7351d5a5dfab126040f06f1c606)]:
+  - @preact/async-loader@4.0.0
+
 ## 3.5.0
 
 ### Minor Changes
