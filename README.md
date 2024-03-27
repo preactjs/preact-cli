@@ -1,9 +1,9 @@
 # preact-cli [![NPM Downloads](https://img.shields.io/npm/dm/preact-cli.svg)](https://www.npmjs.com/package/preact-cli) [![NPM Version](https://img.shields.io/npm/v/preact-cli.svg)](https://www.npmjs.com/package/preact-cli)
 
-> Start building a [Preact] Progressive Web App in seconds 🔥
+> [!WARNING]
+> `preact-cli` unfortunately no longer sees active development! It's stable so you can rely upon it for all of your existing apps, but for creating new ones, we recommend [Vite](https://vitejs.dev) via [`create-preact`](https://github.com/preactjs/create-preact). It offers many of the same features but is a much faster, more modern experience. Thanks to all the contributors and users over the years!
 
-> **Note**
-> `preact-cli` no longer sees active development! It's stable so you can rely upon it for all of your existing apps, but for creating new ones, we recommend Vite via [`create-preact`](https://github.com/preactjs/create-preact). It's a much faster, more modern experience and we're working to bring some Preact-CLI/WMR features to it.
+> Start building a [Preact] Progressive Web App in seconds 🔥
 
 ### Contents
 
